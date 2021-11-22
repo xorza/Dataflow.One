@@ -32,7 +32,7 @@ namespace csso.NodeCore
             {
                 return;
             }
-            Node node = outputBinding.SourceNode;
+            Node node = outputBinding.OutputNode;
 
             if (pathBack.Contains(node))
             {
@@ -41,7 +41,7 @@ namespace csso.NodeCore
 
             pathBack.Add(node);
 
-            for (int i = 0; i < node.Inputs.Count; i++)
+            for (int i = 0; i < node.Inputs.Length; i++)
             {
                 Go(node.Inputs[i], pathBack);
             }

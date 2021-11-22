@@ -6,10 +6,17 @@ using System.Threading.Tasks;
 
 namespace csso.NodeCore
 {
-    public class SchemaPut
+    public enum PutType : Int32
+    {
+        In,
+        Out
+    }
+
+    public abstract class SchemaPut
     {
         public Type Type { get; set; } = typeof(void);
         public String Name { get; set; } = "";
+        public abstract PutType PutType { get;  }
 
         public SchemaPut()
         {

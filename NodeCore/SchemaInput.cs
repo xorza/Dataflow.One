@@ -14,5 +14,7 @@ namespace csso.NodeCore
         public SchemaInput(String name, Type type) : base(name, type)
         {
         }
+
+        public override PutType PutType => PutType.In;
     }
 }

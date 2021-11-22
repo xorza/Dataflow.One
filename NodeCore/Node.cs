@@ -10,30 +10,23 @@ namespace csso.NodeCore
     {
         public Schema Schema { get; private set; }
         public Graph Graph { get; private set; }
-        public IReadOnlyList<Binding> Inputs { get; private set; }
+        public Binding[] Inputs { get; private set; }
 
-        private readonly List<Binding> _inputs = new List<Binding>();
 
         public Node(Schema schema, Graph graph)
         {
-            Inputs = _inputs.AsReadOnly();
-
             Schema = schema;
             Graph = graph;
 
             Graph.Add(this);
 
-            foreach (var input in this.Schema.Inputs)
+            Inputs = new Binding[Schema.Inputs.Count];
+            for (int i = 0; i < Schema.Inputs.Count; i++)
             {
-                _inputs.Add(new EmptyBinding(this, input));
+                Inputs[i] = new EmptyBinding(this, Schema.Inputs[i]);
             }
 
             Graph = graph;
-        }
-
-        internal void Add(Binding binding)
-        {
-            _inputs.Add(binding);
         }
     }
 }

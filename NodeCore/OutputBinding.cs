@@ -8,16 +8,16 @@ namespace csso.NodeCore
 {
     public class OutputBinding : Binding
     {
-        public Node SourceNode { get; private set; }
+        public Node OutputNode { get; private set; }
         public SchemaOutput Output { get; private set; }
 
-        public OutputBinding(Node node,
+        public OutputBinding(Node inputNode,
             SchemaInput input,
-            Node sourceNode,
+            Node outputNode,
             SchemaOutput output) :
-            base(node, input)
+            base(inputNode, input)
         {
-            SourceNode = sourceNode;
+            OutputNode = outputNode;
             Output = output;
 
             if (input.Type != output.Type)

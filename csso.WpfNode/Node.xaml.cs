@@ -17,9 +17,18 @@ using System.Windows.Shapes;
 
 namespace csso.WpfNode
 {
-    /// <summary>
-    /// Interaction logic for Node.xaml
-    /// </summary>
+    public class PinClickEventArgs : RoutedEventArgs
+    {
+        public PutView Put { get; private set; }
+
+        public PinClickEventArgs(PutView put)
+        {
+            Put = put;
+        }
+    }
+    public delegate void PinClickEventHandler(object sender, PinClickEventArgs e);
+
+
     public partial class Node : UserControl, INotifyPropertyChanged
     {
         private NodeView? _nodeView;
@@ -37,7 +46,7 @@ namespace csso.WpfNode
             }
         }
 
-
+        public event PinClickEventHandler? PinClick;
 
         public Node()
         {
@@ -54,38 +63,53 @@ namespace csso.WpfNode
         private void Refresh()
         {
             InputsStackPanel.Children.Clear();
+            OutputsStackPanel.Children.Clear();
 
-
-            if (_nodeView != null)
+            if (_nodeView == null)
             {
-           
-                foreach (var pv in _nodeView.Inputs)
-                {
-                    //PutView pv = new PutView(item);                    
-                    StackPanel stackPanel = new StackPanel();
-                    stackPanel.Orientation = Orientation.Horizontal;
-                    UIElement pin = new Button() { Content = "x" };
-                    pv.Control = pin;
-                    stackPanel.Children.Add(pin);
-                    stackPanel.Children.Add(new Label() { Content = pv.SchemaPut.Name });
-                    InputsStackPanel.Children.Add(stackPanel);
-                }
-
-                foreach (var pv in _nodeView.Outputs)
-                {
-                    //PutView pv = new PutView(item);
-                    StackPanel stackPanel = new StackPanel();
-                    stackPanel.HorizontalAlignment = HorizontalAlignment.Right;
-                    stackPanel.Orientation = Orientation.Horizontal;
-                    stackPanel.Children.Add(new Label() { Content = pv.SchemaPut.Name });
-                    UIElement pin = new Button() { Content = "o" };
-                    pv.Control = pin;
-                    stackPanel.Children.Add(pin);
-                    OutputsStackPanel.Children.Add(stackPanel);
-                }
+                return;
             }
+
+            foreach (var pv in _nodeView.Inputs)
+            {
+                StackPanel stackPanel = new StackPanel();
+                stackPanel.Orientation = Orientation.Horizontal;
+                Button button = new Button();
+                pv.Control = button;
+                button.Click += PinButton_Click;
+                button.Tag = pv;
+                stackPanel.Children.Add(button);
+                stackPanel.Children.Add(new Label() { Content = pv.SchemaPut.Name });
+                InputsStackPanel.Children.Add(stackPanel);
+            }
+
+            foreach (var pv in _nodeView.Outputs)
+            {
+                StackPanel stackPanel = new StackPanel();
+                stackPanel.HorizontalAlignment = HorizontalAlignment.Right;
+                stackPanel.Orientation = Orientation.Horizontal;
+                stackPanel.Children.Add(new Label() { Content = pv.SchemaPut.Name });
+                Button button = new Button();
+                pv.Control = button;
+                button.Click += PinButton_Click;
+                button.Tag = pv;
+                stackPanel.Children.Add(button);
+                OutputsStackPanel.Children.Add(stackPanel);
+            }
+
         }
 
+        private void PinButton_Click(object sender, RoutedEventArgs e)
+        {
+            PutView pv = (PutView)((Button)sender).Tag;
+            PinClick?.Invoke(sender,
+                new PinClickEventArgs(pv)
+                {
+                    RoutedEvent = e.RoutedEvent,
+                    Source = e.Source,
+                    Handled = true
+                });
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

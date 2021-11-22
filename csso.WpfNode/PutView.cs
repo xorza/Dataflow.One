@@ -12,10 +12,14 @@ namespace csso.WpfNode
     public class PutView
     {
         public UIElement? Control { get; set; }
-
         public SchemaPut SchemaPut { get; private set; }
         public Point PinPoint { get; set; }
+        public NodeView NodeView { get; private set; }
 
-        public PutView(SchemaPut schemaPut) => SchemaPut = schemaPut;
+        public PutView(SchemaPut schemaPut, NodeView nodeView)
+        {
+            SchemaPut = schemaPut;
+            NodeView = nodeView;
+        }
     }
 }

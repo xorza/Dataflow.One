@@ -10,24 +10,28 @@
         
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Canvas Margin="5"
+    <Grid>
+        <Canvas Margin="5"
             HorizontalAlignment="Stretch"      
             VerticalAlignment="Stretch"
             MinWidth="150"
             x:Name="Canvas">
 
-        <!--<WpfNode:Graph x:Name="Graph" />-->
-        <WpfNode:Node x:Name="Node1" >
-            <behaviors:Interaction.Behaviors>
-                <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"/>
-            </behaviors:Interaction.Behaviors>
-        </WpfNode:Node>
-        <WpfNode:Node x:Name="Node2" Canvas.Left="200" Canvas.Top="0" >
-            <behaviors:Interaction.Behaviors>
-                <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"/>
-            </behaviors:Interaction.Behaviors>
-        </WpfNode:Node>
+            <!--<WpfNode:Graph x:Name="Graph" />-->
+            <WpfNode:Node x:Name="Node1" >
+                <behaviors:Interaction.Behaviors>
+                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"/>
+                </behaviors:Interaction.Behaviors>
+            </WpfNode:Node>
+            <WpfNode:Node x:Name="Node2" Canvas.Left="200" Canvas.Top="0" >
+                <behaviors:Interaction.Behaviors>
+                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"/>
+                </behaviors:Interaction.Behaviors>
+            </WpfNode:Node>
 
-        <Line x:Name="Line1" StrokeThickness="2" X2="150" Stroke="Black" />
-    </Canvas>
+            <Line x:Name="Line1" StrokeThickness="2" X2="150" Stroke="Black" />
+        </Canvas>
+
+        <Canvas x:Name="EdgesCanvas"></Canvas>
+    </Grid>
 </Window>

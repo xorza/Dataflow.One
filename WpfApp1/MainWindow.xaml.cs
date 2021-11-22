@@ -16,14 +16,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Debug = csso.Common.Debug;
 
 namespace WpfApp1
 {
     public partial class MainWindow : Window
     {
+        private readonly csso.NodeCore.Graph _graph;
+        private csso.WpfNode.GraphView? _graphView;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            _graph = new csso.NodeCore.Graph();
 
             Schema schemaRgbMix = new Schema();
             schemaRgbMix.Name = "RGB mix";
@@ -39,15 +45,93 @@ namespace WpfApp1
             schemaBitmap.Outputs.Add(new SchemaOutput("B", typeof(Int32)));
             schemaBitmap.Outputs.Add(new SchemaOutput("RGB", typeof(Int32)));
 
-            csso.NodeCore.Graph graph = new csso.NodeCore.Graph();
-            csso.NodeCore.Node node1 = new csso.NodeCore.Node(schemaRgbMix, graph);
-            csso.NodeCore.Node node2 = new csso.NodeCore.Node(schemaBitmap, graph);
-
-            Node1.NodeView = new csso.WpfNode.NodeView(node1);
-            Node2.NodeView = new csso.WpfNode.NodeView(node2);
+            csso.NodeCore.Node node1 = new csso.NodeCore.Node(schemaRgbMix, _graph);
+            csso.NodeCore.Node node2 = new csso.NodeCore.Node(schemaBitmap, _graph);
 
             Loaded += (s, ea) => { RefreshLine(); };
             MouseUp += MainWindow_MouseUp;
+            MouseMove += MainWindow_MouseMove;
+
+            Node1.PinClick += Node_PinClick;
+            Node2.PinClick += Node_PinClick;
+
+            RefreshGraphView();
+        }
+
+        private void RefreshGraphView()
+        {
+            _graphView = new csso.WpfNode.GraphView(_graph);
+            _graphView.Edges.CollectionChanged += Edges_CollectionChanged;
+            Node1.NodeView = _graphView.Nodes[0];
+            Node2.NodeView = _graphView.Nodes[1];
+            DataContext = _graphView;
+        }
+
+        private void Edges_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RedrawEdges();
+        }
+
+        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
+        {
+            RefreshLine();
+        }
+
+        PutView? pv1 = null;
+        PutView? pv2 = null;
+        private void Node_PinClick(object sender, PinClickEventArgs e)
+        {
+            if (pv1 == null)
+            {
+                pv1 = e.Put;
+            }
+            else if (pv2 == null)
+            {
+                pv2 = e.Put;
+                Commit();
+            }
+            else
+            {
+                pv1 = e.Put;
+                pv2 = null;
+            }
+
+            RefreshLine();
+        }
+
+        private void Commit()
+        {
+            Debug.Assert.NotNull(pv1);
+            Debug.Assert.NotNull(pv2);
+
+            if (pv1!.SchemaPut.PutType == pv2!.SchemaPut.PutType)
+            {
+                pv1 = null;
+                pv2 = null;
+                return;
+            }
+            if (pv1!.NodeView == pv2!.NodeView)
+            {
+                pv1 = null;
+                pv2 = null;
+                return;
+            }
+
+            PutView input = pv1.SchemaPut.PutType == PutType.In ? pv1 : pv2;
+            PutView output = pv1.SchemaPut.PutType == PutType.Out ? pv1 : pv2;
+
+            Debug.Assert.True(pv1 != pv2);
+
+            OutputBinding binding = new OutputBinding(
+                input.NodeView.Node,
+                (SchemaInput)input.SchemaPut,
+                output.NodeView.Node,
+                (SchemaOutput)output.SchemaPut);
+
+            Int32 indexOfBinding = input.NodeView.Node.Schema.Inputs.IndexOf((SchemaInput)input.SchemaPut);
+            input.NodeView.Node.Inputs[indexOfBinding] = binding;
+
+            RefreshGraphView();
         }
 
         private void MainWindow_MouseUp(object sender, MouseButtonEventArgs e)
@@ -67,12 +151,21 @@ namespace WpfApp1
             UpdatePinPositions(Canvas, Node2.NodeView.Inputs);
             UpdatePinPositions(Canvas, Node2.NodeView.Outputs);
 
-            PutView input = Node1.NodeView.Inputs[0];
-            PutView output = Node2.NodeView.Outputs[0];
-            Line1.X1 = input.PinPoint.X;
-            Line1.Y1 = input.PinPoint.Y;
-            Line1.X2 = output.PinPoint.X;
-            Line1.Y2 = output.PinPoint.Y;
+
+            //if (pv1 != null && pv2 != null)
+            //{
+            //    Line1.X1 = pv1.PinPoint.X;
+            //    Line1.Y1 = pv1.PinPoint.Y;
+            //    Line1.X2 = pv2.PinPoint.X;
+            //    Line1.Y2 = pv2.PinPoint.Y;
+            //    Line1.Visibility = Visibility.Visible;
+            //}
+            //else
+            {
+                Line1.Visibility = Visibility.Collapsed;
+            }
+
+            RedrawEdges();
         }
 
         private void UpdatePinPositions(Canvas canvas, IEnumerable<PutView> putViews)
@@ -90,6 +183,24 @@ namespace WpfApp1
                     put.PinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
                 }
             });
+        }
+
+        private void RedrawEdges()
+        {
+            EdgesCanvas.Children.Clear();
+
+            foreach (var edge in _graphView!.Edges)
+            {
+                Line line = new Line();
+                line.X1 = edge.P1.X;
+                line.Y1 = edge.P1.Y;
+                line.X2 = edge.P2.X;
+                line.Y2 = edge.P2.Y;
+                line.StrokeThickness = 2.0;
+                line.Stroke = Brushes.Black;
+
+                EdgesCanvas.Children.Add(line);
+            }
         }
     }
 }

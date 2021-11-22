@@ -14,5 +14,7 @@ namespace csso.NodeCore
         public SchemaOutput(String name, Type type) : base(name, type)
         {
         }
+
+        public override PutType PutType => PutType.Out;
     }
 }

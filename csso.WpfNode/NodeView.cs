@@ -42,12 +42,12 @@ namespace csso.WpfNode
 
             foreach (var input in Node.Schema.Inputs)
             {
-                PutView pv = new PutView(input);
+                PutView pv = new PutView(input, this);
                 Inputs.Add(pv); 
             }
             foreach (var output in Node.Schema.Outputs)
             {
-                PutView pv = new PutView(output);
+                PutView pv = new PutView(output, this);
                 Outputs.Add(pv);
             }
         }

@@ -50,7 +50,7 @@ namespace NodeCoreTest
 
             node.Inputs.ForEach(input =>
             {
-                Assert.AreSame(input.Node, node);
+                Assert.AreSame(input.InputNode, node);
             });
 
 
