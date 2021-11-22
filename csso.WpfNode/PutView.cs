@@ -14,6 +14,7 @@ namespace csso.WpfNode
         public UIElement? Control { get; set; }
 
         public SchemaPut SchemaPut { get; private set; }
+        public Point PinPoint { get; set; }
 
         public PutView(SchemaPut schemaPut) => SchemaPut = schemaPut;
     }

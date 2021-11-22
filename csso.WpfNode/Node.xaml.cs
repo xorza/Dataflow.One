@@ -37,16 +37,10 @@ namespace csso.WpfNode
             }
         }
 
-        private readonly List<PutView> _inputs = new List<PutView>();
-        private readonly List<PutView> _outputs = new List<PutView>();
-        public IReadOnlyList<PutView> Inputs { get; private set; }
-        public IReadOnlyList<PutView> Outputs { get; private set; } 
+
 
         public Node()
         {
-            Inputs = _inputs.AsReadOnly();
-            Outputs = _outputs.AsReadOnly();
-
             InitializeComponent();
 
             Loaded += Node_Loaded;
@@ -65,10 +59,9 @@ namespace csso.WpfNode
             if (_nodeView != null)
             {
            
-                foreach (var item in _nodeView.Node.Schema.Inputs)
+                foreach (var pv in _nodeView.Inputs)
                 {
-                    PutView pv = new PutView(item); 
-                    _inputs.Add(pv);
+                    //PutView pv = new PutView(item);                    
                     StackPanel stackPanel = new StackPanel();
                     stackPanel.Orientation = Orientation.Horizontal;
                     UIElement pin = new Button() { Content = "x" };
@@ -78,10 +71,9 @@ namespace csso.WpfNode
                     InputsStackPanel.Children.Add(stackPanel);
                 }
 
-                foreach (var item in _nodeView.Node.Schema.Outputs)
+                foreach (var pv in _nodeView.Outputs)
                 {
-                    PutView pv = new PutView(item);
-                    _outputs.Add(pv);
+                    //PutView pv = new PutView(item);
                     StackPanel stackPanel = new StackPanel();
                     stackPanel.HorizontalAlignment = HorizontalAlignment.Right;
                     stackPanel.Orientation = Orientation.Horizontal;
@@ -91,9 +83,6 @@ namespace csso.WpfNode
                     stackPanel.Children.Add(pin);
                     OutputsStackPanel.Children.Add(stackPanel);
                 }
-
-                Inputs = _inputs.AsReadOnly();
-                Outputs = _outputs.AsReadOnly();
             }
         }
 

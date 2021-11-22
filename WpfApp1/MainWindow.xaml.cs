@@ -1,4 +1,6 @@
-﻿using csso.NodeCore;
+﻿using csso.Common;
+using csso.NodeCore;
+using csso.WpfNode;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -37,9 +39,9 @@ namespace WpfApp1
             schemaBitmap.Outputs.Add(new SchemaOutput("B", typeof(Int32)));
             schemaBitmap.Outputs.Add(new SchemaOutput("RGB", typeof(Int32)));
 
-            Graph graph = new Graph();
-            Node node1 = new Node(schemaRgbMix, graph);
-            Node node2 = new Node(schemaBitmap, graph);
+            csso.NodeCore.Graph graph = new csso.NodeCore.Graph();
+            csso.NodeCore.Node node1 = new csso.NodeCore.Node(schemaRgbMix, graph);
+            csso.NodeCore.Node node2 = new csso.NodeCore.Node(schemaBitmap, graph);
 
             Node1.NodeView = new csso.WpfNode.NodeView(node1);
             Node2.NodeView = new csso.WpfNode.NodeView(node2);
@@ -55,18 +57,39 @@ namespace WpfApp1
 
         private void RefreshLine()
         {
-            Point? p1 = Node2.Outputs[0].Control?.TransformToAncestor(Canvas)
-                                        .Transform(new Point(0, 0));
-            Point? p2 = Node1.Inputs[0].Control?.TransformToAncestor(Canvas)
-                                        .Transform(new Point(0, 0));
-
-            if (p1.HasValue && p2.HasValue)
+            if (Node1.NodeView == null || Node2.NodeView == null)
             {
-                Line1.X1 = p1.Value.X;
-                Line1.Y1 = p1.Value.Y;
-                Line1.X2 = p2.Value.X;
-                Line1.Y2 = p2.Value.Y;
+                return;
             }
+
+            UpdatePinPositions(Canvas, Node1.NodeView.Inputs);
+            UpdatePinPositions(Canvas, Node1.NodeView.Outputs);
+            UpdatePinPositions(Canvas, Node2.NodeView.Inputs);
+            UpdatePinPositions(Canvas, Node2.NodeView.Outputs);
+
+            PutView input = Node1.NodeView.Inputs[0];
+            PutView output = Node2.NodeView.Outputs[0];
+            Line1.X1 = input.PinPoint.X;
+            Line1.Y1 = input.PinPoint.Y;
+            Line1.X2 = output.PinPoint.X;
+            Line1.Y2 = output.PinPoint.Y;
+        }
+
+        private void UpdatePinPositions(Canvas canvas, IEnumerable<PutView> putViews)
+        {
+            putViews.ForEach(put =>
+            {
+                if (put.Control != null)
+                {
+                    Point upperLeft = put.Control
+                        .TransformToAncestor(canvas)
+                        .Transform(new Point(0, 0));
+                    Point mid = new Point(
+                        put.Control.RenderSize.Width / 2,
+                        put.Control.RenderSize.Height / 2);
+                    put.PinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
+                }
+            });
         }
     }
 }

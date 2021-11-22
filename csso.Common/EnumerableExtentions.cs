@@ -8,9 +8,12 @@ namespace csso.Common
 {
     public static class EnumerableExtentions
     {
-        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> e, Action<T> action) 
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> e, Action<T> action)
         {
-
+            foreach (T item in e)
+            {
+                action(item);
+            }
             return e;
         }
     }
