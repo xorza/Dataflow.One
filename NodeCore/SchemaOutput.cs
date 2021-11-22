@@ -6,18 +6,13 @@ using System.Threading.Tasks;
 
 namespace csso.NodeCore
 {
-    public class SchemaOutput
+    public class SchemaOutput : SchemaPut
     {
-        public Type Type { get; set; } = typeof(void);
-        public String Name { get; set; } = "";
-
         public SchemaOutput()
         {
         }
-        public SchemaOutput(String name, Type type)
+        public SchemaOutput(String name, Type type) : base(name, type)
         {
-            Name = name;
-            Type = type;
         }
     }
 }
