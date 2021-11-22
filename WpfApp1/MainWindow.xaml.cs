@@ -44,32 +44,29 @@ namespace WpfApp1
             Node1.NodeView = new csso.WpfNode.NodeView(node1);
             Node2.NodeView = new csso.WpfNode.NodeView(node2);
 
-            Loaded += MainWindow_Loaded;
+            Loaded += (s, ea) => { RefreshLine(); };
             MouseUp += MainWindow_MouseUp;
         }
 
         private void MainWindow_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            foreach (var item in Node2.Outputs)
-            {
-                Point relativePoint = item.Control.TransformToAncestor(Canvas)
-                              .Transform(new Point(0, 0));
-                                
-                Debug.WriteLine("top: " + relativePoint.ToString());
-
-            }
+            RefreshLine();
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void RefreshLine()
         {
-            Point p1 = Node2.Outputs[0].Control.TransformToAncestor(Canvas)
+            Point? p1 = Node2.Outputs[0].Control?.TransformToAncestor(Canvas)
                                         .Transform(new Point(0, 0));
-            Point p2 = Node1.Inputs[0].Control.TransformToAncestor(Canvas)
+            Point? p2 = Node1.Inputs[0].Control?.TransformToAncestor(Canvas)
                                         .Transform(new Point(0, 0));
-            Line1.X1 = p1.X;
-            Line1.Y1 = p1.Y;
-            Line1.X2 = p2.X;
-            Line1.Y2 = p2.Y;
+
+            if (p1.HasValue && p2.HasValue)
+            {
+                Line1.X1 = p1.Value.X;
+                Line1.Y1 = p1.Value.Y;
+                Line1.X2 = p2.Value.X;
+                Line1.Y2 = p2.Value.Y;
+            }
         }
     }
 }

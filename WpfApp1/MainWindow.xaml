@@ -28,6 +28,6 @@
             </behaviors:Interaction.Behaviors>
         </WpfNode:Node>
 
-        <Line x:Name="Line1" />
+        <Line x:Name="Line1" StrokeThickness="2" X2="150" Stroke="Black" />
     </Canvas>
 </Window>
