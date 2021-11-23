@@ -157,19 +157,31 @@ namespace WpfApp1
 
         private void RedrawEdges()
         {
-            EdgesCanvas.Children.Clear();
+            if (_graphView == null)
+            {
+                return;
+            }
 
-            foreach (var edge in _graphView!.Edges)
+            while (_graphView!.Edges.Count > EdgesCanvas.Children.Count)
             {
                 Line line = new Line();
-                line.X1 = edge.P1.X;
-                line.Y1 = edge.P1.Y;
-                line.X2 = edge.P2.X;
-                line.Y2 = edge.P2.Y;
                 line.StrokeThickness = 2.0;
                 line.Stroke = Brushes.Black;
 
                 EdgesCanvas.Children.Add(line);
+            }
+
+            for (int i = 0; i < _graphView!.Edges.Count; i++)
+            {
+                Line line = (Line)EdgesCanvas.Children[i];
+                line.X1 = _graphView!.Edges[i].P1.X;
+                line.Y1 = _graphView!.Edges[i].P1.Y;
+                line.X2 = _graphView!.Edges[i].P2.X;
+                line.Y2 = _graphView!.Edges[i].P2.Y;
+            }
+            while (_graphView!.Edges.Count < EdgesCanvas.Children.Count)
+            {
+                EdgesCanvas.Children.RemoveAt(EdgesCanvas.Children.Count - 1);
             }
         }
     }
