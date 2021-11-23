@@ -13,7 +13,6 @@
     <Border BorderThickness="1"
             BorderBrush="Bisque" 
             CornerRadius="5"
-            DataContext="{Binding RelativeSource={RelativeSource Self}}"
             Margin="2"
             Padding="2">
 
