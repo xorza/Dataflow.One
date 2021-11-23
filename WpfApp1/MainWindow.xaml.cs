@@ -45,36 +45,41 @@ namespace WpfApp1
             schemaBitmap.Outputs.Add(new SchemaOutput("B", typeof(Int32)));
             schemaBitmap.Outputs.Add(new SchemaOutput("RGB", typeof(Int32)));
 
-            csso.NodeCore.Node node1 = new csso.NodeCore.Node(schemaRgbMix, _graph);
-            csso.NodeCore.Node node2 = new csso.NodeCore.Node(schemaBitmap, _graph);
+            csso.NodeCore.Node node0 = new csso.NodeCore.Node(schemaRgbMix, _graph);
+            csso.NodeCore.Node node1 = new csso.NodeCore.Node(schemaBitmap, _graph);
+            csso.NodeCore.Node node2 = new csso.NodeCore.Node(schemaRgbMix, _graph);
+            csso.NodeCore.Node node3 = new csso.NodeCore.Node(schemaBitmap, _graph);
 
-            Loaded += (s, ea) => { RefreshLine(); };
-            MouseUp += MainWindow_MouseUp;
-            MouseMove += MainWindow_MouseMove;
+            Loaded += (s, ea) => { RefreshLine(true); };
+            LayoutUpdated += MainWindow_LayoutUpdated;
 
+            Node0.PinClick += Node_PinClick;
             Node1.PinClick += Node_PinClick;
             Node2.PinClick += Node_PinClick;
+            Node3.PinClick += Node_PinClick;
 
             RefreshGraphView();
+        }
+
+        private void MainWindow_LayoutUpdated(object? sender, EventArgs e)
+        {
+            RefreshLine(false);
         }
 
         private void RefreshGraphView()
         {
             _graphView = new csso.WpfNode.GraphView(_graph);
             _graphView.Edges.CollectionChanged += Edges_CollectionChanged;
-            Node1.NodeView = _graphView.Nodes[0];
-            Node2.NodeView = _graphView.Nodes[1];
+            Node0.NodeView = _graphView.Nodes[0];
+            Node1.NodeView = _graphView.Nodes[1];
+            Node2.NodeView = _graphView.Nodes[2];
+            Node3.NodeView = _graphView.Nodes[3];
             DataContext = _graphView;
         }
 
         private void Edges_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            RedrawEdges();
-        }
-
-        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
-        {
-            RefreshLine();
+            RefreshLine(true);
         }
 
         PutView? pv1 = null;
@@ -96,7 +101,7 @@ namespace WpfApp1
                 pv2 = null;
             }
 
-            RefreshLine();
+            RefreshLine(true);
         }
 
         private void Commit()
@@ -134,55 +139,20 @@ namespace WpfApp1
             RefreshGraphView();
         }
 
-        private void MainWindow_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            RefreshLine();
-        }
-
-        private void RefreshLine()
+        private void RefreshLine(bool forceRedraw)
         {
             if (Node1.NodeView == null || Node2.NodeView == null)
-            {
                 return;
-            }
 
-            UpdatePinPositions(Canvas, Node1.NodeView.Inputs);
-            UpdatePinPositions(Canvas, Node1.NodeView.Outputs);
-            UpdatePinPositions(Canvas, Node2.NodeView.Inputs);
-            UpdatePinPositions(Canvas, Node2.NodeView.Outputs);
+            bool needRedraw = Node0.UpdatePinPositions(Canvas);
+            needRedraw |= Node1.UpdatePinPositions(Canvas);
+            needRedraw |= Node2.UpdatePinPositions(Canvas);
+            needRedraw |= Node3.UpdatePinPositions(Canvas);
 
-
-            //if (pv1 != null && pv2 != null)
-            //{
-            //    Line1.X1 = pv1.PinPoint.X;
-            //    Line1.Y1 = pv1.PinPoint.Y;
-            //    Line1.X2 = pv2.PinPoint.X;
-            //    Line1.Y2 = pv2.PinPoint.Y;
-            //    Line1.Visibility = Visibility.Visible;
-            //}
-            //else
-            {
-                Line1.Visibility = Visibility.Collapsed;
-            }
+            if (!needRedraw && !forceRedraw)
+                return;
 
             RedrawEdges();
-        }
-
-        private void UpdatePinPositions(Canvas canvas, IEnumerable<PutView> putViews)
-        {
-            putViews.ForEach(put =>
-            {
-                if (put.Control != null)
-                {
-                    Point upperLeft = put.Control
-                        .TransformToAncestor(canvas)
-                        .Transform(new Point(0, 0));
-                    Point mid = new Point(
-                        put.Control.RenderSize.Width / 2,
-                        put.Control.RenderSize.Height / 2);
-                    put.PinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
-                }
-            });
         }
 
         private void RedrawEdges()

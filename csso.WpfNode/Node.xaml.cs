@@ -51,13 +51,53 @@ namespace csso.WpfNode
         public Node()
         {
             InitializeComponent();
-
-            Loaded += Node_Loaded;
         }
 
-        private void Node_Loaded(object sender, RoutedEventArgs e)
+        public bool UpdatePinPositions(Canvas canvas)
         {
+            bool updated = false;
 
+            _nodeView?.Inputs.ForEach(put =>
+            {
+                if (put.Control != null)
+                {
+                    Point upperLeft = put.Control
+                        .TransformToAncestor(canvas)
+                        .Transform(new Point(0, 0));
+                    Point mid = new Point(
+                        put.Control.RenderSize.Width / 2,
+                        put.Control.RenderSize.Height / 2);
+
+                    Point newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
+                    if (put.PinPoint != newPinPoint)
+                    {
+                        put.PinPoint = newPinPoint;
+                        updated = true;
+                    }
+                }
+            });
+
+            _nodeView?.Outputs.ForEach(put =>
+            {
+                if (put.Control != null)
+                {
+                    Point upperLeft = put.Control
+                        .TransformToAncestor(canvas)
+                        .Transform(new Point(0, 0));
+                    Point mid = new Point(
+                        put.Control.RenderSize.Width / 2,
+                        put.Control.RenderSize.Height / 2);
+                    //Point mid = new Point();
+                    Point newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
+                    if (put.PinPoint != newPinPoint)
+                    {
+                        put.PinPoint = newPinPoint;
+                        updated = true;
+                    }
+                }
+            });
+
+            return updated;
         }
 
         private void Refresh()
