@@ -1,19 +1,30 @@
-﻿namespace csso.NodeCore {
+﻿using System.Collections.Generic;
+using System.Reflection.PortableExecutable;
+using csso.Common;
+
+namespace csso.NodeCore {
 public class Node {
+    private readonly List<Binding> _inputBindings = new List<Binding>();
+    
     public Node(Schema schema, Graph graph) {
         Schema = schema;
         Graph = graph;
 
         Graph.Add(this);
 
-        Inputs = new Binding[Schema.Inputs.Count];
-        for (var i = 0; i < Schema.Inputs.Count; i++) Inputs[i] = new EmptyBinding(this, Schema.Inputs[i]);
-
-        Graph = graph;
+        Inputs = _inputBindings.AsReadOnly();
     }
 
     public Schema Schema { get; }
     public Graph Graph { get; }
-    public Binding[] Inputs { get; }
+    public IReadOnlyList<Binding> Inputs { get; }
+
+    public void AddBinding(Binding binding) {
+        _inputBindings.RemoveAll(_ => _.Input == binding.Input);
+
+        Check.True(binding.InputNode == this);
+        
+        _inputBindings.Add(binding);
+    }
 }
 }

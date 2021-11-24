@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using csso.Common;
+using csso.ImageProcessing;
 using csso.NodeCore;
 using csso.WpfNode;
 using Graph = csso.NodeCore.Graph;
@@ -24,22 +25,29 @@ public partial class MainWindow : Window {
 
         Schema schemaRgbMix = new();
         schemaRgbMix.Name = "RGB mix";
-        schemaRgbMix.Inputs.Add(new SchemaInput("R", typeof(int)));
-        schemaRgbMix.Inputs.Add(new SchemaInput("G", typeof(int)));
-        schemaRgbMix.Inputs.Add(new SchemaInput("B", typeof(int)));
-        schemaRgbMix.Outputs.Add(new SchemaOutput("RGB", typeof(int)));
+        schemaRgbMix.Inputs.Add(new SchemaInput("R", typeof(Tensor1)));
+        schemaRgbMix.Inputs.Add(new SchemaInput("G", typeof(Tensor1)));
+        schemaRgbMix.Inputs.Add(new SchemaInput("B", typeof(Tensor1)));
+        schemaRgbMix.Outputs.Add(new SchemaOutput("RGB", typeof(Tensor4)));
 
         Schema schemaBitmap = new();
         schemaBitmap.Name = "Bitmap";
-        schemaBitmap.Outputs.Add(new SchemaOutput("R", typeof(int)));
-        schemaBitmap.Outputs.Add(new SchemaOutput("G", typeof(int)));
-        schemaBitmap.Outputs.Add(new SchemaOutput("B", typeof(int)));
-        schemaBitmap.Outputs.Add(new SchemaOutput("RGB", typeof(int)));
+        schemaBitmap.Outputs.Add(new SchemaOutput("R", typeof(Tensor1)));
+        schemaBitmap.Outputs.Add(new SchemaOutput("G", typeof(Tensor1)));
+        schemaBitmap.Outputs.Add(new SchemaOutput("B", typeof(Tensor1)));
+        schemaBitmap.Outputs.Add(new SchemaOutput("RGB", typeof(Tensor4)));
+
+        Schema output = new();
+        output.Name = "Output";
+        output.Inputs.Add(new SchemaInput("R", typeof(Tensor1)));
+        output.Inputs.Add(new SchemaInput("RGB", typeof(Tensor4)));
 
         Node node0 = new(schemaRgbMix, _graph);
         Node node1 = new(schemaBitmap, _graph);
         Node node2 = new(schemaRgbMix, _graph);
         Node node3 = new(schemaBitmap, _graph);
+
+        OutputNode node4 = new(output, _graph);
 
         Loaded += (s, ea) => { RefreshLine(true); };
         LayoutUpdated += MainWindow_LayoutUpdated;
@@ -61,8 +69,8 @@ public partial class MainWindow : Window {
         _graphView.Edges.CollectionChanged += Edges_CollectionChanged;
         Node0.NodeView = _graphView.Nodes[0];
         Node1.NodeView = _graphView.Nodes[1];
-        Node2.NodeView = _graphView.Nodes[2];
-        Node3.NodeView = _graphView.Nodes[3];
+        Node2.NodeView = _graphView.Nodes[3];
+        Node3.NodeView = _graphView.Nodes[4];
         DataContext = _graphView;
     }
 
@@ -103,6 +111,18 @@ public partial class MainWindow : Window {
             return;
         }
 
+        if (pv1 == pv2) {
+            pv1 = null;
+            pv2 = null;
+            return;
+        }
+
+        if (pv1!.SchemaPut.Type != pv2!.SchemaPut.Type) {
+            pv1 = null;
+            pv2 = null;
+            return;
+        }
+
         PutView input = pv1.SchemaPut.PutType == PutType.In ? pv1 : pv2;
         PutView output = pv1.SchemaPut.PutType == PutType.Out ? pv1 : pv2;
 
@@ -114,8 +134,7 @@ public partial class MainWindow : Window {
             output.NodeView.Node,
             (SchemaOutput) output.SchemaPut);
 
-        var indexOfBinding = input.NodeView.Node.Schema.Inputs.IndexOf((SchemaInput) input.SchemaPut);
-        input.NodeView.Node.Inputs[indexOfBinding] = binding;
+        input.NodeView.Node.AddBinding(binding);
 
         RefreshGraphView();
     }
@@ -139,23 +158,25 @@ public partial class MainWindow : Window {
         if (_graphView == null) return;
 
         while (_graphView!.Edges.Count > EdgesCanvas.Children.Count) {
-            Line line = new();
-            line.StrokeThickness = 2.0;
-            line.Stroke = Brushes.Black;
+            csso.WpfNode.Edge line = new Edge();
+
 
             EdgesCanvas.Children.Add(line);
         }
 
         for (var i = 0; i < _graphView!.Edges.Count; i++) {
-            Line line = (Line) EdgesCanvas.Children[i];
-            line.X1 = _graphView!.Edges[i].P1.X;
-            line.Y1 = _graphView!.Edges[i].P1.Y;
-            line.X2 = _graphView!.Edges[i].P2.X;
-            line.Y2 = _graphView!.Edges[i].P2.Y;
+            Edge line = (Edge) EdgesCanvas.Children[i];
+            line.InputPosition = _graphView!.Edges[i].P1;
+            line.OutputPosition = _graphView!.Edges[i].P2;
         }
 
         while (_graphView!.Edges.Count < EdgesCanvas.Children.Count)
             EdgesCanvas.Children.RemoveAt(EdgesCanvas.Children.Count - 1);
+    }
+
+    private void ButtonBase_OnClick(object sender, RoutedEventArgs e) {
+        NoLoopValidator validator = new();
+        validator.Go(_graph);
     }
 }
 }

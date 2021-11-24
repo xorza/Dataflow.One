@@ -10,6 +10,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
         <Canvas Margin="0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
@@ -22,7 +27,7 @@
                     <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
                 </behaviors:Interaction.Behaviors>
             </WpfNode:Node>
-            <WpfNode:Node x:Name="Node1" Canvas.Left="200" Canvas.Top="0">
+            <WpfNode:Node x:Name="Node1" Canvas.Left="100" Canvas.Top="0">
                 <behaviors:Interaction.Behaviors>
                     <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
                 </behaviors:Interaction.Behaviors>
@@ -34,7 +39,7 @@
                 </behaviors:Interaction.Behaviors>
             </WpfNode:Node>
 
-            <WpfNode:Node x:Name="Node3" Canvas.Left="200" Canvas.Top="0">
+            <WpfNode:Node x:Name="Node3" Canvas.Left="300" Canvas.Top="0">
                 <behaviors:Interaction.Behaviors>
                     <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
                 </behaviors:Interaction.Behaviors>
@@ -42,6 +47,11 @@
 
         </Canvas>
 
-        <Canvas x:Name="EdgesCanvas" Margin="0" />
+        <Canvas Grid.Row="0" x:Name="EdgesCanvas" Margin="0" />
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Button Content="test" Click="ButtonBase_OnClick"></Button>
+        </StackPanel>
+        
     </Grid>
 </Window>

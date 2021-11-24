@@ -7,7 +7,9 @@ public class NoLoopValidator {
         var nodeCount = graph.Nodes.Count;
 
         List<Node> path = new();
-        foreach (Binding binding in graph.Outputs) Go(binding, path);
+        foreach (Node outputNode in graph.Outputs)
+        foreach (var binding in outputNode.Inputs)
+            Go(binding, path);
     }
 
     private void Go(Binding binding, List<Node> pathBack) {
@@ -16,11 +18,14 @@ public class NoLoopValidator {
 
         Node node = outputBinding.OutputNode;
 
-        if (pathBack.Contains(node)) throw new Exception("loop detected");
+        if (pathBack.Contains(node))
+            throw new Exception("loop detected");
 
         pathBack.Add(node);
 
-        for (var i = 0; i < node.Inputs.Length; i++) Go(node.Inputs[i], pathBack);
+        foreach (Binding b in node.Inputs) {
+            Go(b, pathBack);
+        }
 
         pathBack.RemoveAt(pathBack.Count - 1);
     }
