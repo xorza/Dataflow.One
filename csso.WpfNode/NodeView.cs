@@ -1,60 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using csso.NodeCore;
 
-namespace csso.WpfNode
-{
-    public class NodeView : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public csso.NodeCore.Node Node { get; private set; }
-
-        public List<PutView> Inputs { get; private set; } = new List<PutView>();
-        public List<PutView> Outputs { get; private set; } = new List<PutView>();
-
-        private Point _position;
-
-        public Point Position
-        {
-            get { return _position; }
-            set
-            {
-                if (_position != value)
-                {
-                    _position = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        public string Name => this.Node.Schema.Name;
+namespace csso.WpfNode {
+public class NodeView : INotifyPropertyChanged {
+    private Point _position;
 
 
-        public NodeView(csso.NodeCore.Node node)
-        {
-            Node = node;
+    public NodeView(NodeCore.Node node) {
+        Node = node;
 
-            foreach (var input in Node.Schema.Inputs)
-            {
-                PutView pv = new PutView(input, this);
-                Inputs.Add(pv); 
-            }
-            foreach (var output in Node.Schema.Outputs)
-            {
-                PutView pv = new PutView(output, this);
-                Outputs.Add(pv);
-            }
+        foreach (var input in Node.Schema.Inputs) {
+            PutView pv = new(input, this);
+            Inputs.Add(pv);
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        foreach (var output in Node.Schema.Outputs) {
+            PutView pv = new(output, this);
+            Outputs.Add(pv);
         }
     }
+
+    public NodeCore.Node Node { get; }
+
+    public List<PutView> Inputs { get; } = new();
+    public List<PutView> Outputs { get; } = new();
+
+    public Point Position {
+        get => _position;
+        set {
+            if (_position != value) {
+                _position = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public string Name => Node.Schema.Name;
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string? name = null) {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
+}
 }

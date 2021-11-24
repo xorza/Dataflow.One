@@ -1,86 +1,72 @@
+using csso.Common;
 using csso.NodeCore;
 using NUnit.Framework;
-using System;
-using csso.Common;
 
-namespace NodeCoreTest
-{
-    public class Tests
-    {
-        private readonly Schema _schema = new Schema();
+namespace NodeCoreTest {
+public class Tests {
+    private readonly Schema _schema = new();
 
-        [SetUp]
-        public void Setup()
-        {
-            _schema.Name = "RGB mix";
-            _schema.Inputs.Add(
-                new SchemaInput()
-                {
-                    Name = "R",
-                    Type = typeof(Int32)
-                });
-            _schema.Inputs.Add(
-                new SchemaInput()
-                {
-                    Name = "G",
-                    Type = typeof(Int32)
-                });
-            _schema.Inputs.Add(
-                new SchemaInput()
-                {
-                    Name = "B",
-                    Type = typeof(Int32)
-                });
-            _schema.Outputs.Add(
-               new SchemaOutput()
-               {
-                   Name = "RGB",
-                   Type = typeof(Int32)
-               });
-        }
-
-        [Test]
-        public void Test1()
-        {
-            Graph graph = new Graph();
-            Node node = new Node(_schema, graph);
-
-            Assert.AreEqual(node.Graph, graph);
-            Assert.AreEqual(node.Inputs.Length, _schema.Inputs.Count);
-
-            node.Inputs.ForEach(input =>
-            {
-                Assert.AreSame(input.InputNode, node);
+    [SetUp]
+    public void Setup() {
+        _schema.Name = "RGB mix";
+        _schema.Inputs.Add(
+            new SchemaInput {
+                Name = "R",
+                Type = typeof(int)
             });
-
-
-            Assert.Pass();
-        }
-
-        [Test]
-        public void Test2()
-        {
-            Graph graph = new Graph();
-            Node node = new Node(_schema, graph);
-
-            NoLoopValidator validator = new NoLoopValidator();
-            validator.Go(graph);
-
-            Assert.Pass();
-        }
-
-        [Test]
-        public void Test3()
-        {
-            Graph graph = new Graph();
-            Node node = new Node(_schema, graph);
-
-            NoLoopValidator validator = new NoLoopValidator();
-
-
-            //Assert.Throws(typeof(Exception), () => { validator.Go(graph); });
-
-            Assert.Pass();
-        }
+        _schema.Inputs.Add(
+            new SchemaInput {
+                Name = "G",
+                Type = typeof(int)
+            });
+        _schema.Inputs.Add(
+            new SchemaInput {
+                Name = "B",
+                Type = typeof(int)
+            });
+        _schema.Outputs.Add(
+            new SchemaOutput {
+                Name = "RGB",
+                Type = typeof(int)
+            });
     }
+
+    [Test]
+    public void Test1() {
+        Graph graph = new();
+        Node node = new(_schema, graph);
+
+        Assert.AreEqual(node.Graph, graph);
+        Assert.AreEqual(node.Inputs.Length, _schema.Inputs.Count);
+
+        node.Inputs.ForEach(input => { Assert.AreSame(input.InputNode, node); });
+
+
+        Assert.Pass();
+    }
+
+    [Test]
+    public void Test2() {
+        Graph graph = new();
+        Node node = new(_schema, graph);
+
+        NoLoopValidator validator = new();
+        validator.Go(graph);
+
+        Assert.Pass();
+    }
+
+    [Test]
+    public void Test3() {
+        Graph graph = new();
+        Node node = new(_schema, graph);
+
+        NoLoopValidator validator = new();
+
+
+        //Assert.Throws(typeof(Exception), () => { validator.Go(graph); });
+
+        Assert.Pass();
+    }
+}
 }

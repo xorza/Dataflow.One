@@ -1,28 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using csso.Common;
 
-namespace csso.NodeCore
-{
-    public class Graph
-    {
-        private readonly List<Node> _nodes = new List<Node>();
-        public IReadOnlyList<Node> Nodes { get; private set; }
-        public List<Binding> Outputs { get; private set; } = new List<Binding>();
+namespace csso.NodeCore {
+public class Graph {
+    private readonly List<Node> _nodes = new();
 
-        public Graph()
-        {
-            this.Nodes = _nodes.AsReadOnly();
-        }
-
-        internal void Add(Node node)
-        {
-            Debug.Assert.AreSame(node.Graph, this);
-
-            this._nodes.Add(node);
-        }
+    public Graph() {
+        Nodes = _nodes.AsReadOnly();
     }
+
+    public IReadOnlyList<Node> Nodes { get; }
+    public List<Binding> Outputs { get; } = new();
+
+    internal void Add(Node node) {
+        Debug.Assert.AreSame(node.Graph, this);
+
+        _nodes.Add(node);
+    }
+}
 }

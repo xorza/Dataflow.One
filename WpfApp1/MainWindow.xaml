@@ -4,45 +4,44 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
-        
-        xmlns:local="clr-namespace:WpfApp1"
+
         xmlns:WpfNode="clr-namespace:csso.WpfNode;assembly=csso.WpfNode"
-        
+
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Canvas Margin="0"
-            HorizontalAlignment="Stretch"      
-            VerticalAlignment="Stretch"
-            MinWidth="150"
-            x:Name="Canvas">
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                MinWidth="150"
+                x:Name="Canvas">
 
             <!--<WpfNode:Graph x:Name="Graph" />-->
-            <WpfNode:Node x:Name="Node0" >
+            <WpfNode:Node x:Name="Node0">
                 <behaviors:Interaction.Behaviors>
-                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"/>
+                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
                 </behaviors:Interaction.Behaviors>
             </WpfNode:Node>
-            <WpfNode:Node x:Name="Node1" Canvas.Left="200" Canvas.Top="0" >
+            <WpfNode:Node x:Name="Node1" Canvas.Left="200" Canvas.Top="0">
                 <behaviors:Interaction.Behaviors>
-                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"/>
-                </behaviors:Interaction.Behaviors>
-            </WpfNode:Node>
-
-            <WpfNode:Node x:Name="Node2" Canvas.Left="200" Canvas.Top="0" >
-                <behaviors:Interaction.Behaviors>
-                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"/>
+                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
                 </behaviors:Interaction.Behaviors>
             </WpfNode:Node>
 
-            <WpfNode:Node x:Name="Node3" Canvas.Left="200" Canvas.Top="0" >
+            <WpfNode:Node x:Name="Node2" Canvas.Left="200" Canvas.Top="0">
                 <behaviors:Interaction.Behaviors>
-                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"/>
+                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
+                </behaviors:Interaction.Behaviors>
+            </WpfNode:Node>
+
+            <WpfNode:Node x:Name="Node3" Canvas.Left="200" Canvas.Top="0">
+                <behaviors:Interaction.Behaviors>
+                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
                 </behaviors:Interaction.Behaviors>
             </WpfNode:Node>
 
         </Canvas>
 
-        <Canvas x:Name="EdgesCanvas" Margin="0"></Canvas>
+        <Canvas x:Name="EdgesCanvas" Margin="0" />
     </Grid>
 </Window>

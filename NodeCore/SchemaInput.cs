@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace csso.NodeCore
-{
-    public class SchemaInput : SchemaPut
-    {
-        public SchemaInput()
-        {
-        }
-        public SchemaInput(String name, Type type) : base(name, type)
-        {
-        }
+namespace csso.NodeCore {
+public class SchemaInput : SchemaPut {
+    public SchemaInput() { }
+    public SchemaInput(string name, Type type) : base(name, type) { }
 
-        public override PutType PutType => PutType.In;
-    }
+    public override PutType PutType => PutType.In;
+}
 }

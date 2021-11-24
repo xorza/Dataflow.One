@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace csso.Common
-{
-    public class AssertionException : Exception
-    {
-    }
+namespace csso.Common {
+public class AssertionException : Exception { }
 }
