@@ -7,7 +7,7 @@ public class NoLoopValidator {
         var nodeCount = graph.Nodes.Count;
 
         List<Node> path = new();
-        foreach (Node outputNode in graph.Outputs)
+        foreach (OutputNode outputNode in graph.Outputs)
         foreach (var binding in outputNode.Inputs)
             Go(binding, path);
     }

@@ -65,7 +65,7 @@
       <option name="presentableId" value="Default" />
       <updated>1637712319337</updated>
       <workItem from="1637712327591" duration="934000" />
-      <workItem from="1637713401261" duration="9151000" />
+      <workItem from="1637713401261" duration="11209000" />
     </task>
     <servers />
   </component>
@@ -76,50 +76,5 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/NodeCore/NoLoopValidator.cs</url>
-          <line>26</line>
-          <properties documentPath="E:\Projects\WpfApp1\NodeCore\NoLoopValidator.cs" initialLine="25" containingFunctionPresentation="method 'Go'">
-            <startOffsets>
-              <option value="736" />
-            </startOffsets>
-            <endOffsets>
-              <option value="752" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/NodeCore/NoLoopValidator.cs</url>
-          <line>15</line>
-          <properties documentPath="E:\Projects\WpfApp1\NodeCore\NoLoopValidator.cs" initialLine="14" containingFunctionPresentation="method 'Go'">
-            <startOffsets>
-              <option value="425" />
-            </startOffsets>
-            <endOffsets>
-              <option value="470" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/NodeCore/NoLoopValidator.cs</url>
-          <line>9</line>
-          <properties documentPath="E:\Projects\WpfApp1\NodeCore\NoLoopValidator.cs" initialLine="9" containingFunctionPresentation="method 'Go'">
-            <startOffsets>
-              <option value="225" />
-            </startOffsets>
-            <endOffsets>
-              <option value="267" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
