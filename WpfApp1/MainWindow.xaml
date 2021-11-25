@@ -50,7 +50,9 @@
         <Canvas Grid.Row="0" x:Name="EdgesCanvas" Margin="0" />
         
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <Button Content="test" Click="ButtonBase_OnClick"></Button>
+            <Button Content="detect cycles" Click="DetectCycles_Button_OnClick"></Button>
+            <Button Content="openCL test 1" Click="OpenCLTest1_Button_OnClick"></Button>
+            <Button Content="openCL test 2" Click="OpenCLTest2_Button_OnClick"></Button>
         </StackPanel>
         
     </Grid>

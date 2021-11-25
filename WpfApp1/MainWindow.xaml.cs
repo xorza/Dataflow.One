@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using csso.Common;
 using csso.ImageProcessing;
 using csso.NodeCore;
 using csso.WpfNode;
+using OpenTK.Compute.OpenCL;
 using Graph = csso.NodeCore.Graph;
 using Node = csso.NodeCore.Node;
 
@@ -15,8 +17,10 @@ public partial class MainWindow : Window {
     private readonly Graph _graph;
     private GraphView? _graphView;
 
-    private PutView? pv1;
-    private PutView? pv2;
+    private csso.ImageProcessing.Context? _clContext;
+
+    private PutView? _pv1;
+    private PutView? _pv2;
 
     public MainWindow() {
         InitializeComponent();
@@ -49,8 +53,9 @@ public partial class MainWindow : Window {
 
         OutputNode node4 = new(output, _graph);
 
-        Loaded += (s, ea) => { RefreshLine(true); };
+
         LayoutUpdated += MainWindow_LayoutUpdated;
+        Loaded += MainWindow_Loaded;
 
         Node0.PinClick += Node_PinClick;
         Node1.PinClick += Node_PinClick;
@@ -58,6 +63,12 @@ public partial class MainWindow : Window {
         Node3.PinClick += Node_PinClick;
 
         RefreshGraphView();
+    }
+
+    private void MainWindow_Loaded(object? sender, EventArgs e) {
+        RefreshLine(true);
+
+        _clContext = Context.Create();
     }
 
     private void MainWindow_LayoutUpdated(object? sender, EventArgs e) {
@@ -80,53 +91,53 @@ public partial class MainWindow : Window {
     }
 
     private void Node_PinClick(object sender, PinClickEventArgs e) {
-        if (pv1 == null) {
-            pv1 = e.Put;
+        if (_pv1 == null) {
+            _pv1 = e.Put;
         }
-        else if (pv2 == null) {
-            pv2 = e.Put;
+        else if (_pv2 == null) {
+            _pv2 = e.Put;
             Commit();
         }
         else {
-            pv1 = e.Put;
-            pv2 = null;
+            _pv1 = e.Put;
+            _pv2 = null;
         }
 
         RefreshLine(true);
     }
 
     private void Commit() {
-        Debug.Assert.NotNull(pv1);
-        Debug.Assert.NotNull(pv2);
+        Debug.Assert.NotNull(_pv1);
+        Debug.Assert.NotNull(_pv2);
 
-        if (pv1!.SchemaPut.PutType == pv2!.SchemaPut.PutType) {
-            pv1 = null;
-            pv2 = null;
+        if (_pv1!.SchemaPut.PutType == _pv2!.SchemaPut.PutType) {
+            _pv1 = null;
+            _pv2 = null;
             return;
         }
 
-        if (pv1!.NodeView == pv2!.NodeView) {
-            pv1 = null;
-            pv2 = null;
+        if (_pv1!.NodeView == _pv2!.NodeView) {
+            _pv1 = null;
+            _pv2 = null;
             return;
         }
 
-        if (pv1 == pv2) {
-            pv1 = null;
-            pv2 = null;
+        if (_pv1 == _pv2) {
+            _pv1 = null;
+            _pv2 = null;
             return;
         }
 
-        if (pv1!.SchemaPut.Type != pv2!.SchemaPut.Type) {
-            pv1 = null;
-            pv2 = null;
+        if (_pv1!.SchemaPut.Type != _pv2!.SchemaPut.Type) {
+            _pv1 = null;
+            _pv2 = null;
             return;
         }
 
-        PutView input = pv1.SchemaPut.PutType == PutType.In ? pv1 : pv2;
-        PutView output = pv1.SchemaPut.PutType == PutType.Out ? pv1 : pv2;
+        PutView input = _pv1.SchemaPut.PutType == PutType.In ? _pv1 : _pv2;
+        PutView output = _pv1.SchemaPut.PutType == PutType.Out ? _pv1 : _pv2;
 
-        Debug.Assert.True(pv1 != pv2);
+        Debug.Assert.True(_pv1 != _pv2);
 
         OutputBinding binding = new(
             input.NodeView.Node,
@@ -174,9 +185,31 @@ public partial class MainWindow : Window {
             EdgesCanvas.Children.RemoveAt(EdgesCanvas.Children.Count - 1);
     }
 
-    private void ButtonBase_OnClick(object sender, RoutedEventArgs e) {
+    private void DetectCycles_Button_OnClick(object sender, RoutedEventArgs e) {
         NoLoopValidator validator = new();
         validator.Go(_graph);
+    }
+
+    private void OpenCLTest1_Button_OnClick(object sender, RoutedEventArgs e) {
+        if (_clContext != null) {
+            String result = _clContext.Test1();
+            MessageBox.Show(this, result, "OpenCL test results");
+        }
+    }
+    private void OpenCLTest2_Button_OnClick(object sender, RoutedEventArgs e) {
+        if (_clContext == null) {
+            return;
+        }
+
+
+        String code = @"
+                __kernel void add(__global float* A, __global float* B,__global float* result, const float C)
+                {
+                    int i = get_global_id(0);
+                    result[i] = (A[i] + B[i]) + C;
+					result[i] = (A[i] + B[i]);
+                }";
+        Program p = new Program(_clContext!, code);
     }
 }
 }

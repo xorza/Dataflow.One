@@ -43,8 +43,8 @@ public class Edge : Control {
 
         Point[] points = {
             InputPosition,
-            new Point(InputPosition.X-50, InputPosition.Y),
-            new Point(OutputPosition.X+50, OutputPosition.Y),
+            new Point(InputPosition.X - 50, InputPosition.Y),
+            new Point(OutputPosition.X + 50, OutputPosition.Y),
             OutputPosition,
         };
 
@@ -54,7 +54,7 @@ public class Edge : Control {
             new BezierSegment(points[1], points[2], points[3], true));
         pathFigure.IsClosed = false;
 
-        PathGeometry path = new ();
+        PathGeometry path = new();
         path.Figures.Add(pathFigure);
 
         drawingContext.DrawGeometry(null, pen, path);
