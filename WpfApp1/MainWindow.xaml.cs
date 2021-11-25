@@ -68,7 +68,7 @@ public partial class MainWindow : Window {
     private void MainWindow_Loaded(object? sender, EventArgs e) {
         RefreshLine(true);
 
-        _clContext = Context.Create();
+        _clContext = new Context();
     }
 
     private void MainWindow_LayoutUpdated(object? sender, EventArgs e) {
@@ -196,11 +196,11 @@ public partial class MainWindow : Window {
             MessageBox.Show(this, result, "OpenCL test results");
         }
     }
+
     private void OpenCLTest2_Button_OnClick(object sender, RoutedEventArgs e) {
         if (_clContext == null) {
             return;
         }
-
 
         String code = @"
                 __kernel void add(__global float* A, __global float* B,__global float* result, const float C)
@@ -208,8 +208,15 @@ public partial class MainWindow : Window {
                     int i = get_global_id(0);
                     result[i] = (A[i] + B[i]) + C;
 					result[i] = (A[i] + B[i]);
+                }
+
+                __kernel void test_test(__global float3* A, __global float* B,__global float* result, const float C)
+                {
+                    int i = get_global_id(0);
+                    result[i] = (A[i].x + B[i]) + C;
+					result[i] = (A[i].x + B[i]);
                 }";
-        Program p = new Program(_clContext!, code);
+        Program p = new (_clContext!, code);
     }
 }
 }

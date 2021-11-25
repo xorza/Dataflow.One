@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Dynamic;
+using System.Linq;
 using System.Text;
+using csso.Common;
 using OpenTK.Compute.OpenCL;
+using Debug = System.Diagnostics.Debug;
 
 namespace csso.ImageProcessing {
 public class Context : IDisposable {
     internal CLContext ClContext { get; }
     internal CLDevice[] ClDevices { get; }
+    internal CLDevice SelectedDevice { get; }
 
-    public static Context? Create() {
+    public Context() {
+        IsDisposed = false;
+
         CLResultCode result;
 
         result = CL.GetPlatformIds(out CLPlatform[] platformIds);
@@ -18,7 +23,6 @@ public class Context : IDisposable {
 
         foreach (CLPlatform platform in platformIds) {
             result = CL.GetPlatformInfo(platform, PlatformInfo.Name, out byte[] val);
-            String name = System.Text.Encoding.Default.GetString(val);
         }
 
         foreach (CLPlatform platform in platformIds) {
@@ -30,17 +34,15 @@ public class Context : IDisposable {
                 throw new Exception("The context couldn't be created.");
             }
 
-            return new Context(context, devices);
+            if (devices.Length != 0) {
+                ClContext = context;
+                ClDevices = devices;
+                SelectedDevice = devices.First();
+                return;
+            }
         }
 
-        return null;
-    }
-
-    private Context(CLContext clContext, CLDevice[] devices) {
-        IsDisposed = false;
-
-        ClContext = clContext;
-        ClDevices = devices;
+        throw new InvalidOperationException("cannot create context");
     }
 
 
@@ -57,8 +59,10 @@ public class Context : IDisposable {
 
         CLResultCode result;
         CLProgram program = CL.CreateProgramWithSource(ClContext, code, out result);
+        result.ValidateSuccess();
 
         result = CL.BuildProgram(program, (uint) ClDevices.Length, ClDevices, null, IntPtr.Zero, IntPtr.Zero);
+        result.ValidateSuccess();
 
         CLKernel kernel = CL.CreateKernel(program, "add", out result);
 
@@ -77,7 +81,7 @@ public class Context : IDisposable {
         CLBuffer bufferB = CL.CreateBuffer(ClContext, MemoryFlags.ReadOnly | MemoryFlags.CopyHostPtr, b1,
             out result);
 
-        CLBuffer resultBuffer = new CLBuffer(CL.CreateBuffer(ClContext, MemoryFlags.ReadWrite,
+        CLBuffer resultBuffer = new CLBuffer(CL.CreateBuffer(ClContext, MemoryFlags.WriteOnly,
             new UIntPtr((uint) (arraySize * sizeof(float))), IntPtr.Zero, out result));
 
         CLEvent eventHandle = default;
@@ -85,26 +89,34 @@ public class Context : IDisposable {
 
         try {
             result = CL.SetKernelArg(kernel, 0, bufferA);
+            result.ValidateSuccess();
             result = CL.SetKernelArg(kernel, 1, bufferB);
+            result.ValidateSuccess();
             result = CL.SetKernelArg(kernel, 2, resultBuffer);
+            result.ValidateSuccess();
             result = CL.SetKernelArg(kernel, 3, 1f);
+            result.ValidateSuccess();
 
-            commandQueue = CL.CreateCommandQueueWithProperties(ClContext, ClDevices[0], IntPtr.Zero, out result);
+            commandQueue = CL.CreateCommandQueueWithProperties(ClContext, SelectedDevice, IntPtr.Zero, out result);
+            result.ValidateSuccess();
 
-            result = CL.EnqueueFillBuffer(commandQueue, bufferB, b2, UIntPtr.Zero, (UIntPtr) (arraySize * sizeof(float)), null,
+            result = CL.EnqueueFillBuffer(commandQueue, bufferB, b2, UIntPtr.Zero,
+                (UIntPtr) (arraySize * sizeof(float)), null,
                 out _);
+            result.ValidateSuccess();
 
-            result = CL.EnqueueNDRangeKernel(commandQueue, kernel, 1, null, new UIntPtr[] {new UIntPtr((uint) a.Length)},
+            result = CL.EnqueueNDRangeKernel(commandQueue, kernel, 1, null,
+                new UIntPtr[] {new UIntPtr((uint) a.Length)},
                 null, 0, null, out eventHandle);
-
-            // result = CL.Finish(commandQueue);
+            result.ValidateSuccess();
 
             float[] resultValues = new float[arraySize];
-            result =  CL.EnqueueReadBuffer(commandQueue, resultBuffer, true, UIntPtr.Zero, resultValues, null, out _);
+            result = CL.EnqueueReadBuffer(commandQueue, resultBuffer, true, UIntPtr.Zero, resultValues, null, out _);
+            result.ValidateSuccess();
 
-            result = CL.Finish(commandQueue);
-            
-            StringBuilder line = new StringBuilder();
+            CL.Finish(commandQueue).ValidateSuccess();
+
+            StringBuilder line = new();
             foreach (float res in resultValues) {
                 line.Append(res);
                 line.Append(", ");
