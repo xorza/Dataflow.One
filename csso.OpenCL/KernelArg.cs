@@ -1,8 +1,7 @@
 ﻿using System;
 using csso.Common;
-using OpenTK.Graphics.ES11;
 
-namespace csso.ImageProcessing {
+namespace csso.OpenCL {
 public enum Quantity {
     Scalar,
     Vector

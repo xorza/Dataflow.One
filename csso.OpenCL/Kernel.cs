@@ -4,7 +4,7 @@ using System.Diagnostics;
 using csso.Common;
 using OpenTK.Compute.OpenCL;
 
-namespace csso.ImageProcessing {
+namespace csso.OpenCL {
 
 public class Kernel:IDisposable {
     internal CLKernel ClKernel { get; }

@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using OpenTK.Compute.OpenCL;
 
-namespace csso.ImageProcessing {
+namespace csso.OpenCL {
 public class CommandQueue : IDisposable {
     public Context Context { get; }
 
@@ -36,14 +37,22 @@ public class CommandQueue : IDisposable {
                 (UIntPtr) (arr.Length * sizeof(T)),
                 null,
                 out clEvent);
-            CL.ReleaseEvent(clEvent);
+     
+            CLResultCode releaseResult = CL.ReleaseEvent(clEvent);
             result.ValidateSuccess();
+            releaseResult.ValidateSuccess();
         }
     }
 
-    public void EnqueueNdRangeKernel(Kernel kernel, Int32 size) {
+    public void EnqueueNdRangeKernel(Kernel kernel, Int32 size, IEnumerable<KernelArgValue> argValues) {
         CheckIfDisposed();
         kernel.CheckIfDisposed();
+
+        Int32 i = 0;
+        foreach (var value in argValues) {
+            value.Set(kernel, i);
+            ++i;
+        }
 
         CLResultCode result;
         CLEvent clEvent;
@@ -52,13 +61,15 @@ public class CommandQueue : IDisposable {
             kernel.ClKernel,
             1,
             null,
-            new UIntPtr[] {new UIntPtr((UInt32)size)},
+            new UIntPtr[] {new UIntPtr((UInt32) size)},
             null,
             0,
             null,
             out clEvent);
-        CL.ReleaseEvent(clEvent);
+
+        CLResultCode releaseResult = CL.ReleaseEvent(clEvent);
         result.ValidateSuccess();
+        releaseResult.ValidateSuccess();
     }
 
     public void EnqueueReadBuffer<T>(Buffer buffer, T[] arr) where T : unmanaged {
@@ -75,8 +86,10 @@ public class CommandQueue : IDisposable {
             arr,
             null,
             out clEvent);
-        CL.ReleaseEvent(clEvent);
+
+        CLResultCode releaseResult = CL.ReleaseEvent(clEvent);
         result.ValidateSuccess();
+        releaseResult.ValidateSuccess();
     }
 
     public void Finish() {

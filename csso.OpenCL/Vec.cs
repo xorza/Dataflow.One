@@ -1,4 +1,4 @@
-﻿namespace csso.ImageProcessing {
+﻿namespace csso.OpenCL {
 public struct Vec2d {
     public double x;
     public double y;

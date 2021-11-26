@@ -1,7 +1,7 @@
 ﻿using System;
 using OpenTK.Compute.OpenCL;
 
-namespace csso.ImageProcessing {
+namespace csso.OpenCL {
 public class OpenCLException :Exception{
     internal CLResultCode ClResultCode { get; }
 

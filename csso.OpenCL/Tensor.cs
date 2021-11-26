@@ -1,4 +1,4 @@
-﻿namespace csso.ImageProcessing {
+﻿namespace csso.OpenCL {
 
 public class Tensor1 { }
 public class Tensor2 { }

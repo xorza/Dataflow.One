@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="OpenTK" Version="5.0.0-pre.6" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\csso.Common\csso.Common.csproj" />
+    </ItemGroup>
+
+</Project>

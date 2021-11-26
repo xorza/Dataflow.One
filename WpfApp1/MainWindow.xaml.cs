@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using csso.Common;
 using csso.ImageProcessing;
+using csso.OpenCL;
 using csso.NodeCore;
 using csso.WpfNode;
-using OpenTK.Compute.OpenCL;
+using Buffer = System.Buffer;
 using Graph = csso.NodeCore.Graph;
 using Node = csso.NodeCore.Node;
 
@@ -17,7 +19,7 @@ public partial class MainWindow : Window {
     private readonly Graph _graph;
     private GraphView? _graphView;
 
-    private csso.ImageProcessing.Context? _clContext;
+    private csso.OpenCL.Context? _clContext;
 
     private PutView? _pv1;
     private PutView? _pv2;
@@ -216,7 +218,51 @@ public partial class MainWindow : Window {
                     result[i] = (A[i].x + B[i]) + C;
 					result[i] = (A[i].x + B[i]);
                 }";
-        Program p = new (_clContext!, code);
+        Program p = new(_clContext!, code);
+    }
+
+    private void PngLoadTest_Button_OnClick(object sender, RoutedEventArgs e) {
+        if (_clContext == null)
+            return;
+
+        Image img = new("C:\\1.png");
+        RGB8U[] pixels = img.As<RGB8U>();
+        RGB32F[] floatPixels = new RGB32F[pixels.Length];
+        Int32 pixelCount = floatPixels.Length;
+        for (int i = 0; i < pixels.Length; i++)
+            floatPixels[i] = new RGB32F(pixels[i]);
+        RGB32F[] resultPixels = new RGB32F[pixels.Length];
+
+        csso.OpenCL.Buffer a = csso.OpenCL.Buffer.Create(_clContext!, floatPixels);
+        csso.OpenCL.Buffer b = new(_clContext!, sizeof(float) * 3 * pixelCount);
+
+        String code = @"
+                __kernel void add(__global float3* A, __global float3* B, const float C) {
+                    int i = get_global_id(0);
+					B[i] = A[i];
+                }";
+        Program program = new(_clContext, code);
+        Kernel kernel = program.Kernels.Single();
+        CommandQueue commandQueue = new(_clContext);
+
+        KernelArgValue[] argsValues = {
+            new BufferKernelArgValue(a),
+            new BufferKernelArgValue(b),
+            new ScalarKernelArgValue<float>(1f)
+        };
+
+        try {
+            commandQueue.EnqueueNdRangeKernel(kernel, pixelCount, argsValues);
+            commandQueue.EnqueueReadBuffer(b, resultPixels);
+            commandQueue.Finish();
+        }
+        finally {
+            a.Dispose();
+            b.Dispose();
+            commandQueue.Dispose();
+            program.Dispose();
+            kernel.Dispose();
+        }
     }
 }
 }

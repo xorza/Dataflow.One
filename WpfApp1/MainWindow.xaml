@@ -53,6 +53,7 @@
             <Button Content="detect cycles" Click="DetectCycles_Button_OnClick"></Button>
             <Button Content="openCL test 1" Click="OpenCLTest1_Button_OnClick"></Button>
             <Button Content="openCL test 2" Click="OpenCLTest2_Button_OnClick"></Button>
+            <Button Content="png load test" Click="PngLoadTest_Button_OnClick"></Button>
         </StackPanel>
         
     </Grid>

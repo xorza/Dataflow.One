@@ -2,7 +2,7 @@
 using csso.Common;
 using OpenTK.Compute.OpenCL;
 
-namespace csso.ImageProcessing {
+namespace csso.OpenCL {
 public class Buffer : IDisposable {
     public Context Context { get; }
     public Int32 SizeInBytes { get; private set; } = 0;

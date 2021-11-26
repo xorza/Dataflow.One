@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using OpenTK.Compute.OpenCL;
 
-namespace csso.ImageProcessing {
+namespace csso.OpenCL {
 internal static partial class Xtensions {
     internal static String DecodeString(this byte[] bytes) {
         byte[] withoutNulls = bytes.Where(b => b != 0).ToArray();
