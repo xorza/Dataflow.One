@@ -226,18 +226,20 @@ public partial class MainWindow : Window {
             return;
 
         Image img = new("C:\\1.png");
-        RGB8U[] pixels = img.As<RGB8U>();
-        RGB32F[] floatPixels = new RGB32F[pixels.Length];
-        Int32 pixelCount = floatPixels.Length;
-        for (int i = 0; i < pixels.Length; i++)
-            floatPixels[i] = new RGB32F(pixels[i]);
-        RGB32F[] resultPixels = new RGB32F[pixels.Length];
+        Int32 pixelCount = img.TotalPixels;
+        
+        RGB8U[] pixels8u = img.As<RGB8U>();
+        RGB16U[] pixels16u = new RGB16U[pixelCount];
+        for (int i = 0; i < pixelCount; i++) 
+            pixels16u[i] = new RGB16U(pixels8u[i]);
 
-        csso.OpenCL.Buffer a = csso.OpenCL.Buffer.Create(_clContext!, floatPixels);
-        csso.OpenCL.Buffer b = new(_clContext!, sizeof(float) * 3 * pixelCount);
+        RGB16U[] resultPixels = new RGB16U[pixelCount];
+
+        csso.OpenCL.Buffer a = csso.OpenCL.Buffer.Create(_clContext!, pixels16u);
+        csso.OpenCL.Buffer b = new(_clContext!, sizeof(UInt16) * 3 * pixelCount);
 
         String code = @"
-                __kernel void add(__global float3* A, __global float3* B, const float C) {
+                __kernel void add(__global ushort3* A, __global ushort3* B, const float C) {
                     int i = get_global_id(0);
 					B[i] = A[i];
                 }";

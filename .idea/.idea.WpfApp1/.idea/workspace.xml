@@ -18,6 +18,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57c2d4282221452cad4df86bbd5d6fa0a1fc70/110/UIntPtr.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57c2d4282221452cad4df86bbd5d6fa0a1fc70/2E/Array.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/metadata/8162576708c64326b8ce803fe69950b2b000/83/2697edc6/OpenTK.Compute.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57c2d4282221452cad4df86bbd5d6fa0a1fc70/10D/UInt16.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57c2d4282221452cad4df86bbd5d6fa0a1fc70/3B/Enum.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57c2d4282221452cad4df86bbd5d6fa0a1fc70/2A1/Marshal.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8162576708c64326b8ce803fe69950b2b000/1e/9ad20684/CL.cs" root0="SKIP_HIGHLIGHTING" />
@@ -96,6 +97,7 @@
       <workItem from="1637866852059" duration="8328000" />
       <workItem from="1637876290417" duration="15678000" />
       <workItem from="1637913197701" duration="8551000" />
+      <workItem from="1637924639775" duration="3909000" />
     </task>
     <servers />
   </component>
@@ -111,30 +113,17 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/csso.ImageProcessing/Image.cs</url>
-          <line>117</line>
-          <properties documentPath="E:\Projects\WpfApp1\csso.ImageProcessing\Image.cs" initialLine="113" containingFunctionPresentation="method 'Dispose'">
+          <url>file://$PROJECT_DIR$/WpfApp1/MainWindow.xaml.cs</url>
+          <line>261</line>
+          <properties documentPath="E:\Projects\WpfApp1\WpfApp1\MainWindow.xaml.cs" initialLine="260" containingFunctionPresentation="method 'PngLoadTest_Button_OnClick'">
             <startOffsets>
-              <option value="3315" />
+              <option value="8078" />
             </startOffsets>
             <endOffsets>
-              <option value="3316" />
+              <option value="8090" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/csso.ImageProcessing/Image.cs</url>
-          <line>110</line>
-          <properties documentPath="E:\Projects\WpfApp1\csso.ImageProcessing\Image.cs" initialLine="106" containingFunctionPresentation="method 'ReleaseUnmanagedResources'">
-            <startOffsets>
-              <option value="3164" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3165" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="8" />
+          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

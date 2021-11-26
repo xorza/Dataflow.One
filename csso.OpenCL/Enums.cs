@@ -9,6 +9,14 @@ public enum DataType {
     Float2,
     Float3,
     Float4,
+    UChar,
+    UChar2,
+    UChar3,
+    UChar4,
+    UShort,
+    UShort2,
+    UShort3,
+    UShort4
 }
 
 internal static partial class Xtensions {
