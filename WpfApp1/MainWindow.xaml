@@ -9,10 +9,8 @@
 
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Window.Resources>
-        <ResourceDictionary Source="GlobalStyles.xaml"></ResourceDictionary>
-    </Window.Resources>
-    <Grid>
+    
+    <Grid Background="{StaticResource WindowColorBrush}">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
@@ -51,13 +49,13 @@
         </Canvas>
 
         <Canvas Grid.Row="0" x:Name="EdgesCanvas" Margin="0" />
-        
+
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <Button Content="detect cycles" Click="DetectCycles_Button_OnClick"></Button>
-            <Button Content="openCL test 1" Click="OpenCLTest1_Button_OnClick"></Button>
-            <Button Content="openCL test 2" Click="OpenCLTest2_Button_OnClick"></Button>
-            <Button Content="png load test" Click="PngLoadTest_Button_OnClick"></Button>
+            <Button Content="detect cycles" Click="DetectCycles_Button_OnClick" />
+            <Button Content="openCL test 1" Click="OpenCLTest1_Button_OnClick" />
+            <Button Content="openCL test 2" Click="OpenCLTest2_Button_OnClick" />
+            <Button Content="png load test" Click="PngLoadTest_Button_OnClick" />
         </StackPanel>
-        
+
     </Grid>
 </Window>

@@ -4,10 +4,26 @@
         <ResourceDictionary Source="Colors.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="Window">
+    <Style TargetType="Control">
+        <Setter Property="Background" Value="{StaticResource InactiveContentBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource InactiveForegroundBrush}" />
+    </Style>
+    <!-- <Style TargetType="TextBlock"> -->
+    <!--     <Setter Property="Background" Value="{x:Null}" /> -->
+    <!--     <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}" /> -->
+    <!-- </Style> -->
+
+
+    <Style TargetType="Window" x:Key="WindowStyle">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
+        <!-- <Setter Property="Background"> -->
+        <!--     <Setter.Value> -->
+        <!--         <SolidColorBrush Color="Blue" /> -->
+        <!--     </Setter.Value> -->
+        <!-- </Setter> -->
     </Style>
+
 
     <Style TargetType="Button">
         <Setter Property="SnapsToDevicePixels" Value="true" />
@@ -15,31 +31,84 @@
         <Setter Property="MinHeight" Value="23" />
         <Setter Property="MinWidth" Value="75" />
         <Setter Property="Margin" Value="2" />
-        <Setter Property="Padding" Value="6 3" />
+        <Setter Property="Padding" Value="10 6" />
+        <Setter Property="Foreground" Value="{StaticResource InactiveForegroundBrush}" />
+        <Setter Property="Background" Value="{StaticResource InactiveContentBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource InactiveBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border BorderThickness="1" x:Name="Border" Padding="{TemplateBinding Padding}"
-                            CornerRadius="2">
-                        <Border.BorderBrush>
-                            <SolidColorBrush Color="Goldenrod" />
-                        </Border.BorderBrush>
-                        <Border.Background>
-                            <SolidColorBrush Color="Aquamarine" />
-                        </Border.Background>
+                    <Grid>
+                        <Border
+                            x:Name="Border"
+                            CornerRadius="2"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            RenderTransformOrigin="0.5 0.5">
+                            <Border.RenderTransform>
+                                <TransformGroup>
+                                    <TransformGroup.Children>
+                                        <TransformCollection>
+                                            <ScaleTransform
+                                                x:Name="AnimatedScaleTransform" ScaleX="1" ScaleY="1" />
+                                        </TransformCollection>
+                                    </TransformGroup.Children>
+                                </TransformGroup>
+                            </Border.RenderTransform>
+                        </Border>
+
                         <ContentPresenter HorizontalAlignment="Center"
                                           VerticalAlignment="Center"
-                                          RecognizesAccessKey="True" />
-                    </Border>
+                                          RecognizesAccessKey="True"
+                                          Margin="{TemplateBinding Padding}" />
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="Brown" />
+                            <Setter Property="Background"
+                                    Value="{StaticResource ActiveContentBackgroundBrush}" />
+                            <Setter Property="Foreground"
+                                    Value="{StaticResource ActiveForegroundBrush}" />
+                            <Setter Property="BorderBrush"
+                                    Value="{StaticResource ActiveBorderBrush}" />
+
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Name="Storyboard">
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="AnimatedScaleTransform"
+                                            Storyboard.TargetProperty="ScaleX"
+                                            To="1.05"
+                                            Duration="0:0:0.2">
+                                            <DoubleAnimation.EasingFunction>
+                                                <BounceEase />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="AnimatedScaleTransform"
+                                            Storyboard.TargetProperty="ScaleY"
+                                            To="1.05"
+                                            Duration="0:0:0.2">
+                                            <DoubleAnimation.EasingFunction>
+                                                <BounceEase />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="Storyboard" />
+                            </Trigger.ExitActions>
+
                         </Trigger>
                         <Trigger Property="IsDefault" Value="true">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="Aquamarine" />
+                            <Setter Property="BorderThickness" Value="2" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="Border" Property="Background" Value="Olive" />
+                            <Setter Property="Background" Value="{StaticResource InactiveContentBackgroundBrush}" />
+
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
