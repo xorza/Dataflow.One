@@ -5,13 +5,14 @@ using System.Linq;
 using System.Text;
 using csso.Common;
 using OpenTK.Compute.OpenCL;
+using OpenTK.Graphics.ES20;
 using Debug = System.Diagnostics.Debug;
 
 namespace csso.ImageProcessing {
 public class Context : IDisposable {
     internal CLContext ClContext { get; }
     internal CLDevice[] ClDevices { get; }
-    internal CLDevice SelectedDevice { get; }
+    internal CLDevice SelectedClDevice { get; }
 
     public Context() {
         IsDisposed = false;
@@ -37,7 +38,7 @@ public class Context : IDisposable {
             if (devices.Length != 0) {
                 ClContext = context;
                 ClDevices = devices;
-                SelectedDevice = devices.First();
+                SelectedClDevice = devices.First();
                 return;
             }
         }
@@ -57,64 +58,108 @@ public class Context : IDisposable {
 					result[i] = (A[i] + B[i]);
                 }";
 
+        Program program = new (this, code);
+        
         CLResultCode result;
-        CLProgram program = CL.CreateProgramWithSource(ClContext, code, out result);
-        result.ValidateSuccess();
+        // CLProgram program = CL.CreateProgramWithSource(ClContext, code, out result);
+        // result.ValidateSuccess();
 
-        result = CL.BuildProgram(program, (uint) ClDevices.Length, ClDevices, null, IntPtr.Zero, IntPtr.Zero);
-        result.ValidateSuccess();
+        // result = CL.BuildProgram(program, (uint) ClDevices.Length, ClDevices, null, IntPtr.Zero, IntPtr.Zero);
+        // result.ValidateSuccess();
 
-        CLKernel kernel = CL.CreateKernel(program, "add", out result);
+        Kernel kernel = program.Kernels.Single(_ => _.Name == "add");
+
+        // CLKernel kernel = CL.CreateKernel(program, "add", out result);
 
         int arraySize = 20;
         float[] a = new float[arraySize];
         float[] b1 = new float[arraySize];
-        float[] b2 = new float[] {1, 1, 1, 1};
+        float[] b2 = {1, 1, 1, 1};
 
         for (int i = 0; i < arraySize; i++) {
             a[i] = i;
             b1[i] = 1;
         }
 
-        CLBuffer bufferA = CL.CreateBuffer(ClContext, MemoryFlags.ReadOnly | MemoryFlags.CopyHostPtr, a,
-            out result);
-        CLBuffer bufferB = CL.CreateBuffer(ClContext, MemoryFlags.ReadOnly | MemoryFlags.CopyHostPtr, b1,
-            out result);
+        // CLBuffer bufferA = CL.CreateBuffer(ClContext,
+        //     MemoryFlags.ReadOnly | MemoryFlags.CopyHostPtr,
+        //     a,
+        //     out result);
+        // result.ValidateSuccess();
+        // CLBuffer bufferB = CL.CreateBuffer(ClContext,
+        //     MemoryFlags.ReadOnly | MemoryFlags.CopyHostPtr,
+        //     b1,
+        //     out result);
+        // result.ValidateSuccess();
 
-        CLBuffer resultBuffer = new CLBuffer(CL.CreateBuffer(ClContext, MemoryFlags.WriteOnly,
-            new UIntPtr((uint) (arraySize * sizeof(float))), IntPtr.Zero, out result));
+        Buffer buffer_a = Buffer.Create(this, a);
+        Buffer buffer_b = Buffer.Create(this, b1);
 
-        CLEvent eventHandle = default;
-        CLCommandQueue commandQueue = default;
+        // CLBuffer resultBuffer = CL.CreateBuffer(
+        //     ClContext,
+        //     MemoryFlags.WriteOnly,
+        //     new UIntPtr((uint) (arraySize * sizeof(float))),
+        //     IntPtr.Zero,
+        //     out result);
+        // result.ValidateSuccess();
+
+        Buffer result_buffer = new Buffer(this, arraySize * sizeof(float));
+        
+        CommandQueue commandQueue = new (this);
 
         try {
-            result = CL.SetKernelArg(kernel, 0, bufferA);
-            result.ValidateSuccess();
-            result = CL.SetKernelArg(kernel, 1, bufferB);
-            result.ValidateSuccess();
-            result = CL.SetKernelArg(kernel, 2, resultBuffer);
-            result.ValidateSuccess();
-            result = CL.SetKernelArg(kernel, 3, 1f);
-            result.ValidateSuccess();
+            // result = CL.SetKernelArg(kernel, 0, bufferA);
+            // result.ValidateSuccess();
+            // result = CL.SetKernelArg(kernel, 1, bufferB);
+            // result.ValidateSuccess();
+            // result = CL.SetKernelArg(kernel, 2, resultBuffer);
+            // result.ValidateSuccess();
+            // result = CL.SetKernelArg(kernel, 3, 1f);
+            // result.ValidateSuccess();
 
-            commandQueue = CL.CreateCommandQueueWithProperties(ClContext, SelectedDevice, IntPtr.Zero, out result);
-            result.ValidateSuccess();
+            // commandQueue = CL.CreateCommandQueueWithProperties(
+            //     ClContext,
+            //     SelectedClDevice,
+            //     IntPtr.Zero,
+            //     out result);
+            // result.ValidateSuccess();
 
-            result = CL.EnqueueFillBuffer(commandQueue, bufferB, b2, UIntPtr.Zero,
-                (UIntPtr) (arraySize * sizeof(float)), null,
+           
+
+            result = CL.EnqueueFillBuffer(
+                commandQueue.ClCommandQueue,
+                buffer_b.ClBuffer,
+                b2,
+                UIntPtr.Zero,
+                (UIntPtr) (arraySize * sizeof(float)),
+                null,
                 out _);
             result.ValidateSuccess();
 
-            result = CL.EnqueueNDRangeKernel(commandQueue, kernel, 1, null,
+            result = CL.EnqueueNDRangeKernel(
+                commandQueue.ClCommandQueue,
+                kernel.ClKernel,
+                1,
+                null,
                 new UIntPtr[] {new UIntPtr((uint) a.Length)},
-                null, 0, null, out eventHandle);
+                null,
+                0,
+                null,
+                out _);
             result.ValidateSuccess();
 
             float[] resultValues = new float[arraySize];
-            result = CL.EnqueueReadBuffer(commandQueue, resultBuffer, true, UIntPtr.Zero, resultValues, null, out _);
+            result = CL.EnqueueReadBuffer(
+                commandQueue.ClCommandQueue,
+                result_buffer.ClBuffer,
+                true,
+                UIntPtr.Zero,
+                resultValues,
+                null,
+                out _);
             result.ValidateSuccess();
 
-            CL.Finish(commandQueue).ValidateSuccess();
+            CL.Finish(commandQueue.ClCommandQueue).ValidateSuccess();
 
             StringBuilder line = new();
             foreach (float res in resultValues) {
@@ -129,18 +174,19 @@ public class Context : IDisposable {
             throw;
         }
         finally {
-            CL.ReleaseMemoryObject(bufferA);
-            CL.ReleaseMemoryObject(bufferB);
-            CL.ReleaseMemoryObject(resultBuffer);
+            buffer_a.Dispose();
+            buffer_b.Dispose();
+            result_buffer.Dispose();
+            commandQueue.Dispose();
+            program.Dispose();
+            kernel.Dispose();
 
-            CL.ReleaseProgram(program);
-            CL.ReleaseKernel(kernel);
-            CL.ReleaseCommandQueue(commandQueue);
-            CL.ReleaseEvent(eventHandle);
+            // CL.ReleaseProgram(program);
+            // CL.ReleaseKernel(kernel);
         }
     }
 
-    public bool IsDisposed { get; }
+    public bool IsDisposed { get; private set; } = false;
 
     private void ReleaseUnmanagedResources() {
         CL.ReleaseContext(ClContext);
@@ -148,11 +194,12 @@ public class Context : IDisposable {
 
     internal void CheckIfDisposed() {
         if (IsDisposed) {
-            throw new InvalidOperationException("Context is disposed.");
+            throw new InvalidOperationException("Already disposed.");
         }
     }
 
     public void Dispose() {
+        IsDisposed = true;
         ReleaseUnmanagedResources();
         GC.SuppressFinalize(this);
     }

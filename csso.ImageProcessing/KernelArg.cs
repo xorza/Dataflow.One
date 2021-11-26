@@ -20,7 +20,7 @@ public class KernelArg {
 
         String type = typeName;
         Quantity = Quantity.Scalar;
-        
+
         if (typeName.EndsWith("*")) {
             Check.True(typeName.Length > 1);
             type = typeName.Substring(0, typeName.Length - 1);
@@ -28,7 +28,6 @@ public class KernelArg {
         }
 
         Type = type.ToEnum<DataType>();
-        ;
     }
 }
 }

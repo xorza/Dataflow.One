@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using OpenTK.Compute.OpenCL;
 
 namespace csso.ImageProcessing {
-public class Program {
+public class Program:IDisposable {
     public String Code { get; }
     public Context Context { get; }
 
@@ -44,6 +44,28 @@ public class Program {
             result.ValidateSuccess();
             kernels.Add(new Kernel(this, kernelName, clKernel));
         }
+    }
+    
+    public bool IsDisposed { get; private set; } = false;
+
+    private void ReleaseUnmanagedResources() {
+        CL.ReleaseProgram(ClProgram);
+    }
+
+    internal void CheckIfDisposed() {
+        if (IsDisposed || Context.IsDisposed) {
+            throw new InvalidOperationException("Already disposed.");
+        }
+    }
+
+    public void Dispose() {
+        IsDisposed = true;
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+
+    ~Program() {
+        ReleaseUnmanagedResources();
     }
 }
 }

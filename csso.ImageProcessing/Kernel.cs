@@ -6,16 +6,20 @@ using OpenTK.Compute.OpenCL;
 
 namespace csso.ImageProcessing {
 
-public class Kernel {
+public class Kernel:IDisposable {
     internal CLKernel ClKernel { get; }
 
     public Program Program { get; }
     public String Name { get; }
 
+    
+    List<KernelArg> _args = new();
     public IReadOnlyList<KernelArg> Args { get; }
 
     internal Kernel(Program program, String name, CLKernel clKernel) {
         program.Context.CheckIfDisposed();
+        
+        Args = _args.AsReadOnly();
 
         ClKernel = clKernel;
         Program = program;
@@ -27,9 +31,8 @@ public class Kernel {
 
     [Conditional("DEBUG")]
     private void ValidateName() {
-        Program.Context.CheckIfDisposed();
+        CheckIfDisposed();
 
-        CLResultCode result;
         CL.GetKernelInfo(ClKernel, KernelInfo.FunctionName, out byte[] nameBytes)
             .ValidateSuccess();
 
@@ -38,13 +41,12 @@ public class Kernel {
     }
 
     private void Inspect() {
-        Program.Context.CheckIfDisposed();
+        CheckIfDisposed();
 
         CLResultCode result;
         result = CL.GetKernelInfo(ClKernel, KernelInfo.NumberOfArguments, out byte[] bytes);
         result.ValidateSuccess();
-
-        List<KernelArg> argsList = new();
+        
         UInt32 argCount = BitConverter.ToUInt32(bytes);
         for (UInt32 i = 0; i < argCount; i++) {
             CL.GetKernelArgInfo(ClKernel, i, KernelArgInfo.Name, out bytes).ValidateSuccess();
@@ -53,12 +55,35 @@ public class Kernel {
             CL.GetKernelArgInfo(ClKernel, i, KernelArgInfo.TypeName, out bytes).ValidateSuccess();
             String typeName = bytes.DecodeString();
 
-            argsList.Add(new KernelArg(argName, typeName));
+            _args.Add(new KernelArg(argName, typeName));
 
             // CL.GetKernelArgInfo(ClKernel, i, KernelArgInfo.AccessQualifier, out bytes).ValidateSuccess();
             // CL.GetKernelArgInfo(ClKernel, i, KernelArgInfo.AddressQualifier, out bytes).ValidateSuccess();
             // CL.GetKernelArgInfo(ClKernel, i, KernelArgInfo.TypeQualifier, out bytes).ValidateSuccess();
         }
+    }
+
+
+    public bool IsDisposed { get; private set; } = false;
+
+    private void ReleaseUnmanagedResources() {
+        CL.ReleaseKernel(ClKernel);
+    }
+
+    internal void CheckIfDisposed() {
+        if (IsDisposed || Program.IsDisposed) {
+            throw new InvalidOperationException("Already disposed.");
+        }
+    }
+
+    public void Dispose() {
+        IsDisposed = true;
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+
+    ~Kernel() {
+        ReleaseUnmanagedResources();
     }
 }
 }
