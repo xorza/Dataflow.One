@@ -3,102 +3,86 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:csso.WpfNode"
              mc:Ignorable="d"
              d:DesignHeight="350" d:DesignWidth="300"
              VerticalAlignment="Top"
-             HorizontalAlignment="Left">
+             HorizontalAlignment="Left"
+             x:Name="NodeUserControl">
+    <!-- <UserControl.Style> -->
+    <!--     <Style TargetType="local:Node"> -->
+    <!--         <Setter Property="CornerRadius" Value="1" /> -->
+    <!--         <Setter Property="BorderThickness" Value="1" /> -->
+    <!--         <Setter Property="BorderBrush" Value="White" /> -->
+    <!--         <Setter Property="Background" Value="Red" /> -->
+    <!--     </Style> -->
+    <!-- </UserControl.Style> -->
 
+    <UserControl.Resources>
+        <ResourceDictionary />
+    </UserControl.Resources>
 
-    <Border BorderThickness="1"
-            BorderBrush="Bisque"
-            CornerRadius="5"
-            Margin="2"
-            Padding="2">
-
-        <Grid x:Name="Panel"
-              DataContext="{Binding NodeView}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Label Content="{Binding Name}"
-                   Grid.Row="0" />
-            <Grid Grid.Row="1" HorizontalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.Resources>
-                    <ResourceDictionary>
-                        <Style TargetType="Button">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Grid x:Name="grid" Width="10" Height="10" Background="Transparent">
-                                            <!--<Border x:Name="border" CornerRadius="8" BorderBrush="Black" BorderThickness="2">
-                                                <Border.Background>
-                                                    <RadialGradientBrush GradientOrigin="0.496,1.052">
-                                                        <RadialGradientBrush.RelativeTransform>
-                                                            <TransformGroup>
-                                                                <ScaleTransform CenterX="0.5" CenterY="0.5" 
-                                                        ScaleX="1.5" ScaleY="1.5"/>
-                                                                <TranslateTransform X="0.02" Y="0.3"/>
-                                                            </TransformGroup>
-                                                        </RadialGradientBrush.RelativeTransform>
-                                                        <GradientStop Offset="1" Color="#00000000"/>
-                                                        <GradientStop Offset="0.3" Color="#FFFFFFFF"/>
-                                                    </RadialGradientBrush>
-                                                </Border.Background>
-                                                <ContentPresenter HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"
-                                          TextElement.FontWeight="Bold">
-                                                </ContentPresenter>
-                                            </Border>-->
-
-                                            <Ellipse Stroke="Red" StrokeThickness="4" Visibility="Collapsed"
-                                                     x:Name="Highlight" />
-                                            <Ellipse Stroke="Black" StrokeThickness="2" Margin="1" />
-
-                                        </Grid>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsPressed" Value="True">
-                                                <!--<Setter Property="Background" TargetName="border">
-                                                    <Setter.Value>
-                                                        <RadialGradientBrush GradientOrigin="0.496,1.052">
-                                                            <RadialGradientBrush.RelativeTransform>
-                                                                <TransformGroup>
-                                                                    <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.5" ScaleY="1.5"/>
-                                                                    <TranslateTransform X="0.02" Y="0.3"/>
-                                                                </TransformGroup>
-                                                            </RadialGradientBrush.RelativeTransform>
-                                                            <GradientStop Color="#00000000" Offset="1"/>
-                                                            <GradientStop Color="#FF303030" Offset="0.3"/>
-                                                        </RadialGradientBrush>
-                                                    </Setter.Value>
-                                                </Setter>-->
-                                            </Trigger>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Visibility" TargetName="Highlight" Value="Visible" />
-                                            </Trigger>
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <!--<Setter Property="Opacity" TargetName="grid" Value="0.25"/>-->
-                                            </Trigger>
-
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ResourceDictionary>
-                </Grid.Resources>
-
-                <StackPanel x:Name="InputsStackPanel"
-                            HorizontalAlignment="Stretch" />
-
-                <StackPanel x:Name="OutputsStackPanel"
-                            HorizontalAlignment="Stretch"
-                            Grid.Column="1" />
+    <UserControl.Template>
+        <ControlTemplate TargetType="UserControl">
+            <Grid Margin="{TemplateBinding Margin}">
+                <Border BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{Binding Path=CornerRadius, ElementName=NodeUserControl}"
+                        Margin="{TemplateBinding Margin}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        Background="{TemplateBinding Background}" />
+                <ContentPresenter Margin="{TemplateBinding Padding}" />
             </Grid>
+        </ControlTemplate>
+    </UserControl.Template>
+    <Grid x:Name="Panel"
+          DataContext="{Binding NodeView}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Label Content="{Binding Name}"
+               Grid.Row="0" />
+        <Grid Grid.Row="1" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <ResourceDictionary>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Grid x:Name="grid" Width="10" Height="10" Background="Transparent">
+                                        <Ellipse Stroke="Red" StrokeThickness="4" Visibility="Collapsed"
+                                                 x:Name="Highlight" />
+                                        <Ellipse Stroke="Black" StrokeThickness="2" Margin="1" />
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsPressed" Value="True" />
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Visibility" TargetName="Highlight" Value="Visible" />
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <!--<Setter Property="Opacity" TargetName="grid" Value="0.25"/>-->
+                                        </Trigger>
+
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ResourceDictionary>
+            </Grid.Resources>
+
+            <StackPanel x:Name="InputsStackPanel"
+                        HorizontalAlignment="Stretch" />
+
+            <StackPanel x:Name="OutputsStackPanel"
+                        HorizontalAlignment="Stretch"
+                        Grid.Column="1" 
+                        TextBlock.Foreground="Green"/>
+      
         </Grid>
-    </Border>
+    </Grid>
 </UserControl>

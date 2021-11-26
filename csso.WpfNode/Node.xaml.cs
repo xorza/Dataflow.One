@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace csso.WpfNode {
 public class PinClickEventArgs : RoutedEventArgs {
@@ -37,6 +38,14 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     public event PinClickEventHandler? PinClick;
 
+    public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
+        "CornerRadius", typeof(CornerRadius), typeof(Node), new PropertyMetadata(default(CornerRadius)));
+
+    public CornerRadius CornerRadius {
+        get { return (CornerRadius) GetValue(CornerRadiusProperty); }
+        set { SetValue(CornerRadiusProperty, value); }
+    }
+    
     public bool UpdatePinPositions(Canvas canvas) {
         var updated = false;
 

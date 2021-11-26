@@ -8,9 +8,11 @@
         xmlns:WpfNode="clr-namespace:csso.WpfNode;assembly=csso.WpfNode"
 
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        Style="{StaticResource WindowStyle}"
+        >
     
-    <Grid Background="{StaticResource WindowColorBrush}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
@@ -23,24 +25,28 @@
                 x:Name="Canvas">
 
             <!--<WpfNode:Graph x:Name="Graph" />-->
-            <WpfNode:Node x:Name="Node0">
+            <WpfNode:Node x:Name="Node0"
+                          Style="{StaticResource NodeDefaultStyle}">
                 <behaviors:Interaction.Behaviors>
                     <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
                 </behaviors:Interaction.Behaviors>
             </WpfNode:Node>
-            <WpfNode:Node x:Name="Node1" Canvas.Left="100" Canvas.Top="0">
+            <WpfNode:Node x:Name="Node1" Canvas.Left="100" Canvas.Top="0"
+                          Style="{StaticResource NodeDefaultStyle}">
                 <behaviors:Interaction.Behaviors>
                     <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
                 </behaviors:Interaction.Behaviors>
             </WpfNode:Node>
 
-            <WpfNode:Node x:Name="Node2" Canvas.Left="200" Canvas.Top="0">
+            <WpfNode:Node x:Name="Node2" Canvas.Left="200" Canvas.Top="0"
+                          Style="{StaticResource NodeDefaultStyle}">
                 <behaviors:Interaction.Behaviors>
                     <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
                 </behaviors:Interaction.Behaviors>
             </WpfNode:Node>
 
-            <WpfNode:Node x:Name="Node3" Canvas.Left="300" Canvas.Top="0">
+            <WpfNode:Node x:Name="Node3" Canvas.Left="300" Canvas.Top="0"
+                          Style="{StaticResource NodeDefaultStyle}">
                 <behaviors:Interaction.Behaviors>
                     <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
                 </behaviors:Interaction.Behaviors>
