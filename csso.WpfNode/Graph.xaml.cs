@@ -55,7 +55,7 @@ public partial class Graph : UserControl {
         DataContext = null;
 
         _graphView = graphView;
-        
+
         if (_graphView != null) {
             _graphView.Edges.CollectionChanged += Edges_CollectionChanged;
             _graphView.PropertyChanged += PropertyChanged_Handler;

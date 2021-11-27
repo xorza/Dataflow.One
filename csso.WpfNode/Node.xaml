@@ -3,20 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+
+             xmlns:view="clr-namespace:csso.WpfNode"
+             xmlns:core="clr-namespace:csso.NodeCore;assembly=csso.NodeCore"
+
              mc:Ignorable="d"
              d:DesignHeight="350" d:DesignWidth="300"
              VerticalAlignment="Top"
              HorizontalAlignment="Left"
-             x:Name="NodeUserControl"
-           >
-    <!-- <UserControl.Style> -->
-    <!--     <Style TargetType="local:Node"> -->
-    <!--         <Setter Property="CornerRadius" Value="1" /> -->
-    <!--         <Setter Property="BorderThickness" Value="1" /> -->
-    <!--         <Setter Property="BorderBrush" Value="White" /> -->
-    <!--         <Setter Property="Background" Value="Red" /> -->
-    <!--     </Style> -->
-    <!-- </UserControl.Style> -->
+             x:Name="NodeUserControl">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -64,49 +59,101 @@
                     </Grid.ColumnDefinitions>
                     <Grid.Resources>
                         <ResourceDictionary>
-                            <Style TargetType="Button">
-                                <Setter Property="BorderBrush"
-                                        Value="{Binding Path=BorderBrush, ElementName=NodeUserControl}" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type Button}">
-                                            <Grid x:Name="grid" Width="10" Height="10" Background="Transparent">
-                                                <Ellipse x:Name="Highlight" Stroke="{TemplateBinding BorderBrush}"
-                                                         StrokeThickness="2" Margin="1" />
+                            <DataTemplate DataType="{x:Type view:PutView}">
+                                <Button Padding="0" Margin="0" Click="PinButton_Click"
+                                        Tag="{Binding}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Border Grid.ColumnSpan="3" x:Name="Border1"
+                                                        BorderBrush="{x:Null}" BorderThickness="0" />
+
+                                                <Ellipse Grid.Column="0"
+                                                         x:Name="Highlight2"
+                                                         Stroke="{x:Null}"
+                                                         Fill="Transparent"
+                                                         Width="16"
+                                                         Height="16"
+                                                         StrokeThickness="0"
+                                                         Margin="0"
+                                                         VerticalAlignment="Center"
+                                                         HorizontalAlignment="Center" />
+                                                <Ellipse Grid.Column="0"
+                                                         x:Name="Highlight1"
+                                                         Stroke="DarkGray"
+                                                         Width="7"
+                                                         Height="7"
+                                                         StrokeThickness="2"
+                                                         Margin="0"
+                                                         VerticalAlignment="Center"
+                                                         HorizontalAlignment="Center"
+                                                         DataContext="{Binding}"
+                                                         Loaded="PinHighlight1_OnLoaded" />
+
+                                                <ContentPresenter Grid.Column="1" Margin="0"
+                                                                  Content="{TemplateBinding Content }"
+                                                                  HorizontalAlignment="Left"
+                                                                  x:Name="ContentPresenter1" />
+
+
                                             </Grid>
                                             <ControlTemplate.Triggers>
-                                                <Trigger Property="IsPressed" Value="True" />
+                                                <DataTrigger Binding="{Binding IsOutput}" Value="True">
+                                                    <Setter TargetName="ContentPresenter1"
+                                                            Property="HorizontalAlignment"
+                                                            Value="Right" />
+                                                    <Setter TargetName="Highlight1"
+                                                            Property="Grid.Column"
+                                                            Value="2" />
+                                                    <Setter TargetName="Highlight2"
+                                                            Property="Grid.Column"
+                                                            Value="2" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True" >
+                                                    <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" /> 
+                                                </DataTrigger>
                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Stroke" TargetName="Highlight" Value="Coral" />
+                                                    <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" />
                                                 </Trigger>
-                                                <Trigger Property="IsEnabled" Value="False">
-                                                    <!--<Setter Property="Opacity" TargetName="grid" Value="0.25"/>-->
-                                                </Trigger>
-
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
+                                    </Button.Template>
+                                    <Grid>
+                                        <Label Margin="0" Padding="2"
+                                               Content="{Binding SchemaPut.Name }"
+                                               VerticalAlignment="Center"
+                                               Visibility="{Binding Path=IsInput, Converter={StaticResource BoolToVis}}" />
 
-                            <Style TargetType="Label">
-                                <Setter Property="Margin" Value="2 1" />
-                                <Setter Property="Padding" Value="0" />
-                                <Setter Property="Foreground"
-                                        Value="{Binding Path=Foreground, ElementName=NodeUserControl}" />
-                            </Style>
+                                        <Label Margin="0" Padding="2"
+                                               Content="{Binding SchemaPut.Name }"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right"
+                                               Visibility="{Binding Path=IsOutput, Converter={StaticResource BoolToVis}}" />
+
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
                         </ResourceDictionary>
                     </Grid.Resources>
 
-                    <StackPanel x:Name="InputsStackPanel"
-                                HorizontalAlignment="Stretch"
-                                Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
+                    <StackPanel
+                        HorizontalAlignment="Stretch"
+                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}">
+                        <ItemsControl ItemsSource="{Binding Path=NodeView.Inputs, ElementName=NodeUserControl}" />
+                    </StackPanel>
 
-                    <StackPanel x:Name="OutputsStackPanel"
-                                HorizontalAlignment="Stretch"
-                                Grid.Column="1"
-                                TextBlock.Foreground="Green"
-                                Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
+                    <StackPanel
+                        HorizontalAlignment="Stretch"
+                        Grid.Column="1"
+                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}">
+                        <ItemsControl ItemsSource="{Binding Path=NodeView.Outputs, ElementName=NodeUserControl}" />
+                    </StackPanel>
 
                 </Grid>
             </Grid>
@@ -117,6 +164,5 @@
                 BorderThickness="1"
                 Visibility="{Binding Path=IsSelected, Converter={StaticResource BoolToVis}}" />
 
-        
     </Grid>
 </UserControl>

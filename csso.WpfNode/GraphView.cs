@@ -21,7 +21,7 @@ public class EdgeView {
 
 public class GraphView : INotifyPropertyChanged {
     public NodeCore.Graph Graph { get; private set; }
-    
+
     public GraphView(NodeCore.Graph graph) {
         Graph = graph;
         Refresh();
@@ -40,11 +40,30 @@ public class GraphView : INotifyPropertyChanged {
         set {
             if (_selectedNode != value) {
                 _selectedNode = value;
+
                 foreach (var node in Nodes) {
                     node.IsSelected = (node == value);
                 }
+
                 OnPropertyChanged();
             }
+        }
+    }
+
+    private PutView? _selectedPutView = null;
+
+    public PutView? SelectedPutView {
+        get => _selectedPutView;
+        set {
+            if (_selectedPutView == value) 
+                return;
+
+            if (_selectedPutView != null)
+                _selectedPutView.IsSelected = false;
+            _selectedPutView = value;
+            if (_selectedPutView != null)
+                _selectedPutView.IsSelected = true;
+            OnPropertyChanged();
         }
     }
 
@@ -63,8 +82,8 @@ public class GraphView : INotifyPropertyChanged {
         Nodes.Clear();
         Edges.Clear();
         SelectedNode = null;
-        
-        
+
+
         foreach (var node in Graph.Nodes) {
             NodeView nv = new(this, node);
             Nodes.Add(nv);

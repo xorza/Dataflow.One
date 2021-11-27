@@ -38,9 +38,11 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         set {
             if (_nodeView != value) {
                 _nodeView = value;
+                Panel.DataContext = null;
                 Panel.DataContext = _nodeView;
                 HeaderLabel.Content = _nodeView?.Name;
-                Refresh();
+                
+                OnPropertyChanged();
             }
         }
     }
@@ -61,7 +63,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     public bool UpdatePinPositions(Canvas canvas) {
         var updated = false;
-
+        
         _nodeView?.Inputs.ForEach(put => {
             if (put.Control != null) {
                 var upperLeft = put.Control
@@ -99,41 +101,10 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         return updated;
     }
 
-    private void Refresh() {
-        InputsStackPanel.Children.Clear();
-        OutputsStackPanel.Children.Clear();
-        InvalidateVisual();
-
-        if (_nodeView == null) return;
-
-        foreach (var pv in _nodeView.Inputs) {
-            StackPanel stackPanel = new();
-            stackPanel.Orientation = Orientation.Horizontal;
-            Button button = new();
-            pv.Control = button;
-            button.Click += PinButton_Click;
-            button.Tag = pv;
-            stackPanel.Children.Add(button);
-            stackPanel.Children.Add(new Label {Content = pv.SchemaPut.Name});
-            InputsStackPanel.Children.Add(stackPanel);
-        }
-
-        foreach (var pv in _nodeView.Outputs) {
-            StackPanel stackPanel = new();
-            stackPanel.HorizontalAlignment = HorizontalAlignment.Right;
-            stackPanel.Orientation = Orientation.Horizontal;
-            stackPanel.Children.Add(new Label {Content = pv.SchemaPut.Name});
-            Button button = new();
-            pv.Control = button;
-            button.Click += PinButton_Click;
-            button.Tag = pv;
-            stackPanel.Children.Add(button);
-            OutputsStackPanel.Children.Add(stackPanel);
-        }
-    }
-
+ 
     private void PinButton_Click(object sender, RoutedEventArgs e) {
         PutView pv = (PutView) ((Button) sender).Tag;
+        pv.IsSelected = true;
         PinClick?.Invoke(sender,
             new PinClickEventArgs(pv) {
                 RoutedEvent = e.RoutedEvent,
@@ -150,6 +121,12 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         Check.True(_nodeView != null);
 
         _nodeView!.GraphView.SelectedNode = _nodeView;
+    }
+
+    private void PinHighlight1_OnLoaded(object sender, RoutedEventArgs e) {
+        FrameworkElement element = (FrameworkElement) sender;
+        PutView pv = (PutView) element.DataContext;
+        pv.Control = element;
     }
 }
 }
