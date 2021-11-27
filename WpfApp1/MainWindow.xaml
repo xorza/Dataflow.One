@@ -3,41 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1" Padding="0"
+        Margin="0"
+        Background="{x:Null}"
+        VerticalContentAlignment="Stretch"
+        HorizontalContentAlignment="Stretch">
+    
+    
+    <local:Overview VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch" />
 
-        xmlns:WpfNode="clr-namespace:csso.WpfNode;assembly=csso.WpfNode"
-
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
-        Background="{StaticResource InactiveContentBackgroundBrush}">
-
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-
-        <WpfNode:Graph x:Name="Graph"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
-                       NodeStyle="{StaticResource NodeDefaultStyle}" />
-
-        <WpfNode:NodeEdit
-            x:Name="NodeEdit"
-            Grid.Row="0" Grid.Column="1"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Stretch" />
-
-        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal"
-                    VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
-            <Button Content="detect cycles" Click="DetectCycles_Button_OnClick" />
-            <Button Content="openCL test 1" Click="OpenCLTest1_Button_OnClick" />
-            <Button Content="openCL test 2" Click="OpenCLTest2_Button_OnClick" />
-            <Button Content="png load test" Click="PngLoadTest_Button_OnClick" />
-        </StackPanel>
-
-    </Grid>
 </Window>

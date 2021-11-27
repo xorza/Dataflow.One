@@ -31,9 +31,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         InitializeComponent();
 
         MouseLeftButtonDown += Node_MouseLeftButtonDown;
-        ;
     }
-
 
     public NodeView? NodeView {
         get => _nodeView;

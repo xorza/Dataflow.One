@@ -3,6 +3,7 @@
 
     <Thickness x:Key="DefaultBorderThickness">1</Thickness>
     <CornerRadius x:Key="DefaultCornerRadius">0</CornerRadius>
+    <Thickness x:Key="DefaultPadding" >10 6</Thickness>
 
     <Color x:Key="WindowColor" />
     <Color x:Key="ContentBackgroundColor">#FF393939</Color>
