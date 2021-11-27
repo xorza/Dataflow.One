@@ -16,6 +16,8 @@
     </Style>
     <Style TargetType="TextBlock">
         <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
     </Style>
     <Style TargetType="Label">
         <Setter Property="Background" Value="{x:Null}" />

@@ -8,7 +8,8 @@
 
              mc:Ignorable="d"
              x:Name="OverviewUserControl"
-             Background="{StaticResource InactiveContentBackgroundBrush}">
+             Background="{StaticResource InactiveContentBackgroundBrush}"
+             Foreground="{StaticResource InactiveForegroundBrush}">
 
     <Grid>
         <Grid.RowDefinitions>

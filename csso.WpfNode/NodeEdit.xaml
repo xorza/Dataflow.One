@@ -13,8 +13,12 @@
         </ControlTemplate>
     </UserControl.Template>
     <Grid>
-        <Grid Margin="{Binding Path=Padding, ElementName=NodeEditUserControl}">
+        <StackPanel Orientation="Vertical" Margin="{Binding Path=Padding, ElementName=NodeEditUserControl}">
             <TextBlock Text="{Binding Path=NodeView.Name, ElementName=NodeEditUserControl}" />
-        </Grid>
+            
+            
+            <TextBlock Text="Some description" />
+            
+        </StackPanel>
     </Grid>
 </UserControl>
