@@ -12,5 +12,7 @@ public class PutView {
     public SchemaPut SchemaPut { get; }
     public Point PinPoint { get; set; }
     public NodeView NodeView { get; }
+
+ 
 }
 }

@@ -3,6 +3,8 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using csso.Common;
+using OpenTK.Windowing.Common;
 
 namespace csso.WpfNode {
 public class PinClickEventArgs : RoutedEventArgs {
@@ -27,7 +29,11 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     public Node() {
         InitializeComponent();
+
+        MouseLeftButtonDown += Node_MouseLeftButtonDown;
+        ;
     }
+
 
     public NodeView? NodeView {
         get => _nodeView;
@@ -35,6 +41,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
             if (_nodeView != value) {
                 _nodeView = value;
                 Panel.DataContext = _nodeView;
+                HeaderLabel.Content = _nodeView?.Name;
                 Refresh();
             }
         }
@@ -60,7 +67,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         _nodeView?.Inputs.ForEach(put => {
             if (put.Control != null) {
                 var upperLeft = put.Control
-                    .TransformToAncestor(canvas)
+                    .TransformToVisual(canvas)
                     .Transform(new Point(0, 0));
                 var mid = new Point(
                     put.Control.RenderSize.Width / 2,
@@ -77,7 +84,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         _nodeView?.Outputs.ForEach(put => {
             if (put.Control != null) {
                 var upperLeft = put.Control
-                    .TransformToAncestor(canvas)
+                    .TransformToVisual(canvas)
                     .Transform(new Point(0, 0));
                 var mid = new Point(
                     put.Control.RenderSize.Width / 2,
@@ -97,6 +104,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     private void Refresh() {
         InputsStackPanel.Children.Clear();
         OutputsStackPanel.Children.Clear();
+        InvalidateVisual();
 
         if (_nodeView == null) return;
 
@@ -138,6 +146,12 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
+
+    private void Node_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+        Check.True(_nodeView != null);
+
+        _nodeView!.GraphView.SelectedNode = _nodeView;
     }
 }
 }

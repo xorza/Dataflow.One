@@ -7,7 +7,8 @@
              d:DesignHeight="350" d:DesignWidth="300"
              VerticalAlignment="Top"
              HorizontalAlignment="Left"
-             x:Name="NodeUserControl">
+             x:Name="NodeUserControl"
+           >
     <!-- <UserControl.Style> -->
     <!--     <Style TargetType="local:Node"> -->
     <!--         <Setter Property="CornerRadius" Value="1" /> -->
@@ -18,91 +19,104 @@
     <!-- </UserControl.Style> -->
 
     <UserControl.Resources>
-        <ResourceDictionary />
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <UserControl.Template>
         <ControlTemplate TargetType="UserControl">
-            <Grid Margin="{TemplateBinding Margin}">
-                <Border BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{Binding Path=CornerRadius, ElementName=NodeUserControl}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        Background="{TemplateBinding Background}"
-                        ClipToBounds="True">
-                    <ContentPresenter />
-                </Border>
-            </Grid>
+            <ContentPresenter />
         </ControlTemplate>
     </UserControl.Template>
-    <Grid x:Name="Panel"
-          DataContext="{Binding NodeView}" Margin="0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Border
-            VerticalAlignment="Stretch"
-            HorizontalAlignment="Stretch"
-            BorderBrush="{x:Null}"
-            BorderThickness="0"
-            Background="{Binding Path=HeaderBackground, ElementName=NodeUserControl}">
-            <Label Content="{Binding Name}"
-                   HorizontalAlignment="Left"
-                   FontWeight="Bold"
-                   FontSize="10"
-                   Padding="0"
-                   Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
+
+    <Grid x:Name="Panel" Margin="{Binding Path=Margin, ElementName=NodeUserControl}">
+
+        <Border BorderThickness="{Binding Path=BorderThickness, ElementName=NodeUserControl}"
+                CornerRadius="{Binding Path=CornerRadius, ElementName=NodeUserControl}"
+                BorderBrush="{Binding Path=BorderBrush, ElementName=NodeUserControl}"
+                Background="{Binding Path=Background, ElementName=NodeUserControl}">
+            <Grid DataContext="{Binding NodeView}" Margin="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Border
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch"
+                    BorderBrush="{x:Null}"
+                    BorderThickness="0"
+                    Background="{Binding Path=HeaderBackground, ElementName=NodeUserControl}">
+                    <Label Content="{Binding Name}"
+                           x:Name="HeaderLabel"
+                           HorizontalAlignment="Left"
+                           FontWeight="Bold"
+                           FontSize="10"
+                           Padding="0"
+                           Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
+                </Border>
+
+                <Grid Grid.Row="1"
+                      HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.Resources>
+                        <ResourceDictionary>
+                            <Style TargetType="Button">
+                                <Setter Property="BorderBrush"
+                                        Value="{Binding Path=BorderBrush, ElementName=NodeUserControl}" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Grid x:Name="grid" Width="10" Height="10" Background="Transparent">
+                                                <Ellipse x:Name="Highlight" Stroke="{TemplateBinding BorderBrush}"
+                                                         StrokeThickness="2" Margin="1" />
+                                            </Grid>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsPressed" Value="True" />
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Stroke" TargetName="Highlight" Value="Coral" />
+                                                </Trigger>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <!--<Setter Property="Opacity" TargetName="grid" Value="0.25"/>-->
+                                                </Trigger>
+
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+
+                            <Style TargetType="Label">
+                                <Setter Property="Margin" Value="2 1" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="Foreground"
+                                        Value="{Binding Path=Foreground, ElementName=NodeUserControl}" />
+                            </Style>
+                        </ResourceDictionary>
+                    </Grid.Resources>
+
+                    <StackPanel x:Name="InputsStackPanel"
+                                HorizontalAlignment="Stretch"
+                                Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
+
+                    <StackPanel x:Name="OutputsStackPanel"
+                                HorizontalAlignment="Stretch"
+                                Grid.Column="1"
+                                TextBlock.Foreground="Green"
+                                Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
+
+                </Grid>
+            </Grid>
         </Border>
-        <Grid Grid.Row="1"
-              HorizontalAlignment="Stretch">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.Resources>
-                <ResourceDictionary>
-                    <Style TargetType="Button">
-                        <Setter Property="BorderBrush" Value="{Binding Path=BorderBrush, ElementName=NodeUserControl}" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type Button}">
-                                    <Grid x:Name="grid" Width="10" Height="10" Background="Transparent">
-                                        <Ellipse x:Name="Highlight" Stroke="{TemplateBinding BorderBrush}"
-                                                 StrokeThickness="2" Margin="1" />
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsPressed" Value="True" />
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Stroke" TargetName="Highlight" Value="Coral" />
-                                        </Trigger>
-                                        <Trigger Property="IsEnabled" Value="False">
-                                            <!--<Setter Property="Opacity" TargetName="grid" Value="0.25"/>-->
-                                        </Trigger>
 
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
+        <Border Grid.Row="0"
+                BorderBrush="Chartreuse"
+                BorderThickness="1"
+                Visibility="{Binding Path=IsSelected, Converter={StaticResource BoolToVis}}" />
 
-                    <Style TargetType="Label">
-                        <Setter Property="Margin" Value="2 1" />
-                        <Setter Property="Padding" Value="0" />
-                        <Setter Property="Foreground" Value="{Binding Path=Foreground, ElementName=NodeUserControl}" />
-                    </Style>
-                </ResourceDictionary>
-            </Grid.Resources>
-
-            <StackPanel x:Name="InputsStackPanel"
-                        HorizontalAlignment="Stretch"
-                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
-
-            <StackPanel x:Name="OutputsStackPanel"
-                        HorizontalAlignment="Stretch"
-                        Grid.Column="1"
-                        TextBlock.Foreground="Green"
-                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
-
-        </Grid>
+        
     </Grid>
 </UserControl>

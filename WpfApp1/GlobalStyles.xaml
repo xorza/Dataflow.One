@@ -2,10 +2,12 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 
                     xmlns:WpfNode="clr-namespace:csso.WpfNode;assembly=csso.WpfNode">
-
+    
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Colors.xaml" />
     </ResourceDictionary.MergedDictionaries>
+    
+    <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
     <Style TargetType="Control">
         <Setter Property="Background" Value="{StaticResource InactiveContentBackgroundBrush}" />
@@ -127,7 +129,7 @@
     </Style>
 
     <Style TargetType="{x:Type WpfNode:Graph}" >
-        <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="Background" Value="{StaticResource InactiveContentBackgroundBrush}" />
     </Style>
     
     <Style TargetType="{x:Type WpfNode:Node}" x:Key="NodeDefaultStyle">

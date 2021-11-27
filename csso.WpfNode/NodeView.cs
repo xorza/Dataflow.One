@@ -1,15 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.DirectoryServices.ActiveDirectory;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using csso.NodeCore;
 
 namespace csso.WpfNode {
 public class NodeView : INotifyPropertyChanged {
     private Point _position;
 
+    public GraphView GraphView { get; }
 
-    public NodeView(NodeCore.Node node) {
+    public NodeView(GraphView graphView, NodeCore.Node node) {
         Node = node;
+        GraphView = graphView;
 
         foreach (var input in Node.Schema.Inputs) {
             PutView pv = new(input, this);
@@ -27,6 +31,19 @@ public class NodeView : INotifyPropertyChanged {
     public List<PutView> Inputs { get; } = new();
     public List<PutView> Outputs { get; } = new();
 
+    private  bool _isSelected =false;
+    public bool IsSelected {
+        get {
+            return _isSelected;
+        }
+        set {
+            if (_isSelected != value) {
+                _isSelected = value;
+                OnPropertyChanged();
+            }
+        }
+}
+
     public Point Position {
         get => _position;
         set {
@@ -42,6 +59,11 @@ public class NodeView : INotifyPropertyChanged {
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
+    
+    public void AddBinding(Binding binding ) {
+        Node.AddBinding(binding);
+        GraphView.Refresh();
     }
 }
 }

@@ -26,9 +26,6 @@ public class Edge : ClickControl {
         LeftButtonClick += LeftButtonClickHandler;
     }
 
-
-    // public  event E
-
     public Point InputPosition {
         get => (Point) GetValue(InputPositionDependencyProperty);
         set {

@@ -44,12 +44,14 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/30baf184f5f1437b854bd73b0c2fa233f85a70/5C/Button.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/30baf184f5f1437b854bd73b0c2fa233f85a70/405/ButtonBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f72a88ddb1544769ad66fc6f66f95b6f2ac70/2/System.Drawing.Common.notsupported.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d2d1a747c745437181b978c1e7ca5add842a68/246/RoutedEventArgs.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/30baf184f5f1437b854bd73b0c2fa233f85a70/26E/ContentControl.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8162576708c64326b8ce803fe69950b2b000/20/a6e3581d/CLResultCode.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/30baf184f5f1437b854bd73b0c2fa233f85a70/419/Control.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57c2d4282221452cad4df86bbd5d6fa0a1fc70/4C/Object.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d2d1a747c745437181b978c1e7ca5add842a68/24B/MouseButtonEventHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a3b66fa01e4e4bf0b8be66266419859efe668/E/Image.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/91fa6274cfe447a8bc6c44d56ff0bb9e15e70/0/PropertyChangedEventHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8162576708c64326b8ce803fe69950b2b000/48/9605ae2b/DeviceType.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/30baf184f5f1437b854bd73b0c2fa233f85a70/285/CornerRadius.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/30baf184f5f1437b854bd73b0c2fa233f85a70/233/MessageBox.cs" root0="SKIP_HIGHLIGHTING" />
@@ -121,6 +123,7 @@
       <workItem from="1637876290417" duration="15678000" />
       <workItem from="1637913197701" duration="8551000" />
       <workItem from="1637924639775" duration="3909000" />
+      <workItem from="1637987202847" duration="8676000" />
     </task>
     <servers />
   </component>

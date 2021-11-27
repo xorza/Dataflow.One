@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Reflection.Metadata.Ecma335;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,26 +10,40 @@ using csso.NodeCore;
 using csso.OpenCL;
 
 namespace csso.WpfNode {
-/// <summary>
-///     Interaction logic for Graph.xaml
-/// </summary>
 public partial class Graph : UserControl {
     public static readonly DependencyProperty NodeStyleProperty = DependencyProperty.Register(
         "NodeStyle", typeof(Style), typeof(Graph), new PropertyMetadata(default(Style)));
 
-    private NodeCore.Graph? _graph;
-
     private GraphView? _graphView;
+
+    public static readonly DependencyProperty GraphViewProperty = DependencyProperty.Register(
+        "GraphView", typeof(GraphView), typeof(Graph), new PropertyMetadata(default(GraphView)));
+
+    public GraphView? GraphView {
+        get { return (GraphView) GetValue(GraphViewProperty); }
+        set {
+            SetValue(GraphViewProperty, value);
+            SetDataContext(value);
+        }
+    }
 
     private PutView? _pv1;
     private PutView? _pv2;
-
 
     public Graph() {
         InitializeComponent();
 
         LayoutUpdated += LayoutUpdated_Handler;
         Loaded += Loaded_Handler;
+        MouseLeftButtonDown += MouseLeftButton_Handler;
+        MouseRightButtonDown += MouseRightButton_Handler;
+    }
+
+    private void MouseLeftButton_Handler(object sender, MouseButtonEventArgs e) { }
+
+    private void MouseRightButton_Handler(object sender, MouseButtonEventArgs e) {
+        if (_graphView != null)
+            _graphView.SelectedNode = null;
     }
 
     public Style NodeStyle {
@@ -36,68 +51,29 @@ public partial class Graph : UserControl {
         set => SetValue(NodeStyleProperty, value);
     }
 
-    public NodeCore.Graph? GraphContext {
-        get => _graph;
-        set {
-            _graph = value;
-            SetupDataContext();
-        }
-    }
-
-    private void SetupDataContext() {
-        if (_graph != null) {
-            Schema schemaRgbMix = new();
-            schemaRgbMix.Name = "RGB mix";
-            schemaRgbMix.Inputs.Add(new SchemaInput("R", typeof(Tensor1)));
-            schemaRgbMix.Inputs.Add(new SchemaInput("G", typeof(Tensor1)));
-            schemaRgbMix.Inputs.Add(new SchemaInput("B", typeof(Tensor1)));
-            schemaRgbMix.Outputs.Add(new SchemaOutput("RGB", typeof(Tensor4)));
-
-            Schema schemaBitmap = new();
-            schemaBitmap.Name = "Bitmap";
-            schemaBitmap.Outputs.Add(new SchemaOutput("R", typeof(Tensor1)));
-            schemaBitmap.Outputs.Add(new SchemaOutput("G", typeof(Tensor1)));
-            schemaBitmap.Outputs.Add(new SchemaOutput("B", typeof(Tensor1)));
-            schemaBitmap.Outputs.Add(new SchemaOutput("RGB", typeof(Tensor4)));
-
-            Schema output = new();
-            output.Name = "Output";
-            output.Inputs.Add(new SchemaInput("R", typeof(Tensor1)));
-            output.Inputs.Add(new SchemaInput("RGB", typeof(Tensor4)));
-
-            NodeCore.Node node0 = new(schemaRgbMix, _graph);
-            NodeCore.Node node1 = new(schemaBitmap, _graph);
-            NodeCore.Node node2 = new(schemaRgbMix, _graph);
-            NodeCore.Node node3 = new(schemaBitmap, _graph);
-
-            OutputNode node4 = new(output, _graph);
-
-        }
-        
-        
-        RefreshDataContext();
-    }
-
-    private void RefreshDataContext() {
+    private void SetDataContext(GraphView? graphView) {
         DataContext = null;
 
-        if (_graph == null)
-            return;
-
-        _graphView = new GraphView(_graph);
-        _graphView.Edges.CollectionChanged += Edges_CollectionChanged;
+        _graphView = graphView;
         
-        Node0.NodeView = _graphView.Nodes[0];
-        Node1.NodeView = _graphView.Nodes[1];
-        Node2.NodeView = _graphView.Nodes[3];
-        Node3.NodeView = _graphView.Nodes[4];
-        DataContext = _graphView;
+        if (_graphView != null) {
+            _graphView.Edges.CollectionChanged += Edges_CollectionChanged;
+            _graphView.PropertyChanged += PropertyChanged_Handler;
+
+            Node0.NodeView = _graphView.Nodes[0];
+            Node1.NodeView = _graphView.Nodes[1];
+            Node2.NodeView = _graphView.Nodes[3];
+            Node3.NodeView = _graphView.Nodes[4];
+            DataContext = _graphView;
+        }
     }
 
     private void Edges_CollectionChanged(object? sender,
         NotifyCollectionChangedEventArgs e) {
         RefreshLine(true);
     }
+
+    private void PropertyChanged_Handler(object? sender, PropertyChangedEventArgs e) { }
 
     private void Commit() {
         Debug.Assert.NotNull(_pv1);
@@ -139,8 +115,9 @@ public partial class Graph : UserControl {
             (SchemaOutput) output.SchemaPut);
 
         input.NodeView.Node.AddBinding(binding);
+        input.NodeView.GraphView.Refresh();
 
-        RefreshDataContext();
+        SetDataContext(_graphView);
     }
 
     private void Loaded_Handler(object? sender, EventArgs e) {

@@ -18,21 +18,22 @@
     <Border
         Background="{Binding Path=Background, ElementName=GraphUserControl}"
         BorderThickness="0"
-         BorderBrush="{x:Null}">
+        BorderBrush="{x:Null}">
         <Grid>
+
             <Canvas Margin="0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     MinWidth="150"
                     x:Name="Canvas">
-
                 <local:Node x:Name="Node0"
                             Style="{Binding Path=NodeStyle, ElementName=GraphUserControl}"
                             PinClick="Node0_OnPinClick">
                     <behaviors:Interaction.Behaviors>
-                        <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
+                        <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"  />
                     </behaviors:Interaction.Behaviors>
                 </local:Node>
+
                 <local:Node x:Name="Node1" Canvas.Left="100" Canvas.Top="0"
                             PinClick="Node0_OnPinClick"
                             Style="{Binding Path=NodeStyle, ElementName=GraphUserControl}">
@@ -40,7 +41,6 @@
                         <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
                     </behaviors:Interaction.Behaviors>
                 </local:Node>
-
                 <local:Node x:Name="Node2" Canvas.Left="200" Canvas.Top="0"
                             PinClick="Node0_OnPinClick"
                             Style="{Binding Path=NodeStyle, ElementName=GraphUserControl}">
@@ -50,6 +50,7 @@
                 </local:Node>
 
                 <local:Node x:Name="Node3" Canvas.Left="300" Canvas.Top="0"
+                            PinClick="Node0_OnPinClick"
                             Style="{Binding Path=NodeStyle, ElementName=GraphUserControl}">
                     <behaviors:Interaction.Behaviors>
                         <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />

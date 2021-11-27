@@ -3,11 +3,21 @@ using System.Windows;
 using csso.ImageProcessing;
 using csso.NodeCore;
 using csso.OpenCL;
+using csso.WpfNode;
+using Graph = csso.NodeCore.Graph;
 
 namespace WpfApp1 {
 public partial class MainWindow : Window {
     private readonly csso.NodeCore.Graph _graph;
     private readonly Context? _clContext;
+
+    public static readonly DependencyProperty GraphViewProperty = DependencyProperty.Register(
+        "GraphView", typeof(GraphView), typeof(MainWindow), new PropertyMetadata(default(GraphView)));
+
+    public GraphView GraphView {
+        get { return (GraphView) GetValue(GraphViewProperty); }
+        set { SetValue(GraphViewProperty, value); }
+    }
 
     public MainWindow() {
         InitializeComponent();
@@ -15,7 +25,37 @@ public partial class MainWindow : Window {
         _graph = new Graph();
         _clContext = new Context();
 
-        Graph.GraphContext = _graph;
+        Schema schemaRgbMix = new();
+        schemaRgbMix.Name = "RGB mix";
+        schemaRgbMix.Inputs.Add(new SchemaInput("R", typeof(Tensor1)));
+        schemaRgbMix.Inputs.Add(new SchemaInput("G", typeof(Tensor1)));
+        schemaRgbMix.Inputs.Add(new SchemaInput("B", typeof(Tensor1)));
+        schemaRgbMix.Outputs.Add(new SchemaOutput("RGB", typeof(Tensor4)));
+
+        Schema schemaBitmap = new();
+        schemaBitmap.Name = "Bitmap";
+        schemaBitmap.Outputs.Add(new SchemaOutput("R", typeof(Tensor1)));
+        schemaBitmap.Outputs.Add(new SchemaOutput("G", typeof(Tensor1)));
+        schemaBitmap.Outputs.Add(new SchemaOutput("B", typeof(Tensor1)));
+        schemaBitmap.Outputs.Add(new SchemaOutput("RGB", typeof(Tensor4)));
+
+        Schema output = new();
+        output.Name = "Output";
+        output.Inputs.Add(new SchemaInput("R", typeof(Tensor1)));
+        output.Inputs.Add(new SchemaInput("RGB", typeof(Tensor4)));
+
+        csso.NodeCore.Node node0 = new(schemaRgbMix, _graph);
+        csso.NodeCore.Node node1 = new(schemaBitmap, _graph);
+        csso.NodeCore.Node node2 = new(schemaRgbMix, _graph);
+        csso.NodeCore.Node node3 = new(schemaBitmap, _graph);
+
+        OutputNode node4 = new(output, _graph);
+
+        GraphView graphView = new(_graph);
+        GraphView = graphView;
+
+        DataContext = graphView;
+        Graph.GraphView = graphView;
     }
 
     private void DetectCycles_Button_OnClick(object sender, RoutedEventArgs e) {
