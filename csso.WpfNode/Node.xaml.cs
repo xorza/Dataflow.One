@@ -125,13 +125,15 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    private void Node_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+    private void Node_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs args) {
         Check.True(_nodeView != null);
 
-        _nodeView!.GraphView.SelectedNode = _nodeView;
+        if (_nodeView!.GraphView.SelectedNode != _nodeView) {
+            _nodeView!.GraphView.SelectedNode = _nodeView;
+        }
     }
 
-    private void PinHighlight1_OnLoaded(object sender, RoutedEventArgs e) {
+    private void PinHighlight1_OnLoaded(object sender, RoutedEventArgs args) {
         FrameworkElement element = (FrameworkElement) sender;
         PutView pv = (PutView) element.DataContext;
         pv.Control = element;

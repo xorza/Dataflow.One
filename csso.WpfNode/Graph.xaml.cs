@@ -35,13 +35,17 @@ public partial class Graph : UserControl {
 
         LayoutUpdated += LayoutUpdated_Handler;
         Loaded += Loaded_Handler;
-        MouseLeftButtonDown += MouseLeftButton_Handler;
-        MouseRightButtonDown += MouseRightButton_Handler;
+        MouseLeftButtonDown += NodeDeselectButton_Handler;
+        MouseRightButtonDown += NodeDeselectButton_Handler;
+
+        AddNode(Node0);
+        AddNode(Node1);
+        AddNode(Node2);
+        AddNode(Node3);
     }
 
-    private void MouseLeftButton_Handler(object sender, MouseButtonEventArgs e) { }
 
-    private void MouseRightButton_Handler(object sender, MouseButtonEventArgs e) {
+    private void NodeDeselectButton_Handler(object sender, MouseButtonEventArgs e) {
         if (_graphView != null)
             _graphView.SelectedNode = null;
     }
@@ -168,7 +172,7 @@ public partial class Graph : UserControl {
         ;
     }
 
-    private void Node0_OnPinClick(object sender, PinClickEventArgs e) {
+    private void Node_OnPinClick(object sender, PinClickEventArgs e) {
         if (_pv1 == null) {
             _pv1 = e.Put;
         }
@@ -182,6 +186,45 @@ public partial class Graph : UserControl {
         }
 
         RefreshLine(true);
+    }
+
+    Point? _dragStart = null;
+    private void AddNode(Node node) {
+        void Down(object sender, MouseButtonEventArgs args) {
+            if (_dragStart == null) {
+                args.Handled = true;
+            }
+            
+            var element = (UIElement) sender;
+            _dragStart = args.GetPosition(element);
+        }
+
+        void Up(object sender, MouseButtonEventArgs args) {
+            var element = (UIElement) sender;
+            _dragStart = null;
+            element.ReleaseMouseCapture();
+        }
+
+        void Move(object sender, MouseEventArgs args) {
+            if (_dragStart != null && args.LeftButton == MouseButtonState.Pressed) {
+                var element = (UIElement) sender;
+                element.CaptureMouse();
+                var p2 = args.GetPosition(Canvas);
+                Canvas.SetLeft(element, p2.X - _dragStart.Value.X);
+                Canvas.SetTop(element, p2.Y - _dragStart.Value.Y);
+
+                args.Handled = true;
+            }
+        }
+        
+        void EnableDrag(UIElement element) {
+            element.MouseDown += Down;
+            element.MouseMove += Move;
+            element.MouseUp += Up;
+        }
+
+        EnableDrag(node);
+        node.PinClick += Node_OnPinClick;
     }
 }
 }
