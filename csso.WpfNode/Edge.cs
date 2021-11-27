@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -13,13 +14,19 @@ public class EdgeEventArgs : RoutedEventArgs {
 
 public class Edge : ClickControl {
     public static readonly DependencyProperty InputPositionDependencyProperty = DependencyProperty.Register(
-        "InputPosition", typeof(Point),
-        typeof(Edge)
+        "InputPosition",
+        typeof(Point),
+        typeof(Edge),
+         new PropertyMetadata(Position_PropertyChangedCallback)
     );
 
+
+
     public static readonly DependencyProperty OutputPositionDependencyProperty = DependencyProperty.Register(
-        "OutputPosition", typeof(Point),
-        typeof(Edge)
+        "OutputPosition",
+        typeof(Point),
+        typeof(Edge),
+        new PropertyMetadata(Position_PropertyChangedCallback)
     );
 
     public Edge() {
@@ -30,7 +37,6 @@ public class Edge : ClickControl {
         get => (Point) GetValue(InputPositionDependencyProperty);
         set {
             SetValue(InputPositionDependencyProperty, value);
-            InvalidateVisual();
         }
     }
 
@@ -38,8 +44,11 @@ public class Edge : ClickControl {
         get => (Point) GetValue(OutputPositionDependencyProperty);
         set {
             SetValue(OutputPositionDependencyProperty, value);
-            InvalidateVisual();
         }
+    }
+    
+    private static void Position_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        ((UIElement)d).InvalidateVisual();
     }
 
     private void LeftButtonClickHandler(object? sender, MouseButtonEventArgs ea) {

@@ -18,8 +18,6 @@ public class EdgeView {
     public Binding Binding { get; }
     public PutView Input { get; }
     public PutView Output { get; }
-    public Point P1 => Input.PinPoint;
-    public Point P2 => Output.PinPoint;
 }
 
 public class GraphView : INotifyPropertyChanged {

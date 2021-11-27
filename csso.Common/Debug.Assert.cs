@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace csso.Common {
 public static class Debug {
@@ -10,12 +11,12 @@ public static class Debug {
             if (!condition)
                 throw new AssertionException();
         }
-
+        
         [Conditional("DEBUG")]
         [DebuggerStepThrough]
         [DebuggerHidden]
         public static void AreSame<T>(T a, T b) where T : class {
-            if (!ReferenceEquals(a, b))
+            if (!Object.ReferenceEquals(a, b))
                 throw new AssertionException();
         }
 

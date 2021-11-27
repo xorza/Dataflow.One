@@ -18,7 +18,20 @@ public sealed class PutView : INotifyPropertyChanged {
     public bool IsOutput => PutType == PutType.Out;
 
     public SchemaPut SchemaPut { get; }
-    public Point PinPoint { get; set; }
+
+    private Point _pinPoint;
+
+    public Point PinPoint {
+        get => _pinPoint;
+        set {
+            if(_pinPoint==value)
+                return;
+
+            _pinPoint = value;
+            OnPropertyChanged();
+        }
+    }
+
     public NodeView NodeView { get; }
 
     private bool _isSelected = false;

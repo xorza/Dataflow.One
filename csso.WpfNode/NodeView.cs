@@ -31,18 +31,17 @@ public class NodeView : INotifyPropertyChanged {
     public List<PutView> Inputs { get; } = new();
     public List<PutView> Outputs { get; } = new();
 
-    private  bool _isSelected =false;
+    private bool _isSelected = false;
+
     public bool IsSelected {
-        get {
-            return _isSelected;
-        }
-        set {
+        get => _isSelected;
+        internal set {
             if (_isSelected != value) {
                 _isSelected = value;
                 OnPropertyChanged();
             }
         }
-}
+    }
 
     public Point Position {
         get => _position;
@@ -60,8 +59,8 @@ public class NodeView : INotifyPropertyChanged {
     protected void OnPropertyChanged([CallerMemberName] string? name = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
-    
-    public void AddBinding(Binding binding ) {
+
+    public void AddBinding(Binding binding) {
         Node.AddBinding(binding);
         GraphView.Refresh();
     }

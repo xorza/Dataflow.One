@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,28 +33,30 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         get { return (Brush) GetValue(HighlightBrushProperty); }
         set { SetValue(HighlightBrushProperty, value); }
     }
-    
-    private NodeView? _nodeView;
+
+    public static readonly DependencyProperty NodeViewProperty = DependencyProperty.Register(
+        "NodeView", typeof(NodeView), typeof(Node), new PropertyMetadata(default(NodeView)));
+
+    public NodeView? NodeView {
+        get => (NodeView) GetValue(NodeViewProperty);
+        set => SetValue(NodeViewProperty, value);
+    }
+
+    public static readonly DependencyProperty DragCanvasProperty = DependencyProperty.Register(
+        "DragCanvas", typeof(Canvas), typeof(Node), new PropertyMetadata(default(Canvas)));
+
+    public Canvas? DragCanvas {
+        get => (Canvas) GetValue(DragCanvasProperty);
+        set => SetValue(DragCanvasProperty, value);
+    }
 
     public Node() {
         InitializeComponent();
 
         MouseLeftButtonDown += Node_MouseLeftButtonDown;
+        LayoutUpdated += EventHandler;
     }
 
-    public NodeView? NodeView {
-        get => _nodeView;
-        set {
-            if (_nodeView != value) {
-                _nodeView = value;
-                Panel.DataContext = null;
-                Panel.DataContext = _nodeView;
-                HeaderLabel.Content = _nodeView?.Name;
-                
-                OnPropertyChanged();
-            }
-        }
-    }
 
     public CornerRadius CornerRadius {
         get => (CornerRadius) GetValue(CornerRadiusProperty);
@@ -69,50 +72,48 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     public event PinClickEventHandler? PinClick;
 
-    public bool UpdatePinPositions(Canvas canvas) {
-        var updated = false;
-        
-        _nodeView?.Inputs.ForEach(put => {
-            if (put.Control != null) {
-                var upperLeft = put.Control
-                    .TransformToVisual(canvas)
-                    .Transform(new Point(0, 0));
-                var mid = new Point(
-                    put.Control.RenderSize.Width / 2,
-                    put.Control.RenderSize.Height / 2);
-
-                var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
-                if (put.PinPoint != newPinPoint) {
-                    put.PinPoint = newPinPoint;
-                    updated = true;
-                }
-            }
-        });
-
-        _nodeView?.Outputs.ForEach(put => {
-            if (put.Control != null) {
-                var upperLeft = put.Control
-                    .TransformToVisual(canvas)
-                    .Transform(new Point(0, 0));
-                var mid = new Point(
-                    put.Control.RenderSize.Width / 2,
-                    put.Control.RenderSize.Height / 2);
-                //Point mid = new Point();
-                var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
-                if (put.PinPoint != newPinPoint) {
-                    put.PinPoint = newPinPoint;
-                    updated = true;
-                }
-            }
-        });
-
-        return updated;
+    private void EventHandler(object? sender, EventArgs e) {
+        if (DragCanvas != null) {
+            UpdatePinPositions(DragCanvas!);
+        }
     }
 
- 
+    private void UpdatePinPositions(Canvas canvas) {
+        Check.True(NodeView != null);
+
+        NodeView!.Inputs.ForEach(put => {
+            if (put.Control != null) {
+                var upperLeft = put.Control
+                    .TransformToVisual(canvas)
+                    .Transform(new Point(0, 0));
+                var mid = new Point(
+                    put.Control.RenderSize.Width / 2,
+                    put.Control.RenderSize.Height / 2);
+
+                var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
+                put.PinPoint = newPinPoint;
+            }
+        });
+
+        NodeView!.Outputs.ForEach(put => {
+            if (put.Control != null) {
+                var upperLeft = put.Control
+                    .TransformToVisual(canvas)
+                    .Transform(new Point(0, 0));
+                var mid = new Point(
+                    put.Control.RenderSize.Width / 2,
+                    put.Control.RenderSize.Height / 2);
+
+                var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
+                put.PinPoint = newPinPoint;
+            }
+        });
+    }
+
+
     private void PinButton_Click(object sender, RoutedEventArgs e) {
         PutView pv = (PutView) ((Button) sender).Tag;
-        pv.IsSelected = !  pv.IsSelected;
+        pv.IsSelected = !pv.IsSelected;
         PinClick?.Invoke(sender,
             new PinClickEventArgs(pv) {
                 RoutedEvent = e.RoutedEvent,
@@ -126,10 +127,10 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void Node_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs args) {
-        Check.True(_nodeView != null);
+        Check.True(NodeView != null);
 
-        if (_nodeView!.GraphView.SelectedNode != _nodeView) {
-            _nodeView!.GraphView.SelectedNode = _nodeView;
+        if (NodeView!.GraphView.SelectedNode != NodeView) {
+            NodeView!.GraphView.SelectedNode = NodeView;
         }
     }
 

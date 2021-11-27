@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
 
              xmlns:local="clr-namespace:csso.WpfNode"
 
@@ -21,15 +20,41 @@
         BorderBrush="{x:Null}">
         <Grid>
 
+            <ItemsControl
+                Margin="0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                ItemsSource="{Binding Nodes}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="local:NodeView">
+                        <local:Node
+                            NodeView="{Binding }"
+                            Loaded="Node_OnLoaded"
+                            Style="{Binding Path=NodeStyle, ElementName=GraphUserControl}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Margin="0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Loaded="NodesCanvas_OnLoaded" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="Canvas.Left" Value="{Binding Position.X}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Position.Y}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+            </ItemsControl>
+
+
             <Canvas Margin="0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    x:Name="NodesCanvas" />
+                    x:Name="EdgesCanvas" />
 
-            <Canvas x:Name="EdgesCanvas"
-                    Margin="0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch" />
         </Grid>
     </Border>
 </UserControl>

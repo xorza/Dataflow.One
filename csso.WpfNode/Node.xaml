@@ -42,8 +42,7 @@
                     BorderBrush="{x:Null}"
                     BorderThickness="0"
                     Background="{Binding Path=HeaderBackground, ElementName=NodeUserControl}">
-                    <Label Content="{Binding Name}"
-                           x:Name="HeaderLabel"
+                    <Label Content="{Binding Path=Name, ElementName=NodeUserControl}"
                            HorizontalAlignment="Left"
                            FontWeight="Bold"
                            FontSize="10"
