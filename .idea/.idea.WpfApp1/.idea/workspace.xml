@@ -19,7 +19,9 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8162576708c64326b8ce803fe69950b2b000/01/f5a4a407/CLDevice.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8162576708c64326b8ce803fe69950b2b000/3b/26d1198c/CLImage.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0640eaf9b9bb48ccb0ff746081274a3f84470/2a/1a31e4d4/RoutedEvent.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8162576708c64326b8ce803fe69950b2b000/b8/620cc88e/MemoryFlags.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d2d1a747c745437181b978c1e7ca5add842a68/C3/brushes.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/30baf184f5f1437b854bd73b0c2fa233f85a70/235/XamlReader.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/IL/8162576708c64326b8ce803fe69950b2b000/de/96b7621c/02000008.il" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57c2d4282221452cad4df86bbd5d6fa0a1fc70/110/UIntPtr.cs" root0="SKIP_HIGHLIGHTING" />
@@ -46,6 +48,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8162576708c64326b8ce803fe69950b2b000/20/a6e3581d/CLResultCode.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/30baf184f5f1437b854bd73b0c2fa233f85a70/419/Control.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57c2d4282221452cad4df86bbd5d6fa0a1fc70/4C/Object.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d2d1a747c745437181b978c1e7ca5add842a68/24B/MouseButtonEventHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a3b66fa01e4e4bf0b8be66266419859efe668/E/Image.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8162576708c64326b8ce803fe69950b2b000/48/9605ae2b/DeviceType.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/30baf184f5f1437b854bd73b0c2fa233f85a70/285/CornerRadius.cs" root0="SKIP_HIGHLIGHTING" />
@@ -59,6 +62,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/IL/8162576708c64326b8ce803fe69950b2b000/f7/7f663f22/02000004.il" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d2d1a747c745437181b978c1e7ca5add842a68/2BE/EventRoute.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57c2d4282221452cad4df86bbd5d6fa0a1fc70/267/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d2d1a747c745437181b978c1e7ca5add842a68/18B/UIElement.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="21LFAZWnWFTTCArBPxqa401WqRU" />
   <component name="ProjectLevelVcsManager">
@@ -74,6 +78,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C#" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>

@@ -10,7 +10,7 @@ public class OutputBinding : Binding {
         base(inputNode, input) {
         OutputNode = outputNode;
         Output = output;
-        
+
         Check.True(inputNode.Schema.Inputs.Contains(input));
         Check.True(outputNode.Schema.Outputs.Contains(output));
 

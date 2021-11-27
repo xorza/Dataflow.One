@@ -4,10 +4,6 @@ using OpenTK.Compute.OpenCL;
 
 namespace csso.OpenCL {
 public class CommandQueue : IDisposable {
-    public Context Context { get; }
-
-    internal CLCommandQueue ClCommandQueue { get; }
-
     public CommandQueue(Context context) {
         context.CheckIfDisposed();
 
@@ -20,6 +16,18 @@ public class CommandQueue : IDisposable {
             IntPtr.Zero,
             out result);
         result.ValidateSuccess();
+    }
+
+    public Context Context { get; }
+
+    internal CLCommandQueue ClCommandQueue { get; }
+
+    public bool IsDisposed { get; private set; }
+
+    public void Dispose() {
+        IsDisposed = true;
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
     }
 
     public void EnqueueFillBuffer<T>(Buffer buffer, T[] arr) where T : unmanaged {
@@ -37,18 +45,18 @@ public class CommandQueue : IDisposable {
                 (UIntPtr) (arr.Length * sizeof(T)),
                 null,
                 out clEvent);
-     
-            CLResultCode releaseResult = CL.ReleaseEvent(clEvent);
+
+            var releaseResult = CL.ReleaseEvent(clEvent);
             result.ValidateSuccess();
             releaseResult.ValidateSuccess();
         }
     }
 
-    public void EnqueueNdRangeKernel(Kernel kernel, Int32 size, IEnumerable<KernelArgValue> argValues) {
+    public void EnqueueNdRangeKernel(Kernel kernel, int size, IEnumerable<KernelArgValue> argValues) {
         CheckIfDisposed();
         kernel.CheckIfDisposed();
 
-        Int32 i = 0;
+        var i = 0;
         foreach (var value in argValues) {
             value.Set(kernel, i);
             ++i;
@@ -61,13 +69,13 @@ public class CommandQueue : IDisposable {
             kernel.ClKernel,
             1,
             null,
-            new UIntPtr[] {new UIntPtr((UInt32) size)},
+            new UIntPtr[] {new UIntPtr((uint) size)},
             null,
             0,
             null,
             out clEvent);
 
-        CLResultCode releaseResult = CL.ReleaseEvent(clEvent);
+        var releaseResult = CL.ReleaseEvent(clEvent);
         result.ValidateSuccess();
         releaseResult.ValidateSuccess();
     }
@@ -87,7 +95,7 @@ public class CommandQueue : IDisposable {
             null,
             out clEvent);
 
-        CLResultCode releaseResult = CL.ReleaseEvent(clEvent);
+        var releaseResult = CL.ReleaseEvent(clEvent);
         result.ValidateSuccess();
         releaseResult.ValidateSuccess();
     }
@@ -98,22 +106,12 @@ public class CommandQueue : IDisposable {
         CL.Finish(ClCommandQueue).ValidateSuccess();
     }
 
-    public bool IsDisposed { get; private set; } = false;
-
     private void ReleaseUnmanagedResources() {
         CL.ReleaseCommandQueue(ClCommandQueue);
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || Context.IsDisposed) {
-            throw new InvalidOperationException("Already disposed.");
-        }
-    }
-
-    public void Dispose() {
-        IsDisposed = true;
-        ReleaseUnmanagedResources();
-        GC.SuppressFinalize(this);
+        if (IsDisposed || Context.IsDisposed) throw new InvalidOperationException("Already disposed.");
     }
 
     ~CommandQueue() {

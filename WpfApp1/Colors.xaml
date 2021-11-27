@@ -1,10 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Thickness x:Key="DefaultBorderThickness">1</Thickness>
-    <CornerRadius x:Key="DefaultCornerRadius">5.0</CornerRadius>
-    
+    <CornerRadius x:Key="DefaultCornerRadius">0</CornerRadius>
+
     <Color x:Key="WindowColor" />
     <Color x:Key="ContentBackgroundColor">#FF393939</Color>
     <Color x:Key="ActiveContentBackgroundColor">#FF505050</Color>
@@ -18,7 +17,7 @@
     <SolidColorBrush x:Key="PanelBorderBrush" Color="#FF212121" />
     <SolidColorBrush x:Key="InactiveForegroundBrush" Color="{StaticResource ForegroundColor}" />
     <SolidColorBrush x:Key="ActiveForegroundBrush" Color="{StaticResource ActiveForegroundColor}" />
-    
+
     <SolidColorBrush x:Key="InactiveBorderBrush" Color="Chocolate" />
     <SolidColorBrush x:Key="ActiveBorderBrush" Color="Coral" />
 

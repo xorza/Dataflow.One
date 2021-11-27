@@ -23,9 +23,7 @@ public class NoLoopValidator {
 
         pathBack.Add(node);
 
-        foreach (Binding b in node.Inputs) {
-            Go(b, pathBack);
-        }
+        foreach (Binding b in node.Inputs) Go(b, pathBack);
 
         pathBack.RemoveAt(pathBack.Count - 1);
     }

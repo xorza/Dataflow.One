@@ -3,58 +3,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
 
         xmlns:WpfNode="clr-namespace:csso.WpfNode;assembly=csso.WpfNode"
 
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        Style="{StaticResource WindowStyle}"
-        >
-    
+        Background="{StaticResource InactiveContentBackgroundBrush}">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Canvas Margin="0"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                MinWidth="150"
-                x:Name="Canvas">
-
-            <!--<WpfNode:Graph x:Name="Graph" />-->
-            <WpfNode:Node x:Name="Node0"
-                          Style="{StaticResource NodeDefaultStyle}">
-                <behaviors:Interaction.Behaviors>
-                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
-                </behaviors:Interaction.Behaviors>
-            </WpfNode:Node>
-            <WpfNode:Node x:Name="Node1" Canvas.Left="100" Canvas.Top="0"
-                          Style="{StaticResource NodeDefaultStyle}">
-                <behaviors:Interaction.Behaviors>
-                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
-                </behaviors:Interaction.Behaviors>
-            </WpfNode:Node>
-
-            <WpfNode:Node x:Name="Node2" Canvas.Left="200" Canvas.Top="0"
-                          Style="{StaticResource NodeDefaultStyle}">
-                <behaviors:Interaction.Behaviors>
-                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
-                </behaviors:Interaction.Behaviors>
-            </WpfNode:Node>
-
-            <WpfNode:Node x:Name="Node3" Canvas.Left="300" Canvas.Top="0"
-                          Style="{StaticResource NodeDefaultStyle}">
-                <behaviors:Interaction.Behaviors>
-                    <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
-                </behaviors:Interaction.Behaviors>
-            </WpfNode:Node>
-
-        </Canvas>
-
-        <Canvas Grid.Row="0" x:Name="EdgesCanvas" Margin="0" />
+        <WpfNode:Graph x:Name="Graph"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       NodeStyle="{StaticResource NodeDefaultStyle}" />
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Button Content="detect cycles" Click="DetectCycles_Button_OnClick" />

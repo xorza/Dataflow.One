@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Reflection.PortableExecutable;
 using csso.Common;
 
 namespace csso.NodeCore {
 public class Node {
-    private readonly List<Binding> _inputBindings = new List<Binding>();
-    
+    private readonly List<Binding> _inputBindings = new();
+
     public Node(Schema schema, Graph graph) {
         Schema = schema;
         Graph = graph;
@@ -23,7 +22,7 @@ public class Node {
         _inputBindings.RemoveAll(_ => _.Input == binding.Input);
 
         Check.True(binding.InputNode == this);
-        
+
         _inputBindings.Add(binding);
     }
 }

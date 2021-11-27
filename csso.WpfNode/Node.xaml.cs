@@ -17,6 +17,12 @@ public delegate void PinClickEventHandler(object sender, PinClickEventArgs e);
 
 
 public partial class Node : UserControl, INotifyPropertyChanged {
+    public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
+        "CornerRadius", typeof(CornerRadius), typeof(Node), new PropertyMetadata(default(CornerRadius)));
+
+    public static readonly DependencyProperty HeaderBackgroundProperty = DependencyProperty.Register(
+        "HeaderBackground", typeof(Brush), typeof(Node), new PropertyMetadata(default(Brush)));
+
     private NodeView? _nodeView;
 
     public Node() {
@@ -34,18 +40,20 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         }
     }
 
+    public CornerRadius CornerRadius {
+        get => (CornerRadius) GetValue(CornerRadiusProperty);
+        set => SetValue(CornerRadiusProperty, value);
+    }
+
+    public Brush HeaderBackground {
+        get => (Brush) GetValue(HeaderBackgroundProperty);
+        set => SetValue(HeaderBackgroundProperty, value);
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public event PinClickEventHandler? PinClick;
 
-    public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
-        "CornerRadius", typeof(CornerRadius), typeof(Node), new PropertyMetadata(default(CornerRadius)));
-
-    public CornerRadius CornerRadius {
-        get { return (CornerRadius) GetValue(CornerRadiusProperty); }
-        set { SetValue(CornerRadiusProperty, value); }
-    }
-    
     public bool UpdatePinPositions(Canvas canvas) {
         var updated = false;
 

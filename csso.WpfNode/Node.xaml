@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:csso.WpfNode"
              mc:Ignorable="d"
              d:DesignHeight="350" d:DesignWidth="300"
              VerticalAlignment="Top"
@@ -27,22 +26,35 @@
             <Grid Margin="{TemplateBinding Margin}">
                 <Border BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{Binding Path=CornerRadius, ElementName=NodeUserControl}"
-                        Margin="{TemplateBinding Margin}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        Background="{TemplateBinding Background}" />
-                <ContentPresenter Margin="{TemplateBinding Padding}" />
+                        Background="{TemplateBinding Background}"
+                        ClipToBounds="True">
+                    <ContentPresenter />
+                </Border>
             </Grid>
         </ControlTemplate>
     </UserControl.Template>
     <Grid x:Name="Panel"
-          DataContext="{Binding NodeView}">
+          DataContext="{Binding NodeView}" Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Label Content="{Binding Name}"
-               Grid.Row="0" />
-        <Grid Grid.Row="1" HorizontalAlignment="Stretch">
+        <Border
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            BorderBrush="{x:Null}"
+            BorderThickness="0"
+            Background="{Binding Path=HeaderBackground, ElementName=NodeUserControl}">
+            <Label Content="{Binding Name}"
+                   HorizontalAlignment="Left"
+                   FontWeight="Bold"
+                   FontSize="10"
+                   Padding="0"
+                   Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
+        </Border>
+        <Grid Grid.Row="1"
+              HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -50,18 +62,18 @@
             <Grid.Resources>
                 <ResourceDictionary>
                     <Style TargetType="Button">
+                        <Setter Property="BorderBrush" Value="{Binding Path=BorderBrush, ElementName=NodeUserControl}" />
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Grid x:Name="grid" Width="10" Height="10" Background="Transparent">
-                                        <Ellipse Stroke="Red" StrokeThickness="4" Visibility="Collapsed"
-                                                 x:Name="Highlight" />
-                                        <Ellipse Stroke="Black" StrokeThickness="2" Margin="1" />
+                                        <Ellipse x:Name="Highlight" Stroke="{TemplateBinding BorderBrush}"
+                                                 StrokeThickness="2" Margin="1" />
                                     </Grid>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsPressed" Value="True" />
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Visibility" TargetName="Highlight" Value="Visible" />
+                                            <Setter Property="Stroke" TargetName="Highlight" Value="Coral" />
                                         </Trigger>
                                         <Trigger Property="IsEnabled" Value="False">
                                             <!--<Setter Property="Opacity" TargetName="grid" Value="0.25"/>-->
@@ -72,17 +84,25 @@
                             </Setter.Value>
                         </Setter>
                     </Style>
+
+                    <Style TargetType="Label">
+                        <Setter Property="Margin" Value="2 1" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Foreground" Value="{Binding Path=Foreground, ElementName=NodeUserControl}" />
+                    </Style>
                 </ResourceDictionary>
             </Grid.Resources>
 
             <StackPanel x:Name="InputsStackPanel"
-                        HorizontalAlignment="Stretch" />
+                        HorizontalAlignment="Stretch"
+                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
 
             <StackPanel x:Name="OutputsStackPanel"
                         HorizontalAlignment="Stretch"
-                        Grid.Column="1" 
-                        TextBlock.Foreground="Green"/>
-      
+                        Grid.Column="1"
+                        TextBlock.Foreground="Green"
+                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
+
         </Grid>
     </Grid>
 </UserControl>

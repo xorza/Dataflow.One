@@ -1,36 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Text;
-using csso.Common;
-using csso.OpenCL;
 using OpenTK.Compute.OpenCL;
-using Buffer = csso.OpenCL.Buffer;
-using Debug = System.Diagnostics.Debug;
 
 namespace csso.OpenCL {
 public class Context : IDisposable {
-    internal CLContext ClContext { get; }
-    internal CLDevice[] ClDevices { get; }
-    internal CLDevice SelectedClDevice { get; }
-
     public Context() {
         IsDisposed = false;
 
         CL.GetPlatformIds(out CLPlatform[] platformIds)
             .ValidateSuccess();
 
-        foreach (CLPlatform platform in platformIds)
+        foreach (var platform in platformIds)
             CL.GetPlatformInfo(platform, PlatformInfo.Name, out byte[] val)
                 .ValidateSuccess();
 
-        foreach (CLPlatform platform in platformIds) {
+        foreach (var platform in platformIds) {
             CL.GetDeviceIds(platform, DeviceType.All, out CLDevice[] devices)
                 .ValidateSuccess();
 
-            CLContext context = CL.CreateContext(IntPtr.Zero, devices, IntPtr.Zero,
-                IntPtr.Zero, out CLResultCode result);
+            var context = CL.CreateContext(IntPtr.Zero, devices, IntPtr.Zero,
+                IntPtr.Zero, out var result);
             result.ValidateSuccess();
 
             if (devices.Length != 0) {
@@ -44,8 +34,20 @@ public class Context : IDisposable {
         throw new InvalidOperationException("cannot create context");
     }
 
+    internal CLContext ClContext { get; }
+    internal CLDevice[] ClDevices { get; }
+    internal CLDevice SelectedClDevice { get; }
 
-    public String Test1() {
+    public bool IsDisposed { get; private set; }
+
+    public void Dispose() {
+        IsDisposed = true;
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+
+
+    public string Test1() {
         CheckIfDisposed();
 
         string code = @"
@@ -56,13 +58,13 @@ public class Context : IDisposable {
 					result[i] = (A[i] + B[i]);
                 }";
 
-        const Int32 arraySize = 20;
+        const int arraySize = 20;
 
         float[] a = new float[arraySize];
         float[] b = new float[arraySize];
         float[] resultValues = new float[arraySize];
 
-        for (Int32 i = 0; i < arraySize; i++) {
+        for (var i = 0; i < arraySize; i++) {
             a[i] = i;
             b[i] = 1;
         }
@@ -96,7 +98,7 @@ public class Context : IDisposable {
         }
 
         StringBuilder line = new();
-        foreach (float res in resultValues) {
+        foreach (var res in resultValues) {
             line.Append(res);
             line.Append(", ");
         }
@@ -104,22 +106,12 @@ public class Context : IDisposable {
         return line.ToString();
     }
 
-    public bool IsDisposed { get; private set; } = false;
-
     private void ReleaseUnmanagedResources() {
         CL.ReleaseContext(ClContext);
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed) {
-            throw new InvalidOperationException("Already disposed.");
-        }
-    }
-
-    public void Dispose() {
-        IsDisposed = true;
-        ReleaseUnmanagedResources();
-        GC.SuppressFinalize(this);
+        if (IsDisposed) throw new InvalidOperationException("Already disposed.");
     }
 
     ~Context() {

@@ -1,5 +1,4 @@
-﻿using System;
-using csso.Common;
+﻿using csso.Common;
 
 namespace csso.OpenCL {
 public enum Quantity {
@@ -8,16 +7,12 @@ public enum Quantity {
 }
 
 public class KernelArg {
-    public String Name { get; }
-    public Quantity Quantity { get; }
-    public DataType Type { get; }
-
-    public KernelArg(String name, String typeName) {
+    public KernelArg(string name, string typeName) {
         Check.True(name.Length > 0);
 
         Name = name;
 
-        String type = typeName;
+        string type = typeName;
         Quantity = Quantity.Scalar;
 
         if (typeName.EndsWith("*")) {
@@ -28,5 +23,9 @@ public class KernelArg {
 
         Type = type.ToEnum<DataType>();
     }
+
+    public string Name { get; }
+    public Quantity Quantity { get; }
+    public DataType Type { get; }
 }
 }

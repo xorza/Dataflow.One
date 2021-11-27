@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace csso.ImageProcessing {
+﻿namespace csso.ImageProcessing {
 public struct RGB8U {
     public byte r;
     public byte g;
@@ -28,28 +26,28 @@ public struct RGBA8U {
 }
 
 public struct RGB16U {
-    public UInt16 r;
-    public UInt16 g;
-    public UInt16 b;
+    public ushort r;
+    public ushort g;
+    public ushort b;
 
     public RGB16U(RGB8U other) {
-        r = (UInt16) (other.r * 256);
-        g = (UInt16) (other.g * 256);
-        b = (UInt16) (other.b * 256);
+        r = (ushort) (other.r * 256);
+        g = (ushort) (other.g * 256);
+        b = (ushort) (other.b * 256);
     }
 }
 
 public struct RGBA16U {
-    public UInt16 r;
-    public UInt16 g;
-    public UInt16 b;
-    public UInt16 a;
+    public ushort r;
+    public ushort g;
+    public ushort b;
+    public ushort a;
 
     public RGBA16U(RGBA8U other) {
-        r = (UInt16) (other.r * 256);
-        g = (UInt16) (other.g * 256);
-        b = (UInt16) (other.g * 256);
-        a = (UInt16) (other.a * 256);
+        r = (ushort) (other.r * 256);
+        g = (ushort) (other.g * 256);
+        b = (ushort) (other.g * 256);
+        a = (ushort) (other.a * 256);
     }
 }
 

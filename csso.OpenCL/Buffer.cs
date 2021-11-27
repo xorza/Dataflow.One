@@ -4,12 +4,7 @@ using OpenTK.Compute.OpenCL;
 
 namespace csso.OpenCL {
 public class Buffer : IDisposable {
-    public Context Context { get; }
-    public Int32 SizeInBytes { get; private set; } = 0;
-
-    internal CLBuffer ClBuffer { get; }
-
-    public Buffer(Context context, Int32 sizeInBytes) {
+    public Buffer(Context context, int sizeInBytes) {
         context.CheckIfDisposed();
 
         Context = context;
@@ -18,7 +13,7 @@ public class Buffer : IDisposable {
         ClBuffer = CL.CreateBuffer(
             Context.ClContext,
             MemoryFlags.WriteOnly,
-            new UIntPtr((UInt32) sizeInBytes),
+            new UIntPtr((uint) sizeInBytes),
             IntPtr.Zero,
             out result);
         result.ValidateSuccess();
@@ -26,7 +21,7 @@ public class Buffer : IDisposable {
         SizeInBytes = sizeInBytes;
     }
 
-    private Buffer(Context context, CLBuffer clBuffer, Int32 sizeInBytes) {
+    private Buffer(Context context, CLBuffer clBuffer, int sizeInBytes) {
         context.CheckIfDisposed();
         Check.Argument(sizeInBytes > 0, nameof(sizeInBytes));
 
@@ -35,12 +30,25 @@ public class Buffer : IDisposable {
         SizeInBytes = sizeInBytes;
     }
 
+    public Context Context { get; }
+    public int SizeInBytes { get; }
+
+    internal CLBuffer ClBuffer { get; }
+
+    public bool IsDisposed { get; private set; }
+
+    public void Dispose() {
+        IsDisposed = true;
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+
     public static Buffer Create<T>(Context context, T[] arr) where T : unmanaged {
         context.CheckIfDisposed();
         Check.Argument(arr.Length > 0, nameof(arr));
 
         CLResultCode result;
-        CLBuffer clBuffer = CL.CreateBuffer(
+        var clBuffer = CL.CreateBuffer(
             context.ClContext,
             MemoryFlags.ReadOnly | MemoryFlags.CopyHostPtr,
             arr,
@@ -52,22 +60,12 @@ public class Buffer : IDisposable {
         }
     }
 
-    public bool IsDisposed { get; private set; } = false;
-
     private void ReleaseUnmanagedResources() {
         CL.ReleaseMemoryObject(ClBuffer);
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || Context.IsDisposed) {
-            throw new InvalidOperationException("Already disposed.");
-        }
-    }
-
-    public void Dispose() {
-        IsDisposed = true;
-        ReleaseUnmanagedResources();
-        GC.SuppressFinalize(this);
+        if (IsDisposed || Context.IsDisposed) throw new InvalidOperationException("Already disposed.");
     }
 
     ~Buffer() {

@@ -5,7 +5,7 @@ public struct Vec2d {
 }
 
 public struct Vec2f {
-    public float x; 
+    public float x;
     public float y;
 }
 }

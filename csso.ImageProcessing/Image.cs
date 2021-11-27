@@ -1,24 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
-using System.Threading;
 
 namespace csso.ImageProcessing {
 public class Image : IDisposable {
-    public Int32 Height { get; private set; } = 0;
-    public Int32 Width { get; private set; } = 0;
-    public Int32 Stride { get; private set; } = 0;
-    public Int32 ChannelCount { get; private set; }
-    public Int32 BytesPerChannel { get; private set; }
-    public Int32 SizeInBytes { get; }
-    public Int32 TotalPixels => Height * Width;
-
     private IntPtr _ptr;
 
-    public Image(String filename) {
+    public Image(string filename) {
         var img = new Bitmap(filename);
         BitmapData? imageData = null;
 
@@ -27,7 +16,7 @@ public class Image : IDisposable {
                 new Rectangle(0, 0, img.Width, img.Height),
                 ImageLockMode.ReadOnly,
                 img.PixelFormat);
-            
+
             SetPixelFormat(imageData.PixelFormat);
             SizeInBytes = imageData.Height * imageData.Stride;
             Height = imageData.Height;
@@ -47,9 +36,22 @@ public class Image : IDisposable {
         }
     }
 
-    private void SetPixelFormat(System.Drawing.Imaging.PixelFormat pixelFormat) {
+    public int Height { get; }
+    public int Width { get; }
+    public int Stride { get; }
+    public int ChannelCount { get; private set; }
+    public int BytesPerChannel { get; private set; }
+    public int SizeInBytes { get; }
+    public int TotalPixels => Height * Width;
+
+    public void Dispose() {
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+
+    private void SetPixelFormat(PixelFormat pixelFormat) {
         switch (pixelFormat) {
-            case System.Drawing.Imaging.PixelFormat.Format24bppRgb:
+            case PixelFormat.Format24bppRgb:
                 ChannelCount = 3;
                 BytesPerChannel = 1;
                 break;
@@ -59,18 +61,16 @@ public class Image : IDisposable {
         }
     }
 
-    public unsafe T Get<T>(Int32 x, Int32 y) where T : unmanaged {
-        T* data = (T*) (_ptr + y * Stride).ToPointer();
+    public unsafe T Get<T>(int x, int y) where T : unmanaged {
+        var data = (T*) (_ptr + y * Stride).ToPointer();
         return data[x];
     }
 
     public T[] As<T>() where T : unmanaged {
         T[] result = new T[TotalPixels];
-        for (int y = 0; y < Height; y++) {
-            for (int x = 0; x < Width; x++) {
-                result[y * Width + x] = Get<T>(x, y);
-            }
-        }
+        for (var y = 0; y < Height; y++)
+        for (var x = 0; x < Width; x++)
+            result[y * Width + x] = Get<T>(x, y);
 
         return result;
     }
@@ -81,11 +81,6 @@ public class Image : IDisposable {
             Marshal.FreeHGlobal(_ptr);
             _ptr = IntPtr.Zero;
         }
-    }
-
-    public void Dispose() {
-        ReleaseUnmanagedResources();
-        GC.SuppressFinalize(this);
     }
 
     ~Image() {

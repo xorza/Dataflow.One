@@ -17,7 +17,15 @@
     </Style>
     <Style TargetType="Label">
         <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="Foreground" Value="{DynamicResource InactiveForegroundBrush}" />
+    </Style>
+    <Style TargetType="Border">
+        <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="BorderBrush" Value="Gray" />
+        <Setter Property="BorderThickness" Value="1" />
     </Style>
 
 
@@ -118,8 +126,11 @@
         </Setter>
     </Style>
 
-
-    <Style TargetType="{x:Type WpfNode:Node}" x:Key="NodeDefaultStyle" >
+    <Style TargetType="{x:Type WpfNode:Graph}" >
+        <Setter Property="Background" Value="{x:Null}" />
+    </Style>
+    
+    <Style TargetType="{x:Type WpfNode:Node}" x:Key="NodeDefaultStyle">
         <Setter Property="Margin" Value="2" />
         <Setter Property="Padding" Value="10 6" />
         <Setter Property="Foreground" Value="{StaticResource InactiveForegroundBrush}" />
@@ -127,5 +138,6 @@
         <Setter Property="BorderBrush" Value="{StaticResource PanelBorderBrush}" />
         <Setter Property="BorderThickness" Value="{StaticResource DefaultBorderThickness}" />
         <Setter Property="CornerRadius" Value="{StaticResource DefaultCornerRadius}" />
+        <Setter Property="HeaderBackground" Value="{StaticResource ActiveContentBackgroundBrush}" />
     </Style>
 </ResourceDictionary>
