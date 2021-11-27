@@ -135,6 +135,7 @@
     <Style TargetType="{x:Type WpfNode:Node}" x:Key="NodeDefaultStyle">
         <Setter Property="Margin" Value="2" />
         <Setter Property="Padding" Value="10 6" />
+        <Setter Property="HighlightBrush" Value="Chartreuse" />
         <Setter Property="Foreground" Value="{StaticResource InactiveForegroundBrush}" />
         <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource PanelBorderBrush}" />

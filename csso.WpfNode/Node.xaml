@@ -156,7 +156,7 @@
         </Border>
 
         <Border Grid.Row="0"
-                BorderBrush="Chartreuse"
+                BorderBrush="{Binding Path=HighlightBrush, ElementName=NodeUserControl }"
                 BorderThickness="1"
                 Visibility="{Binding Path=IsSelected, Converter={StaticResource BoolToVis}}" />
 

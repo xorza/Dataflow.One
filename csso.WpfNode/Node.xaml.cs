@@ -25,6 +25,14 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     public static readonly DependencyProperty HeaderBackgroundProperty = DependencyProperty.Register(
         "HeaderBackground", typeof(Brush), typeof(Node), new PropertyMetadata(default(Brush)));
 
+    public static readonly DependencyProperty HighlightBrushProperty = DependencyProperty.Register(
+        "HighlightBrush", typeof(Brush), typeof(Node), new PropertyMetadata(default(Brush)));
+
+    public Brush HighlightBrush {
+        get { return (Brush) GetValue(HighlightBrushProperty); }
+        set { SetValue(HighlightBrushProperty, value); }
+    }
+    
     private NodeView? _nodeView;
 
     public Node() {
