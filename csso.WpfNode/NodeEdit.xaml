@@ -14,7 +14,7 @@
     </UserControl.Template>
     <Grid>
         <Grid Margin="{Binding Path=Padding, ElementName=NodeEditUserControl}">
-            <Label Content="{Binding Path=NodeView.Name, ElementName=NodeEditUserControl}" />
+            <TextBlock Text="{Binding Path=NodeView.Name, ElementName=NodeEditUserControl}" />
         </Grid>
     </Grid>
 </UserControl>

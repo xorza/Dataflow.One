@@ -71,19 +71,25 @@
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
 
-                                                <Border Grid.ColumnSpan="3" x:Name="Border1"
-                                                        BorderBrush="{x:Null}" BorderThickness="0" />
+                                                <Border Grid.ColumnSpan="3"
+                                                        x:Name="Border1"
+                                                        BorderBrush="{x:Null}"
+                                                        BorderThickness="0"
+                                                        VerticalAlignment="Stretch"
+                                                        HorizontalAlignment="Stretch"
+                                                        Visibility="Collapsed" />
 
                                                 <Ellipse Grid.Column="0"
                                                          x:Name="Highlight2"
                                                          Stroke="{x:Null}"
                                                          Fill="Transparent"
-                                                         Width="16"
-                                                         Height="16"
+                                                         Width="13"
+                                                         Height="13"
                                                          StrokeThickness="0"
                                                          Margin="0"
                                                          VerticalAlignment="Center"
                                                          HorizontalAlignment="Center" />
+
                                                 <Ellipse Grid.Column="0"
                                                          x:Name="Highlight1"
                                                          Stroke="DarkGray"
@@ -101,7 +107,6 @@
                                                                   HorizontalAlignment="Left"
                                                                   x:Name="ContentPresenter1" />
 
-
                                             </Grid>
                                             <ControlTemplate.Triggers>
                                                 <DataTrigger Binding="{Binding IsOutput}" Value="True">
@@ -115,8 +120,8 @@
                                                             Property="Grid.Column"
                                                             Value="2" />
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsSelected}" Value="True" >
-                                                    <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" /> 
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" />
                                                 </DataTrigger>
                                                 <Trigger Property="IsMouseOver" Value="True">
                                                     <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" />
@@ -124,19 +129,10 @@
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Button.Template>
-                                    <Grid>
-                                        <Label Margin="0" Padding="2"
-                                               Content="{Binding SchemaPut.Name }"
-                                               VerticalAlignment="Center"
-                                               Visibility="{Binding Path=IsInput, Converter={StaticResource BoolToVis}}" />
-
-                                        <Label Margin="0" Padding="2"
-                                               Content="{Binding SchemaPut.Name }"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Right"
-                                               Visibility="{Binding Path=IsOutput, Converter={StaticResource BoolToVis}}" />
-
-                                    </Grid>
+                                    <TextBlock Margin="0" Padding="0"
+                                           Text="{Binding SchemaPut.Name }"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left" />
                                 </Button>
                             </DataTemplate>
                         </ResourceDictionary>
