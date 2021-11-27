@@ -24,26 +24,12 @@
             <Canvas Margin="0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    MinWidth="150"
-                    x:Name="Canvas">
-                <local:Node x:Name="Node0"
-                            Style="{Binding Path=NodeStyle, ElementName=GraphUserControl}">
-                    <!-- <behaviors:Interaction.Behaviors> -->
-                    <!--     <behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"  /> -->
-                    <!-- </behaviors:Interaction.Behaviors> -->
-                </local:Node>
+                    x:Name="NodesCanvas" />
 
-                <local:Node x:Name="Node1" Canvas.Left="100" Canvas.Top="0"
-                            Style="{Binding Path=NodeStyle, ElementName=GraphUserControl}" />
-                <local:Node x:Name="Node2" Canvas.Left="200" Canvas.Top="0"
-                            Style="{Binding Path=NodeStyle, ElementName=GraphUserControl}" />
-
-                <local:Node x:Name="Node3" Canvas.Left="300" Canvas.Top="0"
-                            Style="{Binding Path=NodeStyle, ElementName=GraphUserControl}" />
-
-            </Canvas>
-
-            <Canvas x:Name="EdgesCanvas" Margin="0" />
+            <Canvas x:Name="EdgesCanvas"
+                    Margin="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch" />
         </Grid>
     </Border>
 </UserControl>

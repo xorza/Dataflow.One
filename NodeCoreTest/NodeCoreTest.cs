@@ -39,7 +39,7 @@ public class Tests {
         Assert.AreEqual(node.Graph, graph);
         Assert.AreEqual(node.Inputs.Count, _schema.Inputs.Count);
 
-        node.Inputs.ForEach(input => { Assert.AreSame(input.InputNode, node); });
+        node.Inputs.Foreach(input => { Assert.AreSame(input.InputNode, node); });
 
 
         Assert.Pass();

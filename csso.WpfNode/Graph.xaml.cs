@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,6 +32,8 @@ public partial class Graph : UserControl {
     private PutView? _pv1;
     private PutView? _pv2;
 
+    private readonly List<Node> _nodes = new List<Node>();
+
     public Graph() {
         InitializeComponent();
 
@@ -37,11 +41,6 @@ public partial class Graph : UserControl {
         Loaded += Loaded_Handler;
         MouseLeftButtonDown += NodeDeselectButton_Handler;
         MouseRightButtonDown += NodeDeselectButton_Handler;
-
-        AddNode(Node0);
-        AddNode(Node1);
-        AddNode(Node2);
-        AddNode(Node3);
     }
 
 
@@ -56,25 +55,46 @@ public partial class Graph : UserControl {
     }
 
     private void SetDataContext(GraphView? graphView) {
-        DataContext = null;
+        if (_graphView == graphView)
+            return;
 
         _graphView = graphView;
+        DataContext = _graphView;
+        NodesCanvas.Children.Clear();
+        _nodes.Clear();
 
         if (_graphView != null) {
             _graphView.Edges.CollectionChanged += Edges_CollectionChanged;
+            _graphView.Nodes.CollectionChanged += Nodes_CollectionChanged;
             _graphView.PropertyChanged += PropertyChanged_Handler;
 
-            Node0.NodeView = _graphView.Nodes[0];
-            Node1.NodeView = _graphView.Nodes[1];
-            Node2.NodeView = _graphView.Nodes[3];
-            Node3.NodeView = _graphView.Nodes[4];
-            DataContext = _graphView;
+            _graphView.Nodes.Foreach(AddNode);
         }
     }
 
     private void Edges_CollectionChanged(object? sender,
         NotifyCollectionChangedEventArgs e) {
         RefreshLine(true);
+    }
+
+    private void Nodes_CollectionChanged(object? sender,
+        NotifyCollectionChangedEventArgs e) {
+        if (e.OldItems != null) {
+            _nodes.Where(node => e.OldItems.Contains(node.NodeView))
+                .ToArray()
+                .Foreach(node => {
+                    NodesCanvas.Children.Remove(node);
+                    _nodes.Remove(node);
+                });
+        }
+        else {
+            NodesCanvas.Children.Clear();
+            _nodes.Clear();
+        }
+
+        if (e.NewItems != null) {
+            e.NewItems.Foreach<NodeView>(AddNode);
+        }
     }
 
     private void PropertyChanged_Handler(object? sender, PropertyChangedEventArgs e) { }
@@ -133,13 +153,12 @@ public partial class Graph : UserControl {
     }
 
     private void RefreshLine(bool forceRedraw) {
-        if (Node1.NodeView == null || Node2.NodeView == null)
-            return;
+        bool needRedraw = false;
 
-        var needRedraw = Node0.UpdatePinPositions(Canvas);
-        needRedraw |= Node1.UpdatePinPositions(Canvas);
-        needRedraw |= Node2.UpdatePinPositions(Canvas);
-        needRedraw |= Node3.UpdatePinPositions(Canvas);
+        _nodes.ForEach(node => {
+            Check.True(node.NodeView != null);
+            needRedraw |= node.UpdatePinPositions(NodesCanvas);
+        });
 
         if (!needRedraw && !forceRedraw)
             return;
@@ -189,12 +208,20 @@ public partial class Graph : UserControl {
     }
 
     Point? _dragStart = null;
+
+
+    private void AddNode(NodeView nodeView) {
+        Node wpfNode = new();
+        wpfNode.NodeView = nodeView;
+        AddNode(wpfNode);
+    }
+
     private void AddNode(Node node) {
         void Down(object sender, MouseButtonEventArgs args) {
             if (_dragStart == null) {
                 args.Handled = true;
             }
-            
+
             var element = (UIElement) sender;
             _dragStart = args.GetPosition(element);
         }
@@ -209,14 +236,14 @@ public partial class Graph : UserControl {
             if (_dragStart != null && args.LeftButton == MouseButtonState.Pressed) {
                 var element = (UIElement) sender;
                 element.CaptureMouse();
-                var p2 = args.GetPosition(Canvas);
+                var p2 = args.GetPosition(NodesCanvas);
                 Canvas.SetLeft(element, p2.X - _dragStart.Value.X);
                 Canvas.SetTop(element, p2.Y - _dragStart.Value.Y);
 
                 args.Handled = true;
             }
         }
-        
+
         void EnableDrag(UIElement element) {
             element.MouseDown += Down;
             element.MouseMove += Move;
@@ -225,6 +252,9 @@ public partial class Graph : UserControl {
 
         EnableDrag(node);
         node.PinClick += Node_OnPinClick;
+        _nodes.Add(node);
+        node.Style = NodeStyle;
+        NodesCanvas.Children.Add(node);
     }
 }
 }
