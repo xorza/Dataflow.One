@@ -30,8 +30,8 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         "HighlightBrush", typeof(Brush), typeof(Node), new PropertyMetadata(default(Brush)));
 
     public Brush HighlightBrush {
-        get { return (Brush) GetValue(HighlightBrushProperty); }
-        set { SetValue(HighlightBrushProperty, value); }
+        get => (Brush) GetValue(HighlightBrushProperty);
+        set => SetValue(HighlightBrushProperty, value);
     }
 
     public static readonly DependencyProperty NodeViewProperty = DependencyProperty.Register(
@@ -133,9 +133,9 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         }
     }
 
-    private void PinHighlight1_OnLoaded(object sender, RoutedEventArgs args) {
+    private void PinHighlight_LoadedHandler(object sender, RoutedEventArgs args) {
         FrameworkElement element = (FrameworkElement) sender;
-        PutView pv = (PutView) element.DataContext;
+        PutView pv = (PutView) element.Tag;
         pv.Control = element;
     }
 }

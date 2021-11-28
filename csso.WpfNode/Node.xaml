@@ -16,6 +16,95 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+            <DataTemplate
+                x:Key="PinViewTemplate"
+                DataType="{x:Type view:PutView}">
+                <Button
+                    Padding="0"
+                    Margin="0"
+                    Click="PinButton_Click"
+                    Tag="{Binding}"
+                    HorizontalAlignment="Right"
+                    x:Name="PinButton">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid Background="Transparent" Margin="0"
+                                  x:Name="MainGrid123">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Ellipse Grid.Column="0"
+                                         x:Name="Highlight2"
+                                         Stroke="{x:Null}"
+                                         Fill="Transparent"
+                                         Width="13"
+                                         Height="13"
+                                         StrokeThickness="0"
+                                         Margin="0"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"
+                                         Visibility="Visible" />
+
+                                <Ellipse Grid.Column="0"
+                                         x:Name="Highlight1"
+                                         Stroke="DarkGray"
+                                         Width="7"
+                                         Height="7"
+                                         StrokeThickness="2"
+                                         Margin="0"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"
+                                         Tag="{Binding}"
+                                         Loaded="PinHighlight_LoadedHandler"
+                                         Visibility="Visible" />
+
+                                <ContentPresenter Visibility="Visible"
+                                                  Grid.Column="1"
+                                                  Margin="0"
+                                                  Content="{TemplateBinding Content}"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center"
+                                                  x:Name="ContentPresenter1" />
+
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsOutput}" Value="True">
+                                    
+                                    <Setter TargetName="Highlight1"
+                                            Property="Grid.Column"
+                                            Value="2" />
+                                    <Setter TargetName="Highlight2"
+                                            Property="Grid.Column"
+                                            Value="2" />
+                                    
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" />
+                                </DataTrigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+
+                    <TextBlock Margin="0"
+                               Padding="0"
+                               Text="{Binding SchemaPut.Name }"
+                               VerticalAlignment="Center" />
+                </Button>
+                
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding IsInput}" Value="True">
+                        <Setter TargetName="PinButton" Property="HorizontalAlignment" Value="Left"></Setter>
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -25,7 +114,8 @@
         </ControlTemplate>
     </UserControl.Template>
 
-    <Grid x:Name="Panel" Margin="{Binding Path=Margin, ElementName=NodeUserControl}">
+    <Grid
+        Margin="{Binding Path=Margin, ElementName=NodeUserControl}">
 
         <Border BorderThickness="{Binding Path=BorderThickness, ElementName=NodeUserControl}"
                 CornerRadius="{Binding Path=CornerRadius, ElementName=NodeUserControl}"
@@ -42,7 +132,7 @@
                     BorderBrush="{x:Null}"
                     BorderThickness="0"
                     Background="{Binding Path=HeaderBackground, ElementName=NodeUserControl}">
-                    <Label Content="{Binding Path=Name, ElementName=NodeUserControl}"
+                    <Label Content="{Binding Path=NodeView.Node.Schema.Name, ElementName=NodeUserControl}"
                            HorizontalAlignment="Left"
                            FontWeight="Bold"
                            FontSize="10"
@@ -53,101 +143,29 @@
                 <Grid Grid.Row="1"
                       HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Grid.Resources>
-                        <ResourceDictionary>
-                            <DataTemplate DataType="{x:Type view:PutView}">
-                                <Button Padding="0" Margin="0" Click="PinButton_Click"
-                                        Tag="{Binding}">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-
-                                                <Border Grid.ColumnSpan="3"
-                                                        x:Name="Border1"
-                                                        BorderBrush="{x:Null}"
-                                                        BorderThickness="0"
-                                                        VerticalAlignment="Stretch"
-                                                        HorizontalAlignment="Stretch"
-                                                        Visibility="Collapsed" />
-
-                                                <Ellipse Grid.Column="0"
-                                                         x:Name="Highlight2"
-                                                         Stroke="{x:Null}"
-                                                         Fill="Transparent"
-                                                         Width="13"
-                                                         Height="13"
-                                                         StrokeThickness="0"
-                                                         Margin="0"
-                                                         VerticalAlignment="Center"
-                                                         HorizontalAlignment="Center" />
-
-                                                <Ellipse Grid.Column="0"
-                                                         x:Name="Highlight1"
-                                                         Stroke="DarkGray"
-                                                         Width="7"
-                                                         Height="7"
-                                                         StrokeThickness="2"
-                                                         Margin="0"
-                                                         VerticalAlignment="Center"
-                                                         HorizontalAlignment="Center"
-                                                         DataContext="{Binding}"
-                                                         Loaded="PinHighlight1_OnLoaded" />
-
-                                                <ContentPresenter Grid.Column="1" Margin="0"
-                                                                  Content="{TemplateBinding Content }"
-                                                                  HorizontalAlignment="Left"
-                                                                  x:Name="ContentPresenter1" />
-
-                                            </Grid>
-                                            <ControlTemplate.Triggers>
-                                                <DataTrigger Binding="{Binding IsOutput}" Value="True">
-                                                    <Setter TargetName="ContentPresenter1"
-                                                            Property="HorizontalAlignment"
-                                                            Value="Right" />
-                                                    <Setter TargetName="Highlight1"
-                                                            Property="Grid.Column"
-                                                            Value="2" />
-                                                    <Setter TargetName="Highlight2"
-                                                            Property="Grid.Column"
-                                                            Value="2" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                    <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" />
-                                                </DataTrigger>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" />
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                    <TextBlock Margin="0" Padding="0"
-                                           Text="{Binding SchemaPut.Name }"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Left" />
-                                </Button>
-                            </DataTemplate>
-                        </ResourceDictionary>
-                    </Grid.Resources>
 
                     <StackPanel
-                        HorizontalAlignment="Stretch"
+                        HorizontalAlignment="Left"
                         Margin="{Binding Path=Padding, ElementName=NodeUserControl}">
-                        <ItemsControl ItemsSource="{Binding Path=NodeView.Inputs, ElementName=NodeUserControl}" />
+                        <ItemsControl
+                            ItemsSource="{Binding Path=NodeView.Inputs, ElementName=NodeUserControl}"
+                            ItemTemplate="{StaticResource PinViewTemplate}" />
                     </StackPanel>
 
                     <StackPanel
-                        HorizontalAlignment="Stretch"
+                        
+                        HorizontalAlignment="Right"
                         Grid.Column="1"
-                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}">
-                        <ItemsControl ItemsSource="{Binding Path=NodeView.Outputs, ElementName=NodeUserControl}" />
+                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}"
+                        >
+                        <ItemsControl
+                            HorizontalAlignment="Right"
+                            HorizontalContentAlignment="Right"
+                            ItemsSource="{Binding Path=NodeView.Outputs, ElementName=NodeUserControl}"
+                            ItemTemplate="{StaticResource PinViewTemplate}" />
                     </StackPanel>
 
                 </Grid>

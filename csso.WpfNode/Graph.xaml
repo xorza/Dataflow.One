@@ -49,7 +49,6 @@
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
 
-
             <Canvas Margin="0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
