@@ -11,7 +11,7 @@ public class Graph {
 
     public IReadOnlyList<Node> Nodes { get; }
 
-    internal void Add(Node node) {
+    public void Add(Node node) {
         Debug.Assert.AreSame(node.Graph, this);
 
         _nodes.Add(node);

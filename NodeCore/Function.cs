@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 
 namespace csso.NodeCore {
-[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-sealed class ArgumentDescriptionAttribute : Attribute {
-    public string Text { get; }
 
-    public ArgumentDescriptionAttribute(String text) {
-        Text = text;
-    }
+[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+public sealed class OutputAttribute : Attribute {
+    public OutputAttribute() { }
 }
 
 public interface IFunction {
@@ -18,6 +17,7 @@ public interface IFunction {
     IReadOnlyList<FunctionOutput> Outputs { get; }
     string Name { get; }
     string Description { get; }
+    bool IsOutput { get; }
 }
 
 public class Function : IFunction {
@@ -25,8 +25,9 @@ public class Function : IFunction {
     public IReadOnlyList<FunctionOutput> Outputs { get; }
     public string Name { get; }
     public string Description { get; }
+    public bool IsOutput { get; }
 
-    public Function(String name, Delegate func) {
+    public Function(String name, MethodInfo method) {
         List<FunctionInput> inputs = new();
         List<FunctionOutput> outputs = new();
 
@@ -34,13 +35,14 @@ public class Function : IFunction {
         Outputs = outputs.AsReadOnly();
         Name = name;
 
-        ArgumentDescriptionAttribute? descr =
-            Attribute.GetCustomAttribute(func.Method, typeof(ArgumentDescriptionAttribute))
-                as ArgumentDescriptionAttribute;
+        DescriptionAttribute? descr =
+            Attribute.GetCustomAttribute(method, typeof(DescriptionAttribute))
+                as DescriptionAttribute;
+        Description = descr?.Description ?? "";
 
-        Description = descr?.Text ?? "";
+        IsOutput = (Attribute.GetCustomAttribute(method, typeof(OutputAttribute)) is OutputAttribute);
 
-        ParameterInfo[] parameters = func.Method.GetParameters();
+        ParameterInfo[] parameters = method.GetParameters();
         foreach (var parameter in parameters) {
             FunctionArg arg;
 
@@ -62,5 +64,8 @@ public class Function : IFunction {
             }
         }
     }
+
+    public Function(String name, Delegate func) : this(name, func.Method) { }
+    public Function(Delegate func) : this(func.Method.Name, func.Method) { }
 }
 }

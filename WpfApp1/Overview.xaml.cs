@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,10 +24,15 @@ public partial class Overview : UserControl {
         get { return (GraphView) GetValue(GraphViewProperty); }
         set { SetValue(GraphViewProperty, value); }
     }
-    
-    
 
-    public Overview() {
+    [Description("messagebox")]
+    [Output()]
+    private static bool Output(Int32 i) {
+        MessageBox.Show(i.ToString());
+        return true;
+    }
+
+public Overview() {
         InitializeComponent();
 
         _graph = new csso.NodeCore.Graph();
@@ -35,15 +41,15 @@ public partial class Overview : UserControl {
         IFunction addFunc = new Function("Add", F.Add);
         IFunction divideWholeFunc = new Function("Divide whole", F.DivideWhole);
 
-        IFunction messageBoxFunc = new Function("Output", (Int32 i) => {
-            MessageBox.Show(i.ToString());
-        });
-        
+        IFunction messageBoxFunc = new Function("Output", Output);
         
         csso.NodeCore.Node node0 = new(addFunc, _graph);
         csso.NodeCore.Node node1 = new(divideWholeFunc, _graph);
         csso.NodeCore.Node node2 = new(messageBoxFunc, _graph);
-        
+
+        _graph.Add(node0);
+        _graph.Add(node1);
+        _graph.Add(node2);
 
         GraphView graphView = new(_graph);
         GraphView = graphView;

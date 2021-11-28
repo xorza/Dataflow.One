@@ -13,8 +13,6 @@ public class Node {
         Function = function;
         Graph = graph;
 
-        Graph.Add(this);
-
         Connections = _connections.AsReadOnly();
     }
 

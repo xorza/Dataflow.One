@@ -74,14 +74,14 @@
 
                             <ControlTemplate.Triggers>
                                 <DataTrigger Binding="{Binding IsOutput}" Value="True">
-                                    
+
                                     <Setter TargetName="Highlight1"
                                             Property="Grid.Column"
                                             Value="2" />
                                     <Setter TargetName="Highlight2"
                                             Property="Grid.Column"
                                             Value="2" />
-                                    
+
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                     <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" />
@@ -98,10 +98,10 @@
                                Text="{Binding FunctionArg.Name }"
                                VerticalAlignment="Center" />
                 </Button>
-                
+
                 <DataTemplate.Triggers>
                     <DataTrigger Binding="{Binding IsInput}" Value="True">
-                        <Setter TargetName="PinButton" Property="HorizontalAlignment" Value="Left"></Setter>
+                        <Setter TargetName="PinButton" Property="HorizontalAlignment" Value="Left" />
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
@@ -127,11 +127,33 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Border
+                    x:Name="Border123"
                     VerticalAlignment="Stretch"
                     HorizontalAlignment="Stretch"
                     BorderBrush="{x:Null}"
-                    BorderThickness="0"
-                    Background="{Binding Path=HeaderBackground, ElementName=NodeUserControl}">
+                    BorderThickness="0">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding Path=NodeView.Node.Function.IsOutput, ElementName=NodeUserControl}"
+                                    Value="True">
+                                    <Setter
+                                        Property="Background"
+                                        Value="SaddleBrown" />
+                                </DataTrigger>
+                                <DataTrigger
+                                    Binding="{Binding Path=NodeView.Node.Function.IsOutput, ElementName=NodeUserControl}"
+                                    Value="False">
+                                    <Setter
+                                        Property="Background"
+                                        Value="{Binding Path=HeaderBackground, ElementName=NodeUserControl}"
+                                        />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    
                     <Label Content="{Binding Path=NodeView.Node.Name, ElementName=NodeUserControl}"
                            HorizontalAlignment="Left"
                            FontWeight="Bold"
@@ -139,6 +161,7 @@
                            Padding="0"
                            Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
                 </Border>
+
 
                 <Grid Grid.Row="1"
                       HorizontalAlignment="Stretch">
@@ -156,18 +179,16 @@
                     </StackPanel>
 
                     <StackPanel
-                        
+
                         HorizontalAlignment="Right"
                         Grid.Column="1"
-                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}"
-                        >
+                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}">
                         <ItemsControl
                             HorizontalAlignment="Right"
                             HorizontalContentAlignment="Right"
                             ItemsSource="{Binding Path=NodeView.Outputs, ElementName=NodeUserControl}"
                             ItemTemplate="{StaticResource PinViewTemplate}" />
                     </StackPanel>
-
                 </Grid>
             </Grid>
         </Border>
