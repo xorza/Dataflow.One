@@ -24,7 +24,7 @@ public sealed class PutView : INotifyPropertyChanged {
     public Point PinPoint {
         get => _pinPoint;
         set {
-            if(_pinPoint==value)
+            if (_pinPoint == value)
                 return;
 
             _pinPoint = value;
@@ -41,8 +41,10 @@ public sealed class PutView : INotifyPropertyChanged {
         set {
             if (_isSelected == value)
                 return;
+            
             _isSelected = value;
-            NodeView.GraphView.SelectedPutView = this;
+            NodeView.GraphView.SelectedPutView = value ? this : null;
+            
             OnPropertyChanged();
         }
     }

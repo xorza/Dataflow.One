@@ -113,7 +113,6 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     private void PinButton_Click(object sender, RoutedEventArgs e) {
         PutView pv = (PutView) ((Button) sender).Tag;
-        pv.IsSelected = !pv.IsSelected;
         PinClick?.Invoke(sender,
             new PinClickEventArgs(pv) {
                 RoutedEvent = e.RoutedEvent,

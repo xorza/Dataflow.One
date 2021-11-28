@@ -35,11 +35,14 @@ public class NodeView : INotifyPropertyChanged {
 
     public bool IsSelected {
         get => _isSelected;
-        internal set {
-            if (_isSelected != value) {
-                _isSelected = value;
-                OnPropertyChanged();
-            }
+        set {
+            if (_isSelected == value)
+                return;
+            
+            _isSelected = value;
+            GraphView.SelectedNode = value ? this : null;
+            
+            OnPropertyChanged();
         }
     }
 

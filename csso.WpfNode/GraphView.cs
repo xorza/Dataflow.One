@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -39,15 +40,27 @@ public class GraphView : INotifyPropertyChanged {
     public NodeView? SelectedNode {
         get => _selectedNode;
         set {
-            if (_selectedNode != value) {
-                _selectedNode = value;
+            if (_selectedNode == value)
+                return;
 
-                foreach (var node in Nodes) {
-                    node.IsSelected = (node == value);
-                }
+            if (_selectedNode != null)
+                _selectedNode.IsSelected = false;
+            _selectedNode = value;
+            if (_selectedNode != null)
+                _selectedNode.IsSelected = true;
 
-                OnPropertyChanged();
-            }
+            OnPropertyChanged();
+
+
+            // if (_selectedNode != value) {
+            //     _selectedNode = value;
+            //
+            //     foreach (var node in Nodes) {
+            //         node.IsSelected = (node == value);
+            //     }
+            //
+            //     OnPropertyChanged();
+            // }
         }
     }
 
@@ -64,6 +77,7 @@ public class GraphView : INotifyPropertyChanged {
             _selectedPutView = value;
             if (_selectedPutView != null)
                 _selectedPutView.IsSelected = true;
+
             OnPropertyChanged();
         }
     }
@@ -88,6 +102,8 @@ public class GraphView : INotifyPropertyChanged {
             Nodes.Add(nv);
         }
 
+
+        List<EdgeView> newEdgeViews = new();
         foreach (var node in Nodes)
         foreach (var edge in node.Node.Inputs)
             if (edge is OutputBinding binding) {
@@ -100,8 +116,19 @@ public class GraphView : INotifyPropertyChanged {
                 PutView input = inputNode.Inputs.Single(_ => _.SchemaPut == binding.Input);
                 PutView output = outputNode.Outputs.Single(_ => _.SchemaPut == binding.Output);
 
-                Edges.Add(new EdgeView(binding, input, output));
+                newEdgeViews.Add(new EdgeView(binding, input, output));
             }
+
+
+        for (int i = 0; i < newEdgeViews.Count; i++) {
+            if (Edges.Count > i)
+                Edges[i] = newEdgeViews[i];
+            else
+                Edges.Add(newEdgeViews[i]);
+
+            while (Edges.Count > newEdgeViews.Count) 
+                Edges.RemoveAt(Edges.Count - 1);
+        }
 
         if (_selectedNode != null && !Nodes.Contains(_selectedNode))
             SelectedNode = null;

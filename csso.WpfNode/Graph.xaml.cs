@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using csso.Common;
 using csso.NodeCore;
-using csso.OpenCL;
 
 namespace csso.WpfNode {
 public partial class Graph : UserControl {
@@ -26,9 +25,6 @@ public partial class Graph : UserControl {
         get => (GraphView) GetValue(GraphViewProperty);
         set => SetValue(GraphViewProperty, value);
     }
-
-    private PutView? _pv1;
-    private PutView? _pv2;
 
     private readonly List<Node> _nodes = new();
 
@@ -52,50 +48,7 @@ public partial class Graph : UserControl {
         get => (Style) GetValue(NodeStyleProperty);
         set => SetValue(NodeStyleProperty, value);
     }
-
-    private void Commit() {
-        Debug.Assert.NotNull(_pv1);
-        Debug.Assert.NotNull(_pv2);
-
-        if (_pv1!.SchemaPut.PutType == _pv2!.SchemaPut.PutType) {
-            _pv1 = null;
-            _pv2 = null;
-            return;
-        }
-
-        if (_pv1!.NodeView == _pv2!.NodeView) {
-            _pv1 = null;
-            _pv2 = null;
-            return;
-        }
-
-        if (_pv1 == _pv2) {
-            _pv1 = null;
-            _pv2 = null;
-            return;
-        }
-
-        if (_pv1!.SchemaPut.Type != _pv2!.SchemaPut.Type) {
-            _pv1 = null;
-            _pv2 = null;
-            return;
-        }
-
-        PutView input = _pv1.SchemaPut.PutType == PutType.In ? _pv1 : _pv2;
-        PutView output = _pv1.SchemaPut.PutType == PutType.Out ? _pv1 : _pv2;
-
-        Debug.Assert.True(_pv1 != _pv2);
-
-        OutputBinding binding = new(
-            input.NodeView.Node,
-            (SchemaInput) input.SchemaPut,
-            output.NodeView.Node,
-            (SchemaOutput) output.SchemaPut);
-
-        input.NodeView.Node.AddBinding(binding);
-        input.NodeView.GraphView.Refresh();
-    }
-
+    
     private void Loaded_Handler(object? sender, EventArgs e) { }
 
     private void LayoutUpdated_Handler(object? sender, EventArgs e) { }
@@ -120,35 +73,30 @@ public partial class Graph : UserControl {
     private void RedrawEdges() {
         if (GraphView == null) return;
 
-        while (GraphView!.Edges.Count > EdgesCanvas.Children.Count) {
-            Edge line = new();
-            line.LeftButtonClick += LeftButtonClickHandler;
+        while (GraphView!.Edges.Count != EdgesCanvas.Children.Count) {
+            if (GraphView!.Edges.Count < EdgesCanvas.Children.Count)
+                EdgesCanvas.Children.RemoveAt(EdgesCanvas.Children.Count - 1);
+            else {
+                Edge line = new();
+                line.LeftButtonClick += LeftButtonClickHandler;
 
-            EdgesCanvas.Children.Add(line);
+                EdgesCanvas.Children.Add(line);
+            }
         }
 
         Debug.Assert.True(EdgesCanvas.Children.Count == GraphView!.Edges.Count);
 
         for (var i = 0; i < EdgesCanvas.Children.Count; i++) {
-
             System.Windows.Data.Binding inputPointBinding = new("Input.PinPoint");
             inputPointBinding.Source = GraphView!.Edges[i];
-            inputPointBinding.Mode = BindingMode.Default;
-            
+
             System.Windows.Data.Binding outputPointBinding = new("Output.PinPoint");
             outputPointBinding.Source = GraphView!.Edges[i];
-            inputPointBinding.Mode = BindingMode.Default;
-            
-            // edge.InputPosition = GraphView!.Edges[i].Input.PinPoint;
-            //  edge.OutputPosition = GraphView!.Edges[i].Output.PinPoint;
-            
+
             Edge edge = (Edge) EdgesCanvas.Children[i];
             edge.SetBinding(Edge.InputPositionDependencyProperty, inputPointBinding);
             edge.SetBinding(Edge.OutputPositionDependencyProperty, outputPointBinding);
         }
-
-        while (GraphView!.Edges.Count < EdgesCanvas.Children.Count)
-            EdgesCanvas.Children.RemoveAt(EdgesCanvas.Children.Count - 1);
     }
 
     private void LeftButtonClickHandler(object? sender, MouseButtonEventArgs ea) {
@@ -156,19 +104,43 @@ public partial class Graph : UserControl {
     }
 
     private void Node_OnPinClick(object sender, PinClickEventArgs e) {
-        if (_pv1 == null) {
-            _pv1 = e.Put;
-        }
-        else if (_pv2 == null) {
-            _pv2 = e.Put;
-            Commit();
-        }
-        else {
-            _pv1 = e.Put;
-            _pv2 = null;
-        }
-    }
+        Debug.Assert.True(GraphView != null);
 
+        GraphView graphView = GraphView!;
+        if (graphView.SelectedPutView == null ||
+            graphView.SelectedPutView == e.Put) {
+            e.Put.IsSelected = !e.Put.IsSelected;
+            return;
+        }
+
+        PutView p1 = graphView.SelectedPutView;
+        PutView p2 = e.Put;
+
+        graphView.SelectedPutView = null;
+        
+        if (p1!.SchemaPut.PutType == p2!.SchemaPut.PutType) 
+            return;
+        if (p1!.NodeView == p2!.NodeView) 
+            return;
+        if (p1 == p2) 
+            return;
+        if (p1!.SchemaPut.Type != p2!.SchemaPut.Type) 
+            return;
+        
+        PutView input = p1.SchemaPut.PutType == PutType.In ? p1 : p2;
+        PutView output = p1.SchemaPut.PutType == PutType.Out ? p1 : p2;
+        
+        Debug.Assert.True(p1 != p2);
+        
+        OutputBinding binding = new(
+            input.NodeView.Node,
+            (SchemaInput) input.SchemaPut,
+            output.NodeView.Node,
+            (SchemaOutput) output.SchemaPut);
+        
+        input.NodeView.Node.AddBinding(binding);
+        input.NodeView.GraphView.Refresh();
+    }
 
     private void NodesCanvas_OnLoaded(object sender, RoutedEventArgs e) {
         _nodesCanvas = (Canvas) sender;
