@@ -11,8 +11,8 @@ public partial class NodeEdit : UserControl {
         "NodeView", typeof(NodeView), typeof(NodeEdit), new PropertyMetadata(default(NodeView)));
 
     public NodeView? NodeView {
-        get { return (NodeView) GetValue(NodeViewProperty); }
-        set { SetValue(NodeViewProperty, value); }
+        get => (NodeView) GetValue(NodeViewProperty);
+        set => SetValue(NodeViewProperty, value);
     }
 }
 }

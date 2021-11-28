@@ -7,13 +7,13 @@ public class NoLoopValidator {
         var nodeCount = graph.Nodes.Count;
 
         List<Node> path = new();
-        foreach (OutputNode outputNode in graph.Outputs)
-        foreach (var binding in outputNode.Inputs)
+        foreach (Node outputNode in graph.Nodes)
+        foreach (var binding in outputNode.Connections)
             Go(binding, path);
     }
 
-    private void Go(Binding binding, List<Node> pathBack) {
-        var outputBinding = binding as OutputBinding;
+    private void Go(Connection connection, List<Node> pathBack) {
+        var outputBinding = connection as OutputConnection;
         if (outputBinding == null) return;
 
         Node node = outputBinding.OutputNode;
@@ -23,7 +23,7 @@ public class NoLoopValidator {
 
         pathBack.Add(node);
 
-        foreach (Binding b in node.Inputs) Go(b, pathBack);
+        foreach (Connection b in node.Connections) Go(b, pathBack);
 
         pathBack.RemoveAt(pathBack.Count - 1);
     }

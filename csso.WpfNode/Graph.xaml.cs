@@ -118,27 +118,27 @@ public partial class Graph : UserControl {
 
         graphView.SelectedPutView = null;
         
-        if (p1!.SchemaPut.PutType == p2!.SchemaPut.PutType) 
+        if (p1!.FunctionArg.PutType == p2!.FunctionArg.PutType) 
             return;
         if (p1!.NodeView == p2!.NodeView) 
             return;
         if (p1 == p2) 
             return;
-        if (p1!.SchemaPut.Type != p2!.SchemaPut.Type) 
+        if (p1!.FunctionArg.Type != p2!.FunctionArg.Type) 
             return;
         
-        PutView input = p1.SchemaPut.PutType == PutType.In ? p1 : p2;
-        PutView output = p1.SchemaPut.PutType == PutType.Out ? p1 : p2;
+        PutView input = p1.FunctionArg.PutType == PutType.In ? p1 : p2;
+        PutView output = p1.FunctionArg.PutType == PutType.Out ? p1 : p2;
         
         Debug.Assert.True(p1 != p2);
         
-        OutputBinding binding = new(
+        OutputConnection connection = new(
             input.NodeView.Node,
-            (SchemaInput) input.SchemaPut,
+            (FunctionInput) input.FunctionArg,
             output.NodeView.Node,
-            (SchemaOutput) output.SchemaPut);
+            (FunctionOutput) output.FunctionArg);
         
-        input.NodeView.Node.AddBinding(binding);
+        input.NodeView.Node.AddBinding(connection);
         input.NodeView.GraphView.Refresh();
     }
 

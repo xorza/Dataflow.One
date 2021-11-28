@@ -95,7 +95,7 @@
 
                     <TextBlock Margin="0"
                                Padding="0"
-                               Text="{Binding SchemaPut.Name }"
+                               Text="{Binding FunctionArg.Name }"
                                VerticalAlignment="Center" />
                 </Button>
                 
@@ -132,7 +132,7 @@
                     BorderBrush="{x:Null}"
                     BorderThickness="0"
                     Background="{Binding Path=HeaderBackground, ElementName=NodeUserControl}">
-                    <Label Content="{Binding Path=NodeView.Node.Schema.Name, ElementName=NodeUserControl}"
+                    <Label Content="{Binding Path=NodeView.Node.Name, ElementName=NodeUserControl}"
                            HorizontalAlignment="Left"
                            FontWeight="Bold"
                            FontSize="10"

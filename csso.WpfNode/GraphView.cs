@@ -10,13 +10,13 @@ using csso.WpfNode.Annotations;
 
 namespace csso.WpfNode {
 public class EdgeView {
-    public EdgeView(OutputBinding binding, PutView input, PutView output) {
+    public EdgeView(OutputConnection connection, PutView input, PutView output) {
         Input = input;
         Output = output;
-        Binding = binding;
+        Connection = connection;
     }
 
-    public Binding Binding { get; }
+    public Connection Connection { get; }
     public PutView Input { get; }
     public PutView Output { get; }
 }
@@ -107,13 +107,13 @@ public class GraphView : INotifyPropertyChanged {
 
         List<EdgeView> newEdgeViews = new();
         foreach (var node in Nodes)
-        foreach (var edge in node.Node.Inputs)
-            if (edge is OutputBinding binding) {
+        foreach (var edge in node.Node.Connections)
+            if (edge is OutputConnection binding) {
                 var inputNode = GetNodeView(binding.InputNode);
                 var outputNode = GetNodeView(binding.OutputNode);
 
-                PutView input = inputNode.Inputs.Single(_ => _.SchemaPut == binding.Input);
-                PutView output = outputNode.Outputs.Single(_ => _.SchemaPut == binding.Output);
+                PutView input = inputNode.Inputs.Single(_ => _.FunctionArg == binding.Input);
+                PutView output = outputNode.Outputs.Single(_ => _.FunctionArg == binding.Output);
 
                 newEdgeViews.Add(new EdgeView(binding, input, output));
             }

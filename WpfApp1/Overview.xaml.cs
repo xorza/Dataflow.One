@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using csso.ImageProcessing;
 using csso.NodeCore;
+using csso.NodeCore.Funcs;
 using csso.OpenCL;
 using csso.WpfNode;
+using Buffer = csso.OpenCL.Buffer;
 using Graph = csso.WpfNode.Graph;
 using Image = System.Windows.Controls.Image;
 
@@ -20,6 +23,8 @@ public partial class Overview : UserControl {
         get { return (GraphView) GetValue(GraphViewProperty); }
         set { SetValue(GraphViewProperty, value); }
     }
+    
+    
 
     public Overview() {
         InitializeComponent();
@@ -27,31 +32,18 @@ public partial class Overview : UserControl {
         _graph = new csso.NodeCore.Graph();
         _clContext = new Context();
 
-        Schema schemaRgbMix = new();
-        schemaRgbMix.Name = "RGB mix";
-        schemaRgbMix.Inputs.Add(new SchemaInput("R", typeof(Tensor1)));
-        schemaRgbMix.Inputs.Add(new SchemaInput("G", typeof(Tensor1)));
-        schemaRgbMix.Inputs.Add(new SchemaInput("B", typeof(Tensor1)));
-        schemaRgbMix.Outputs.Add(new SchemaOutput("RGB", typeof(Tensor4)));
+        IFunction addFunc = new Function("Add", F.Add);
+        IFunction divideWholeFunc = new Function("Divide whole", F.DivideWhole);
 
-        Schema schemaBitmap = new();
-        schemaBitmap.Name = "Bitmap";
-        schemaBitmap.Outputs.Add(new SchemaOutput("R", typeof(Tensor1)));
-        schemaBitmap.Outputs.Add(new SchemaOutput("G", typeof(Tensor1)));
-        schemaBitmap.Outputs.Add(new SchemaOutput("B", typeof(Tensor1)));
-        schemaBitmap.Outputs.Add(new SchemaOutput("RGB", typeof(Tensor4)));
-
-        Schema output = new();
-        output.Name = "Output";
-        output.Inputs.Add(new SchemaInput("R", typeof(Tensor1)));
-        output.Inputs.Add(new SchemaInput("RGB", typeof(Tensor4)));
-
-        csso.NodeCore.Node node0 = new(schemaRgbMix, _graph);
-        csso.NodeCore.Node node1 = new(schemaBitmap, _graph);
-        csso.NodeCore.Node node2 = new(schemaRgbMix, _graph);
-        csso.NodeCore.Node node3 = new(schemaBitmap, _graph);
-
-        OutputNode node4 = new(output, _graph);
+        IFunction messageBoxFunc = new Function("Output", (Int32 i) => {
+            MessageBox.Show(i.ToString());
+        });
+        
+        
+        csso.NodeCore.Node node0 = new(addFunc, _graph);
+        csso.NodeCore.Node node1 = new(divideWholeFunc, _graph);
+        csso.NodeCore.Node node2 = new(messageBoxFunc, _graph);
+        
 
         GraphView graphView = new(_graph);
         GraphView = graphView;

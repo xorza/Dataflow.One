@@ -7,17 +7,17 @@ using csso.WpfNode.Annotations;
 
 namespace csso.WpfNode {
 public sealed class PutView : INotifyPropertyChanged {
-    public PutView(SchemaPut schemaPut, NodeView nodeView) {
-        SchemaPut = schemaPut;
+    public PutView(FunctionArg functionArg, NodeView nodeView) {
+        FunctionArg = functionArg;
         NodeView = nodeView;
     }
 
     public UIElement? Control { get; set; }
-    public PutType PutType => SchemaPut.PutType;
+    public PutType PutType => FunctionArg.PutType;
     public bool IsInput => PutType == PutType.In;
     public bool IsOutput => PutType == PutType.Out;
 
-    public SchemaPut SchemaPut { get; }
+    public FunctionArg FunctionArg { get; }
 
     private Point _pinPoint;
 

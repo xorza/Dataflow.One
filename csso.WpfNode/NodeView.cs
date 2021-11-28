@@ -15,12 +15,12 @@ public class NodeView : INotifyPropertyChanged {
         Node = node;
         GraphView = graphView;
 
-        foreach (var input in Node.Schema.Inputs) {
+        foreach (var input in Node.Inputs) {
             PutView pv = new(input, this);
             Inputs.Add(pv);
         }
 
-        foreach (var output in Node.Schema.Outputs) {
+        foreach (var output in Node.Outputs) {
             PutView pv = new(output, this);
             Outputs.Add(pv);
         }
@@ -56,15 +56,15 @@ public class NodeView : INotifyPropertyChanged {
         }
     }
 
-    public string Name => Node.Schema.Name;
+    // public string Name {get;}
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    public void AddBinding(Binding binding) {
-        Node.AddBinding(binding);
+    public void AddBinding(Connection connection) {
+        Node.AddBinding(connection);
         GraphView.Refresh();
     }
 }
