@@ -101,15 +101,14 @@ public class GraphView : INotifyPropertyChanged {
             NodeView nv = new(this, node);
             Nodes.Add(nv);
         }
-
+        
+        if (_selectedNode != null && !Nodes.Contains(_selectedNode))
+            SelectedNode = null;
 
         List<EdgeView> newEdgeViews = new();
         foreach (var node in Nodes)
         foreach (var edge in node.Node.Inputs)
             if (edge is OutputBinding binding) {
-                if (Edges.Any(_ => _.Binding == binding))
-                    continue;
-
                 var inputNode = GetNodeView(binding.InputNode);
                 var outputNode = GetNodeView(binding.OutputNode);
 
@@ -119,19 +118,15 @@ public class GraphView : INotifyPropertyChanged {
                 newEdgeViews.Add(new EdgeView(binding, input, output));
             }
 
-
         for (int i = 0; i < newEdgeViews.Count; i++) {
             if (Edges.Count > i)
                 Edges[i] = newEdgeViews[i];
             else
                 Edges.Add(newEdgeViews[i]);
-
-            while (Edges.Count > newEdgeViews.Count) 
-                Edges.RemoveAt(Edges.Count - 1);
         }
 
-        if (_selectedNode != null && !Nodes.Contains(_selectedNode))
-            SelectedNode = null;
+        while (Edges.Count > newEdgeViews.Count) 
+            Edges.RemoveAt(Edges.Count - 1);
     }
 }
 }
