@@ -35,6 +35,7 @@ public partial class Overview : UserControl {
     }
 
     [Description("value")]
+    [Reactive]
     private static bool Const([Config(12)] Int32 c, [Output] ref Int32 i) {
         i = c;
         return true;
@@ -153,5 +154,9 @@ public partial class Overview : UserControl {
     private void RunGraph_Button_OnClick(object sender, RoutedEventArgs args) {
         _executor.Run();
     }
+    private void ResetCtx_Button_OnClick(object sender, RoutedEventArgs args) {
+        _executor.Reset();
+    }
+    
 }
 }

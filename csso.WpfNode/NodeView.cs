@@ -63,9 +63,5 @@ public class NodeView : INotifyPropertyChanged {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    public void AddBinding(Connection connection) {
-        Node.AddBinding(connection);
-        GraphView.Refresh();
-    }
 }
 }

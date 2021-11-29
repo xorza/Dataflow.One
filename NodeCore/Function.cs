@@ -13,6 +13,7 @@ public sealed class OutputAttribute : Attribute {
     public OutputAttribute() { }
 }
 
+[AttributeUsage(AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
 public sealed class ConfigAttribute : Attribute {
     public Object? DefaultValue { get; private set; } = null;
     public ConfigAttribute() { }
@@ -22,6 +23,16 @@ public sealed class ConfigAttribute : Attribute {
     }
 }
 
+[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+public sealed class ReactiveAttribute : Attribute {
+    public ReactiveAttribute() { }
+}
+
+public enum FunctionBehavior {
+    Reactive,
+    Proactive
+}
+
 public interface IFunction {
     IReadOnlyList<FunctionInput> Inputs { get; }
     IReadOnlyList<FunctionOutput> Outputs { get; }
@@ -29,7 +40,8 @@ public interface IFunction {
     IReadOnlyList<FunctionConfig> Config { get; }
     string Name { get; }
     string Description { get; }
-    bool IsOutput { get; }
+    bool IsProcedure { get; }
+    FunctionBehavior Behavior { get; }
 
     void Invoke(object?[]? args);
 }
@@ -39,9 +51,10 @@ public class Function : IFunction {
     public IReadOnlyList<FunctionOutput> Outputs { get; }
     public IReadOnlyList<FunctionArg> Args { get; }
     public IReadOnlyList<FunctionConfig> Config { get; }
+    public FunctionBehavior Behavior { get; }
     public string Name { get; }
     public string Description { get; }
-    public bool IsOutput => Outputs.Count == 0;
+    public bool IsProcedure => Outputs.Count == 0;
     public Delegate Delegate { get; }
 
     public Function(String name, Delegate func) {
@@ -57,6 +70,10 @@ public class Function : IFunction {
             Attribute.GetCustomAttribute(func.Method, typeof(DescriptionAttribute))
                 as DescriptionAttribute;
         Description = descr?.Description ?? "";
+        ReactiveAttribute? reactive =
+            Attribute.GetCustomAttribute(func.Method, typeof(ReactiveAttribute))
+                as ReactiveAttribute;
+        Behavior = reactive == null ? FunctionBehavior.Proactive : FunctionBehavior.Reactive;
 
         ParameterInfo[] parameters = func.Method.GetParameters();
         foreach (var parameter in parameters) {
@@ -84,6 +101,7 @@ public class Function : IFunction {
                     Check.True(argType == configAttribute.DefaultValue.GetType());
                     config.Value = configAttribute.DefaultValue;
                 }
+
                 arg = config;
             } else
                 arg = new FunctionInput(argName, argType);
@@ -94,12 +112,13 @@ public class Function : IFunction {
         Inputs = args.OfType<FunctionInput>().ToList().AsReadOnly();
         Outputs = args.OfType<FunctionOutput>().ToList().AsReadOnly();
         Config = args.OfType<FunctionConfig>().ToList().AsReadOnly();
+
+        if (IsProcedure)
+            Behavior = FunctionBehavior.Proactive;
     }
 
-    public Function(Delegate func) : this(func.Method.Name, func) { }
-
-    public Function(Action action): this(action.Method.Name, action) {
-        
+    public Function(String name, Delegate func, FunctionBehavior functionBehavior) : this(name, func) {
+        Behavior = functionBehavior;
     }
 
     public void Invoke(object?[]? args) {

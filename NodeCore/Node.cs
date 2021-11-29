@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using csso.Common;
+using csso.NodeCore.Annotations;
 
 namespace csso.NodeCore {
-public class Node {
+public class Node : INotifyPropertyChanged {
     private readonly List<Connection> _connections = new();
 
 
@@ -12,11 +15,32 @@ public class Node {
         Graph = graph;
 
         Connections = _connections.AsReadOnly();
+        Behavior = function.Behavior;
     }
 
     public string Name => Function.Name;
 
     public IFunction Function { get; private set; }
+
+    private FunctionBehavior _behavior;
+
+    public FunctionBehavior Behavior {
+        get => _behavior;
+        set {
+            if (_behavior != value) {
+                _behavior = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    [NotifyPropertyChangedInvocator]
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
     public Graph Graph { get; }
     public IReadOnlyList<Connection> Connections { get; }
 

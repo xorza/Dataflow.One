@@ -136,30 +136,42 @@
                         <Style TargetType="Border">
                             <Style.Triggers>
                                 <DataTrigger
-                                    Binding="{Binding Path=NodeView.Node.Function.IsOutput, ElementName=NodeUserControl}"
-                                    Value="True">
-                                    <Setter
-                                        Property="Background"
-                                        Value="DarkSlateGray" />
-                                </DataTrigger>
-                                <DataTrigger
-                                    Binding="{Binding Path=NodeView.Node.Function.IsOutput, ElementName=NodeUserControl}"
+                                    Binding="{Binding Path=NodeView.Node.Function.IsProcedure, ElementName=NodeUserControl}"
                                     Value="False">
                                     <Setter
                                         Property="Background"
-                                        Value="{Binding Path=HeaderBackground, ElementName=NodeUserControl}"
-                                        />
+                                        Value="{Binding Path=HeaderBackground, ElementName=NodeUserControl}" />
                                 </DataTrigger>
+                                <DataTrigger
+                                    Binding="{Binding Path=NodeView.Node.Behavior, ElementName=NodeUserControl}"
+                                    Value="{x:Static core:FunctionBehavior.Proactive}">
+                                    <Setter
+                                        Property="Background"
+                                        Value="DarkSlateGray" />
+
+                                </DataTrigger>
+                                <DataTrigger
+                                    Binding="{Binding Path=NodeView.Node.Function.IsProcedure, ElementName=NodeUserControl}"
+                                    Value="True">
+                                    <Setter
+                                        Property="Background"
+                                        Value="Teal" />
+                                    <Setter
+                                        Property="TextBlock.Foreground"
+                                        Value="Black" />
+                                </DataTrigger>
+
+
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
-                    
-                    <Label Content="{Binding Path=NodeView.Node.Name, ElementName=NodeUserControl}"
-                           HorizontalAlignment="Left"
-                           FontWeight="Bold"
-                           FontSize="10"
-                           Padding="0"
-                           Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
+
+                    <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeUserControl}"
+                               HorizontalAlignment="Left"
+                               FontWeight="Bold"
+                               FontSize="10"
+                               Padding="0"
+                               Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
                 </Border>
 
 

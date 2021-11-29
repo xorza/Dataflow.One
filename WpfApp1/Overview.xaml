@@ -44,6 +44,7 @@
             <Button Content="openCL test 2" Click="OpenCLTest2_Button_OnClick" />
             <Button Content="png load test" Click="PngLoadTest_Button_OnClick" />
             <Button Content="run graph" Click="RunGraph_Button_OnClick" />
+            <Button Content="reset ctx" Click="ResetCtx_Button_OnClick" />
         </StackPanel>
 
     </Grid>
