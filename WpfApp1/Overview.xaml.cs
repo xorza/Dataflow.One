@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using csso.Calculator;
 using csso.ImageProcessing;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
@@ -26,13 +28,18 @@ public partial class Overview : UserControl {
     }
 
     [Description("messagebox")]
-    [Output()]
     private static bool Output(Int32 i) {
         MessageBox.Show(i.ToString());
         return true;
     }
 
-public Overview() {
+    [Description("value")]
+    private static bool Const([Config(12)] Int32 c, [Output] ref Int32 i) {
+        i = c;
+        return true;
+    }
+
+    public Overview() {
         InitializeComponent();
 
         _graph = new csso.NodeCore.Graph();
@@ -42,14 +49,17 @@ public Overview() {
         IFunction divideWholeFunc = new Function("Divide whole", F.DivideWhole);
 
         IFunction messageBoxFunc = new Function("Output", Output);
-        
-        csso.NodeCore.Node node0 = new(addFunc, _graph);
-        csso.NodeCore.Node node1 = new(divideWholeFunc, _graph);
-        csso.NodeCore.Node node2 = new(messageBoxFunc, _graph);
+        IFunction valueFunc = new Function("Value", Const);
 
-        _graph.Add(node0);
-        _graph.Add(node1);
-        _graph.Add(node2);
+
+        _graph.Add(new(addFunc, _graph)); ;
+        _graph.Add(new(divideWholeFunc, _graph));
+        _graph.Add(new(messageBoxFunc, _graph));
+        _graph.Add(new(valueFunc, _graph));
+        _graph.Add(new(valueFunc, _graph));
+        _graph.Add(new(valueFunc, _graph));
+        _graph.Add(new(valueFunc, _graph));
+        _graph.Add(new(valueFunc, _graph));
 
         GraphView graphView = new(_graph);
         GraphView = graphView;
@@ -134,6 +144,11 @@ public Overview() {
             program.Dispose();
             kernel.Dispose();
         }
+    }
+
+    private void RunGraph_Button_OnClick(object sender, RoutedEventArgs args) {
+        Executor e = new Executor(_graph);
+        e.Run();
     }
 }
 }

@@ -1,35 +1,77 @@
 ﻿using System;
+using System.Linq;
+using System.Security.AccessControl;
+using csso.Common;
 
 namespace csso.NodeCore {
-public enum PutType {
+public enum ArgType {
     In,
-    Out
+    Out,
+    Config
 }
 
 public abstract class FunctionArg {
-    protected FunctionArg() { }
-
     protected FunctionArg(string name, Type type) {
         Name = name;
         Type = type;
     }
 
-    public Type Type { get; set; } = typeof(void);
-    public string Name { get; set; } = "";
-    public abstract PutType PutType { get; }
+    public Type Type { get; } = typeof(void);
+    public string Name { get; } = "";
+    public abstract ArgType ArgType { get; }
 }
 
 public class FunctionInput : FunctionArg {
-    public FunctionInput() { }
     public FunctionInput(string name, Type type) : base(name, type) { }
 
-    public override PutType PutType => PutType.In;
+    public override ArgType ArgType => ArgType.In;
 }
 
 public class FunctionOutput : FunctionArg {
-    public FunctionOutput() { }
     public FunctionOutput(string name, Type type) : base(name, type) { }
 
-    public override PutType PutType => PutType.Out;
+    public override ArgType ArgType => ArgType.Out;
+}
+
+public class FunctionConfig : FunctionArg {
+    protected FunctionConfig(String name, Type type) : base(name, type) { }
+
+    private Object? _value = default(Type);
+
+    public Object? Value {
+        get => _value;
+        set {
+            if (value != null)
+                Check.True(value.GetType() == Type);
+
+            _value = value;
+        }
+    }
+
+    public override ArgType ArgType => ArgType.Config;
+
+    public static FunctionConfig Create(String name, Type type) {
+        Object result =
+            typeof(FunctionConfig<>)
+                .MakeGenericType(type)
+                .GetConstructors()
+                .Single()!
+                .Invoke(new Object[2] {name, type});
+        return  (FunctionConfig)result;
+    }
+}
+
+public class FunctionConfig<T> : FunctionConfig {
+    public T TypedValue {
+        get => (T) Value!;
+        set {
+            if (value != null)
+                Check.True(value.GetType() == Type);
+
+            Value = value;
+        }
+    }
+
+    public FunctionConfig(string name, Type type) : base(name, type) { }
 }
 }

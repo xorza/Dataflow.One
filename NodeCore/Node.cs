@@ -8,17 +8,11 @@ public class Node {
 
 
     public Node(IFunction function, Graph graph) {
-        Inputs = function.Inputs;
-        Outputs = function.Outputs;
         Function = function;
         Graph = graph;
 
         Connections = _connections.AsReadOnly();
     }
-
-
-    public IReadOnlyList<FunctionInput> Inputs { get; }
-    public IReadOnlyList<FunctionOutput> Outputs { get; }
 
     public string Name => Function.Name;
 

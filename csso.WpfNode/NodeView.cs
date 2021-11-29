@@ -15,12 +15,12 @@ public class NodeView : INotifyPropertyChanged {
         Node = node;
         GraphView = graphView;
 
-        foreach (var input in Node.Inputs) {
+        foreach (var input in Node.Function.Inputs) {
             PutView pv = new(input, this);
             Inputs.Add(pv);
         }
 
-        foreach (var output in Node.Outputs) {
+        foreach (var output in Node.Function.Outputs) {
             PutView pv = new(output, this);
             Outputs.Add(pv);
         }

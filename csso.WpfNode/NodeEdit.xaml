@@ -4,6 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:csso.WpfNode"
+             xmlns:sys="clr-namespace:System;assembly=System"
+             xmlns:nodecore="clr-namespace:csso.NodeCore;assembly=csso.NodeCore"
+
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              x:Name="NodeEditUserControl">
@@ -15,10 +18,33 @@
     <Grid>
         <StackPanel Orientation="Vertical" Margin="{Binding Path=Padding, ElementName=NodeEditUserControl}">
             <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeEditUserControl}" />
-            
-            
+
             <TextBlock Text="{Binding Path=NodeView.Node.Function.Description, ElementName=NodeEditUserControl}" />
-            
+
+            <ItemsControl ItemsSource="{Binding Path=NodeView.Node.Function.Config, ElementName=NodeEditUserControl}">
+                <ItemsControl.Resources>
+                    <ResourceDictionary>
+                        <DataTemplate
+                            x:Key="Int32DataTemplate"
+                            DataType="{x:Type nodecore:FunctionConfig}">
+                            <Border Background="MediumVioletRed">
+                                <TextBox Text="{Binding TypedValue }" />
+                            </Border>
+                        </DataTemplate>
+
+                        <local:NodeConfigTemplateSelector x:Key="NodeConfigTemplateSelector"
+                                                          Int32DataTemplate="{StaticResource Int32DataTemplate}" />
+
+                        <DataTemplate DataType="{x:Type nodecore:FunctionConfig}">
+                            <Border Background="MediumVioletRed">
+                                <ContentControl Content="{Binding}"
+                                                ContentTemplateSelector="{StaticResource NodeConfigTemplateSelector}" />
+                            </Border>
+                        </DataTemplate>
+                    </ResourceDictionary>
+                </ItemsControl.Resources>
+            </ItemsControl>
+
         </StackPanel>
     </Grid>
 </UserControl>

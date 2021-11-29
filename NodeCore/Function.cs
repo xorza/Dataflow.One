@@ -1,71 +1,110 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
+using csso.Common;
 
 namespace csso.NodeCore {
-
-[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
 public sealed class OutputAttribute : Attribute {
     public OutputAttribute() { }
+}
+
+public sealed class ConfigAttribute : Attribute {
+    public Object? DefaultValue { get; private set; } = null;
+    public ConfigAttribute() { }
+
+    public ConfigAttribute(Object defaultValue) {
+        DefaultValue = defaultValue;
+    }
 }
 
 public interface IFunction {
     IReadOnlyList<FunctionInput> Inputs { get; }
     IReadOnlyList<FunctionOutput> Outputs { get; }
+    IReadOnlyList<FunctionArg> Args { get; }
+    IReadOnlyList<FunctionConfig> Config { get; }
     string Name { get; }
     string Description { get; }
     bool IsOutput { get; }
+
+    void Invoke(object?[]? args);
 }
 
 public class Function : IFunction {
     public IReadOnlyList<FunctionInput> Inputs { get; }
     public IReadOnlyList<FunctionOutput> Outputs { get; }
+    public IReadOnlyList<FunctionArg> Args { get; }
+    public IReadOnlyList<FunctionConfig> Config { get; }
     public string Name { get; }
     public string Description { get; }
-    public bool IsOutput { get; }
+    public bool IsOutput => Outputs.Count == 0;
+    public Delegate Delegate { get; }
 
-    public Function(String name, MethodInfo method) {
-        List<FunctionInput> inputs = new();
-        List<FunctionOutput> outputs = new();
+    public Function(String name, Delegate func) {
+        Check.Argument(func.Method.ReturnType == typeof(bool), nameof(func));
 
-        Inputs = inputs.AsReadOnly();
-        Outputs = outputs.AsReadOnly();
+        List<FunctionArg> args = new();
+
+        Args = args.AsReadOnly();
         Name = name;
+        Delegate = func;
 
         DescriptionAttribute? descr =
-            Attribute.GetCustomAttribute(method, typeof(DescriptionAttribute))
+            Attribute.GetCustomAttribute(func.Method, typeof(DescriptionAttribute))
                 as DescriptionAttribute;
         Description = descr?.Description ?? "";
 
-        IsOutput = (Attribute.GetCustomAttribute(method, typeof(OutputAttribute)) is OutputAttribute);
-
-        ParameterInfo[] parameters = method.GetParameters();
+        ParameterInfo[] parameters = func.Method.GetParameters();
         foreach (var parameter in parameters) {
+            OutputAttribute? outputAttribute =
+                Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) as OutputAttribute;
+            ConfigAttribute? configAttribute =
+                Attribute.GetCustomAttribute(parameter, typeof(ConfigAttribute)) as ConfigAttribute;
+
+            if (outputAttribute != null && configAttribute != null) throw new Exception("fghoji4r5");
+
+            String argName = parameter.Name!;
+            Type argType;
+            if (parameter.ParameterType.IsByRef)
+                argType = parameter.ParameterType.GetElementType()!;
+            else
+                argType = parameter.ParameterType;
+
             FunctionArg arg;
 
-            if (parameter.IsOut) {
-                outputs.Add(new FunctionOutput());
-                arg = outputs.Last();
-            }
-            else {
-                inputs.Add(new FunctionInput());
-                arg = inputs.Last();
-            }
+            if (outputAttribute != null)
+                arg = new FunctionOutput(argName, argType);
+            else if (configAttribute != null) {
+                FunctionConfig config = FunctionConfig.Create(argName, argType);
+                if (configAttribute.DefaultValue != null) {
+                    Check.True(argType == configAttribute.DefaultValue.GetType());
+                    config.Value = configAttribute.DefaultValue;
+                }
+                arg = config;
+            } else
+                arg = new FunctionInput(argName, argType);
 
-            arg.Name = parameter.Name!;
-            if (parameter.ParameterType.IsByRef) {
-                arg.Type = parameter.ParameterType.GetElementType()!;
-            }
-            else {
-                arg.Type = parameter.ParameterType;
-            }
+            args.Add(arg);
         }
+
+        Inputs = args.OfType<FunctionInput>().ToList().AsReadOnly();
+        Outputs = args.OfType<FunctionOutput>().ToList().AsReadOnly();
+        Config = args.OfType<FunctionConfig>().ToList().AsReadOnly();
     }
 
-    public Function(String name, Delegate func) : this(name, func.Method) { }
-    public Function(Delegate func) : this(func.Method.Name, func.Method) { }
+    public Function(Delegate func) : this(func.Method.Name, func) { }
+
+
+    public void Invoke(object?[]? args) {
+        object? result = Delegate.DynamicInvoke(args);
+        if (result is bool boolResult)
+            Check.True(boolResult);
+        else
+            throw new InvalidOperationException();
+    }
 }
 }

@@ -13,9 +13,9 @@ public sealed class PutView : INotifyPropertyChanged {
     }
 
     public UIElement? Control { get; set; }
-    public PutType PutType => FunctionArg.PutType;
-    public bool IsInput => PutType == PutType.In;
-    public bool IsOutput => PutType == PutType.Out;
+    public ArgType ArgType => FunctionArg.ArgType;
+    public bool IsInput => ArgType == ArgType.In;
+    public bool IsOutput => ArgType == ArgType.Out;
 
     public FunctionArg FunctionArg { get; }
 

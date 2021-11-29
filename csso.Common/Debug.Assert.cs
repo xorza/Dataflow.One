@@ -27,6 +27,12 @@ public static class Debug {
             if (o == null)
                 throw new AssertionException();
         }
+        [Conditional("DEBUG")]
+        [DebuggerStepThrough]
+        [DebuggerHidden]
+        public static void False() {
+            throw new AssertionException();
+        }
     }
 }
 }

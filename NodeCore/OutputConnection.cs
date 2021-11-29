@@ -12,8 +12,8 @@ public class OutputConnection : Connection {
         OutputNode = outputNode;
         Output = output;
 
-        Check.True(inputNode.Inputs.Contains(input));
-        Check.True(outputNode.Outputs.Contains(output));
+        Check.True(inputNode.Function.Inputs.Contains(input));
+        Check.True(outputNode.Function.Outputs.Contains(output));
 
         if (input.Type != output.Type) throw new Exception("type mismatch");
     }

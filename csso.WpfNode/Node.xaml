@@ -140,7 +140,7 @@
                                     Value="True">
                                     <Setter
                                         Property="Background"
-                                        Value="SaddleBrown" />
+                                        Value="DarkSlateGray" />
                                 </DataTrigger>
                                 <DataTrigger
                                     Binding="{Binding Path=NodeView.Node.Function.IsOutput, ElementName=NodeUserControl}"

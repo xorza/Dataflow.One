@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\csso.Calculator\csso.Calculator.csproj" />
         <ProjectReference Include="..\csso.Common\csso.Common.csproj" />
         <ProjectReference Include="..\csso.ImageProcessing\csso.ImageProcessing.csproj" />
         <ProjectReference Include="..\csso.OpenCL\csso.OpenCL.csproj" />

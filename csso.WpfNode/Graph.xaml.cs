@@ -118,7 +118,7 @@ public partial class Graph : UserControl {
 
         graphView.SelectedPutView = null;
         
-        if (p1!.FunctionArg.PutType == p2!.FunctionArg.PutType) 
+        if (p1!.FunctionArg.ArgType == p2!.FunctionArg.ArgType) 
             return;
         if (p1!.NodeView == p2!.NodeView) 
             return;
@@ -127,8 +127,8 @@ public partial class Graph : UserControl {
         if (p1!.FunctionArg.Type != p2!.FunctionArg.Type) 
             return;
         
-        PutView input = p1.FunctionArg.PutType == PutType.In ? p1 : p2;
-        PutView output = p1.FunctionArg.PutType == PutType.Out ? p1 : p2;
+        PutView input = p1.FunctionArg.ArgType == ArgType.In ? p1 : p2;
+        PutView output = p1.FunctionArg.ArgType == ArgType.Out ? p1 : p2;
         
         Debug.Assert.True(p1 != p2);
         

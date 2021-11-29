@@ -14,5 +14,13 @@ public partial class NodeEdit : UserControl {
         get => (NodeView) GetValue(NodeViewProperty);
         set => SetValue(NodeViewProperty, value);
     }
+
+    public static readonly DependencyProperty NodeConfigTemplateSelectorProperty = DependencyProperty.Register(
+        "NodeConfigTemplateSelector", typeof(NodeConfigTemplateSelector), typeof(NodeEdit), new PropertyMetadata(default(NodeConfigTemplateSelector)));
+
+    public NodeConfigTemplateSelector NodeConfigTemplateSelector {
+        get { return (NodeConfigTemplateSelector) GetValue(NodeConfigTemplateSelectorProperty); }
+        set { SetValue(NodeConfigTemplateSelectorProperty, value); }
+    }
 }
 }
