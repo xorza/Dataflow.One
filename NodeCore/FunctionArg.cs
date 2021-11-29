@@ -18,6 +18,7 @@ public abstract class FunctionArg {
 
     public Type Type { get; } = typeof(void);
     public string Name { get; } = "";
+    public string FullName => Name + ":" + Type.Name;
     public abstract ArgType ArgType { get; }
 }
 

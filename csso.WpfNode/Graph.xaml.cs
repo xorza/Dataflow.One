@@ -48,7 +48,7 @@ public partial class Graph : UserControl {
         get => (Style) GetValue(NodeStyleProperty);
         set => SetValue(NodeStyleProperty, value);
     }
-    
+
     private void Loaded_Handler(object? sender, EventArgs e) { }
 
     private void LayoutUpdated_Handler(object? sender, EventArgs e) { }
@@ -117,27 +117,29 @@ public partial class Graph : UserControl {
         PutView p2 = e.Put;
 
         graphView.SelectedPutView = null;
-        
-        if (p1!.FunctionArg.ArgType == p2!.FunctionArg.ArgType) 
+
+        if (p1.FunctionArg.ArgType == p2.FunctionArg.ArgType)
             return;
-        if (p1!.NodeView == p2!.NodeView) 
+        if (p1.NodeView == p2.NodeView)
             return;
-        if (p1 == p2) 
+        if (p1 == p2)
             return;
-        if (p1!.FunctionArg.Type != p2!.FunctionArg.Type) 
+        if (p1.FunctionArg.Type != p2!.FunctionArg.Type &&
+            !p1.FunctionArg.Type.IsSubclassOf(p2.FunctionArg.Type)&&
+            !p2.FunctionArg.Type.IsSubclassOf(p1.FunctionArg.Type))
             return;
-        
+
         PutView input = p1.FunctionArg.ArgType == ArgType.In ? p1 : p2;
         PutView output = p1.FunctionArg.ArgType == ArgType.Out ? p1 : p2;
-        
+
         Debug.Assert.True(p1 != p2);
-        
+
         OutputConnection connection = new(
             input.NodeView.Node,
             (FunctionInput) input.FunctionArg,
             output.NodeView.Node,
             (FunctionOutput) output.FunctionArg);
-        
+
         input.NodeView.Node.AddBinding(connection);
         input.NodeView.GraphView.Refresh();
     }

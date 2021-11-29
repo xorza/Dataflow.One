@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using csso.Common;
 using csso.NodeCore;
 
@@ -53,6 +55,8 @@ public class Executor {
         }
     }
 
+    private Int32 _frameNo = 0;
+
     private class NotFound { }
 
     private readonly Object _notFound = new NotFound();
@@ -61,7 +65,28 @@ public class Executor {
 
     public Executor(Graph graph) {
         Graph = graph;
+
+        FrameNoFunction = new(
+            "Frame number",
+            ([Output] ref Int32 frameNumber) => {
+                frameNumber = _frameNo;
+                return true;
+            }
+        );
+        DeltaTimeFunction = new(
+            "Frame number",
+            ([Output] ref Double deltaTime) => {
+                deltaTime = 0.1555f;
+                return true;
+            }
+        );
     }
+
+
+    public Function FrameNoFunction { get; }
+
+    public Function DeltaTimeFunction { get; }
+
 
     public void Run() {
         var rootNodes = Graph.Nodes
@@ -105,8 +130,7 @@ public class Executor {
                         argValue = executedNode.GetOutputValue(outputConnection.Output);
                     }
                 } else if (arg is FunctionOutput output) {
-                    Int32 v = 0;
-                    argValue = v;
+                    argValue = Activator.CreateInstance(output.Type);
                 } else if (arg is FunctionConfig config)
                     argValue = config.Value;
                 else
@@ -127,6 +151,8 @@ public class Executor {
 
             context.EvaluatedNodes.Add(enode);
         }
+
+        ++_frameNo;
     }
 }
 }

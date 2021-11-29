@@ -9,13 +9,15 @@ public class OutputConnection : Connection {
         Node outputNode,
         FunctionOutput output) :
         base(inputNode, input) {
+        ;
+        if (input.Type != output.Type && !output.Type.IsSubclassOf(input.Type)) 
+            throw new Exception("type mismatch");
+
         OutputNode = outputNode;
         Output = output;
 
         Check.True(inputNode.Function.Inputs.Contains(input));
         Check.True(outputNode.Function.Outputs.Contains(output));
-
-        if (input.Type != output.Type) throw new Exception("type mismatch");
     }
 
     public Node OutputNode { get; }

@@ -95,7 +95,7 @@
 
                     <TextBlock Margin="0"
                                Padding="0"
-                               Text="{Binding FunctionArg.Name }"
+                               Text="{Binding FunctionArg.FullName }"
                                VerticalAlignment="Center" />
                 </Button>
 

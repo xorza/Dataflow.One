@@ -18,6 +18,7 @@ namespace WpfApp1 {
 public partial class Overview : UserControl {
     private readonly csso.NodeCore.Graph _graph;
     private readonly Context? _clContext;
+    private readonly Executor _executor;
 
     public static readonly DependencyProperty GraphViewProperty = DependencyProperty.Register(
         "GraphView", typeof(GraphView), typeof(Overview), new PropertyMetadata(default(GraphView)));
@@ -28,7 +29,7 @@ public partial class Overview : UserControl {
     }
 
     [Description("messagebox")]
-    private static bool Output(Int32 i) {
+    private static bool Output(object i) {
         MessageBox.Show(i.ToString());
         return true;
     }
@@ -43,6 +44,7 @@ public partial class Overview : UserControl {
         InitializeComponent();
 
         _graph = new csso.NodeCore.Graph();
+        _executor = new Executor(_graph);
         _clContext = new Context();
 
         IFunction addFunc = new Function("Add", F.Add);
@@ -52,14 +54,17 @@ public partial class Overview : UserControl {
         IFunction valueFunc = new Function("Value", Const);
 
 
-        _graph.Add(new(addFunc, _graph)); ;
+        _graph.Add(new(addFunc, _graph));
+        
         _graph.Add(new(divideWholeFunc, _graph));
         _graph.Add(new(messageBoxFunc, _graph));
+        
         _graph.Add(new(valueFunc, _graph));
         _graph.Add(new(valueFunc, _graph));
         _graph.Add(new(valueFunc, _graph));
-        _graph.Add(new(valueFunc, _graph));
-        _graph.Add(new(valueFunc, _graph));
+        
+        _graph.Add(new(_executor.FrameNoFunction, _graph));
+        _graph.Add(new(_executor.DeltaTimeFunction, _graph));
 
         GraphView graphView = new(_graph);
         GraphView = graphView;
@@ -136,8 +141,7 @@ public partial class Overview : UserControl {
             commandQueue.EnqueueNdRangeKernel(kernel, pixelCount, argsValues);
             commandQueue.EnqueueReadBuffer(b, resultPixels);
             commandQueue.Finish();
-        }
-        finally {
+        } finally {
             a.Dispose();
             b.Dispose();
             commandQueue.Dispose();
@@ -147,8 +151,7 @@ public partial class Overview : UserControl {
     }
 
     private void RunGraph_Button_OnClick(object sender, RoutedEventArgs args) {
-        Executor e = new Executor(_graph);
-        e.Run();
+        _executor.Run();
     }
 }
 }

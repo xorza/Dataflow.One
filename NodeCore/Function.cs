@@ -98,6 +98,9 @@ public class Function : IFunction {
 
     public Function(Delegate func) : this(func.Method.Name, func) { }
 
+    public Function(Action action): this(action.Method.Name, action) {
+        
+    }
 
     public void Invoke(object?[]? args) {
         object? result = Delegate.DynamicInvoke(args);
