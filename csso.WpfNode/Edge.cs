@@ -17,9 +17,8 @@ public class Edge : ClickControl {
         "InputPosition",
         typeof(Point),
         typeof(Edge),
-         new PropertyMetadata(Position_PropertyChangedCallback)
+        new PropertyMetadata(Position_PropertyChangedCallback)
     );
-
 
 
     public static readonly DependencyProperty OutputPositionDependencyProperty = DependencyProperty.Register(
@@ -29,30 +28,40 @@ public class Edge : ClickControl {
         new PropertyMetadata(Position_PropertyChangedCallback)
     );
 
+    public static readonly DependencyProperty IsProactiveProperty = DependencyProperty.Register(
+        "IsProactive", typeof(bool), typeof(Edge), new PropertyMetadata(default(bool)));
+
+    public bool IsProactive {
+        get { return (bool) GetValue(IsProactiveProperty); }
+        set { SetValue(IsProactiveProperty, value); }
+    }
+
     public Edge() {
         LeftButtonClick += LeftButtonClickHandler;
+        MouseDoubleClick += MouseButtonEventHandler;
     }
 
     public Point InputPosition {
         get => (Point) GetValue(InputPositionDependencyProperty);
-        set {
-            SetValue(InputPositionDependencyProperty, value);
-        }
+        set { SetValue(InputPositionDependencyProperty, value); }
     }
 
     public Point OutputPosition {
         get => (Point) GetValue(OutputPositionDependencyProperty);
-        set {
-            SetValue(OutputPositionDependencyProperty, value);
-        }
+        set { SetValue(OutputPositionDependencyProperty, value); }
     }
-    
+
     private static void Position_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        ((UIElement)d).InvalidateVisual();
+        ((UIElement) d).InvalidateVisual();
     }
 
     private void LeftButtonClickHandler(object? sender, MouseButtonEventArgs ea) {
         ;
+    }
+
+    private void MouseButtonEventHandler(object sender, MouseButtonEventArgs e) {
+        EdgeView view = (EdgeView) (((FrameworkElement) sender).DataContext);
+        view.IsProactive = !view.IsProactive;
     }
 
     protected override void OnRender(DrawingContext drawingContext) {
@@ -61,6 +70,8 @@ public class Edge : ClickControl {
         Pen pen;
         if (IsMouseOver)
             pen = new Pen(Brushes.Coral, 2);
+        else if (IsProactive)
+            pen = new Pen(Brushes.Teal, 1.5);
         else
             pen = new Pen(Brushes.SlateGray, 1.5);
 

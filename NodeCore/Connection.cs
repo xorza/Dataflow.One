@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using csso.Common;
 using csso.NodeCore.Annotations;
 
 namespace csso.NodeCore {
@@ -12,18 +13,7 @@ public abstract class Connection : INotifyPropertyChanged {
     public FunctionInput Input { get; }
     public Node InputNode { get; }
 
-
-    private FunctionBehavior _behavior = FunctionBehavior.Proactive;
-
-    public virtual FunctionBehavior Behavior {
-        get => _behavior;
-        set {
-            if (_behavior != value) {
-                _behavior = value;
-                OnPropertyChanged();
-            }
-        }
-    }
+    public abstract FunctionBehavior FinalBehavior { get; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

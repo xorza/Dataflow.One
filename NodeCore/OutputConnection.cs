@@ -18,7 +18,7 @@ public sealed class OutputConnection : Connection {
 
         OutputNode = outputNode;
         Output = output;
-        Behavior = outputNode.Behavior;
+        Behavior = FunctionBehavior.Proactive;
 
         Check.True(inputNode.Function.Inputs.Contains(input));
         Check.True(outputNode.Function.Outputs.Contains(output));
@@ -26,6 +26,30 @@ public sealed class OutputConnection : Connection {
 
     public Node OutputNode { get; }
     public FunctionOutput Output { get; }
+    
+    
+    private FunctionBehavior _behavior = FunctionBehavior.Reactive;
+
+    public FunctionBehavior Behavior {
+        get => _behavior;
+        set {
+            if (_behavior == value) return;
+            _behavior = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(FinalBehavior));
+        }
+    }
+    
+    public override FunctionBehavior FinalBehavior {
+        get {
+            if (_behavior == FunctionBehavior.Proactive)
+                return OutputNode.FinalBehavior;
+            else {
+                Check.True(_behavior == FunctionBehavior.Reactive);
+                return FunctionBehavior.Reactive;
+            }
+        }
+    }
 
 }
 }

@@ -93,14 +93,22 @@ public partial class Graph : UserControl {
             System.Windows.Data.Binding outputPointBinding = new("Output.PinPoint");
             outputPointBinding.Source = GraphView!.Edges[i];
 
+            System.Windows.Data.Binding proactivePointBinding = new("IsProactive");
+            proactivePointBinding.Source = GraphView!.Edges[i];
+
+            System.Windows.Data.Binding contextBinding = new();
+            contextBinding.Source = GraphView!.Edges[i];
+
             Edge edge = (Edge) EdgesCanvas.Children[i];
             edge.SetBinding(Edge.InputPositionDependencyProperty, inputPointBinding);
             edge.SetBinding(Edge.OutputPositionDependencyProperty, outputPointBinding);
+            edge.SetBinding(Edge.IsProactiveProperty, proactivePointBinding);
+            edge.SetBinding(Edge.DataContextProperty, contextBinding);
         }
     }
 
-    private void LeftButtonClickHandler(object? sender, MouseButtonEventArgs ea) {
-        ;
+    private void LeftButtonClickHandler(object sender, MouseButtonEventArgs ea) {
+        
     }
 
     private void Node_OnPinClick(object sender, PinClickEventArgs e) {
@@ -125,7 +133,7 @@ public partial class Graph : UserControl {
         if (p1 == p2)
             return;
         if (p1.FunctionArg.Type != p2!.FunctionArg.Type &&
-            !p1.FunctionArg.Type.IsSubclassOf(p2.FunctionArg.Type)&&
+            !p1.FunctionArg.Type.IsSubclassOf(p2.FunctionArg.Type) &&
             !p2.FunctionArg.Type.IsSubclassOf(p1.FunctionArg.Type))
             return;
 

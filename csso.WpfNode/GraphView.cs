@@ -9,17 +9,7 @@ using csso.NodeCore;
 using csso.WpfNode.Annotations;
 
 namespace csso.WpfNode {
-public class EdgeView {
-    public EdgeView(OutputConnection connection, PutView input, PutView output) {
-        Input = input;
-        Output = output;
-        Connection = connection;
-    }
 
-    public Connection Connection { get; }
-    public PutView Input { get; }
-    public PutView Output { get; }
-}
 
 public class GraphView : INotifyPropertyChanged {
     public NodeCore.Graph Graph { get; private set; }
@@ -50,17 +40,6 @@ public class GraphView : INotifyPropertyChanged {
                 _selectedNode.IsSelected = true;
 
             OnPropertyChanged();
-
-
-            // if (_selectedNode != value) {
-            //     _selectedNode = value;
-            //
-            //     foreach (var node in Nodes) {
-            //         node.IsSelected = (node == value);
-            //     }
-            //
-            //     OnPropertyChanged();
-            // }
         }
     }
 

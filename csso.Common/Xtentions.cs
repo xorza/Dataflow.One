@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace csso.Common {
 public static class Xtentions {
@@ -14,6 +15,10 @@ public static class Xtentions {
         foreach (T item in e)
             action(item);
         return e;
+    }
+
+    public static IEnumerable<T> SkipNulls<T>(this IEnumerable<T> e) {
+        return e.Where(_ => !Object.ReferenceEquals(_, null));
     }
 }
 }

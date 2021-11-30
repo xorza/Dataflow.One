@@ -143,7 +143,7 @@
                                         Value="{Binding Path=HeaderBackground, ElementName=NodeUserControl}" />
                                 </DataTrigger>
                                 <DataTrigger
-                                    Binding="{Binding Path=NodeView.Node.Behavior, ElementName=NodeUserControl}"
+                                    Binding="{Binding Path=NodeView.Node.FinalBehavior, ElementName=NodeUserControl}"
                                     Value="{x:Static core:FunctionBehavior.Proactive}">
                                     <Setter
                                         Property="Background"

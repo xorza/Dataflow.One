@@ -15,21 +15,33 @@ public class Node : INotifyPropertyChanged {
         Graph = graph;
 
         Connections = _connections.AsReadOnly();
-        Behavior = function.Behavior;
     }
 
     public string Name => Function.Name;
 
     public IFunction Function { get; private set; }
 
-    private FunctionBehavior _behavior;
+    private FunctionBehavior _behavior = FunctionBehavior.Proactive;
 
     public FunctionBehavior Behavior {
         get => _behavior;
         set {
             if (_behavior != value) {
+                Check.Argument(value != FunctionBehavior.Proactive, nameof(value));
                 _behavior = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(FinalBehavior));
+            }
+        }
+    }
+
+    public FunctionBehavior FinalBehavior {
+        get {
+            if (_behavior == FunctionBehavior.Proactive)
+                return Function.Behavior;
+            else {
+                Check.True(_behavior == FunctionBehavior.Reactive);
+                return FunctionBehavior.Reactive;
             }
         }
     }

@@ -25,40 +25,86 @@ internal static class Xtensions {
 
 public class Executor {
     internal class ExecutionContext {
-        public Queue<Node> YetToProcess { get; } = new();
-        public List<Node> Order { get; } = new();
-
-        public List<EvaluationNode> EvaluatedNodes { get; } = new();
+        public List<EvaluationNode> EvaluationNodes { get; } = new();
 
         public EvaluationNode? GetEvaluated(Node node) {
-            return EvaluatedNodes.SingleOrDefault(_ => _.Node == node);
+            return EvaluationNodes.SingleOrDefault(_ => _.Node == node);
+        }
+    }
+
+    internal struct Dependency {
+        public EvaluationNode Node { get; }
+        public FunctionOutput Output { get; }
+
+        public FunctionBehavior Behavior { get; }
+
+        public Dependency(EvaluationNode evaluationNode, FunctionOutput output, FunctionBehavior behavior) {
+            Node = evaluationNode;
+            Output = output;
+            Behavior = behavior;
         }
     }
 
     internal class EvaluationNode {
         public Node Node { get; }
         public Object?[] ArgValues { get; }
-        public Func<Object?>?[] ArgFunctions { get; private set; }
+
+        public Dependency?[] ArgDependencies { get; }
 
         public Int32 ArgCount { get; }
-        public bool Updated { get; set; } = false;
         public bool Invoked { get; set; } = false;
+        public bool UpdatedThisFrame { get; set; } = false;
+        public bool ProcessedThisFrame { get; set; } = false;
 
         private class NotFound { }
 
         private static readonly Object Empty = new NotFound();
 
-        public EvaluationNode(Node node) {
+        public EvaluationNode(ExecutionContext context, Node node) {
             Node = node;
             ArgCount = node.Function.Args.Count;
 
             ArgValues = Enumerable.Repeat(Empty, ArgCount).ToArray();
-            ArgFunctions = Enumerable.Repeat<Func<Object?>?>(null, ArgCount).ToArray();
+            ArgDependencies = Enumerable.Repeat((Dependency?) null, ArgCount).ToArray();
+
+            Invoked = false;
+            UpdatedThisFrame = true;
+            ProcessedThisFrame = true;
+
+            for (int i = 0; i < ArgCount; i++) {
+                FunctionArg arg = node.Function.Args[i];
+
+                if (arg is FunctionInput input) {
+                    Connection? connection = node.Connections.SingleOrDefault(_ => _.Input == input);
+                    if (connection == null) {
+                        System.Diagnostics.Debug.WriteLine("asfdsdfgweg");
+                        return;
+                    }
+
+                    if (connection is ValueConnection valueConnection)
+                        ArgValues[i] = valueConnection.Value;
+
+                    if (connection is OutputConnection outputConnection) {
+                        EvaluationNode? dependencyNode = context.GetEvaluated(outputConnection.OutputNode);
+
+                        if (dependencyNode == null) {
+                            return;
+                        }
+
+                        if (dependencyNode.Invoked) {
+                            ArgValues[i] = dependencyNode.GetOutputValue(outputConnection.Output);
+                        }
+
+                        ArgDependencies[i] = new Dependency(dependencyNode, outputConnection.Output,
+                            outputConnection.FinalBehavior);
+                    }
+                } else if (arg is FunctionConfig config)
+                    ArgValues[i] = config.Value;
+            }
         }
 
         public object? GetOutputValue(FunctionOutput outputConnectionOutput) {
-            if (!Invoked)
-                Invoke();
+            Check.True(Invoked);
 
             Int32? index = Node.Function.Args.FirstIndexOf(outputConnectionOutput);
             if (index == null)
@@ -70,26 +116,45 @@ public class Executor {
         public void Invoke() {
             if (Invoked) return;
 
-            for (int i = 0; i < ArgCount; i++)
-                if (ArgFunctions[i] != null)
-                    ArgValues[i] = ArgFunctions[i]!.Invoke();
+            for (int i = 0; i < ArgCount; i++) {
+                switch (Node.Function.Args[i].ArgType) {
+                    case ArgType.Config:
+                        break;
+                    case ArgType.Out:
+                        ArgValues[i] = Pool(Node.Function.Args[i].Type);
+                        break;
+                    case ArgType.In:
+                        if (ArgValues[i] == Empty || ArgDependencies[i] != null) {
+                            Check.True(ArgDependencies[i]!.Value.Node.Invoked);
 
-            for (int i = 0; i < ArgCount; i++)
-                if (Node.Function.Args[i].ArgType == ArgType.Out)
-                    ArgValues[i] = Activator.CreateInstance(Node.Function.Args[i].Type);
+                            ArgValues[i] = ArgDependencies[i]!.Value.Node
+                                .GetOutputValue(ArgDependencies[i]!.Value.Output);
+                        }
+
+                        break;
+
+                    default:
+                        Debug.Assert.False();
+                        return;
+                }
+            }
 
             Check.True(ArgValues.All(_ => _ != Empty));
 
             Node.Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
 
             Invoked = true;
-            Updated = true;
+        }
+
+        private Object Pool(Type type) {
+            return Activator.CreateInstance(type)!;
         }
     }
 
     private Int32 _frameNo = 0;
 
     public Graph Graph { get; }
+
 
     public Executor(Graph graph) {
         Graph = graph;
@@ -115,94 +180,89 @@ public class Executor {
 
     public Function DeltaTimeFunction { get; }
 
-    private ExecutionContext? _previousContext;
+    private ExecutionContext context = new ExecutionContext();
 
 
     public void Reset() {
-        _previousContext = null;
+        context = new ExecutionContext();
     }
 
     public void Run() {
-        var rootNodes = Graph.Nodes
-            .Where(_ => _.Function.IsProcedure);
+        Queue<Node> yetToProcessNodes = new();
+        List<Node> pathsFromProcedures = new();
 
-        ExecutionContext context = new();
-        rootNodes.Foreach(context.YetToProcess.Enqueue);
+        context.EvaluationNodes.Foreach(_ => _.ProcessedThisFrame = false);
 
-        while (context.YetToProcess.Count > 0) {
-            Node node = context.YetToProcess.Dequeue();
+        var procedures = Graph.Nodes
+            .Where(_ => _.Function.IsProcedure
+                        && _.FinalBehavior == FunctionBehavior.Proactive)
+            .ToArray();
+
+        procedures.Foreach(yetToProcessNodes.Enqueue);
+
+        while (yetToProcessNodes.Count > 0) {
+            Node node = yetToProcessNodes.Dequeue();
 
             foreach (var c in node.Connections)
                 if (c is OutputConnection connection)
-                    context.YetToProcess.Enqueue(connection.OutputNode);
+                    yetToProcessNodes.Enqueue(connection.OutputNode);
 
-            context.Order.Add(node);
+            pathsFromProcedures.Add(node);
         }
 
-        context.Order.Reverse();
+        pathsFromProcedures.Reverse();
 
-        foreach (var node in context.Order) {
-            if (context.GetEvaluated(node) != null) continue;
+        foreach (var node in pathsFromProcedures) {
+            if (context.GetEvaluated(node)?.ProcessedThisFrame ?? false)
+                continue;
 
-            EvaluationNode? evaluationNode = null;
-
-            if (node.Behavior == FunctionBehavior.Reactive) {
-                bool anyProactiveConnection = node.Connections.Any(_ => {
-                    return _.Behavior == FunctionBehavior.Proactive;
-                });
-
-                if (!anyProactiveConnection)
-                    evaluationNode = _previousContext?.GetEvaluated(node);
-            }
-
-            if (evaluationNode == null) {
-                evaluationNode = new(node);
-                evaluationNode.Updated = true;
-
-                for (int i = 0; i < evaluationNode.ArgCount; i++) {
-                    FunctionArg arg = node.Function.Args[i];
-
-                    if (arg is FunctionInput input) {
-                        Connection? connection = node.Connections.SingleOrDefault(_ => _.Input == input);
-                        if (connection == null) {
-                            System.Diagnostics.Debug.WriteLine("asfdsdfgweg");
-                            return;
-                        }
-
-                        if (connection is ValueConnection valueConnection)
-                            evaluationNode.ArgValues[i] = valueConnection.Value;
-
-                        if (connection is OutputConnection outputConnection) {
-                            EvaluationNode? evaluatedNode = null;
-                            if (outputConnection.Behavior == FunctionBehavior.Reactive)
-                                evaluatedNode = _previousContext?.GetEvaluated(outputConnection.OutputNode);
-
-                            evaluatedNode ??= context.GetEvaluated(outputConnection.OutputNode);
-
-                            if (evaluatedNode != null)
-                                evaluationNode.ArgFunctions[i] = new Func<object?>(() => {
-                                    // TODO flatten recursion
-                                    return evaluatedNode.GetOutputValue(outputConnection.Output);
-                                });
-                        }
-                    } else if (arg is FunctionConfig config)
-                        evaluationNode.ArgValues[i] = config.Value;
+            EvaluationNode? evaluationNode = context.GetEvaluated(node);
+            if (evaluationNode != null) {
+                evaluationNode.UpdatedThisFrame = false;
+                if (evaluationNode.Node.Function.IsProcedure) {
+                    evaluationNode.Invoked = false;
                 }
-
-                // enode.Invoke();
+            } else {
+                evaluationNode = new(context, node);
+                context.EvaluationNodes.Add(evaluationNode);
             }
 
             Debug.Assert.True(evaluationNode.ArgValues.Length == node.Function.Args.Count);
 
-            context.EvaluatedNodes.Add(evaluationNode);
+            evaluationNode.ProcessedThisFrame = true;
         }
 
-        context.EvaluatedNodes
+        Queue<EvaluationNode> yetToProcessENodes = new();
+        context.EvaluationNodes
             .Where(_ => _.Node.Function.IsProcedure)
-            .Foreach(_ => _.Invoke());
+            .Foreach(yetToProcessENodes.Enqueue);
+
+
+        context.EvaluationNodes.Clear();
+
+        while (yetToProcessENodes.Count > 0) {
+            EvaluationNode enode = yetToProcessENodes.Dequeue();
+            context.EvaluationNodes.Add(enode);
+
+            for (int i = 0; i < enode.ArgCount; i++) {
+                Dependency? dependency = enode.ArgDependencies[i];
+                if (dependency == null)
+                    continue;
+
+                if (dependency.Value.Behavior == FunctionBehavior.Reactive
+                    && dependency.Value.Node.Invoked) {
+                    dependency.Value.Node.ArgValues[i] = dependency.Value.Node.GetOutputValue(dependency.Value.Output);
+                } else {
+                    yetToProcessENodes.Enqueue(dependency.Value.Node);
+                    dependency.Value.Node.Invoked = false;
+                }
+            }
+        }
+
+        context.EvaluationNodes.Reverse();
+        context.EvaluationNodes.Foreach(_ => _.Invoke());
 
         ++_frameNo;
-        _previousContext = context;
     }
 }
 }
