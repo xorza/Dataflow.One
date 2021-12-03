@@ -99,7 +99,7 @@ public class Function : IFunction {
                 FunctionConfig config = FunctionConfig.Create(argName, argType);
                 if (configAttribute.DefaultValue != null) {
                     Check.True(argType == configAttribute.DefaultValue.GetType());
-                    config.Value = configAttribute.DefaultValue;
+                    config.DefaultValue = configAttribute.DefaultValue;
                 }
 
                 arg = config;

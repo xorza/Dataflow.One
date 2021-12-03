@@ -37,15 +37,15 @@ public class FunctionOutput : FunctionArg {
 public class FunctionConfig : FunctionArg {
     protected FunctionConfig(String name, Type type) : base(name, type) { }
 
-    private Object? _value = default(Type);
-
-    public Object? Value {
-        get => _value;
+    private Object? _defaultValue = default(Type);
+    
+    public Object? DefaultValue { 
+        get => _defaultValue;
         set {
             if (value != null)
                 Check.True(value.GetType() == Type);
-
-            _value = value;
+    
+            _defaultValue = value;
         }
     }
 
@@ -64,12 +64,12 @@ public class FunctionConfig : FunctionArg {
 
 public class FunctionConfig<T> : FunctionConfig {
     public T TypedValue {
-        get => (T) Value!;
+        get => (T) DefaultValue!;
         set {
             if (value != null)
                 Check.True(value.GetType() == Type);
 
-            Value = value;
+            DefaultValue = value;
         }
     }
 
