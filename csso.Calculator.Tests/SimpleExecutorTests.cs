@@ -161,5 +161,68 @@ public partial class Tests {
 
         Assert.Pass();
     }
+    
+    [Test]
+    public void Test4() {
+        Int32 outputValue = 0;
+
+        csso.NodeCore.Graph graph = new csso.NodeCore.Graph();
+        csso.Calculator.Executor  executor = new Executor(graph);
+        
+        IFunction outputFunc = new Function("Output", (Int32 val) => {
+            outputValue = val;
+            return true;
+        });
+        IFunction constFunc = new Function("Value", Const);
+        IFunction addFunc = new Function("Value", F.Add);
+        
+        
+        constFunc.Config.Single().DefaultValue = 3;
+
+        csso.NodeCore.Node  outputNode = new(outputFunc, graph);
+        graph.Add(outputNode);
+
+        Node addNode = new(addFunc, graph);
+        graph.Add(addNode);
+
+        Node constNode = new(constFunc, graph);
+        graph.Add(constNode);
+        constNode.ConfigValues.Single().Value = 2;
+        
+        Node frameNoNode = new(executor.FrameNoFunction, graph);
+        graph.Add(frameNoNode);
+        
+        
+        OutputConnection connection = new(
+            outputNode,
+            outputNode.Function.Inputs.Single(),
+            addNode,
+            addNode.Function.Outputs.Single());
+        outputNode.AddBinding(connection);
+        
+        
+        OutputConnection connection2 = new(
+            addNode,
+            addNode.Function.Inputs[0],
+            constNode,
+            constNode.Function.Outputs.Single());
+        addNode.AddBinding(connection2);
+        
+        OutputConnection connection3 = new(
+            addNode,
+            addNode.Function.Inputs[1],
+            frameNoNode,
+            frameNoNode.Function.Outputs.Single());
+        addNode.AddBinding(connection3);
+
+
+        executor.Reset();
+        executor.Run();
+        Assert.AreEqual(outputValue, 2);
+        executor.Run();
+        Assert.AreEqual(outputValue, 3);
+
+        Assert.Pass();
+    }
 }
 }

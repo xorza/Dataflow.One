@@ -55,6 +55,7 @@ public class Executor {
         public bool Invoked { get; set; } = false;
         public bool UpdatedThisFrame { get; set; } = false;
         public bool ProcessedThisFrame { get; set; } = false;
+        public FunctionBehavior Behavior { get; } = FunctionBehavior.Proactive;
 
         private class NotFound { }
 
@@ -70,6 +71,7 @@ public class Executor {
             Invoked = false;
             UpdatedThisFrame = true;
             ProcessedThisFrame = true;
+            Behavior = node.FinalBehavior;
 
             for (int i = 0; i < ArgCount; i++) {
                 FunctionArg arg = node.Function.Args[i];
@@ -89,7 +91,11 @@ public class Executor {
 
                         if (dependencyNode == null) {
                             throw new Exception("setsdfsdf");
-                            return;
+                            // return;
+                        }
+
+                        if (dependencyNode.Behavior == FunctionBehavior.Proactive) {
+                            Behavior = FunctionBehavior.Proactive;
                         }
 
                         ArgDependencies[i] = new Dependency(
@@ -260,6 +266,7 @@ public class Executor {
                     continue;
 
                 if (dependency.Behavior == FunctionBehavior.Reactive
+                    && dependency.Node.Behavior== FunctionBehavior.Reactive
                     && dependency.Node.Invoked) {
                     dependency.Node.ArgValues[i] = dependency.Node.GetOutputValue(dependency.Output);
                 }
