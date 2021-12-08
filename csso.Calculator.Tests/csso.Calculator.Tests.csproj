@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\csso.Calculator\csso.Calculator.csproj" />
+      <ProjectReference Include="..\csso.NodeCore\csso.NodeCore.csproj" />
     </ItemGroup>
 
 </Project>
