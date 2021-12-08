@@ -122,11 +122,29 @@ public class Function : IFunction {
     }
 
     public void Invoke(object?[]? args) {
+        CheckArgTypes(args);
+
         object? result = Delegate.DynamicInvoke(args);
         if (result is bool boolResult)
             Check.True(boolResult);
         else
             throw new InvalidOperationException();
+    }
+
+    private void CheckArgTypes(object?[]? args) {
+        for (int i = 0; i < Args.Count; i++) {
+            if (args == null)
+                throw new ArgumentNullException(nameof(args));
+
+            if (args.Length != Args.Count)
+                throw new ArgumentException(nameof(args));
+
+            if (args[i] == null)
+                Check.True(!Args[i].Type.IsValueType);
+
+            Check.True(Args[i].Type.IsSubclassOf(args[i]!.GetType())
+                       || Args[i].Type.Equals(args[i]!.GetType()));
+        }
     }
 }
 }

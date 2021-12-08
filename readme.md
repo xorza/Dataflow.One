@@ -5,3 +5,5 @@
 
 * Serialization as programming language
 * Serialization in two files - visual and graph
+* In, Out and Reference argument type
+  * Reference means it'll reuse memory and write there
