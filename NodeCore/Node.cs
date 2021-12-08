@@ -39,6 +39,7 @@ public class Node : INotifyPropertyChanged {
 
     public Node(IFunction function, Graph graph) {
         Function = function;
+        Behavior = function.Behavior;
         Graph = graph;
 
         Connections = _connections.AsReadOnly();

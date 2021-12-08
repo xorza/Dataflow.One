@@ -237,7 +237,7 @@ public partial class Tests {
             return true;
         });
         IFunction constFunc = new Function("Value", Const);
-        IFunction addFunc = new Function("Value", F.Add);
+        IFunction addFunc = new Function("Add", F.Add);
 
 
         constFunc.Config.Single().DefaultValue = 3;
