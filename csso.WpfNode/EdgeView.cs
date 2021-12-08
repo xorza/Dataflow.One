@@ -10,7 +10,7 @@ public class EdgeView : INotifyPropertyChanged {
         Output = output;
         Connection = connection;
 
-        _isProactive = Connection.InputNode.FinalBehavior == FunctionBehavior.Proactive;
+        _isProactive = true;
     }
 
     public Connection Connection { get; }

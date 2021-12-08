@@ -143,11 +143,9 @@ public class Executor {
                         break;
                     case ArgType.In:
                         if (ArgDependencies[i] != null) {
-                            if (ArgDependencies[i]!.Node.ProcessedThisFrame) {
-                                Check.True(ArgDependencies[i]!.Node.HasOutputValues);
-                                ArgValues[i] = ArgDependencies[i]!.Node
-                                    .GetOutputValue(ArgDependencies[i]!.Output);
-                            }
+                            Check.True(ArgDependencies[i]!.Node.HasOutputValues);
+                            ArgValues[i] = ArgDependencies[i]!.Node
+                                .GetOutputValue(ArgDependencies[i]!.Output);
                         }
 
                         if (ArgValues[i] == Empty) {
@@ -282,7 +280,7 @@ public class Executor {
                     continue;
                 }
 
-                if (dependency.Behavior == FunctionBehavior.Reactive)
+                if (dependency.Behavior == FunctionBehavior.Reactive) 
                     continue;
 
                 if (dependency.Node.ArgumentsUpdatedThisFrame ||
