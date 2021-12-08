@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using csso.Common;
-using csso.NodeCore.Annotations;
 
 namespace csso.NodeCore {
 public  enum ConnectionBehavior {
