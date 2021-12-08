@@ -36,20 +36,9 @@ public sealed class OutputConnection : Connection {
             if (_behavior == value) return;
             _behavior = value;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(FinalBehavior));
         }
     }
     
-    public override FunctionBehavior FinalBehavior {
-        get {
-            if (_behavior == FunctionBehavior.Proactive)
-                return OutputNode.FinalBehavior;
-            else {
-                Check.True(_behavior == FunctionBehavior.Reactive);
-                return FunctionBehavior.Reactive;
-            }
-        }
-    }
 
 }
 }

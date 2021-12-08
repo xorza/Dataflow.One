@@ -13,8 +13,6 @@ public abstract class Connection : INotifyPropertyChanged {
     public FunctionInput Input { get; }
     public Node InputNode { get; }
 
-    public abstract FunctionBehavior FinalBehavior { get; }
-
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]

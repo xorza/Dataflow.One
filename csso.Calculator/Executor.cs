@@ -55,15 +55,17 @@ public class Executor {
 
     internal class EvaluationNode {
         public Node Node { get; }
-        public Object?[] ArgValues { get; }
 
+        public Object?[] ArgValues { get; }
         public Dependency?[] ArgDependencies { get; }
 
         public Int32 ArgCount { get; }
-        public bool WasEverInvoked { get; set; } = false;
-        public bool UpdatedThisFrame { get; set; } = false;
-        public bool ProcessedThisFrame { get; set; } = false;
+        public bool HasOutputValues { get; private set; } = false;
         public FunctionBehavior Behavior { get; } = FunctionBehavior.Proactive;
+
+        public bool ArgumentsUpdatedThisFrame { get; set; } = false;
+        public bool ProcessedThisFrame { get; set; } = false;
+
 
         private class NotFound { }
 
@@ -76,9 +78,6 @@ public class Executor {
             ArgValues = Enumerable.Repeat(Empty, ArgCount).ToArray();
             ArgDependencies = Enumerable.Repeat((Dependency?) null, ArgCount).ToArray();
 
-            WasEverInvoked = false;
-            UpdatedThisFrame = true;
-            ProcessedThisFrame = true;
             Behavior = node.FinalBehavior;
 
             for (int i = 0; i < ArgCount; i++) {
@@ -97,17 +96,16 @@ public class Executor {
                     if (connection is OutputConnection outputConnection) {
                         EvaluationNode? dependencyNode = context.GetEvaluated(outputConnection.OutputNode);
 
-                        if (dependencyNode == null) 
+                        if (dependencyNode == null)
                             throw new Exception("setsdfsdf");
 
-                        if (dependencyNode.Behavior == FunctionBehavior.Proactive) {
+                        if (dependencyNode.Behavior == FunctionBehavior.Proactive)
                             Behavior = FunctionBehavior.Proactive;
-                        }
 
                         ArgDependencies[i] = new Dependency(
                             dependencyNode,
                             outputConnection.Output,
-                            outputConnection.FinalBehavior
+                            outputConnection.Behavior
                         );
                     }
                 } else if (arg is FunctionConfig config) {
@@ -119,7 +117,7 @@ public class Executor {
         }
 
         public object? GetOutputValue(FunctionOutput outputConnectionOutput) {
-            Check.True(WasEverInvoked);
+            Check.True(HasOutputValues);
 
             Int32? index = Node.Function.Args.FirstIndexOf(outputConnectionOutput);
             if (index == null)
@@ -129,7 +127,11 @@ public class Executor {
         }
 
         public void Invoke() {
-            if (!ProcessedThisFrame) 
+            if (HasOutputValues
+                && !ArgumentsUpdatedThisFrame
+                && Behavior != FunctionBehavior.Proactive)
+                throw new Exception("rb56u etdg");
+            if (!ProcessedThisFrame)
                 throw new Exception("veldkfgyuivhnwo4875");
 
             for (int i = 0; i < ArgCount; i++) {
@@ -142,7 +144,7 @@ public class Executor {
                     case ArgType.In:
                         if (ArgDependencies[i] != null) {
                             if (ArgDependencies[i]!.Node.ProcessedThisFrame) {
-                                Check.True(ArgDependencies[i]!.Node.WasEverInvoked);
+                                Check.True(ArgDependencies[i]!.Node.HasOutputValues);
                                 ArgValues[i] = ArgDependencies[i]!.Node
                                     .GetOutputValue(ArgDependencies[i]!.Output);
                             }
@@ -162,7 +164,8 @@ public class Executor {
 
             Node.Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
 
-            WasEverInvoked = true;
+            if (!Node.Function.IsProcedure)
+                HasOutputValues = true;
         }
 
         private Object Pool(Type type) {
@@ -210,7 +213,7 @@ public class Executor {
     public void Run() {
         _context.EvaluationNodes.Foreach(_ => {
             _.ProcessedThisFrame = false;
-            _.UpdatedThisFrame = false;
+            _.ArgumentsUpdatedThisFrame = false;
         });
 
         var pathsFromProcedures = GetPathsToProcedures();
@@ -251,12 +254,10 @@ public class Executor {
 
         Debug.Assert.True(evaluationNode.ArgValues.Length == node.Function.Args.Count);
 
-        bool hasNotInvokedDependencies = evaluationNode.ArgDependencies
-            .SkipNulls()
-            .Any(_ => !_.Node.WasEverInvoked);
-
-        if (hasNotInvokedDependencies)
-            evaluationNode.WasEverInvoked = false;
+        evaluationNode.ArgumentsUpdatedThisFrame =
+            evaluationNode.ArgDependencies
+                .SkipNulls()
+                .Any(dependency => !dependency!.Node.ArgumentsUpdatedThisFrame);
     }
 
     private IReadOnlyList<EvaluationNode> GetInvokationList() {
@@ -270,20 +271,24 @@ public class Executor {
         while (yetToProcessENodes.Count > 0) {
             EvaluationNode enode = yetToProcessENodes.Dequeue();
             invokationList.Add(enode);
-            enode.WasEverInvoked = false;
 
             for (int i = 0; i < enode.ArgCount; i++) {
                 Dependency? dependency = enode.ArgDependencies[i];
                 if (dependency == null)
                     continue;
 
-                if ((dependency.Behavior == FunctionBehavior.Reactive
-                     || dependency.Node.Behavior == FunctionBehavior.Reactive)
-                    && dependency.Node.WasEverInvoked) {
-                    dependency.Node.ArgValues[i] = dependency.Node.GetOutputValue(dependency.Output);
-                } else {
+                if (!dependency.Node.HasOutputValues) {
                     yetToProcessENodes.Enqueue(dependency.Node);
-                    dependency.Node.WasEverInvoked = false;
+                    continue;
+                }
+
+                if (dependency.Behavior == FunctionBehavior.Reactive)
+                    continue;
+
+                if (dependency.Node.ArgumentsUpdatedThisFrame ||
+                    dependency.Node.Behavior == FunctionBehavior.Proactive) {
+                    yetToProcessENodes.Enqueue(dependency.Node);
+                    continue;
                 }
             }
         }
