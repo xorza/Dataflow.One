@@ -26,7 +26,7 @@ public class EdgeView : INotifyPropertyChanged {
             _isProactive = value;
             if (Connection is OutputConnection outputConnection)
                 outputConnection.Behavior =
-                    _isProactive ? FunctionBehavior.Proactive : FunctionBehavior.Reactive;
+                    _isProactive ? ConnectionBehavior.Always : ConnectionBehavior.Once;
             OnPropertyChanged();
         }
     }

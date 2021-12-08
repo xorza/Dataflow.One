@@ -6,6 +6,10 @@ using csso.Common;
 using csso.NodeCore.Annotations;
 
 namespace csso.NodeCore {
+public  enum ConnectionBehavior {
+    Once,
+    Always
+}
 public sealed class OutputConnection : Connection {
     public OutputConnection(
         Node inputNode,
@@ -18,7 +22,6 @@ public sealed class OutputConnection : Connection {
 
         OutputNode = outputNode;
         Output = output;
-        Behavior = FunctionBehavior.Proactive;
 
         Check.True(inputNode.Function.Inputs.Contains(input));
         Check.True(outputNode.Function.Outputs.Contains(output));
@@ -26,11 +29,10 @@ public sealed class OutputConnection : Connection {
 
     public Node OutputNode { get; }
     public FunctionOutput Output { get; }
-    
-    
-    private FunctionBehavior _behavior = FunctionBehavior.Reactive;
 
-    public FunctionBehavior Behavior {
+    private ConnectionBehavior _behavior = ConnectionBehavior.Always;
+
+    public ConnectionBehavior Behavior {
         get => _behavior;
         set {
             if (_behavior == value) return;

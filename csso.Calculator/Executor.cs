@@ -44,9 +44,9 @@ public class Executor {
         public EvaluationNode Node { get; }
         public FunctionOutput Output { get; }
 
-        public FunctionBehavior Behavior { get; }
+        public ConnectionBehavior Behavior { get; }
 
-        public Dependency(EvaluationNode evaluationNode, FunctionOutput output, FunctionBehavior behavior) {
+        public Dependency(EvaluationNode evaluationNode, FunctionOutput output, ConnectionBehavior behavior) {
             Node = evaluationNode;
             Output = output;
             Behavior = behavior;
@@ -280,7 +280,7 @@ public class Executor {
                     continue;
                 }
 
-                if (dependency.Behavior == FunctionBehavior.Reactive) 
+                if (dependency.Behavior == ConnectionBehavior.Once) 
                     continue;
 
                 if (dependency.Node.ArgumentsUpdatedThisFrame ||

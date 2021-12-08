@@ -261,7 +261,7 @@ public partial class Tests {
             outputNode.Function.Inputs.Single(),
             addNode,
             addNode.Function.Outputs.Single());
-        connection.Behavior = FunctionBehavior.Reactive;
+        connection.Behavior = ConnectionBehavior.Once;
         outputNode.AddBinding(connection);
 
 
@@ -326,7 +326,7 @@ public partial class Tests {
             outputNode.Function.Inputs.Single(),
             addNode,
             addNode.Function.Outputs.Single());
-        connection.Behavior = FunctionBehavior.Proactive;
+        connection.Behavior = ConnectionBehavior.Always;
         outputNode.AddBinding(connection);
 
 
