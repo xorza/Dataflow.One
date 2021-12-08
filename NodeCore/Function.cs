@@ -142,8 +142,7 @@ public class Function : IFunction {
             if (args[i] == null)
                 Check.True(!Args[i].Type.IsValueType);
 
-            Check.True(Args[i].Type.IsSubclassOf(args[i]!.GetType())
-                       || Args[i].Type.Equals(args[i]!.GetType()));
+            Check.True(Args[i].Type.IsInstanceOfType(args[i]!));
         }
     }
 }
