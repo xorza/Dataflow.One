@@ -104,8 +104,7 @@ public class Executor {
                             outputConnection.FinalBehavior
                         );
                     }
-                }
-                else if (arg is FunctionConfig config) {
+                } else if (arg is FunctionConfig config) {
                     ConfigValue value = node.ConfigValues
                         .Single(_ => _.Config == config);
                     ArgValues[i] = value.Value;
@@ -202,16 +201,28 @@ public class Executor {
     }
 
     public void Run() {
-        Queue<Node> yetToProcessNodes = new();
-        List<Node> pathsFromProcedures = new();
-
         _context.EvaluationNodes.Foreach(_ => _.ProcessedThisFrame = false);
+
+        var pathsFromProcedures = GetPathsToProcedures();
+        UpdateEvaluationNodes(pathsFromProcedures);
+        var invokationList = GetInvokationList();
+
+        invokationList.Foreach(_ => _.Invoke());
+
+        ++_frameNo;
+    }
+
+
+    private IReadOnlyList<Node> GetPathsToProcedures() {
+        List<Node> pathsFromProcedures = new();
 
         var procedures = Graph.Nodes
             .Where(_ => _.Function.IsProcedure
                         && _.FinalBehavior == FunctionBehavior.Proactive)
             .ToArray();
 
+
+        Queue<Node> yetToProcessNodes = new();
         procedures.Foreach(yetToProcessNodes.Enqueue);
 
         while (yetToProcessNodes.Count > 0) {
@@ -225,7 +236,10 @@ public class Executor {
         }
 
         pathsFromProcedures.Reverse();
+        return pathsFromProcedures.AsReadOnly();
+    }
 
+    private void UpdateEvaluationNodes(IReadOnlyList<Node> pathsFromProcedures) {
         foreach (var node in pathsFromProcedures) {
             if (_context.GetEvaluated(node)?.ProcessedThisFrame ?? false)
                 continue;
@@ -236,8 +250,7 @@ public class Executor {
                 if (evaluationNode.Node.Function.IsProcedure) {
                     evaluationNode.Invoked = false;
                 }
-            }
-            else {
+            } else {
                 evaluationNode = new(_context, node);
                 _context.EvaluationNodes.Add(evaluationNode);
             }
@@ -246,18 +259,19 @@ public class Executor {
 
             evaluationNode.ProcessedThisFrame = true;
         }
+    }
 
+    private IReadOnlyList<EvaluationNode> GetInvokationList() {
         Queue<EvaluationNode> yetToProcessENodes = new();
         _context.EvaluationNodes
             .Where(_ => _.Node.Function.IsProcedure)
             .Foreach(yetToProcessENodes.Enqueue);
 
-
-        _context.EvaluationNodes.Clear();
+        List<EvaluationNode> invokationList = new();
 
         while (yetToProcessENodes.Count > 0) {
             EvaluationNode enode = yetToProcessENodes.Dequeue();
-            _context.EvaluationNodes.Add(enode);
+            invokationList.Add(enode);
             enode.Invoked = false;
 
             for (int i = 0; i < enode.ArgCount; i++) {
@@ -266,21 +280,18 @@ public class Executor {
                     continue;
 
                 if (dependency.Behavior == FunctionBehavior.Reactive
-                    && dependency.Node.Behavior== FunctionBehavior.Reactive
+                    && dependency.Node.Behavior == FunctionBehavior.Reactive
                     && dependency.Node.Invoked) {
                     dependency.Node.ArgValues[i] = dependency.Node.GetOutputValue(dependency.Output);
-                }
-                else {
+                } else {
                     yetToProcessENodes.Enqueue(dependency.Node);
                     dependency.Node.Invoked = false;
                 }
             }
         }
 
-        _context.EvaluationNodes.Reverse();
-        _context.EvaluationNodes.Foreach(_ => _.Invoke());
-
-        ++_frameNo;
+        invokationList.Reverse();
+        return invokationList;
     }
 }
 }
