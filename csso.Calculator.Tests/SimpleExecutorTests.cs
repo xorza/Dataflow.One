@@ -23,7 +23,7 @@ public class Tests {
         var output1Value = 0;
 
         var graph = new Graph();
-        var executor = new Executor(graph);
+        var executor = new Executor();
 
         Function constFunc = new Function("Value", Const);
         constFunc.Config.Single().DefaultValue = 13;
@@ -47,12 +47,12 @@ public class Tests {
 
 
         executor.Reset();
-        executor.Run();
+        executor.Run(graph);
         Assert.AreEqual(13, output1Value);
 
         constNode.ConfigValues.Single().Value = 1253;
         executor.Reset();
-        executor.Run();
+        executor.Run(graph);
 
         Assert.AreEqual(output1Value, 1253);
 
@@ -69,7 +69,7 @@ public class Tests {
         var outputValue = 0;
 
         graph = new Graph();
-        executor = new Executor(graph);
+        executor = new Executor();
         Function outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
             return true;
@@ -90,9 +90,9 @@ public class Tests {
 
 
         executor.Reset();
-        executor.Run();
+        executor.Run(graph);
         Assert.AreEqual(0, outputValue);
-        executor.Run();
+        executor.Run(graph);
         Assert.AreEqual(1, outputValue);
 
         Assert.Pass();
@@ -104,7 +104,7 @@ public class Tests {
         var outputValue = 0;
 
         var graph = new Graph();
-        var executor = new Executor(graph);
+        var executor = new Executor();
 
         Function outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
@@ -154,9 +154,9 @@ public class Tests {
 
 
         executor.Reset();
-        executor.Run();
+        executor.Run(graph);
         Assert.AreEqual(1256, outputValue);
-        executor.Run();
+        executor.Run(graph);
         Assert.AreEqual(1256, outputValue);
 
         Assert.Pass();
@@ -167,7 +167,7 @@ public class Tests {
         var outputValue = 0;
 
         var graph = new Graph();
-        var executor = new Executor(graph);
+        var executor = new Executor();
 
         Function outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
@@ -217,9 +217,9 @@ public class Tests {
 
 
         executor.Reset();
-        executor.Run();
+        executor.Run(graph);
         Assert.AreEqual(outputValue, 2);
-        executor.Run();
+        executor.Run(graph);
         Assert.AreEqual(outputValue, 3);
 
         Assert.Pass();
@@ -230,7 +230,7 @@ public class Tests {
         var outputValue = 0;
 
         var graph = new Graph();
-        var executor = new Executor(graph);
+        var executor = new Executor();
 
         Function outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
@@ -281,9 +281,9 @@ public class Tests {
 
 
         executor.Reset();
-        executor.Run();
+        executor.Run(graph);
         Assert.AreEqual(2, outputValue);
-        executor.Run();
+        executor.Run(graph);
         Assert.AreEqual(2, outputValue);
 
         Assert.Pass();
@@ -295,7 +295,7 @@ public class Tests {
         var outputValue = 0;
 
         var graph = new Graph();
-        var executor = new Executor(graph);
+        var executor = new Executor();
 
         Function outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
@@ -346,9 +346,9 @@ public class Tests {
 
 
         executor.Reset();
-        executor.Run();
+        executor.Run(graph);
         Assert.AreEqual(2, outputValue);
-        executor.Run();
+        executor.Run(graph);
         Assert.AreEqual(3, outputValue);
 
         Assert.Pass();
