@@ -121,7 +121,7 @@
                 CornerRadius="{Binding Path=CornerRadius, ElementName=NodeUserControl}"
                 BorderBrush="{Binding Path=BorderBrush, ElementName=NodeUserControl}"
                 Background="{Binding Path=Background, ElementName=NodeUserControl}">
-            <Grid DataContext="{Binding NodeView}" Margin="0">
+            <Grid Margin="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition />

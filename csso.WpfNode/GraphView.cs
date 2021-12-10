@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using csso.Common;
 using csso.NodeCore;
 using csso.WpfNode.Annotations;
+using DynamicData;
 using OpenTK.Compute.OpenCL;
 
 namespace csso.WpfNode;
@@ -79,20 +80,21 @@ public class GraphView : INotifyPropertyChanged {
     }
 
     public void Refresh() {
-        _nodes.Clear();
+        var nodesToRemove = _nodes
+            .Where(_ => !Graph.Nodes.Contains(_.Node))
+            .ToArray();
+        _nodes.RemoveMany(nodesToRemove);
 
-        foreach (var node in Graph.Nodes) {
-            if (Nodes.Any(_ => _.Node == node))
-                continue;
-
-            NodeView nv = new(this, node);
-            _nodes.Add(nv);
-        }
-
+        Graph.Nodes
+            .Where(n => _nodes.All(nv => nv.Node != n))
+            .Select(_ => new NodeView(this, _))
+            .Foreach(_nodes.Add);
+        
         if (_selectedNode != null && !Nodes.Contains(_selectedNode))
             SelectedNode = null;
 
-        List<EdgeView> newEdgeViews = new();
+       
+        _edges.Clear();
         foreach (var node in Nodes)
         foreach (var edge in node.Node.Connections)
             if (edge is OutputConnection binding) {
@@ -102,17 +104,9 @@ public class GraphView : INotifyPropertyChanged {
                 var input = inputNode.Inputs.Single(_ => _.FunctionArg == binding.Input);
                 var output = outputNode.Outputs.Single(_ => _.FunctionArg == binding.Output);
 
-                newEdgeViews.Add(new EdgeView(binding, input, output));
+                _edges.Add(new EdgeView(binding, input, output));
             }
 
-        for (var i = 0; i < newEdgeViews.Count; i++)
-            if (Edges.Count > i)
-                _edges[i] = newEdgeViews[i];
-            else
-                _edges.Add(newEdgeViews[i]);
-
-        while (Edges.Count > newEdgeViews.Count)
-            _edges.RemoveAt(Edges.Count - 1);
     }
 
     public void RemoveNode(NodeView nodeView) {

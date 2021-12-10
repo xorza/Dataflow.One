@@ -64,6 +64,8 @@ public partial class Graph : UserControl {
         if (e.NewValue is GraphView graphView) {
             ((INotifyCollectionChanged) graphView.Edges).CollectionChanged += graph.Edges_CollectionChanged;
         }
+        
+        graph.RedrawEdges();
     }
 
     private void Edges_CollectionChanged(

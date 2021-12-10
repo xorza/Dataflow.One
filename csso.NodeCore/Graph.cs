@@ -19,6 +19,7 @@ public class Graph {
     }
 
     public void Remove(Node node) {
+        // Check.True(node.Graph != null);
         Debug.Assert.AreSame(node.Graph, this);
 
         if (!_nodes.Remove(node))

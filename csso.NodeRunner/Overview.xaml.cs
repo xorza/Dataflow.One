@@ -53,14 +53,14 @@ public partial class Overview : UserControl {
 
         _graph.Add(new Node(addFunc, _graph));
 
-        _graph.Add(new Node(divideWholeFunc, _graph));
-        // _graph.Add(new Node(messageBoxFunc, _graph));
+        // _graph.Add(new Node(divideWholeFunc, _graph));
+        _graph.Add(new Node(messageBoxFunc, _graph));
         //
-        // _graph.Add(new Node(valueFunc, _graph));
+        _graph.Add(new Node(valueFunc, _graph));
         // _graph.Add(new Node(valueFunc, _graph));
         // _graph.Add(new Node(valueFunc, _graph));
         //
-        // _graph.Add(new Node(_executor.FrameNoFunction, _graph));
+        _graph.Add(new Node(_executor.FrameNoFunction, _graph));
         // _graph.Add(new Node(_executor.DeltaTimeFunction, _graph));
 
         GraphView = new(_graph);

@@ -39,7 +39,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         InitializeComponent();
 
         MouseLeftButtonDown += Node_MouseLeftButtonDown;
-        LayoutUpdated += EventHandler;
+        LayoutUpdated += LayoutUpdated_EventHandler;
     }
 
     public Brush HighlightBrush {
@@ -71,43 +71,48 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     public event PinClickEventHandler? PinClick;
 
-    private void EventHandler(object? sender, EventArgs e) {
-        if (DragCanvas != null) UpdatePinPositions(DragCanvas!);
+    private void LayoutUpdated_EventHandler(object? sender, EventArgs e) {
+        UpdatePinPositions();
     }
 
-    private void UpdatePinPositions(Canvas canvas) {
+    private void UpdatePinPositions() {
         Check.True(NodeView != null);
 
-        try {
-            NodeView!.Inputs.ForEach(put => {
-                if (put.Control != null) {
-                    var upperLeft = put.Control
-                        .TransformToVisual(canvas)
-                        .Transform(new Point(0, 0));
-                    var mid = new Point(
-                        put.Control.RenderSize.Width / 2,
-                        put.Control.RenderSize.Height / 2);
+        if (DragCanvas == null)
+            return;
+        if (IsVisible != true)
+            return;
 
-                    var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
-                    put.PinPoint = newPinPoint;
-                }
-            });
+        Canvas canvas = DragCanvas!;
+
+        NodeView!.Inputs.ForEach(put => {
+            if (put.Control != null) {
+                var upperLeft = put.Control
+                    .TransformToVisual(canvas)
+                    .Transform(new Point(0, 0));
+                var mid = new Point(
+                    put.Control.RenderSize.Width / 2,
+                    put.Control.RenderSize.Height / 2);
+
+                var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
+                put.PinPoint = newPinPoint;
+            }
+        });
 
 
-            NodeView!.Outputs.ForEach(put => {
-                if (put.Control != null) {
-                    var upperLeft = put.Control
-                        .TransformToVisual(canvas)
-                        .Transform(new Point(0, 0));
-                    var mid = new Point(
-                        put.Control.RenderSize.Width / 2,
-                        put.Control.RenderSize.Height / 2);
+        NodeView!.Outputs.ForEach(put => {
+            if (put.Control != null) {
+                var upperLeft = put.Control
+                    .TransformToVisual(canvas)
+                    .Transform(new Point(0, 0));
+                var mid = new Point(
+                    put.Control.RenderSize.Width / 2,
+                    put.Control.RenderSize.Height / 2);
 
-                    var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
-                    put.PinPoint = newPinPoint;
-                }
-            });
-        } catch { }
+                var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
+                put.PinPoint = newPinPoint;
+            }
+        });
     }
 
 
