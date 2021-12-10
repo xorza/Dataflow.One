@@ -18,8 +18,4 @@
         <ProjectReference Include="..\csso.Common\csso.Common.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Serialization" />
-    </ItemGroup>
-
 </Project>

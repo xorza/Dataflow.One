@@ -47,10 +47,13 @@ public sealed class OutputConnection : Connection {
         result.InputIndex = Input.Index;
         result.InputNodeId = InputNode.Id;
 
+        result.Behavior = Behavior;
+
         return result;
     }
 
     internal OutputConnection(Graph graph, SerializedOutputConnection serialized) {
+        Behavior = serialized.Behavior;
         InputNode = graph.GetNode(serialized.InputNodeId);
         Input = InputNode.Function.Inputs
             .Single(input => input.Index == serialized.InputIndex);
@@ -65,4 +68,5 @@ public struct SerializedOutputConnection {
     public Guid OutputNodeId { get; set; }
     public UInt32 InputIndex { get; set; }
     public Guid InputNodeId { get; set; }
+    public ConnectionBehavior Behavior { get; set; }
 }

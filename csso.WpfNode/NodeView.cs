@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -60,4 +61,18 @@ public class NodeView : INotifyPropertyChanged {
     protected void OnPropertyChanged([CallerMemberName] string? name = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
+
+    internal SerializedNodeView Serialize() {
+        SerializedNodeView result = new();
+
+        result.Position = Position;
+        result.Id = Node.Id;
+        
+        return result;
+    }
+}
+
+public struct SerializedNodeView {
+    public Point Position { get; set; }
+    public Guid Id { get; set; }
 }

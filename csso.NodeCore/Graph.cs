@@ -29,6 +29,7 @@ public class Graph {
             .SelectMany(_ => _.Connections)
             .OfType<OutputConnection>()
             .Where(_ => _.OutputNode == node)
+            .ToArray()
             .Foreach(_ => _.InputNode.Remove(_));
     }
 

@@ -89,11 +89,11 @@ public class GraphView : INotifyPropertyChanged {
             .Where(n => _nodes.All(nv => nv.Node != n))
             .Select(_ => new NodeView(this, _))
             .Foreach(_nodes.Add);
-        
+
         if (_selectedNode != null && !Nodes.Contains(_selectedNode))
             SelectedNode = null;
 
-       
+
         _edges.Clear();
         foreach (var node in Nodes)
         foreach (var edge in node.Node.Connections)
@@ -106,7 +106,6 @@ public class GraphView : INotifyPropertyChanged {
 
                 _edges.Add(new EdgeView(binding, input, output));
             }
-
     }
 
     public void RemoveNode(NodeView nodeView) {
@@ -116,4 +115,30 @@ public class GraphView : INotifyPropertyChanged {
 
         Refresh();
     }
+
+    public SerializedGraphView Serialize() {
+        SerializedGraphView result = new();
+
+        result.Graph = Graph.Serialize();
+
+        result.NodeViews = _nodes
+            .Select(_ => _.Serialize())
+            .ToArray();
+
+        return result;
+    }
+
+    public GraphView(FunctionFactory functionFactory, SerializedGraphView serialized) 
+        : this( new NodeCore.Graph(functionFactory, serialized.Graph)) {
+        serialized.NodeViews
+            .Foreach(_ => {
+                var node = _nodes.Single(n => n.Node.Id == _.Id);
+                node.Position = _.Position;
+            });
+    }
+}
+
+public struct SerializedGraphView {
+    public SerializedGraph Graph { get; set; }
+    public SerializedNodeView[] NodeViews { get; set; }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows;
@@ -10,6 +11,7 @@ using csso.NodeCore;
 using csso.NodeCore.Funcs;
 using csso.OpenCL;
 using csso.WpfNode;
+using Microsoft.Win32;
 using Buffer = csso.OpenCL.Buffer;
 using Graph = csso.NodeCore.Graph;
 using Image = csso.ImageProcessing.Image;
@@ -170,14 +172,31 @@ public partial class Overview : UserControl {
     }
 
     private void Serialize_Button_OnClick(object sender, RoutedEventArgs e) {
-        JsonSerializerOptions opts = new();
-        opts.WriteIndented = true;
+        var sfd = new SaveFileDialog();
+        sfd.Filter = "Json files | *.json";
+        sfd.DefaultExt = "json";
+        if (sfd.ShowDialog() ?? false) {
+            JsonSerializerOptions opts = new();
+            opts.WriteIndented = true;
 
-        SerializedGraph serialized = _graph.Serialize();
-        string jsonString = JsonSerializer.Serialize(serialized, opts);
-        serialized = JsonSerializer.Deserialize<SerializedGraph>(jsonString);
-        _graph = new Graph(_functionFactory, serialized);
+            SerializedGraphView serializedGraphView = GraphView.Serialize();
 
-        GraphView = new(_graph);
+            string jsonString = JsonSerializer.Serialize(serializedGraphView, opts);
+            File.WriteAllText(sfd.FileName, jsonString);
+        }
+    }
+
+    private void Deserialize_Button_OnClick(object sender, RoutedEventArgs e) {
+        var ofd = new OpenFileDialog();
+        ofd.Filter = "Json files | *.json";
+        ofd.DefaultExt = "json";
+        if (ofd.ShowDialog() ?? false) {
+            JsonSerializerOptions opts = new();
+            opts.WriteIndented = true;
+
+            string jsonString = File.ReadAllText(ofd.FileName);
+            SerializedGraphView serializedGraphView = JsonSerializer.Deserialize<SerializedGraphView>(jsonString);
+            GraphView = new(_functionFactory, serializedGraphView);
+        }
     }
 }

@@ -46,6 +46,7 @@
             <Button Content="run graph" Click="RunGraph_Button_OnClick" />
             <Button Content="reset ctx" Click="ResetCtx_Button_OnClick" />
             <Button Content="serialize" Click="Serialize_Button_OnClick" />
+            <Button Content="deserialize" Click="Deserialize_Button_OnClick" />
         </StackPanel>
 
     </Grid>

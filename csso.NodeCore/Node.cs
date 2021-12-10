@@ -86,6 +86,9 @@ public class Node : WithId, INotifyPropertyChanged {
 
         result.Name = Name;
         result.Id = Id;
+        result.FunctionId = Function.Id;
+        result.Behavior = Behavior;
+        
         result.ConfigValues = _configValues
             .Select(_ => _.Serialize())
             .ToArray();
@@ -94,7 +97,6 @@ public class Node : WithId, INotifyPropertyChanged {
             .Select(_ => _.Serialize())
             .ToArray();
 
-        result.FunctionId = Function.Id;
 
         return result;
     }
@@ -106,6 +108,7 @@ public class Node : WithId, INotifyPropertyChanged {
         Graph = graph;
         Name = serialized.Name;
         Function = functionFactory.Get(serialized.FunctionId);
+        Behavior = serialized.Behavior;
 
         serialized.ConfigValues
             .Select(serializedValue => new ConfigValue(Function, serializedValue))
@@ -123,4 +126,5 @@ public class SerializedNode {
     public Guid FunctionId { get; set; }
     public SerializedConfigValue[] ConfigValues { get; set; }
     public SerializedValueConnection[] ValueConnections { get; set; }
+    public FunctionBehavior Behavior { get; set; }
 }

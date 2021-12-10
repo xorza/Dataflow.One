@@ -14,7 +14,7 @@ public class EdgeEventArgs : RoutedEventArgs {
 
 public class Edge : ClickControl {
     public static readonly DependencyProperty InputPositionDependencyProperty = DependencyProperty.Register(
-        "InputPosition",
+        nameof(InputPosition),   
         typeof(Point),
         typeof(Edge),
         new PropertyMetadata(Position_PropertyChangedCallback)
@@ -22,14 +22,14 @@ public class Edge : ClickControl {
 
 
     public static readonly DependencyProperty OutputPositionDependencyProperty = DependencyProperty.Register(
-        "OutputPosition",
+        nameof(OutputPosition),
         typeof(Point),
         typeof(Edge),
         new PropertyMetadata(Position_PropertyChangedCallback)
     );
 
     public static readonly DependencyProperty IsProactiveProperty = DependencyProperty.Register(
-        "IsProactive", typeof(bool), typeof(Edge), new PropertyMetadata(default(bool)));
+        nameof(IsProactive), typeof(bool), typeof(Edge), new PropertyMetadata(default(bool)));
 
     public Edge() {
         LeftButtonClick += LeftButtonClickHandler;

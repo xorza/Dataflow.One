@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using csso.NodeCore;
 using csso.NodeCore.Annotations;
 
-namespace csso.WpfNode; 
+namespace csso.WpfNode;
 
 public class EdgeView : INotifyPropertyChanged {
     private bool _isProactive;
@@ -13,10 +13,10 @@ public class EdgeView : INotifyPropertyChanged {
         Output = output;
         Connection = connection;
 
-        _isProactive = true;
+        _isProactive = connection.Behavior == ConnectionBehavior.Always;
     }
 
-    public Connection Connection { get; }
+    public OutputConnection Connection { get; }
     public PutView Input { get; }
     public PutView Output { get; }
 
@@ -25,9 +25,7 @@ public class EdgeView : INotifyPropertyChanged {
         set {
             if (_isProactive == value) return;
             _isProactive = value;
-            if (Connection is OutputConnection outputConnection)
-                outputConnection.Behavior =
-                    _isProactive ? ConnectionBehavior.Always : ConnectionBehavior.Once;
+            Connection.Behavior = _isProactive ? ConnectionBehavior.Always : ConnectionBehavior.Once;
             OnPropertyChanged();
         }
     }
