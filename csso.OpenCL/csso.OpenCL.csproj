@@ -5,14 +5,15 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="OpenTK" Version="5.0.0-pre.6"/>
+        <PackageReference Include="OpenTK" Version="5.0.0-pre.6" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\csso.Common\csso.Common.csproj"/>
+        <ProjectReference Include="..\csso.Common\csso.Common.csproj" />
     </ItemGroup>
 
 </Project>

@@ -12,8 +12,15 @@ public static class Xtentions {
     }
 
     public static IList Foreach<T>(this IList e, Action<T> action) {
-        foreach (T item in e)
-            action(item);
+        foreach (object? item in e) {
+            if (item is T tItem)
+                action(tItem);
+            else if (item == null)
+                throw new Exception("wvert23b46");
+            else
+                throw new Exception("sergtg2v45");
+        }
+
         return e;
     }
 

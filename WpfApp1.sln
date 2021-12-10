@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{AA6FDDCF-6733-4689-A222-7DE567146A52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "csso.NodeRunner", "csso.NodeRunner\csso.NodeRunner.csproj", "{AA6FDDCF-6733-4689-A222-7DE567146A52}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "csso.Common", "csso.Common\csso.Common.csproj", "{9A1241DF-60B5-455B-B450-553E10067554}"
 EndProject
