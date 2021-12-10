@@ -145,7 +145,7 @@ public partial class Graph : UserControl {
             output.NodeView.Node,
             (FunctionOutput) output.FunctionArg);
 
-        input.NodeView.Node.AddBinding(connection);
+        input.NodeView.Node.AddConnection(connection);
         input.NodeView.GraphView.Refresh();
     }
 

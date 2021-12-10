@@ -7,7 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using csso.Common;
 
-namespace csso.WpfNode; 
+namespace csso.WpfNode;
 
 public class PinClickEventArgs : RoutedEventArgs {
     public PinClickEventArgs(PutView put) {
@@ -79,6 +79,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     private void UpdatePinPositions(Canvas canvas) {
         Check.True(NodeView != null);
 
+        try {
         NodeView!.Inputs.ForEach(put => {
             if (put.Control != null) {
                 var upperLeft = put.Control
@@ -93,19 +94,21 @@ public partial class Node : UserControl, INotifyPropertyChanged {
             }
         });
 
-        NodeView!.Outputs.ForEach(put => {
-            if (put.Control != null) {
-                var upperLeft = put.Control
-                    .TransformToVisual(canvas)
-                    .Transform(new Point(0, 0));
-                var mid = new Point(
-                    put.Control.RenderSize.Width / 2,
-                    put.Control.RenderSize.Height / 2);
+  
+            NodeView!.Outputs.ForEach(put => {
+                if (put.Control != null) {
+                    var upperLeft = put.Control
+                        .TransformToVisual(canvas)
+                        .Transform(new Point(0, 0));
+                    var mid = new Point(
+                        put.Control.RenderSize.Width / 2,
+                        put.Control.RenderSize.Height / 2);
 
-                var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
-                put.PinPoint = newPinPoint;
-            }
-        });
+                    var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
+                    put.PinPoint = newPinPoint;
+                }
+            });
+        } catch { }
     }
 
 

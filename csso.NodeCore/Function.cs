@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using csso.Common;
 
-namespace csso.NodeCore; 
+namespace csso.NodeCore;
 
 [AttributeUsage(AttributeTargets.Parameter)]
 public sealed class OutputAttribute : Attribute { }
@@ -25,20 +25,9 @@ public enum FunctionBehavior {
     Proactive
 }
 
-public interface IFunction {
-    IReadOnlyList<FunctionInput> Inputs { get; }
-    IReadOnlyList<FunctionOutput> Outputs { get; }
-    IReadOnlyList<FunctionArg> Args { get; }
-    IReadOnlyList<FunctionConfig> Config { get; }
-    string Name { get; }
-    string Description { get; }
-    bool IsProcedure { get; }
-    FunctionBehavior Behavior { get; }
 
-    void Invoke(object?[]? args);
-}
 
-public class Function : IFunction {
+public class Function : WithId  {
     public Function(String name, Delegate func) {
         Check.Argument(func.Method.ReturnType == typeof(bool), nameof(func));
 
@@ -58,7 +47,9 @@ public class Function : IFunction {
         Behavior = reactive == null ? FunctionBehavior.Proactive : FunctionBehavior.Reactive;
 
         var parameters = func.Method.GetParameters();
-        foreach (var parameter in parameters) {
+        for (UInt32 i = 0; i < parameters.Length; i++) {
+            var parameter = parameters[i];
+
             var outputAttribute =
                 Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) as OutputAttribute;
             var configAttribute =
@@ -76,9 +67,9 @@ public class Function : IFunction {
             FunctionArg arg;
 
             if (outputAttribute != null) {
-                arg = new FunctionOutput(argName, argType);
+                arg = new FunctionOutput(argName, argType, i);
             } else if (configAttribute != null) {
-                var config = FunctionConfig.Create(argName, argType);
+                var config = FunctionConfig.Create(argName, argType, i);
                 if (configAttribute.DefaultValue != null) {
                     Check.True(argType == configAttribute.DefaultValue.GetType());
                     config.DefaultValue = configAttribute.DefaultValue;
@@ -86,7 +77,7 @@ public class Function : IFunction {
 
                 arg = config;
             } else {
-                arg = new FunctionInput(argName, argType);
+                arg = new FunctionInput(argName, argType, i);
             }
 
             args.Add(arg);

@@ -24,7 +24,7 @@
                 Margin="0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                ItemsSource="{Binding Nodes}">
+                ItemsSource="{Binding Path=GraphView.Nodes, ElementName=GraphUserControl}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="local:NodeView">
                         <local:Node

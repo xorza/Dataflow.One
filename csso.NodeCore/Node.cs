@@ -3,46 +3,26 @@ using System.Runtime.CompilerServices;
 using csso.Common;
 using csso.NodeCore.Annotations;
 
-namespace csso.NodeCore; 
+namespace csso.NodeCore;
 
-public class ConfigValue {
-    private Object? _value;
-
-    public ConfigValue(FunctionConfig config) : this(config, config.DefaultValue) { }
-
-    public ConfigValue(FunctionConfig config, Object? value) {
-        Config = config;
-        Value = value;
-    }
-
-    public FunctionConfig Config { get; }
-
-    public Type Type => Config.Type;
-
-    public Object? Value {
-        get => _value;
-        set {
-            if (value != null)
-                Check.True(value.GetType() == Type);
-
-            _value = value;
-        }
-    }
-}
-
-public class Node : INotifyPropertyChanged {
+public class Node : WithId, INotifyPropertyChanged {
     private readonly List<ConfigValue> _configValues = new();
     private readonly List<Connection> _connections = new();
 
     private FunctionBehavior _behavior = FunctionBehavior.Proactive;
 
-    public Node(IFunction function, Graph graph) {
-        Function = function;
-        Behavior = function.Behavior;
-        Graph = graph;
+    private Node() : this(Guid.NewGuid()) { }
 
+    private Node(Guid id) : base(id) {
         Connections = _connections.AsReadOnly();
         ConfigValues = _configValues.AsReadOnly();
+    }
+
+    public Node(Function function, Graph graph) : this() {
+        Function = function;
+        Behavior = function.Behavior;
+        Name = function.Name;
+        Graph = graph;
 
         foreach (var funcConfig in function.Config) {
             ConfigValue value = new(funcConfig);
@@ -50,9 +30,9 @@ public class Node : INotifyPropertyChanged {
         }
     }
 
-    public string Name => Function.Name;
+    public string Name { get; set; }
 
-    public IFunction Function { get; }
+    public Function Function { get; }
 
     public FunctionBehavior Behavior {
         get => _behavior;
@@ -88,11 +68,52 @@ public class Node : INotifyPropertyChanged {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    public void AddBinding(Connection connection) {
+    public void AddConnection(Connection connection) {
         _connections.RemoveAll(_ => _.Input == connection.Input);
 
         Check.True(connection.InputNode == this);
 
         _connections.Add(connection);
     }
+
+    internal SerializedNode Serialize() {
+        SerializedNode result = new();
+
+        result.Name = Name;
+        result.Id = Id;
+        result.ConfigValues = _configValues
+            .Select(_ => _.Serialize())
+            .ToArray();
+        result.ValueConnections = _connections
+            .OfType<ValueConnection>()
+            .Select(_ => _.Serialize())
+            .ToArray();
+
+        result.FunctionId = Function.Id;
+
+        return result;
+    }
+
+    internal Node(
+        FunctionFactory functionFactory,
+        SerializedNode serialized) : this(serialized.Id) {
+        Name = serialized.Name;
+        Function = functionFactory.Get(serialized.FunctionId);
+
+        serialized.ConfigValues
+            .Select(serializedValue => new ConfigValue(Function, serializedValue))
+            .Foreach(_configValues.Add);
+
+        serialized.ValueConnections
+            .Select(_ => new ValueConnection(this, _))
+            .Foreach(AddConnection);
+    }
+}
+
+public class SerializedNode {
+    public string Name { get; set; }
+    public Guid Id { get; set; }
+    public Guid FunctionId { get; set; }
+    public SerializedConfigValue[] ConfigValues { get; set; }
+    public SerializedValueConnection[] ValueConnections { get; set; }
 }

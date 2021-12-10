@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using csso.Calculator;
@@ -14,7 +16,7 @@ using Graph = csso.NodeCore.Graph;
 using Image = csso.ImageProcessing.Image;
 using Node = csso.NodeCore.Node;
 
-namespace WpfApp1; 
+namespace WpfApp1;
 
 public partial class Overview : UserControl {
     public static readonly DependencyProperty GraphViewProperty = DependencyProperty.Register(
@@ -22,7 +24,9 @@ public partial class Overview : UserControl {
 
     private readonly Context? _clContext;
     private readonly Executor _executor;
-    private readonly Graph _graph;
+    private Graph _graph;
+
+    private readonly FunctionFactory _functionFactory = new();
 
     public Overview() {
         InitializeComponent();
@@ -31,12 +35,22 @@ public partial class Overview : UserControl {
         _executor = new Executor(_graph);
         _clContext = new Context();
 
-        IFunction addFunc = new Function("Add", F.Add);
-        IFunction divideWholeFunc = new Function("Divide whole", F.DivideWhole);
+        Function addFunc = new Function("Add", F.Add);
+        Function divideWholeFunc = new Function("Divide whole", F.DivideWhole);
 
-        IFunction messageBoxFunc = new Function("Output", Output);
-        IFunction valueFunc = new Function("Value", Const);
+        Function messageBoxFunc = new Function("Output", Output);
+        Function valueFunc = new Function("Value", Const);
 
+
+        _functionFactory.Register(addFunc);
+        _functionFactory.Register(divideWholeFunc);
+        _functionFactory.Register(messageBoxFunc);
+        _functionFactory.Register(valueFunc);
+
+        _functionFactory.Register(_executor.FrameNoFunction);
+        _functionFactory.Register(_executor.DeltaTimeFunction);
+
+        _graph.FunctionFactory = _functionFactory;
 
         _graph.Add(new Node(addFunc, _graph));
 
@@ -50,11 +64,7 @@ public partial class Overview : UserControl {
         _graph.Add(new Node(_executor.FrameNoFunction, _graph));
         _graph.Add(new Node(_executor.DeltaTimeFunction, _graph));
 
-        GraphView graphView = new(_graph);
-        GraphView = graphView;
-
-        DataContext = graphView;
-        Graph.GraphView = graphView;
+        GraphView = new(_graph);
     }
 
     public GraphView GraphView {
@@ -158,5 +168,17 @@ public partial class Overview : UserControl {
 
     private void ResetCtx_Button_OnClick(object sender, RoutedEventArgs args) {
         _executor.Reset();
+    }
+
+    private void Serialize_Button_OnClick(object sender, RoutedEventArgs e) {
+        JsonSerializerOptions opts = new();
+        opts.WriteIndented = true;
+
+        SerializedGraph serialized = _graph.Serialize();
+        string jsonString = JsonSerializer.Serialize(serialized, opts);
+        serialized = JsonSerializer.Deserialize<SerializedGraph>(jsonString);
+        _graph = new Graph(_functionFactory, serialized);
+
+        GraphView = new(_graph);
     }
 }

@@ -9,7 +9,7 @@ public static class Xtentions {
         return e;
     }
 
-    public static IList Foreach<T>(this IList e, Action<T> action) {
+    public static IEnumerable Foreach<T>(this IEnumerable e, Action<T> action) {
         foreach (var item in e)
             if (item is T tItem)
                 action(tItem);

@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using csso.NodeCore.Annotations;
 
-namespace csso.NodeCore; 
+namespace csso.NodeCore;
 
 public abstract class Connection : INotifyPropertyChanged {
     protected Connection(Node node, FunctionInput input) {
@@ -10,8 +10,10 @@ public abstract class Connection : INotifyPropertyChanged {
         InputNode = node;
     }
 
-    public FunctionInput Input { get; }
-    public Node InputNode { get; }
+    protected Connection() { }
+
+    public FunctionInput Input { get; protected set; }
+    public Node InputNode { get; protected set; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

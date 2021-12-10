@@ -25,9 +25,9 @@ public class Tests {
         var graph = new Graph();
         var executor = new Executor(graph);
 
-        IFunction constFunc = new Function("Value", Const);
+        Function constFunc = new Function("Value", Const);
         constFunc.Config.Single().DefaultValue = 13;
-        IFunction outputFunc = new Function("Output", new Func<Int32, bool>(val => {
+        Function outputFunc = new Function("Output", new Func<Int32, bool>(val => {
             output1Value = val;
             return true;
         }));
@@ -43,7 +43,7 @@ public class Tests {
             outputNode.Function.Inputs.Single(),
             constNode,
             constNode.Function.Outputs.Single());
-        outputNode.AddBinding(connection1);
+        outputNode.AddConnection(connection1);
 
 
         executor.Reset();
@@ -70,7 +70,7 @@ public class Tests {
 
         graph = new Graph();
         executor = new Executor(graph);
-        IFunction outputFunc = new Function("Output", (Int32 val) => {
+        Function outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
             return true;
         });
@@ -86,7 +86,7 @@ public class Tests {
             outputNode.Function.Inputs.Single(),
             frameNoNode,
             frameNoNode.Function.Outputs.Single());
-        outputNode.AddBinding(connection);
+        outputNode.AddConnection(connection);
 
 
         executor.Reset();
@@ -106,12 +106,12 @@ public class Tests {
         var graph = new Graph();
         var executor = new Executor(graph);
 
-        IFunction outputFunc = new Function("Output", (Int32 val) => {
+        Function outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
             return true;
         });
-        IFunction constFunc = new Function("Value", Const);
-        IFunction addFunc = new Function("Value", F.Add);
+        Function constFunc = new Function("Value", Const);
+        Function addFunc = new Function("Value", F.Add);
 
 
         constFunc.Config.Single().DefaultValue = 3;
@@ -135,7 +135,7 @@ public class Tests {
             outputNode.Function.Inputs.Single(),
             addNode,
             addNode.Function.Outputs.Single());
-        outputNode.AddBinding(connection);
+        outputNode.AddConnection(connection);
 
 
         OutputConnection connection2 = new(
@@ -143,14 +143,14 @@ public class Tests {
             addNode.Function.Inputs[0],
             const1Node,
             const1Node.Function.Outputs.Single());
-        addNode.AddBinding(connection2);
+        addNode.AddConnection(connection2);
 
         OutputConnection connection3 = new(
             addNode,
             addNode.Function.Inputs[1],
             const2Node,
             const2Node.Function.Outputs.Single());
-        addNode.AddBinding(connection3);
+        addNode.AddConnection(connection3);
 
 
         executor.Reset();
@@ -169,12 +169,12 @@ public class Tests {
         var graph = new Graph();
         var executor = new Executor(graph);
 
-        IFunction outputFunc = new Function("Output", (Int32 val) => {
+        Function outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
             return true;
         });
-        IFunction constFunc = new Function("Value", Const);
-        IFunction addFunc = new Function("Value", F.Add);
+        Function constFunc = new Function("Value", Const);
+        Function addFunc = new Function("Value", F.Add);
 
 
         constFunc.Config.Single().DefaultValue = 3;
@@ -198,7 +198,7 @@ public class Tests {
             outputNode.Function.Inputs.Single(),
             addNode,
             addNode.Function.Outputs.Single());
-        outputNode.AddBinding(connection);
+        outputNode.AddConnection(connection);
 
 
         OutputConnection connection2 = new(
@@ -206,14 +206,14 @@ public class Tests {
             addNode.Function.Inputs[0],
             constNode,
             constNode.Function.Outputs.Single());
-        addNode.AddBinding(connection2);
+        addNode.AddConnection(connection2);
 
         OutputConnection connection3 = new(
             addNode,
             addNode.Function.Inputs[1],
             frameNoNode,
             frameNoNode.Function.Outputs.Single());
-        addNode.AddBinding(connection3);
+        addNode.AddConnection(connection3);
 
 
         executor.Reset();
@@ -232,12 +232,12 @@ public class Tests {
         var graph = new Graph();
         var executor = new Executor(graph);
 
-        IFunction outputFunc = new Function("Output", (Int32 val) => {
+        Function outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
             return true;
         });
-        IFunction constFunc = new Function("Value", Const);
-        IFunction addFunc = new Function("Add", F.Add);
+        Function constFunc = new Function("Value", Const);
+        Function addFunc = new Function("Add", F.Add);
 
 
         constFunc.Config.Single().DefaultValue = 3;
@@ -262,7 +262,7 @@ public class Tests {
             addNode,
             addNode.Function.Outputs.Single());
         connection.Behavior = ConnectionBehavior.Once;
-        outputNode.AddBinding(connection);
+        outputNode.AddConnection(connection);
 
 
         OutputConnection connection2 = new(
@@ -270,14 +270,14 @@ public class Tests {
             addNode.Function.Inputs[0],
             constNode,
             constNode.Function.Outputs.Single());
-        addNode.AddBinding(connection2);
+        addNode.AddConnection(connection2);
 
         OutputConnection connection3 = new(
             addNode,
             addNode.Function.Inputs[1],
             frameNoNode,
             frameNoNode.Function.Outputs.Single());
-        addNode.AddBinding(connection3);
+        addNode.AddConnection(connection3);
 
 
         executor.Reset();
@@ -297,12 +297,12 @@ public class Tests {
         var graph = new Graph();
         var executor = new Executor(graph);
 
-        IFunction outputFunc = new Function("Output", (Int32 val) => {
+        Function outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
             return true;
         });
-        IFunction constFunc = new Function("Value", Const);
-        IFunction addFunc = new Function("Add", F.Add);
+        Function constFunc = new Function("Value", Const);
+        Function addFunc = new Function("Add", F.Add);
 
 
         constFunc.Config.Single().DefaultValue = 3;
@@ -327,7 +327,7 @@ public class Tests {
             addNode,
             addNode.Function.Outputs.Single());
         connection.Behavior = ConnectionBehavior.Always;
-        outputNode.AddBinding(connection);
+        outputNode.AddConnection(connection);
 
 
         OutputConnection connection2 = new(
@@ -335,14 +335,14 @@ public class Tests {
             addNode.Function.Inputs[0],
             constNode,
             constNode.Function.Outputs.Single());
-        addNode.AddBinding(connection2);
+        addNode.AddConnection(connection2);
 
         OutputConnection connection3 = new(
             addNode,
             addNode.Function.Inputs[1],
             frameNoNode,
             frameNoNode.Function.Outputs.Single());
-        addNode.AddBinding(connection3);
+        addNode.AddConnection(connection3);
 
 
         executor.Reset();

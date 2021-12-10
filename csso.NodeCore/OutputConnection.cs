@@ -1,6 +1,6 @@
 ﻿using csso.Common;
 
-namespace csso.NodeCore; 
+namespace csso.NodeCore;
 
 public enum ConnectionBehavior {
     Once,
@@ -37,4 +37,32 @@ public sealed class OutputConnection : Connection {
             OnPropertyChanged();
         }
     }
+
+    public SerializedOutputConnection Serialize() {
+        SerializedOutputConnection result = new();
+
+        result.OutputIndex = Output.Index;
+        result.OutputNodeId = OutputNode.Id;
+
+        result.InputIndex = Input.Index;
+        result.InputNodeId = InputNode.Id;
+
+        return result;
+    }
+
+    internal OutputConnection(Graph graph, SerializedOutputConnection serialized) {
+        InputNode = graph.GetNode(serialized.InputNodeId);
+        Input = InputNode.Function.Inputs
+            .Single(input => input.Index == serialized.InputIndex);
+        OutputNode = graph.GetNode(serialized.OutputNodeId);
+        Output = OutputNode.Function.Outputs
+            .Single(input => input.Index == serialized.InputIndex);
+    }
+}
+
+public struct SerializedOutputConnection {
+    public UInt32 OutputIndex { get; set; }
+    public Guid OutputNodeId { get; set; }
+    public UInt32 InputIndex { get; set; }
+    public Guid InputNodeId { get; set; }
 }
