@@ -5,7 +5,7 @@ using csso.NodeCore.Annotations;
 
 namespace csso.WpfNode;
 
-public class EdgeView : INotifyPropertyChanged {
+public sealed class EdgeView : INotifyPropertyChanged {
     private bool _isProactive;
 
     public EdgeView(OutputConnection connection, PutView input, PutView output) {
@@ -33,7 +33,7 @@ public class EdgeView : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

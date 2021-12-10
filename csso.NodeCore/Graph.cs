@@ -3,7 +3,7 @@ using csso.Common;
 
 namespace csso.NodeCore;
 
-public class Graph {
+public sealed class Graph {
     private readonly List<Node> _nodes = new();
 
     public Graph() {

@@ -25,9 +25,7 @@ public enum FunctionBehavior {
     Proactive
 }
 
-
-
-public class Function : WithId  {
+public class Function {
     public Function(String name, Delegate func) {
         Check.Argument(func.Method.ReturnType == typeof(bool), nameof(func));
 
@@ -36,11 +34,13 @@ public class Function : WithId  {
         Args = args.AsReadOnly();
         Name = name;
         Delegate = func;
+        Namespace = func.Method.DeclaringType?.FullName ?? "";
 
         var descr =
             Attribute.GetCustomAttribute(func.Method, typeof(DescriptionAttribute))
                 as DescriptionAttribute;
         Description = descr?.Description ?? "";
+
         var reactive =
             Attribute.GetCustomAttribute(func.Method, typeof(ReactiveAttribute))
                 as ReactiveAttribute;
@@ -95,6 +95,7 @@ public class Function : WithId  {
         Behavior = functionBehavior;
     }
 
+    public String Namespace { get; private set; }
     public Delegate Delegate { get; }
     public IReadOnlyList<FunctionInput> Inputs { get; }
     public IReadOnlyList<FunctionOutput> Outputs { get; }
@@ -104,6 +105,7 @@ public class Function : WithId  {
     public string Name { get; }
     public string Description { get; }
     public bool IsProcedure => Outputs.Count == 0;
+    public string FullName => Namespace + "::" + Name;
 
     public void Invoke(object?[]? args) {
         CheckArgTypes(args);

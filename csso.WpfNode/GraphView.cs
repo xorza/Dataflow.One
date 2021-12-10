@@ -11,7 +11,7 @@ using OpenTK.Compute.OpenCL;
 
 namespace csso.WpfNode;
 
-public class GraphView : INotifyPropertyChanged {
+public sealed class GraphView : INotifyPropertyChanged {
     private NodeView? _selectedNode;
 
     private PutView? _selectedPutView;
@@ -75,7 +75,7 @@ public class GraphView : INotifyPropertyChanged {
     }
 
     [NotifyPropertyChangedInvocator]
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 

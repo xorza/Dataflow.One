@@ -5,7 +5,7 @@ using csso.NodeCore.Annotations;
 
 namespace csso.NodeCore;
 
-public class Node : WithId, INotifyPropertyChanged {
+public sealed class Node : WithId, INotifyPropertyChanged {
     private readonly List<ConfigValue> _configValues = new();
     private readonly List<Connection> _connections = new();
 
@@ -64,7 +64,7 @@ public class Node : WithId, INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
@@ -86,7 +86,7 @@ public class Node : WithId, INotifyPropertyChanged {
 
         result.Name = Name;
         result.Id = Id;
-        result.FunctionId = Function.Id;
+        result.FullName = Function.FullName;
         result.Behavior = Behavior;
         
         result.ConfigValues = _configValues
@@ -107,7 +107,7 @@ public class Node : WithId, INotifyPropertyChanged {
         SerializedNode serialized) : this(serialized.Id) {
         Graph = graph;
         Name = serialized.Name;
-        Function = functionFactory.Get(serialized.FunctionId);
+        Function = functionFactory.Get(serialized.FullName);
         Behavior = serialized.Behavior;
 
         serialized.ConfigValues
@@ -123,7 +123,7 @@ public class Node : WithId, INotifyPropertyChanged {
 public class SerializedNode {
     public string Name { get; set; }
     public Guid Id { get; set; }
-    public Guid FunctionId { get; set; }
+    public String FullName { get; set; }
     public SerializedConfigValue[] ConfigValues { get; set; }
     public SerializedValueConnection[] ValueConnections { get; set; }
     public FunctionBehavior Behavior { get; set; }
