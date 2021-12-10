@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using csso.Calculator;
@@ -16,11 +15,11 @@ using Graph = csso.NodeCore.Graph;
 using Image = csso.ImageProcessing.Image;
 using Node = csso.NodeCore.Node;
 
-namespace WpfApp1;
+namespace csso.NodeRunner;
 
 public partial class Overview : UserControl {
     public static readonly DependencyProperty GraphViewProperty = DependencyProperty.Register(
-        "GraphView", typeof(GraphView), typeof(Overview), new PropertyMetadata(default(GraphView)));
+        nameof(GraphView), typeof(GraphView), typeof(Overview), new PropertyMetadata(default(GraphView)));
 
     private readonly Context? _clContext;
     private readonly Executor _executor;
@@ -55,14 +54,14 @@ public partial class Overview : UserControl {
         _graph.Add(new Node(addFunc, _graph));
 
         _graph.Add(new Node(divideWholeFunc, _graph));
-        _graph.Add(new Node(messageBoxFunc, _graph));
-
-        _graph.Add(new Node(valueFunc, _graph));
-        _graph.Add(new Node(valueFunc, _graph));
-        _graph.Add(new Node(valueFunc, _graph));
-
-        _graph.Add(new Node(_executor.FrameNoFunction, _graph));
-        _graph.Add(new Node(_executor.DeltaTimeFunction, _graph));
+        // _graph.Add(new Node(messageBoxFunc, _graph));
+        //
+        // _graph.Add(new Node(valueFunc, _graph));
+        // _graph.Add(new Node(valueFunc, _graph));
+        // _graph.Add(new Node(valueFunc, _graph));
+        //
+        // _graph.Add(new Node(_executor.FrameNoFunction, _graph));
+        // _graph.Add(new Node(_executor.DeltaTimeFunction, _graph));
 
         GraphView = new(_graph);
     }

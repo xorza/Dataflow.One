@@ -3,28 +3,37 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using csso.Common;
 using csso.NodeCore;
 using csso.WpfNode.Annotations;
+using OpenTK.Compute.OpenCL;
 
-namespace csso.WpfNode; 
+namespace csso.WpfNode;
 
 public class GraphView : INotifyPropertyChanged {
     private NodeView? _selectedNode;
 
     private PutView? _selectedPutView;
 
-    public GraphView(NodeCore.Graph graph) {
+    public GraphView(NodeCore.Graph graph) : this() {
         Graph = graph;
         Refresh();
     }
 
+    public GraphView() {
+        Nodes = new ReadOnlyObservableCollection<NodeView>(_nodes);
+        Edges = new ReadOnlyObservableCollection<EdgeView>(_edges);
+    }
+
     public NodeCore.Graph Graph { get; }
 
-    public ObservableCollection<EdgeView> Edges { get; }
-        = new();
+    private readonly ObservableCollection<EdgeView> _edges = new();
+    public ReadOnlyObservableCollection<EdgeView> Edges { get; }
 
-    public ObservableCollection<NodeView> Nodes { get; }
-        = new();
+
+    private readonly ObservableCollection<NodeView> _nodes = new();
+    public ReadOnlyObservableCollection<NodeView> Nodes { get; }
+
 
     public NodeView? SelectedNode {
         get => _selectedNode;
@@ -70,12 +79,14 @@ public class GraphView : INotifyPropertyChanged {
     }
 
     public void Refresh() {
+        _nodes.Clear();
+
         foreach (var node in Graph.Nodes) {
             if (Nodes.Any(_ => _.Node == node))
                 continue;
 
             NodeView nv = new(this, node);
-            Nodes.Add(nv);
+            _nodes.Add(nv);
         }
 
         if (_selectedNode != null && !Nodes.Contains(_selectedNode))
@@ -96,11 +107,19 @@ public class GraphView : INotifyPropertyChanged {
 
         for (var i = 0; i < newEdgeViews.Count; i++)
             if (Edges.Count > i)
-                Edges[i] = newEdgeViews[i];
+                _edges[i] = newEdgeViews[i];
             else
-                Edges.Add(newEdgeViews[i]);
+                _edges.Add(newEdgeViews[i]);
 
         while (Edges.Count > newEdgeViews.Count)
-            Edges.RemoveAt(Edges.Count - 1);
+            _edges.RemoveAt(Edges.Count - 1);
+    }
+
+    public void RemoveNode(NodeView nodeView) {
+        Check.True(nodeView.GraphView == this);
+
+        Graph.Remove(nodeView.Node);
+
+        Refresh();
     }
 }

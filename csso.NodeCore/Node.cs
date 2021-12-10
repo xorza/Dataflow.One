@@ -68,12 +68,17 @@ public class Node : WithId, INotifyPropertyChanged {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    public void AddConnection(Connection connection) {
+    public void Add(Connection connection) {
+        Check.Argument(connection.InputNode == this, nameof(connection));
+
         _connections.RemoveAll(_ => _.Input == connection.Input);
-
-        Check.True(connection.InputNode == this);
-
         _connections.Add(connection);
+    }
+
+    public void Remove(Connection connection) {
+        Check.Argument(connection.InputNode == this, nameof(connection));
+        if (!_connections.Remove(connection))
+            throw new Exception("dfgdvryui6");
     }
 
     internal SerializedNode Serialize() {
@@ -95,8 +100,10 @@ public class Node : WithId, INotifyPropertyChanged {
     }
 
     internal Node(
+        Graph graph,
         FunctionFactory functionFactory,
         SerializedNode serialized) : this(serialized.Id) {
+        Graph = graph;
         Name = serialized.Name;
         Function = functionFactory.Get(serialized.FunctionId);
 
@@ -106,7 +113,7 @@ public class Node : WithId, INotifyPropertyChanged {
 
         serialized.ValueConnections
             .Select(_ => new ValueConnection(this, _))
-            .Foreach(AddConnection);
+            .Foreach(Add);
     }
 }
 

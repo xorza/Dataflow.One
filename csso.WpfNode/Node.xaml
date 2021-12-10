@@ -166,12 +166,20 @@
                         </Style>
                     </Border.Style>
 
-                    <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeUserControl}"
-                               HorizontalAlignment="Left"
-                               FontWeight="Bold"
-                               FontSize="10"
-                               Padding="0"
-                               Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeUserControl}"
+                                   HorizontalAlignment="Left"
+                                   FontWeight="Bold"
+                                   FontSize="10"
+                                   Padding="0"
+                                   Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
+
+                        <Button Grid.Column="1" Content="x" Click="Close_Button_OnClick"></Button>
+                    </Grid>
                 </Border>
 
 

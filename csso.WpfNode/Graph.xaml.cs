@@ -8,14 +8,14 @@ using System.Windows.Input;
 using csso.Common;
 using csso.NodeCore;
 
-namespace csso.WpfNode; 
+namespace csso.WpfNode;
 
 public partial class Graph : UserControl {
     public static readonly DependencyProperty NodeStyleProperty = DependencyProperty.Register(
-        "NodeStyle", typeof(Style), typeof(Graph), new PropertyMetadata(default(Style)));
+        nameof(NodeStyle), typeof(Style), typeof(Graph), new PropertyMetadata(default(Style)));
 
     public static readonly DependencyProperty GraphViewProperty = DependencyProperty.Register(
-        "GraphView", typeof(GraphView), typeof(Graph),
+        nameof(GraphView), typeof(GraphView), typeof(Graph),
         new PropertyMetadata(default(GraphView), GraphViewPropertyChangedCallback));
 
     private readonly List<Node> _nodes = new();
@@ -57,11 +57,13 @@ public partial class Graph : UserControl {
         DependencyPropertyChangedEventArgs e) {
         var graph = (Graph) d;
 
-        if (e.OldValue is GraphView oldGraphView)
-            oldGraphView.Edges.CollectionChanged -= graph.Edges_CollectionChanged;
+        if (e.OldValue is GraphView oldGraphView) {
+            ((INotifyCollectionChanged) oldGraphView.Edges).CollectionChanged -= graph.Edges_CollectionChanged;
+        }
 
-        if (e.NewValue is GraphView graphView)
-            graphView.Edges.CollectionChanged += graph.Edges_CollectionChanged;
+        if (e.NewValue is GraphView graphView) {
+            ((INotifyCollectionChanged) graphView.Edges).CollectionChanged += graph.Edges_CollectionChanged;
+        }
     }
 
     private void Edges_CollectionChanged(
@@ -145,7 +147,7 @@ public partial class Graph : UserControl {
             output.NodeView.Node,
             (FunctionOutput) output.FunctionArg);
 
-        input.NodeView.Node.AddConnection(connection);
+        input.NodeView.Node.Add(connection);
         input.NodeView.GraphView.Refresh();
     }
 
@@ -154,9 +156,22 @@ public partial class Graph : UserControl {
         _nodes.Foreach(_ => _.DragCanvas = _nodesCanvas);
     }
 
+
+    private int asd = 0;
     private void Node_OnLoaded(object sender, RoutedEventArgs e) {
         var node = (Node) sender;
+        node.DragCanvas = _nodesCanvas;
+        Check.True(node.NodeView?.GraphView == GraphView);
         AddNode(node);
+
+        node.Tag = asd;
+        asd++;
+    }
+
+    private void Node_Unloaded_Handler(object sender, RoutedEventArgs e) {
+        var node = (Node) sender;
+        node.DragCanvas = null;
+        Check.True(_nodes.Remove(node));
     }
 
     private void AddNode(Node node) {

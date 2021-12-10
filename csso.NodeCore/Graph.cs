@@ -18,6 +18,19 @@ public class Graph {
         _nodes.Add(node);
     }
 
+    public void Remove(Node node) {
+        Debug.Assert.AreSame(node.Graph, this);
+
+        if (!_nodes.Remove(node))
+            throw new Exception("543b6u365");
+
+        _nodes
+            .SelectMany(_ => _.Connections)
+            .OfType<OutputConnection>()
+            .Where(_ => _.OutputNode == node)
+            .Foreach(_ => _.InputNode.Remove(_));
+    }
+
     public FunctionFactory FunctionFactory { get; set; } = new();
 
     public SerializedGraph Serialize() {
@@ -41,11 +54,12 @@ public class Graph {
         FunctionFactory = functionFactory;
 
         serialized.Nodes
-            .Foreach(_ => _nodes.Add(new Node(FunctionFactory, _)));
+            .Select(_ => new Node(this, FunctionFactory, _))
+            .Foreach(_nodes.Add);
 
         serialized.OutputConnections
             .Select(_ => new OutputConnection(this, _))
-            .Foreach(_ => { _.InputNode.AddConnection(_); });
+            .Foreach(_ => { _.InputNode.Add(_); });
     }
 
     public Node GetNode(Guid id) {

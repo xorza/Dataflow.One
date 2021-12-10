@@ -56,7 +56,7 @@ public sealed class OutputConnection : Connection {
             .Single(input => input.Index == serialized.InputIndex);
         OutputNode = graph.GetNode(serialized.OutputNodeId);
         Output = OutputNode.Function.Outputs
-            .Single(input => input.Index == serialized.InputIndex);
+            .Single(output => output.Index == serialized.OutputIndex);
     }
 }
 

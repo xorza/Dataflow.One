@@ -43,7 +43,7 @@ public class Tests {
             outputNode.Function.Inputs.Single(),
             constNode,
             constNode.Function.Outputs.Single());
-        outputNode.AddConnection(connection1);
+        outputNode.Add(connection1);
 
 
         executor.Reset();
@@ -86,7 +86,7 @@ public class Tests {
             outputNode.Function.Inputs.Single(),
             frameNoNode,
             frameNoNode.Function.Outputs.Single());
-        outputNode.AddConnection(connection);
+        outputNode.Add(connection);
 
 
         executor.Reset();
@@ -135,7 +135,7 @@ public class Tests {
             outputNode.Function.Inputs.Single(),
             addNode,
             addNode.Function.Outputs.Single());
-        outputNode.AddConnection(connection);
+        outputNode.Add(connection);
 
 
         OutputConnection connection2 = new(
@@ -143,14 +143,14 @@ public class Tests {
             addNode.Function.Inputs[0],
             const1Node,
             const1Node.Function.Outputs.Single());
-        addNode.AddConnection(connection2);
+        addNode.Add(connection2);
 
         OutputConnection connection3 = new(
             addNode,
             addNode.Function.Inputs[1],
             const2Node,
             const2Node.Function.Outputs.Single());
-        addNode.AddConnection(connection3);
+        addNode.Add(connection3);
 
 
         executor.Reset();
@@ -198,7 +198,7 @@ public class Tests {
             outputNode.Function.Inputs.Single(),
             addNode,
             addNode.Function.Outputs.Single());
-        outputNode.AddConnection(connection);
+        outputNode.Add(connection);
 
 
         OutputConnection connection2 = new(
@@ -206,14 +206,14 @@ public class Tests {
             addNode.Function.Inputs[0],
             constNode,
             constNode.Function.Outputs.Single());
-        addNode.AddConnection(connection2);
+        addNode.Add(connection2);
 
         OutputConnection connection3 = new(
             addNode,
             addNode.Function.Inputs[1],
             frameNoNode,
             frameNoNode.Function.Outputs.Single());
-        addNode.AddConnection(connection3);
+        addNode.Add(connection3);
 
 
         executor.Reset();
@@ -262,7 +262,7 @@ public class Tests {
             addNode,
             addNode.Function.Outputs.Single());
         connection.Behavior = ConnectionBehavior.Once;
-        outputNode.AddConnection(connection);
+        outputNode.Add(connection);
 
 
         OutputConnection connection2 = new(
@@ -270,14 +270,14 @@ public class Tests {
             addNode.Function.Inputs[0],
             constNode,
             constNode.Function.Outputs.Single());
-        addNode.AddConnection(connection2);
+        addNode.Add(connection2);
 
         OutputConnection connection3 = new(
             addNode,
             addNode.Function.Inputs[1],
             frameNoNode,
             frameNoNode.Function.Outputs.Single());
-        addNode.AddConnection(connection3);
+        addNode.Add(connection3);
 
 
         executor.Reset();
@@ -327,7 +327,7 @@ public class Tests {
             addNode,
             addNode.Function.Outputs.Single());
         connection.Behavior = ConnectionBehavior.Always;
-        outputNode.AddConnection(connection);
+        outputNode.Add(connection);
 
 
         OutputConnection connection2 = new(
@@ -335,14 +335,14 @@ public class Tests {
             addNode.Function.Inputs[0],
             constNode,
             constNode.Function.Outputs.Single());
-        addNode.AddConnection(connection2);
+        addNode.Add(connection2);
 
         OutputConnection connection3 = new(
             addNode,
             addNode.Function.Inputs[1],
             frameNoNode,
             frameNoNode.Function.Outputs.Single());
-        addNode.AddConnection(connection3);
+        addNode.Add(connection3);
 
 
         executor.Reset();

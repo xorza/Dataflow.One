@@ -30,6 +30,7 @@
                         <local:Node
                             NodeView="{Binding }"
                             Loaded="Node_OnLoaded"
+                            Unloaded="Node_Unloaded_Handler"
                             Style="{Binding Path=NodeStyle, ElementName=GraphUserControl}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
