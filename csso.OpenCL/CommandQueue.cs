@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using OpenTK.Compute.OpenCL;
+﻿using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL {
+namespace csso.OpenCL; 
+
 public class CommandQueue : IDisposable {
     public CommandQueue(Context context) {
         context.CheckIfDisposed();
@@ -117,5 +116,4 @@ public class CommandQueue : IDisposable {
     ~CommandQueue() {
         ReleaseUnmanagedResources();
     }
-}
 }

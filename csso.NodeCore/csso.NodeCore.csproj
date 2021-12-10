@@ -11,11 +11,11 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <NoWarn>1701;1702;CS8618</NoWarn>
+        <NoWarn>1701;1702;CS8618</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\csso.Common\csso.Common.csproj" />
+        <ProjectReference Include="..\csso.Common\csso.Common.csproj"/>
     </ItemGroup>
 
 </Project>

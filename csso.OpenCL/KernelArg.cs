@@ -1,6 +1,7 @@
 ﻿using csso.Common;
 
-namespace csso.OpenCL {
+namespace csso.OpenCL; 
+
 public enum Quantity {
     Scalar,
     Vector
@@ -12,7 +13,7 @@ public class KernelArg {
 
         Name = name;
 
-        string type = typeName;
+        var type = typeName;
         Quantity = Quantity.Scalar;
 
         if (typeName.EndsWith("*")) {
@@ -27,5 +28,4 @@ public class KernelArg {
     public string Name { get; }
     public Quantity Quantity { get; }
     public DataType Type { get; }
-}
 }

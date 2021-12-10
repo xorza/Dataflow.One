@@ -1,22 +1,21 @@
-﻿using System;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL {
+namespace csso.OpenCL; 
+
 public class Context : IDisposable {
     public Context() {
         IsDisposed = false;
 
-        CL.GetPlatformIds(out CLPlatform[] platformIds)
+        CL.GetPlatformIds(out var platformIds)
             .ValidateSuccess();
 
         foreach (var platform in platformIds)
-            CL.GetPlatformInfo(platform, PlatformInfo.Name, out byte[] val)
+            CL.GetPlatformInfo(platform, PlatformInfo.Name, out var val)
                 .ValidateSuccess();
 
         foreach (var platform in platformIds) {
-            CL.GetDeviceIds(platform, DeviceType.All, out CLDevice[] devices)
+            CL.GetDeviceIds(platform, DeviceType.All, out var devices)
                 .ValidateSuccess();
 
             var context = CL.CreateContext(IntPtr.Zero, devices, IntPtr.Zero,
@@ -50,7 +49,7 @@ public class Context : IDisposable {
     public string Test1() {
         CheckIfDisposed();
 
-        string code = @"
+        var code = @"
                 __kernel void add(__global float* A, __global float* B,__global float* result, const float C)
                 {
                     int i = get_global_id(0);
@@ -60,9 +59,9 @@ public class Context : IDisposable {
 
         const int arraySize = 20;
 
-        float[] a = new float[arraySize];
-        float[] b = new float[arraySize];
-        float[] resultValues = new float[arraySize];
+        var a = new float[arraySize];
+        var b = new float[arraySize];
+        var resultValues = new float[arraySize];
 
         for (var i = 0; i < arraySize; i++) {
             a[i] = i;
@@ -70,9 +69,9 @@ public class Context : IDisposable {
         }
 
         Program program = new(this, code);
-        Kernel kernel = program.Kernels.Single(_ => _.Name == "add");
-        Buffer bufferA = Buffer.Create(this, a);
-        Buffer bufferB = Buffer.Create(this, b);
+        var kernel = program.Kernels.Single(_ => _.Name == "add");
+        var bufferA = Buffer.Create(this, a);
+        var bufferB = Buffer.Create(this, b);
         Buffer resultBuffer = new(this, arraySize * sizeof(float));
         CommandQueue commandQueue = new(this);
 
@@ -87,8 +86,7 @@ public class Context : IDisposable {
             commandQueue.EnqueueNdRangeKernel(kernel, arraySize, argsValues);
             commandQueue.EnqueueReadBuffer(resultBuffer, resultValues);
             commandQueue.Finish();
-        }
-        finally {
+        } finally {
             bufferA.Dispose();
             bufferB.Dispose();
             resultBuffer.Dispose();
@@ -117,5 +115,4 @@ public class Context : IDisposable {
     ~Context() {
         ReleaseUnmanagedResources();
     }
-}
 }

@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.DirectoryServices.ActiveDirectory;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using csso.NodeCore;
 
-namespace csso.WpfNode {
+namespace csso.WpfNode; 
+
 public class NodeView : INotifyPropertyChanged {
+    private bool _isSelected;
     private Point _position;
-
-    public GraphView GraphView { get; }
 
     public NodeView(GraphView graphView, NodeCore.Node node) {
         Node = node;
@@ -26,22 +24,22 @@ public class NodeView : INotifyPropertyChanged {
         }
     }
 
+    public GraphView GraphView { get; }
+
     public NodeCore.Node Node { get; }
 
     public List<PutView> Inputs { get; } = new();
     public List<PutView> Outputs { get; } = new();
-
-    private bool _isSelected = false;
 
     public bool IsSelected {
         get => _isSelected;
         set {
             if (_isSelected == value)
                 return;
-            
+
             _isSelected = value;
             GraphView.SelectedNode = value ? this : null;
-            
+
             OnPropertyChanged();
         }
     }
@@ -62,6 +60,4 @@ public class NodeView : INotifyPropertyChanged {
     protected void OnPropertyChanged([CallerMemberName] string? name = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
-
-}
 }

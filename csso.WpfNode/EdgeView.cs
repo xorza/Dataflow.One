@@ -3,8 +3,11 @@ using System.Runtime.CompilerServices;
 using csso.NodeCore;
 using csso.NodeCore.Annotations;
 
-namespace csso.WpfNode {
+namespace csso.WpfNode; 
+
 public class EdgeView : INotifyPropertyChanged {
+    private bool _isProactive;
+
     public EdgeView(OutputConnection connection, PutView input, PutView output) {
         Input = input;
         Output = output;
@@ -16,8 +19,6 @@ public class EdgeView : INotifyPropertyChanged {
     public Connection Connection { get; }
     public PutView Input { get; }
     public PutView Output { get; }
-
-    private bool _isProactive = false;
 
     public bool IsProactive {
         get => _isProactive;
@@ -37,5 +38,4 @@ public class EdgeView : INotifyPropertyChanged {
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-}
 }

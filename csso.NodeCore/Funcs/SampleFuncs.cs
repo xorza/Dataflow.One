@@ -1,9 +1,7 @@
-using System;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 
+namespace csso.NodeCore.Funcs; 
 
-namespace csso.NodeCore.Funcs {
 public static class F {
     [Reactive]
     public static bool Add(
@@ -28,5 +26,4 @@ public static class F {
         remainder = a % b;
         return true;
     }
-}
 }

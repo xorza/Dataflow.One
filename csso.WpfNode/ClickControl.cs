@@ -2,7 +2,8 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace csso.WpfNode {
+namespace csso.WpfNode; 
+
 public class ClickControl : Control {
     private bool _leftBuffonDown;
 
@@ -34,5 +35,4 @@ public class ClickControl : Control {
 
         InvalidateVisual();
     }
-}
 }

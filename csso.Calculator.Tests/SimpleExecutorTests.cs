@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
-using csso.Calculator;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
 using NUnit.Framework;
 
-namespace csso.Calculator.Tests {
-public partial class Tests {
+namespace csso.Calculator.Tests; 
+
+public class Tests {
     [System.ComponentModel.Description("value")]
     [Reactive]
     private static bool Const([Config(12)] Int32 c, [Output] ref Int32 i) {
@@ -20,22 +20,22 @@ public partial class Tests {
 
     [Test]
     public void Test1() {
-        Int32 output1Value = 0;
+        var output1Value = 0;
 
-        csso.NodeCore.Graph graph = new csso.NodeCore.Graph();
-        csso.Calculator.Executor executor = new Executor(graph);
+        var graph = new Graph();
+        var executor = new Executor(graph);
 
         IFunction constFunc = new Function("Value", Const);
         constFunc.Config.Single().DefaultValue = 13;
-        IFunction outputFunc = new Function("Output", new Func<Int32, bool>((Int32 val) => {
+        IFunction outputFunc = new Function("Output", new Func<Int32, bool>(val => {
             output1Value = val;
             return true;
         }));
 
 
-        csso.NodeCore.Node constNode = new(constFunc, graph);
+        Node constNode = new(constFunc, graph);
         graph.Add(constNode);
-        csso.NodeCore.Node outputNode = new(outputFunc, graph);
+        Node outputNode = new(outputFunc, graph);
         graph.Add(outputNode);
 
         OutputConnection connection1 = new(
@@ -62,20 +62,20 @@ public partial class Tests {
 
     [Test]
     public void Test2() {
-        csso.NodeCore.Graph graph;
-        csso.Calculator.Executor executor;
-        csso.NodeCore.Node outputNode;
+        Graph graph;
+        Executor executor;
+        Node outputNode;
 
-        Int32 outputValue = 0;
+        var outputValue = 0;
 
-        graph = new csso.NodeCore.Graph();
+        graph = new Graph();
         executor = new Executor(graph);
         IFunction outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
             return true;
         });
 
-        outputNode = new(outputFunc, graph);
+        outputNode = new Node(outputFunc, graph);
         graph.Add(outputNode);
 
         Node frameNoNode = new(executor.FrameNoFunction, graph);
@@ -101,10 +101,10 @@ public partial class Tests {
 
     [Test]
     public void Test3() {
-        Int32 outputValue = 0;
+        var outputValue = 0;
 
-        csso.NodeCore.Graph graph = new csso.NodeCore.Graph();
-        csso.Calculator.Executor executor = new Executor(graph);
+        var graph = new Graph();
+        var executor = new Executor(graph);
 
         IFunction outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
@@ -116,7 +116,7 @@ public partial class Tests {
 
         constFunc.Config.Single().DefaultValue = 3;
 
-        csso.NodeCore.Node outputNode = new(outputFunc, graph);
+        Node outputNode = new(outputFunc, graph);
         graph.Add(outputNode);
 
         Node addNode = new(addFunc, graph);
@@ -164,10 +164,10 @@ public partial class Tests {
 
     [Test]
     public void Test4() {
-        Int32 outputValue = 0;
+        var outputValue = 0;
 
-        csso.NodeCore.Graph graph = new csso.NodeCore.Graph();
-        csso.Calculator.Executor executor = new Executor(graph);
+        var graph = new Graph();
+        var executor = new Executor(graph);
 
         IFunction outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
@@ -179,7 +179,7 @@ public partial class Tests {
 
         constFunc.Config.Single().DefaultValue = 3;
 
-        csso.NodeCore.Node outputNode = new(outputFunc, graph);
+        Node outputNode = new(outputFunc, graph);
         graph.Add(outputNode);
 
         Node addNode = new(addFunc, graph);
@@ -227,10 +227,10 @@ public partial class Tests {
 
     [Test]
     public void Test5() {
-        Int32 outputValue = 0;
+        var outputValue = 0;
 
-        csso.NodeCore.Graph graph = new csso.NodeCore.Graph();
-        csso.Calculator.Executor executor = new Executor(graph);
+        var graph = new Graph();
+        var executor = new Executor(graph);
 
         IFunction outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
@@ -242,7 +242,7 @@ public partial class Tests {
 
         constFunc.Config.Single().DefaultValue = 3;
 
-        csso.NodeCore.Node outputNode = new(outputFunc, graph);
+        Node outputNode = new(outputFunc, graph);
         graph.Add(outputNode);
 
         Node addNode = new(addFunc, graph);
@@ -288,14 +288,14 @@ public partial class Tests {
 
         Assert.Pass();
     }
-    
-    
+
+
     [Test]
     public void Test6() {
-        Int32 outputValue = 0;
+        var outputValue = 0;
 
-        csso.NodeCore.Graph graph = new csso.NodeCore.Graph();
-        csso.Calculator.Executor executor = new Executor(graph);
+        var graph = new Graph();
+        var executor = new Executor(graph);
 
         IFunction outputFunc = new Function("Output", (Int32 val) => {
             outputValue = val;
@@ -307,7 +307,7 @@ public partial class Tests {
 
         constFunc.Config.Single().DefaultValue = 3;
 
-        csso.NodeCore.Node outputNode = new(outputFunc, graph);
+        Node outputNode = new(outputFunc, graph);
         graph.Add(outputNode);
 
         Node addNode = new(addFunc, graph);
@@ -353,5 +353,4 @@ public partial class Tests {
 
         Assert.Pass();
     }
-}
 }

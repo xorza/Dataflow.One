@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using csso.Common;
 using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL {
+namespace csso.OpenCL; 
+
 public class Kernel : IDisposable {
     private readonly List<KernelArg> _args = new();
 
@@ -40,10 +39,10 @@ public class Kernel : IDisposable {
     private void ValidateName() {
         CheckIfDisposed();
 
-        CL.GetKernelInfo(ClKernel, KernelInfo.FunctionName, out byte[] nameBytes)
+        CL.GetKernelInfo(ClKernel, KernelInfo.FunctionName, out var nameBytes)
             .ValidateSuccess();
 
-        string name = nameBytes.DecodeString();
+        var name = nameBytes.DecodeString();
         Check.True(string.Equals(name, Name));
     }
 
@@ -51,16 +50,16 @@ public class Kernel : IDisposable {
         CheckIfDisposed();
 
         CLResultCode result;
-        result = CL.GetKernelInfo(ClKernel, KernelInfo.NumberOfArguments, out byte[] bytes);
+        result = CL.GetKernelInfo(ClKernel, KernelInfo.NumberOfArguments, out var bytes);
         result.ValidateSuccess();
 
         var argCount = BitConverter.ToUInt32(bytes);
         for (uint i = 0; i < argCount; i++) {
             CL.GetKernelArgInfo(ClKernel, i, KernelArgInfo.Name, out bytes).ValidateSuccess();
-            string argName = bytes.DecodeString();
+            var argName = bytes.DecodeString();
 
             CL.GetKernelArgInfo(ClKernel, i, KernelArgInfo.TypeName, out bytes).ValidateSuccess();
-            string typeName = bytes.DecodeString();
+            var typeName = bytes.DecodeString();
 
             _args.Add(new KernelArg(argName, typeName));
 
@@ -81,5 +80,4 @@ public class Kernel : IDisposable {
     ~Kernel() {
         ReleaseUnmanagedResources();
     }
-}
 }

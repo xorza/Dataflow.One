@@ -1,9 +1,9 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace csso.WpfNode {
+namespace csso.WpfNode; 
+
 public class EdgeEventArgs : RoutedEventArgs {
     public EdgeEventArgs(Edge edge) {
         Edge = edge;
@@ -31,24 +31,24 @@ public class Edge : ClickControl {
     public static readonly DependencyProperty IsProactiveProperty = DependencyProperty.Register(
         "IsProactive", typeof(bool), typeof(Edge), new PropertyMetadata(default(bool)));
 
-    public bool IsProactive {
-        get { return (bool) GetValue(IsProactiveProperty); }
-        set { SetValue(IsProactiveProperty, value); }
-    }
-
     public Edge() {
         LeftButtonClick += LeftButtonClickHandler;
         MouseDoubleClick += MouseButtonEventHandler;
     }
 
+    public bool IsProactive {
+        get => (bool) GetValue(IsProactiveProperty);
+        set => SetValue(IsProactiveProperty, value);
+    }
+
     public Point InputPosition {
         get => (Point) GetValue(InputPositionDependencyProperty);
-        set { SetValue(InputPositionDependencyProperty, value); }
+        set => SetValue(InputPositionDependencyProperty, value);
     }
 
     public Point OutputPosition {
         get => (Point) GetValue(OutputPositionDependencyProperty);
-        set { SetValue(OutputPositionDependencyProperty, value); }
+        set => SetValue(OutputPositionDependencyProperty, value);
     }
 
     private static void Position_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
@@ -60,7 +60,7 @@ public class Edge : ClickControl {
     }
 
     private void MouseButtonEventHandler(object sender, MouseButtonEventArgs e) {
-        EdgeView view = (EdgeView) (((FrameworkElement) sender).DataContext);
+        var view = (EdgeView) ((FrameworkElement) sender).DataContext;
         view.IsProactive = !view.IsProactive;
     }
 
@@ -94,5 +94,4 @@ public class Edge : ClickControl {
         drawingContext.DrawGeometry(null, new Pen(Brushes.Transparent, 5), path);
         drawingContext.DrawGeometry(null, pen, path);
     }
-}
 }

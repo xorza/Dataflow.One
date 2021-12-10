@@ -1,4 +1,3 @@
-namespace csso.Calculator {
-public static class Functions {
-}
-}
+namespace csso.Calculator; 
+
+public static class Functions { }

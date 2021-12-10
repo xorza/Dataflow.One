@@ -5,7 +5,8 @@ using System.Windows.Controls;
 using csso.Common;
 using csso.NodeCore;
 
-namespace csso.WpfNode {
+namespace csso.WpfNode; 
+
 public class NodeConfigTemplateSelector : DataTemplateSelector {
     public DataTemplate? Int32DataTemplate { get; set; }
 
@@ -15,12 +16,11 @@ public class NodeConfigTemplateSelector : DataTemplateSelector {
         if (item is FunctionConfig config) {
             if (config.Type == typeof(Int32) && Int32DataTemplate != null)
                 return Int32DataTemplate;
-            DataTemplates.TryGetValue(config.Type, out DataTemplate? result);
+            DataTemplates.TryGetValue(config.Type, out var result);
             return result;
-        } else {
-            Debug.Assert.False();
-            return null;
         }
+
+        Debug.Assert.False();
+        return null;
     }
-}
 }

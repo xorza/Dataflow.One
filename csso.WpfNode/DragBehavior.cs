@@ -2,9 +2,17 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace csso.WpfNode {
+namespace csso.WpfNode; 
+
 public class DragBehavior {
-    public readonly TranslateTransform Transform = new ();
+    public static readonly DependencyProperty IsDragProperty =
+        DependencyProperty.RegisterAttached(
+            "Drag",
+            typeof(bool),
+            typeof(DragBehavior),
+            new PropertyMetadata(false, OnChanged));
+
+    public readonly TranslateTransform Transform = new();
     private Point _elementStartPosition2;
     private Point _mouseStartPosition2;
 
@@ -16,26 +24,18 @@ public class DragBehavior {
         obj.SetValue(IsDragProperty, value);
     }
 
-    public static readonly DependencyProperty IsDragProperty =
-        DependencyProperty.RegisterAttached(
-            "Drag",
-            typeof(bool), 
-            typeof(DragBehavior),
-            new PropertyMetadata(false, OnChanged));
-
     private static void OnChanged(object sender, DependencyPropertyChangedEventArgs e) {
         var element = (UIElement) sender;
-        var isDrag = (bool) (e.NewValue);
+        var isDrag = (bool) e.NewValue;
 
-        DragBehavior dragBehavior = new ();
+        DragBehavior dragBehavior = new();
         element.RenderTransform = dragBehavior.Transform;
 
         if (isDrag) {
             element.MouseLeftButtonDown += dragBehavior.ElementOnMouseLeftButtonDown;
             element.MouseLeftButtonUp += dragBehavior.ElementOnMouseLeftButtonUp;
             element.MouseMove += dragBehavior.ElementOnMouseMove;
-        }
-        else {
+        } else {
             element.MouseLeftButtonDown -= dragBehavior.ElementOnMouseLeftButtonDown;
             element.MouseLeftButtonUp -= dragBehavior.ElementOnMouseLeftButtonUp;
             element.MouseMove -= dragBehavior.ElementOnMouseMove;
@@ -58,10 +58,9 @@ public class DragBehavior {
     private void ElementOnMouseMove(object sender, MouseEventArgs mouseEventArgs) {
         var element = (UIElement) sender;
         var mousePos = mouseEventArgs.GetPosition(element);
-        var diff = (mousePos - _mouseStartPosition2);
+        var diff = mousePos - _mouseStartPosition2;
         if (!((UIElement) sender).IsMouseCaptured) return;
         Transform.X = _elementStartPosition2.X + diff.X;
         Transform.Y = _elementStartPosition2.Y + diff.Y;
     }
-}
 }

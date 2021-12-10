@@ -1,9 +1,9 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-namespace csso.ImageProcessing {
+namespace csso.ImageProcessing; 
+
 public class Image : IDisposable {
     private IntPtr _ptr;
 
@@ -27,8 +27,7 @@ public class Image : IDisposable {
             unsafe {
                 Buffer.MemoryCopy(imageData.Scan0.ToPointer(), _ptr.ToPointer(), SizeInBytes, SizeInBytes);
             }
-        }
-        finally {
+        } finally {
             if (imageData != null)
                 img.UnlockBits(imageData);
 
@@ -67,7 +66,7 @@ public class Image : IDisposable {
     }
 
     public T[] As<T>() where T : unmanaged {
-        T[] result = new T[TotalPixels];
+        var result = new T[TotalPixels];
         for (var y = 0; y < Height; y++)
         for (var x = 0; x < Width; x++)
             result[y * Width + x] = Get<T>(x, y);
@@ -86,5 +85,4 @@ public class Image : IDisposable {
     ~Image() {
         ReleaseUnmanagedResources();
     }
-}
 }

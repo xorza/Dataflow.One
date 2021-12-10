@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using OpenTK.Compute.OpenCL;
+﻿using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL {
+namespace csso.OpenCL; 
+
 public class Program : IDisposable {
     public Program(Context context, string code) {
         context.CheckIfDisposed();
@@ -26,12 +25,12 @@ public class Program : IDisposable {
         List<Kernel> kernels = new();
         Kernels = kernels.AsReadOnly();
 
-        result = CL.GetProgramInfo(ClProgram, ProgramInfo.KernelNames, out byte[] clKernelNames);
+        result = CL.GetProgramInfo(ClProgram, ProgramInfo.KernelNames, out var clKernelNames);
         result.ValidateSuccess();
 
-        string[] kernelNames = clKernelNames.DecodeString().Split(';',
+        var kernelNames = clKernelNames.DecodeString().Split(';',
             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.RemoveEmptyEntries);
-        foreach (string kernelName in kernelNames) {
+        foreach (var kernelName in kernelNames) {
             var clKernel = CL.CreateKernel(ClProgram, kernelName, out result);
             result.ValidateSuccess();
             kernels.Add(new Kernel(this, kernelName, clKernel));
@@ -64,5 +63,4 @@ public class Program : IDisposable {
     ~Program() {
         ReleaseUnmanagedResources();
     }
-}
 }

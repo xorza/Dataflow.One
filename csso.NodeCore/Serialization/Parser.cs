@@ -1,5 +1,3 @@
-namespace csso.NodeCore.Serialization {
-public class Parser {
-    
-}
-}
+namespace csso.NodeCore.Serialization; 
+
+public class Parser { }

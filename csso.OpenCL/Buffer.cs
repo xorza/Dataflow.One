@@ -1,8 +1,8 @@
-﻿using System;
-using csso.Common;
+﻿using csso.Common;
 using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL {
+namespace csso.OpenCL; 
+
 public class Buffer : IDisposable {
     public Buffer(Context context, int sizeInBytes) {
         context.CheckIfDisposed();
@@ -71,5 +71,4 @@ public class Buffer : IDisposable {
     ~Buffer() {
         ReleaseUnmanagedResources();
     }
-}
 }

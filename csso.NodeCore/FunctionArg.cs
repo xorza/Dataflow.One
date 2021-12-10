@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Security.AccessControl;
-using csso.Common;
+﻿using csso.Common;
 
-namespace csso.NodeCore {
+namespace csso.NodeCore; 
+
 public enum ArgType {
     In,
     Out,
@@ -35,16 +33,15 @@ public class FunctionOutput : FunctionArg {
 }
 
 public class FunctionConfig : FunctionArg {
+    private Object? _defaultValue = default(Type);
     protected FunctionConfig(String name, Type type) : base(name, type) { }
 
-    private Object? _defaultValue = default(Type);
-    
-    public Object? DefaultValue { 
+    public Object? DefaultValue {
         get => _defaultValue;
         set {
             if (value != null)
                 Check.True(value.GetType() == Type);
-    
+
             _defaultValue = value;
         }
     }
@@ -52,17 +49,19 @@ public class FunctionConfig : FunctionArg {
     public override ArgType ArgType => ArgType.Config;
 
     public static FunctionConfig Create(String name, Type type) {
-        Object result =
+        var result =
             typeof(FunctionConfig<>)
                 .MakeGenericType(type)
                 .GetConstructors()
                 .Single()!
                 .Invoke(new Object[2] {name, type});
-        return  (FunctionConfig)result;
+        return (FunctionConfig) result;
     }
 }
 
 public class FunctionConfig<T> : FunctionConfig {
+    public FunctionConfig(string name, Type type) : base(name, type) { }
+
     public T TypedValue {
         get => (T) DefaultValue!;
         set {
@@ -72,7 +71,4 @@ public class FunctionConfig<T> : FunctionConfig {
             DefaultValue = value;
         }
     }
-
-    public FunctionConfig(string name, Type type) : base(name, type) { }
-}
 }

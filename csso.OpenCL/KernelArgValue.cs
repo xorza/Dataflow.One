@@ -1,6 +1,7 @@
 ﻿using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL {
+namespace csso.OpenCL; 
+
 public abstract class KernelArgValue {
     internal abstract void Set(Kernel kernel, int index);
 }
@@ -27,5 +28,4 @@ public class BufferKernelArgValue : KernelArgValue {
     internal override void Set(Kernel kernel, int index) {
         CL.SetKernelArg(kernel.ClKernel, (uint) index, Buffer.ClBuffer).ValidateSuccess();
     }
-}
 }

@@ -3,29 +3,28 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using csso.Common;
 using csso.NodeCore;
 using csso.WpfNode.Annotations;
 
-namespace csso.WpfNode {
-
+namespace csso.WpfNode; 
 
 public class GraphView : INotifyPropertyChanged {
-    public NodeCore.Graph Graph { get; private set; }
+    private NodeView? _selectedNode;
+
+    private PutView? _selectedPutView;
 
     public GraphView(NodeCore.Graph graph) {
         Graph = graph;
         Refresh();
     }
 
+    public NodeCore.Graph Graph { get; }
+
     public ObservableCollection<EdgeView> Edges { get; }
         = new();
 
     public ObservableCollection<NodeView> Nodes { get; }
         = new();
-
-    private NodeView? _selectedNode = null;
 
     public NodeView? SelectedNode {
         get => _selectedNode;
@@ -43,8 +42,6 @@ public class GraphView : INotifyPropertyChanged {
         }
     }
 
-    private PutView? _selectedPutView = null;
-
     public PutView? SelectedPutView {
         get => _selectedPutView;
         set {
@@ -61,11 +58,11 @@ public class GraphView : INotifyPropertyChanged {
         }
     }
 
+    public event PropertyChangedEventHandler? PropertyChanged;
+
     private NodeView GetNodeView(NodeCore.Node node) {
         return Nodes.Single(_ => _.Node == node);
     }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
@@ -80,7 +77,7 @@ public class GraphView : INotifyPropertyChanged {
             NodeView nv = new(this, node);
             Nodes.Add(nv);
         }
-        
+
         if (_selectedNode != null && !Nodes.Contains(_selectedNode))
             SelectedNode = null;
 
@@ -91,21 +88,19 @@ public class GraphView : INotifyPropertyChanged {
                 var inputNode = GetNodeView(binding.InputNode);
                 var outputNode = GetNodeView(binding.OutputNode);
 
-                PutView input = inputNode.Inputs.Single(_ => _.FunctionArg == binding.Input);
-                PutView output = outputNode.Outputs.Single(_ => _.FunctionArg == binding.Output);
+                var input = inputNode.Inputs.Single(_ => _.FunctionArg == binding.Input);
+                var output = outputNode.Outputs.Single(_ => _.FunctionArg == binding.Output);
 
                 newEdgeViews.Add(new EdgeView(binding, input, output));
             }
 
-        for (int i = 0; i < newEdgeViews.Count; i++) {
+        for (var i = 0; i < newEdgeViews.Count; i++)
             if (Edges.Count > i)
                 Edges[i] = newEdgeViews[i];
             else
                 Edges.Add(newEdgeViews[i]);
-        }
 
-        while (Edges.Count > newEdgeViews.Count) 
+        while (Edges.Count > newEdgeViews.Count)
             Edges.RemoveAt(Edges.Count - 1);
     }
-}
 }

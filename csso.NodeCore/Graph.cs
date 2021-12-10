@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using csso.Common;
+﻿using csso.Common;
 
-namespace csso.NodeCore {
+namespace csso.NodeCore; 
+
 public class Graph {
     private readonly List<Node> _nodes = new();
 
@@ -16,5 +16,4 @@ public class Graph {
 
         _nodes.Add(node);
     }
-}
 }

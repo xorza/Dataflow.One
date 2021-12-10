@@ -1,4 +1,5 @@
-﻿namespace csso.ImageProcessing {
+﻿namespace csso.ImageProcessing; 
+
 public struct RGB8U {
     public byte r;
     public byte g;
@@ -61,5 +62,4 @@ public struct RGB32F {
         g = other.g;
         b = other.b;
     }
-}
 }

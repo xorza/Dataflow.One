@@ -1,32 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
+﻿using System.ComponentModel;
 using csso.Common;
 
-namespace csso.NodeCore {
-[AttributeUsage(AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
-public sealed class OutputAttribute : Attribute {
-    public OutputAttribute() { }
-}
+namespace csso.NodeCore; 
 
-[AttributeUsage(AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Parameter)]
+public sealed class OutputAttribute : Attribute { }
+
+[AttributeUsage(AttributeTargets.Parameter)]
 public sealed class ConfigAttribute : Attribute {
-    public Object? DefaultValue { get; private set; } = null;
     public ConfigAttribute() { }
 
     public ConfigAttribute(Object defaultValue) {
         DefaultValue = defaultValue;
     }
+
+    public Object? DefaultValue { get; }
 }
 
-[AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-public sealed class ReactiveAttribute : Attribute {
-    public ReactiveAttribute() { }
-}
+[AttributeUsage(AttributeTargets.Method, Inherited = false)]
+public sealed class ReactiveAttribute : Attribute { }
 
 public enum FunctionBehavior {
     Reactive,
@@ -47,16 +39,6 @@ public interface IFunction {
 }
 
 public class Function : IFunction {
-    public IReadOnlyList<FunctionInput> Inputs { get; }
-    public IReadOnlyList<FunctionOutput> Outputs { get; }
-    public IReadOnlyList<FunctionArg> Args { get; }
-    public IReadOnlyList<FunctionConfig> Config { get; }
-    public FunctionBehavior Behavior { get; }
-    public string Name { get; }
-    public string Description { get; }
-    public bool IsProcedure => Outputs.Count == 0;
-    public Delegate Delegate { get; }
-
     public Function(String name, Delegate func) {
         Check.Argument(func.Method.ReturnType == typeof(bool), nameof(func));
 
@@ -66,25 +48,25 @@ public class Function : IFunction {
         Name = name;
         Delegate = func;
 
-        DescriptionAttribute? descr =
+        var descr =
             Attribute.GetCustomAttribute(func.Method, typeof(DescriptionAttribute))
                 as DescriptionAttribute;
         Description = descr?.Description ?? "";
-        ReactiveAttribute? reactive =
+        var reactive =
             Attribute.GetCustomAttribute(func.Method, typeof(ReactiveAttribute))
                 as ReactiveAttribute;
         Behavior = reactive == null ? FunctionBehavior.Proactive : FunctionBehavior.Reactive;
 
-        ParameterInfo[] parameters = func.Method.GetParameters();
+        var parameters = func.Method.GetParameters();
         foreach (var parameter in parameters) {
-            OutputAttribute? outputAttribute =
+            var outputAttribute =
                 Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) as OutputAttribute;
-            ConfigAttribute? configAttribute =
+            var configAttribute =
                 Attribute.GetCustomAttribute(parameter, typeof(ConfigAttribute)) as ConfigAttribute;
 
             if (outputAttribute != null && configAttribute != null) throw new Exception("fghoji4r5");
 
-            String argName = parameter.Name!;
+            var argName = parameter.Name!;
             Type argType;
             if (parameter.ParameterType.IsByRef)
                 argType = parameter.ParameterType.GetElementType()!;
@@ -93,18 +75,19 @@ public class Function : IFunction {
 
             FunctionArg arg;
 
-            if (outputAttribute != null)
+            if (outputAttribute != null) {
                 arg = new FunctionOutput(argName, argType);
-            else if (configAttribute != null) {
-                FunctionConfig config = FunctionConfig.Create(argName, argType);
+            } else if (configAttribute != null) {
+                var config = FunctionConfig.Create(argName, argType);
                 if (configAttribute.DefaultValue != null) {
                     Check.True(argType == configAttribute.DefaultValue.GetType());
                     config.DefaultValue = configAttribute.DefaultValue;
                 }
 
                 arg = config;
-            } else
+            } else {
                 arg = new FunctionInput(argName, argType);
+            }
 
             args.Add(arg);
         }
@@ -121,10 +104,20 @@ public class Function : IFunction {
         Behavior = functionBehavior;
     }
 
+    public Delegate Delegate { get; }
+    public IReadOnlyList<FunctionInput> Inputs { get; }
+    public IReadOnlyList<FunctionOutput> Outputs { get; }
+    public IReadOnlyList<FunctionArg> Args { get; }
+    public IReadOnlyList<FunctionConfig> Config { get; }
+    public FunctionBehavior Behavior { get; }
+    public string Name { get; }
+    public string Description { get; }
+    public bool IsProcedure => Outputs.Count == 0;
+
     public void Invoke(object?[]? args) {
         CheckArgTypes(args);
 
-        object? result = Delegate.DynamicInvoke(args);
+        var result = Delegate.DynamicInvoke(args);
         if (result is bool boolResult)
             Check.True(boolResult);
         else
@@ -132,7 +125,7 @@ public class Function : IFunction {
     }
 
     private void CheckArgTypes(object?[]? args) {
-        for (int i = 0; i < Args.Count; i++) {
+        for (var i = 0; i < Args.Count; i++) {
             if (args == null)
                 throw new ArgumentNullException(nameof(args));
 
@@ -145,5 +138,4 @@ public class Function : IFunction {
             Check.True(Args[i].Type.IsInstanceOfType(args[i]!));
         }
     }
-}
 }

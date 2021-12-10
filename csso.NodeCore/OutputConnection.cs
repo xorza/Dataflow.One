@@ -1,15 +1,15 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using csso.Common;
+﻿using csso.Common;
 
-namespace csso.NodeCore {
-public  enum ConnectionBehavior {
+namespace csso.NodeCore; 
+
+public enum ConnectionBehavior {
     Once,
     Always
 }
+
 public sealed class OutputConnection : Connection {
+    private ConnectionBehavior _behavior = ConnectionBehavior.Always;
+
     public OutputConnection(
         Node inputNode,
         FunctionInput input,
@@ -29,8 +29,6 @@ public sealed class OutputConnection : Connection {
     public Node OutputNode { get; }
     public FunctionOutput Output { get; }
 
-    private ConnectionBehavior _behavior = ConnectionBehavior.Always;
-
     public ConnectionBehavior Behavior {
         get => _behavior;
         set {
@@ -39,7 +37,4 @@ public sealed class OutputConnection : Connection {
             OnPropertyChanged();
         }
     }
-    
-
-}
 }

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using csso.Common;
 
-namespace csso.OpenCL {
+namespace csso.OpenCL; 
+
 public enum DataType {
     Float,
     Float2,
@@ -25,19 +25,16 @@ internal static partial class Xtensions {
     public static T ToEnum<T>(this string s) where T : struct, Enum {
         try {
             return (T) Enum.Parse(typeof(T), s);
-        }
-        catch { }
+        } catch { }
 
         try {
-            string[] names = Enum.GetNames<T>();
+            var names = Enum.GetNames<T>();
 
             var index = Array.FindIndex(names, name => name.Equals(s, StringComparison.InvariantCultureIgnoreCase));
             Check.True(index >= 0);
             return Enum.GetValues<T>()[index];
-        }
-        catch { }
+        } catch { }
 
         throw new ArgumentOutOfRangeException(nameof(s));
     }
-}
 }

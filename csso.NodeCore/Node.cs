@@ -1,16 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Reflection.Metadata.Ecma335;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using csso.Common;
 using csso.NodeCore.Annotations;
 
-namespace csso.NodeCore {
-public class ConfigValue {
-    public FunctionConfig Config { get; }
+namespace csso.NodeCore; 
 
+public class ConfigValue {
     private Object? _value;
+
+    public ConfigValue(FunctionConfig config) : this(config, config.DefaultValue) { }
+
+    public ConfigValue(FunctionConfig config, Object? value) {
+        Config = config;
+        Value = value;
+    }
+
+    public FunctionConfig Config { get; }
 
     public Type Type => Config.Type;
 
@@ -23,19 +28,13 @@ public class ConfigValue {
             _value = value;
         }
     }
-
-    public ConfigValue(FunctionConfig config) : this(config, config.DefaultValue) { }
-
-    public ConfigValue(FunctionConfig config, Object? value) {
-        Config = config;
-        Value = value;
-    }
 }
 
-
 public class Node : INotifyPropertyChanged {
-    private readonly List<Connection> _connections = new();
     private readonly List<ConfigValue> _configValues = new();
+    private readonly List<Connection> _connections = new();
+
+    private FunctionBehavior _behavior = FunctionBehavior.Proactive;
 
     public Node(IFunction function, Graph graph) {
         Function = function;
@@ -53,9 +52,7 @@ public class Node : INotifyPropertyChanged {
 
     public string Name => Function.Name;
 
-    public IFunction Function { get; private set; }
-
-    private FunctionBehavior _behavior = FunctionBehavior.Proactive;
+    public IFunction Function { get; }
 
     public FunctionBehavior Behavior {
         get => _behavior;
@@ -71,14 +68,18 @@ public class Node : INotifyPropertyChanged {
 
     public FunctionBehavior FinalBehavior {
         get {
-            if (_behavior == FunctionBehavior.Proactive)
+            if (_behavior == FunctionBehavior.Proactive) {
                 return Function.Behavior;
-            else {
-                Check.True(_behavior == FunctionBehavior.Reactive);
-                return FunctionBehavior.Reactive;
             }
+
+            Check.True(_behavior == FunctionBehavior.Reactive);
+            return FunctionBehavior.Reactive;
         }
     }
+
+    public Graph Graph { get; }
+    public IReadOnlyList<Connection> Connections { get; }
+    public IReadOnlyList<ConfigValue> ConfigValues { get; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -87,10 +88,6 @@ public class Node : INotifyPropertyChanged {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    public Graph Graph { get; }
-    public IReadOnlyList<Connection> Connections { get; }
-    public IReadOnlyList<ConfigValue> ConfigValues { get; }
-
     public void AddBinding(Connection connection) {
         _connections.RemoveAll(_ => _.Input == connection.Input);
 
@@ -98,5 +95,4 @@ public class Node : INotifyPropertyChanged {
 
         _connections.Add(connection);
     }
-}
 }
