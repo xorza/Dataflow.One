@@ -40,7 +40,6 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     private static void DragCanvas_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
         Node graph = (Node) d;
-        graph.UpdatePinPositions();
     }
 
     public Node() {
@@ -83,54 +82,13 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     public event PinClickEventHandler? PinClick;
 
     private void LayoutUpdated_EventHandler(object? sender, EventArgs e) {
-        UpdatePinPositions();
+     
     }
-
 
     private static void NodeView_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
         Node graph = (Node) d;
     }
-
-    private void UpdatePinPositions() {
-        Check.True(NodeView != null);
-
-        if (DragCanvas == null)
-            return;
-        if (IsVisible != true)
-            return;
-
-
-        NodeView!.Inputs.ForEach(put => {
-            if (put.Control != null) {
-                var upperLeft = put.Control
-                    .TransformToVisual(DragCanvas)
-                    .Transform(new Point(0, 0));
-                var mid = new Point(
-                    put.Control.RenderSize.Width / 2,
-                    put.Control.RenderSize.Height / 2);
-
-                var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
-                put.PinPoint = newPinPoint;
-            }
-        });
-
-
-        NodeView!.Outputs.ForEach(put => {
-            if (put.Control != null) {
-                var upperLeft = put.Control
-                    .TransformToVisual(DragCanvas)
-                    .Transform(new Point(0, 0));
-                var mid = new Point(
-                    put.Control.RenderSize.Width / 2,
-                    put.Control.RenderSize.Height / 2);
-
-                var newPinPoint = new Point(upperLeft.X + mid.X, upperLeft.Y + mid.Y);
-                put.PinPoint = newPinPoint;
-            }
-        });
-    }
-
-
+    
     private void PinButton_Click(object sender, RoutedEventArgs e) {
         var pv = ((Put) sender).PutView!;
         PinClick?.Invoke(this,

@@ -15,6 +15,10 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
             <DataTemplate
@@ -23,8 +27,8 @@
 
                 <view:Put PutView="{Binding}"
                           x:Name="PinButton"
-                          Loaded="PinButton_OnLoaded">
-                </view:Put>
+                          Loaded="PinButton_OnLoaded"
+                          DragCanvas="{Binding ElementName=NodeUserControl, Path=DragCanvas}" />
 
                 <DataTemplate.Triggers>
                     <DataTrigger Binding="{Binding IsInput}" Value="True">
@@ -65,7 +69,7 @@
                                 <DataTrigger
                                     Binding="{Binding Path=NodeView.Node.Function.IsProcedure, ElementName=NodeUserControl}"
                                     Value="False">
-                                    <Setter
+                                    <Setter 
                                         Property="Background"
                                         Value="{Binding Path=HeaderBackground, ElementName=NodeUserControl}" />
                                 </DataTrigger>
@@ -105,7 +109,51 @@
                                    Padding="0"
                                    Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
 
-                        <Button Grid.Column="1" Content="x" Click="Close_Button_OnClick"></Button>
+                        <Button Grid.Column="1" Click="Close_Button_OnClick"
+                                Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                                Template="{StaticResource EmptyButtonTemplate}"
+                                Margin="2" Padding="3" 
+                                BorderBrush="{x:Null}"
+                                BorderThickness="0"
+                                Background="{Binding Path=Background, ElementName=NodeUserControl}"
+                                x:Name="Button456N3"
+                                >
+
+                            <Grid x:Name="Grid235B3"
+                                  Height="7"
+                                  Width="7">
+                                <Line X1="0"
+                                      Y1="0"
+                                      X2="{Binding ElementName=Grid235B3, Path=ActualWidth}"
+                                      Y2="{Binding ElementName=Grid235B3, Path=ActualHeight}"
+                                      Stroke="{Binding ElementName=Button456N3, Path=Foreground}"
+                                      StrokeThickness="1"
+                                      x:Name="Line1" 
+                                      />
+                                <Line X1="0"
+                                      Y1="{Binding ElementName=Grid235B3, Path=ActualHeight}"
+                                      X2="{Binding ElementName=Grid235B3, Path=ActualWidth}"
+                                      Y2="0"
+                                      Stroke="{Binding ElementName=Button456N3, Path=Foreground}"
+                                      StrokeThickness="1" 
+                                      x:Name="Line2"
+                                      />
+                            </Grid>
+
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Foreground" Value="Azure"></Setter>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="False">
+                                            <Setter Property="Foreground" Value="DarkGray"></Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+
+                        </Button>
                     </Grid>
                 </Border>
 
