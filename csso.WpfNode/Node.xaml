@@ -20,84 +20,11 @@
             <DataTemplate
                 x:Key="PinViewTemplate"
                 DataType="{x:Type view:PutView}">
-                <Button
-                    Padding="0"
-                    Margin="0"
-                    Click="PinButton_Click"
-                    Tag="{Binding}"
-                    HorizontalAlignment="Right"
-                    x:Name="PinButton">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Grid Background="Transparent" Margin="0"
-                                  x:Name="MainGrid123">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
 
-                                <Ellipse Grid.Column="0"
-                                         x:Name="Highlight2"
-                                         Stroke="{x:Null}"
-                                         Fill="Transparent"
-                                         Width="13"
-                                         Height="13"
-                                         StrokeThickness="0"
-                                         Margin="0"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Center"
-                                         Visibility="Visible" />
-
-                                <Ellipse Grid.Column="0"
-                                         x:Name="Highlight1"
-                                         Stroke="DarkGray"
-                                         Width="7"
-                                         Height="7"
-                                         StrokeThickness="2"
-                                         Margin="0"
-                                         VerticalAlignment="Center"
-                                         HorizontalAlignment="Center"
-                                         Tag="{Binding}"
-                                         Loaded="PinHighlight_LoadedHandler"
-                                         Visibility="Visible" />
-
-                                <ContentPresenter Visibility="Visible"
-                                                  Grid.Column="1"
-                                                  Margin="0"
-                                                  Content="{TemplateBinding Content}"
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Center"
-                                                  x:Name="ContentPresenter1" />
-
-                            </Grid>
-
-                            <ControlTemplate.Triggers>
-                                <DataTrigger Binding="{Binding IsOutput}" Value="True">
-
-                                    <Setter TargetName="Highlight1"
-                                            Property="Grid.Column"
-                                            Value="2" />
-                                    <Setter TargetName="Highlight2"
-                                            Property="Grid.Column"
-                                            Value="2" />
-
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                    <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" />
-                                </DataTrigger>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Stroke" TargetName="Highlight1" Value="Coral" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-
-                    <TextBlock Margin="0"
-                               Padding="0"
-                               Text="{Binding FunctionArg.FullName }"
-                               VerticalAlignment="Center" />
-                </Button>
+                <view:Put PutView="{Binding}"
+                          x:Name="PinButton"
+                          Loaded="PinButton_OnLoaded">
+                </view:Put>
 
                 <DataTemplate.Triggers>
                     <DataTrigger Binding="{Binding IsInput}" Value="True">

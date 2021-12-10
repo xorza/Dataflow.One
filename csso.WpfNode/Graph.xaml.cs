@@ -211,8 +211,9 @@ public partial class Graph : UserControl {
         }
 
         EnableDrag(node);
-        node.PinClick += Node_OnPinClick;
         _nodes.Add(node);
+
+        node.PinClick += Node_OnPinClick;
         node.DragCanvas = _nodesCanvas;
         node.Style = NodeStyle;
     }

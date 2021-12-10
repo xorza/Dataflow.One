@@ -16,7 +16,16 @@ public sealed class PutView : INotifyPropertyChanged {
         NodeView = nodeView;
     }
 
-    public UIElement? Control { get; set; }
+    private UIElement? _control; 
+    public UIElement? Control {
+        get => _control;
+        set {
+            if (value != _control) {
+                _control = value;
+                OnPropertyChanged();
+            }  
+        } 
+    }
     public ArgType ArgType => FunctionArg.ArgType;
     public bool IsInput => ArgType == ArgType.In;
     public bool IsOutput => ArgType == ArgType.Out;

@@ -16,14 +16,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39"/>
-        <PackageReference Include="ReactiveUI" Version="16.3.10"/>
+        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+        <PackageReference Include="ReactiveUI" Version="16.3.10" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\csso.Common\csso.Common.csproj"/>
-        <ProjectReference Include="..\csso.NodeCore\csso.NodeCore.csproj"/>
-        <ProjectReference Include="..\csso.OpenCL\csso.OpenCL.csproj"/>
+        <ProjectReference Include="..\csso.Common\csso.Common.csproj" />
+        <ProjectReference Include="..\csso.NodeCore\csso.NodeCore.csproj" />
+        <ProjectReference Include="..\csso.OpenCL\csso.OpenCL.csproj" />
     </ItemGroup>
 
 </Project>

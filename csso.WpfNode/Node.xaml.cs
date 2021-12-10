@@ -21,26 +21,37 @@ public delegate void PinClickEventHandler(object sender, PinClickEventArgs e);
 
 public partial class Node : UserControl, INotifyPropertyChanged {
     public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
-        "CornerRadius", typeof(CornerRadius), typeof(Node), new PropertyMetadata(default(CornerRadius)));
+        nameof(CornerRadius), typeof(CornerRadius), typeof(Node), new PropertyMetadata(default(CornerRadius)));
 
     public static readonly DependencyProperty HeaderBackgroundProperty = DependencyProperty.Register(
-        "HeaderBackground", typeof(Brush), typeof(Node), new PropertyMetadata(default(Brush)));
+        nameof(HeaderBackground), typeof(Brush), typeof(Node), new PropertyMetadata(default(Brush)));
 
     public static readonly DependencyProperty HighlightBrushProperty = DependencyProperty.Register(
-        "HighlightBrush", typeof(Brush), typeof(Node), new PropertyMetadata(default(Brush)));
+        nameof(HighlightBrush), typeof(Brush), typeof(Node), new PropertyMetadata(default(Brush)));
 
     public static readonly DependencyProperty NodeViewProperty = DependencyProperty.Register(
-        "NodeView", typeof(NodeView), typeof(Node), new PropertyMetadata(default(NodeView)));
+        nameof(NodeView), typeof(NodeView), typeof(Node),
+        new PropertyMetadata(default(NodeView), NodeView_PropertyChangedCallback));
+
 
     public static readonly DependencyProperty DragCanvasProperty = DependencyProperty.Register(
-        "DragCanvas", typeof(Canvas), typeof(Node), new PropertyMetadata(default(Canvas)));
+        nameof(DragCanvas), typeof(Canvas), typeof(Node),
+        new PropertyMetadata(default(Canvas), DragCanvas_PropertyChangedCallback));
+
+    private static void DragCanvas_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        Node graph = (Node) d;
+        graph.UpdatePinPositions();
+    }
 
     public Node() {
         InitializeComponent();
 
         MouseLeftButtonDown += Node_MouseLeftButtonDown;
         LayoutUpdated += LayoutUpdated_EventHandler;
+        Loaded += OnLoaded;
     }
+
+    private void OnLoaded(object sender, RoutedEventArgs e) { }
 
     public Brush HighlightBrush {
         get => (Brush) GetValue(HighlightBrushProperty);
@@ -75,6 +86,11 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         UpdatePinPositions();
     }
 
+
+    private static void NodeView_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        Node graph = (Node) d;
+    }
+
     private void UpdatePinPositions() {
         Check.True(NodeView != null);
 
@@ -83,12 +99,11 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         if (IsVisible != true)
             return;
 
-        Canvas canvas = DragCanvas!;
 
         NodeView!.Inputs.ForEach(put => {
             if (put.Control != null) {
                 var upperLeft = put.Control
-                    .TransformToVisual(canvas)
+                    .TransformToVisual(DragCanvas)
                     .Transform(new Point(0, 0));
                 var mid = new Point(
                     put.Control.RenderSize.Width / 2,
@@ -103,7 +118,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         NodeView!.Outputs.ForEach(put => {
             if (put.Control != null) {
                 var upperLeft = put.Control
-                    .TransformToVisual(canvas)
+                    .TransformToVisual(DragCanvas)
                     .Transform(new Point(0, 0));
                 var mid = new Point(
                     put.Control.RenderSize.Width / 2,
@@ -117,8 +132,8 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
 
     private void PinButton_Click(object sender, RoutedEventArgs e) {
-        var pv = (PutView) ((Button) sender).Tag;
-        PinClick?.Invoke(sender,
+        var pv = ((Put) sender).PutView!;
+        PinClick?.Invoke(this,
             new PinClickEventArgs(pv) {
                 RoutedEvent = e.RoutedEvent,
                 Source = e.Source,
@@ -136,13 +151,13 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         if (NodeView!.GraphView.SelectedNode != NodeView) NodeView!.GraphView.SelectedNode = NodeView;
     }
 
-    private void PinHighlight_LoadedHandler(object sender, RoutedEventArgs args) {
-        var element = (FrameworkElement) sender;
-        var pv = (PutView) element.Tag;
-        pv.Control = element;
-    }
 
     private void Close_Button_OnClick(object sender, RoutedEventArgs e) {
         NodeView!.GraphView.RemoveNode(NodeView);
+    }
+
+    private void PinButton_OnLoaded(object sender, RoutedEventArgs e) {
+        Put put = (Put) sender;
+        put.PinClick += PinButton_Click;
     }
 }
