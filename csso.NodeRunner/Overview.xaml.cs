@@ -24,7 +24,7 @@ public partial class Overview : UserControl {
         nameof(GraphView), typeof(GraphView), typeof(Overview), new PropertyMetadata(default(GraphView)));
 
     private readonly Context? _clContext;
-    private readonly Executor _executor;
+    private readonly Executor _executor = new();
     private Graph _graph;
 
     private readonly FunctionFactory _functionFactory = new();
@@ -33,7 +33,6 @@ public partial class Overview : UserControl {
         InitializeComponent();
 
         _graph = new Graph();
-        _executor = new Executor(_graph);
         _clContext = new Context();
 
         Function addFunc = new Function("Add", F.Add);
@@ -53,16 +52,13 @@ public partial class Overview : UserControl {
 
         _graph.FunctionFactory = _functionFactory;
 
-        _graph.Add(new Node(addFunc, _graph));
-
+        // _graph.Add(new Node(addFunc, _graph));
         // _graph.Add(new Node(divideWholeFunc, _graph));
-        _graph.Add(new Node(messageBoxFunc, _graph));
-        //
-        _graph.Add(new Node(valueFunc, _graph));
+        // _graph.Add(new Node(messageBoxFunc, _graph));
         // _graph.Add(new Node(valueFunc, _graph));
         // _graph.Add(new Node(valueFunc, _graph));
-        //
-        _graph.Add(new Node(_executor.FrameNoFunction, _graph));
+        // _graph.Add(new Node(valueFunc, _graph));/
+        // _graph.Add(new Node(_executor.FrameNoFunction, _graph));
         // _graph.Add(new Node(_executor.DeltaTimeFunction, _graph));
 
         GraphView = new(_graph);
@@ -164,7 +160,7 @@ public partial class Overview : UserControl {
     }
 
     private void RunGraph_Button_OnClick(object sender, RoutedEventArgs args) {
-        _executor.Run();
+        _executor.Run(_graph);
     }
 
     private void ResetCtx_Button_OnClick(object sender, RoutedEventArgs args) {
@@ -197,6 +193,7 @@ public partial class Overview : UserControl {
             string jsonString = File.ReadAllText(ofd.FileName);
             SerializedGraphView serializedGraphView = JsonSerializer.Deserialize<SerializedGraphView>(jsonString);
             GraphView = new(_functionFactory, serializedGraphView);
+            _graph = GraphView.Graph;
         }
     }
 }

@@ -1,7 +1,7 @@
 using csso.Common;
 using csso.NodeCore;
 
-namespace csso.Calculator; 
+namespace csso.Calculator;
 
 internal static class Xtensions {
     public static Int32? FirstIndexOf<T>(this IEnumerable<T> enumerable, T element) {
@@ -24,9 +24,7 @@ public class Executor {
     private Int32 _frameNo;
 
 
-    public Executor(Graph graph) {
-        Graph = graph;
-
+    public Executor() {
         FrameNoFunction = new Function(
             "Frame number",
             ([Output] ref Int32 frameNumber) => {
@@ -43,7 +41,6 @@ public class Executor {
         );
     }
 
-    public Graph Graph { get; }
 
 
     public Function FrameNoFunction { get; }
@@ -56,13 +53,13 @@ public class Executor {
         _frameNo = 0;
     }
 
-    public void Run() {
+    public void Run(Graph graph) {
         _context.EvaluationNodes.Foreach(_ => {
             _.ProcessedThisFrame = false;
             _.ArgumentsUpdatedThisFrame = false;
         });
 
-        var pathsFromProcedures = GetPathsToProcedures();
+        var pathsFromProcedures = GetPathsToProcedures(graph);
         pathsFromProcedures.Foreach(UpdateEvaluationNode);
 
         var invokationList = GetInvokationList();
@@ -71,11 +68,11 @@ public class Executor {
         ++_frameNo;
     }
 
-    private IReadOnlyList<Node> GetPathsToProcedures() {
+    private IReadOnlyList<Node> GetPathsToProcedures(Graph graph) {
         List<Node> pathsFromProcedures = new();
 
         Queue<Node> yetToProcessNodes = new();
-        Graph.Nodes
+        graph.Nodes
             .Where(_ => _.Function.IsProcedure)
             .Foreach(yetToProcessNodes.Enqueue);
 
@@ -103,7 +100,8 @@ public class Executor {
         evaluationNode.ArgumentsUpdatedThisFrame =
             evaluationNode.ArgDependencies
                 .SkipNulls()
-                .Any(dependency => !dependency!.Node.ArgumentsUpdatedThisFrame);
+                .Any(dependency => dependency!.Node.ArgumentsUpdatedThisFrame
+                                   || dependency!.Node.Behavior == FunctionBehavior.Proactive);
     }
 
     private IReadOnlyList<EvaluationNode> GetInvokationList() {
@@ -200,9 +198,9 @@ public class Executor {
 
                         if (dependencyNode == null)
                             throw new Exception("setsdfsdf");
-
-                        if (dependencyNode.Behavior == FunctionBehavior.Proactive)
-                            Behavior = FunctionBehavior.Proactive;
+                        
+                        // if (dependencyNode.Behavior == FunctionBehavior.Proactive)
+                        //     Behavior = FunctionBehavior.Proactive;
 
                         ArgDependencies[i] = new Dependency(
                             dependencyNode,
