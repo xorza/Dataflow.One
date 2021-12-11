@@ -11,3 +11,4 @@
 
 Unittests
 * changing graph struct between runs
+* validate that reactive nodes are optimized

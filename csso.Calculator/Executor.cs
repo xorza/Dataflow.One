@@ -27,14 +27,14 @@ public class Executor {
     public Executor() {
         FrameNoFunction = new Function(
             "Frame number",
-            ([Output] ref Int32 frameNumber) => {
+            ([Output] out Int32 frameNumber) => {
                 frameNumber = _frameNo;
                 return true;
             }
         );
         DeltaTimeFunction = new Function(
             "Frame number",
-            ([Output] ref Double deltaTime) => {
+            ([Output] out Double deltaTime) => {
                 deltaTime = 0.1555f;
                 return true;
             }
@@ -54,7 +54,13 @@ public class Executor {
 
     public void Run(Graph graph) {
         var activeEvaluationNodes = graph.Nodes
-            .Select(n => _context.EvaluationNodes.SingleOrDefault(en => en.Node == n))
+            .Select(n => {
+                EvaluationNode en =
+                    _context.EvaluationNodes
+                        .SingleOrDefault(en => en.Node == n)
+                    ?? new(n);
+                return en;
+            })
             .SkipNulls()
             .ToList();
         _context.EvaluationNodes = activeEvaluationNodes;
@@ -63,11 +69,11 @@ public class Executor {
         var pathsFromProcedures = GetPathsToProcedures(graph);
         pathsFromProcedures.Foreach(UpdateEvaluationNode);
 
-        var invokationList =
-            GetInvokationList()
+        var invocationList =
+            GetInvocationList()
                 .Distinct()
                 .ToArray();
-        invokationList.Foreach(_ => _.Invoke());
+        invocationList.Foreach(_ => _.Invoke());
 
         ++_frameNo;
     }
@@ -108,7 +114,7 @@ public class Executor {
                                    || dependency!.Node.Behavior == FunctionBehavior.Proactive);
     }
 
-    private IReadOnlyList<EvaluationNode> GetInvokationList() {
+    private IReadOnlyList<EvaluationNode> GetInvocationList() {
         Queue<EvaluationNode> yetToProcessENodes = new();
         _context.EvaluationNodes
             .Where(_ => _.Node.Function.IsProcedure)
@@ -148,12 +154,7 @@ public class Executor {
         public List<EvaluationNode> EvaluationNodes { get; set; } = new();
 
         public EvaluationNode GetEvaluated(Node node) {
-            var result = EvaluationNodes.SingleOrDefault(_ => _.Node == node);
-
-            if (result == null) {
-                result = new EvaluationNode(this, node);
-                EvaluationNodes.Add(result);
-            }
+            var result = EvaluationNodes.Single(_ => _.Node == node);
 
             return result;
         }
@@ -175,7 +176,7 @@ public class Executor {
     internal class EvaluationNode {
         private static readonly Object Empty = new NotFound();
 
-        public EvaluationNode(ExecutionContext context, Node node) {
+        public EvaluationNode(Node node) {
             Node = node;
             ArgCount = node.Function.Args.Count;
 
@@ -183,8 +184,6 @@ public class Executor {
             ArgDependencies = Enumerable.Repeat((Dependency?) null, ArgCount).ToArray();
 
             Behavior = node.FinalBehavior;
-
-            Refresh(context);
         }
 
         public Node Node { get; }
