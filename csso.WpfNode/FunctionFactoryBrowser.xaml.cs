@@ -2,17 +2,17 @@ using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using csso.NodeCore;
 
 namespace csso.WpfNode;
 
 public partial class FunctionFactoryBrowser : UserControl {
-    
     public static readonly DependencyProperty FunctionFactoryProperty = DependencyProperty.Register(
         nameof(FunctionFactory), typeof(FunctionFactoryView), typeof(FunctionFactoryBrowser),
         new PropertyMetadata(default(FunctionFactoryView), FunctionFactoryView_PropertyChangedCallback));
-    
+
     public FunctionFactoryView? FunctionFactory {
         get { return (FunctionFactoryView) GetValue(FunctionFactoryProperty); }
         set { SetValue(FunctionFactoryProperty, value); }
@@ -55,12 +55,22 @@ public partial class FunctionFactoryBrowser : UserControl {
         set { SetValue(NodePreviewProperty, value); }
     }
 
-    public event EventHandler<Function>? FunctionChosen; 
-    
+    public event EventHandler<Function>? FunctionChosen;
+
     public FunctionFactoryBrowser() {
         InitializeComponent();
 
         Loaded += (sender, args) => SubscribeToMouseDoubleClicks();
+        FunctionsListView.ItemContainerGenerator.ItemsChanged += ItemContainerGeneratorOnItemsChanged;
+        FunctionsListView.ItemContainerGenerator.StatusChanged+=ItemContainerGeneratorOnStatusChanged;
+    }
+
+    private void ItemContainerGeneratorOnStatusChanged(object? sender, EventArgs e) {
+        SubscribeToMouseDoubleClicks();
+    }
+
+    private void ItemContainerGeneratorOnItemsChanged(object sender, ItemsChangedEventArgs e) {
+        SubscribeToMouseDoubleClicks();
     }
 
     private static void FunctionFactoryView_PropertyChangedCallback(DependencyObject d,
@@ -73,21 +83,22 @@ public partial class FunctionFactoryBrowser : UserControl {
         if (e.NewValue is FunctionFactoryView ffViewNew)
             ((INotifyCollectionChanged) ffViewNew.Functions).CollectionChanged +=
                 functionFactoryBrowser.FunctionFactory_Functions_OnCollectionChanged;
-        
-        functionFactoryBrowser.SubscribeToMouseDoubleClicks();
+
         functionFactoryBrowser.SelectedFunction = null;
         functionFactoryBrowser.NodePreview = null;
     }
 
     private void FunctionFactory_Functions_OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        SubscribeToMouseDoubleClicks();
+     
     }
 
     private void SubscribeToMouseDoubleClicks() {
         for (int i = 0; i < FunctionsListView.Items.Count; i++) {
-            var listViewItem = (ListViewItem) FunctionsListView.ItemContainerGenerator.ContainerFromIndex(i);
-            listViewItem.MouseDoubleClick -= ListViewItemOnMouseDoubleClick;
-            listViewItem.MouseDoubleClick += ListViewItemOnMouseDoubleClick;
+            if (FunctionsListView.ItemContainerGenerator.ContainerFromIndex(i)
+                is ListViewItem listViewItem) {
+                listViewItem.MouseDoubleClick -= ListViewItemOnMouseDoubleClick;
+                listViewItem.MouseDoubleClick += ListViewItemOnMouseDoubleClick;
+            }
         }
     }
 
@@ -117,5 +128,4 @@ public partial class FunctionFactoryBrowser : UserControl {
 
     private static void
         NodePreview_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) { }
-    
 }

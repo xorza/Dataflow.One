@@ -60,7 +60,7 @@ public partial class Overview {
         GraphView = new(_graph);
     }
 
-    public GraphView GraphView {
+    public GraphView? GraphView {
         get => (GraphView) GetValue(GraphViewProperty);
         set => SetValue(GraphViewProperty, value);
     }
@@ -171,7 +171,7 @@ public partial class Overview {
             JsonSerializerOptions opts = new();
             opts.WriteIndented = true;
 
-            SerializedGraphView serializedGraphView = GraphView.Serialize();
+            SerializedGraphView serializedGraphView = GraphView!.Serialize();
 
             string jsonString = JsonSerializer.Serialize(serializedGraphView, opts);
             File.WriteAllText(sfd.FileName, jsonString);
@@ -194,6 +194,6 @@ public partial class Overview {
     }
 
     private void FunctionFactoryBrowser_OnFunctionChosen(object? sender, Function e) {
-        GraphView.CreateNode(e);
+        GraphView!.CreateNode(e);
     }
 }

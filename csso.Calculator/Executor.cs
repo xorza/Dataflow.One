@@ -42,7 +42,6 @@ public class Executor {
     }
 
 
-
     public Function FrameNoFunction { get; }
 
     public Function DeltaTimeFunction { get; }
@@ -62,7 +61,10 @@ public class Executor {
         var pathsFromProcedures = GetPathsToProcedures(graph);
         pathsFromProcedures.Foreach(UpdateEvaluationNode);
 
-        var invokationList = GetInvokationList();
+        var invokationList =
+            GetInvokationList()
+                .Distinct()
+                .ToArray();
         invokationList.Foreach(_ => _.Invoke());
 
         ++_frameNo;
@@ -198,7 +200,7 @@ public class Executor {
 
                         if (dependencyNode == null)
                             throw new Exception("setsdfsdf");
-                        
+
                         // if (dependencyNode.Behavior == FunctionBehavior.Proactive)
                         //     Behavior = FunctionBehavior.Proactive;
 
@@ -261,7 +263,8 @@ public class Executor {
 
                         if (ArgValues[i] == Empty) {
                             // throw new Exception("dfgsdfhsfgh");
-                            System.Diagnostics.Debug.WriteLine("Missing one or more arguments. Skipping node invocation.");
+                            System.Diagnostics.Debug.WriteLine(
+                                "Missing one or more arguments. Skipping node invocation.");
                             return;
                         }
 
