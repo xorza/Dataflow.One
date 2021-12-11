@@ -53,10 +53,12 @@ public class Executor {
     }
 
     public void Run(Graph graph) {
-        _context.EvaluationNodes.Foreach(_ => {
-            _.ProcessedThisFrame = false;
-            _.ArgumentsUpdatedThisFrame = false;
-        });
+        var activeEvaluationNodes = graph.Nodes
+            .Select(n => _context.EvaluationNodes.SingleOrDefault(en => en.Node == n))
+            .SkipNulls()
+            .ToList();
+        _context.EvaluationNodes = activeEvaluationNodes;
+        _context.EvaluationNodes.Foreach(_ => _.Refresh(_context));
 
         var pathsFromProcedures = GetPathsToProcedures(graph);
         pathsFromProcedures.Foreach(UpdateEvaluationNode);
@@ -143,7 +145,7 @@ public class Executor {
     }
 
     internal class ExecutionContext {
-        public List<EvaluationNode> EvaluationNodes { get; } = new();
+        public List<EvaluationNode> EvaluationNodes { get; set; } = new();
 
         public EvaluationNode GetEvaluated(Node node) {
             var result = EvaluationNodes.SingleOrDefault(_ => _.Node == node);
@@ -182,40 +184,7 @@ public class Executor {
 
             Behavior = node.FinalBehavior;
 
-            for (var i = 0; i < ArgCount; i++) {
-                var arg = node.Function.Args[i];
-
-                if (arg is FunctionInput input) {
-                    var connection = node.Connections.SingleOrDefault(_ => _.Input == input);
-                    if (connection == null) {
-                        System.Diagnostics.Debug.WriteLine("asfdsdfgweg");
-                        return;
-                    }
-
-                    if (connection is ValueConnection valueConnection)
-                        ArgValues[i] = valueConnection.Value;
-
-                    if (connection is OutputConnection outputConnection) {
-                        var dependencyNode = context.GetEvaluated(outputConnection.OutputNode);
-
-                        if (dependencyNode == null)
-                            throw new Exception("setsdfsdf");
-
-                        // if (dependencyNode.Behavior == FunctionBehavior.Proactive)
-                        //     Behavior = FunctionBehavior.Proactive;
-
-                        ArgDependencies[i] = new Dependency(
-                            dependencyNode,
-                            outputConnection.Output,
-                            outputConnection.Behavior
-                        );
-                    }
-                } else if (arg is FunctionConfig config) {
-                    var value = node.ConfigValues
-                        .Single(_ => _.Config == config);
-                    ArgValues[i] = value.Value;
-                }
-            }
+            Refresh(context);
         }
 
         public Node Node { get; }
@@ -225,7 +194,7 @@ public class Executor {
 
         public Int32 ArgCount { get; }
         public bool HasOutputValues { get; private set; }
-        public FunctionBehavior Behavior { get; } = FunctionBehavior.Proactive;
+        public FunctionBehavior Behavior { get; private set; } = FunctionBehavior.Proactive;
 
         public bool ArgumentsUpdatedThisFrame { get; set; }
         public bool ProcessedThisFrame { get; set; }
@@ -285,7 +254,51 @@ public class Executor {
             return Activator.CreateInstance(type)!;
         }
 
-
         private class NotFound { }
+
+        public void Refresh(ExecutionContext context) {
+            Check.True(ArgCount == Node.Function.Args.Count);
+            Check.True(ArgCount == ArgDependencies.Length);
+            Check.True(ArgCount == ArgValues.Length);
+
+            ProcessedThisFrame = false;
+            ArgumentsUpdatedThisFrame = false;
+            Behavior = Node.FinalBehavior;
+
+            for (var i = 0; i < ArgCount; i++) {
+                var arg = Node.Function.Args[i];
+
+                if (arg is FunctionInput input) {
+                    var connection = Node.Connections.SingleOrDefault(_ => _.Input == input);
+                    if (connection == null) {
+                        System.Diagnostics.Debug.WriteLine("asfdsdfgweg");
+                        return;
+                    }
+
+                    if (connection is ValueConnection valueConnection)
+                        ArgValues[i] = valueConnection.Value;
+
+                    if (connection is OutputConnection outputConnection) {
+                        var dependencyNode = context.GetEvaluated(outputConnection.OutputNode);
+
+                        if (dependencyNode == null)
+                            throw new Exception("setsdfsdf");
+
+                        // if (dependencyNode.Behavior == FunctionBehavior.Proactive)
+                        //     Behavior = FunctionBehavior.Proactive;
+
+                        ArgDependencies[i] = new Dependency(
+                            dependencyNode,
+                            outputConnection.Output,
+                            outputConnection.Behavior
+                        );
+                    }
+                } else if (arg is FunctionConfig config) {
+                    var value = Node.ConfigValues
+                        .Single(_ => _.Config == config);
+                    ArgValues[i] = value.Value;
+                }
+            }
+        }
     }
 }

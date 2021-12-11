@@ -8,3 +8,6 @@
 * In, Out and Reference argument type
   * Reference means it'll reuse memory and write there
 * Nobody cares about algorithms, we only think of data
+
+Unittests
+* changing graph struct between runs

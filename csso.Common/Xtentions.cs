@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace csso.Common; 
+namespace csso.Common;
 
 public static class Xtentions {
     public static IEnumerable<T> Foreach<T>(this IEnumerable<T> e, Action<T> action) {
@@ -21,7 +21,13 @@ public static class Xtentions {
         return e;
     }
 
-    public static IEnumerable<T> SkipNulls<T>(this IEnumerable<T> e) {
-        return e.Where(_ => !ReferenceEquals(_, null));
+    public static IEnumerable<T> SkipNulls<T>(this IEnumerable<T?> e) {
+        List<T> result = new();
+        e.Foreach(_ => {
+            if (_ != null)
+                result.Add(_);
+        });
+
+        return result;
     }
 }
