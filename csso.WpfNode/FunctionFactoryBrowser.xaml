@@ -14,6 +14,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <ListView
+            x:Name="FunctionsListView"
             ItemsSource="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=FunctionFactory.Functions}"
             SelectedValue="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=SelectedFunction}">
             <ItemsControl.Resources>
@@ -22,11 +23,17 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate
                     DataType="{x:Type core:Function}">
-                    <Grid>
+              
                         <TextBlock Text="{Binding Name}"></TextBlock>
-                    </Grid>
+               
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
+            <!-- <ListView.ItemContainerStyle> -->
+            <!--     <Style TargetType="ListViewItem"> -->
+            <!--         <EventSetter Event="MouseDoubleClick" Handler="SelectedFunctionDoubleClickHandler"/> -->
+            <!--     </Style> -->
+            <!-- </ListView.ItemContainerStyle> -->
+
         </ListView>
 
         <Grid

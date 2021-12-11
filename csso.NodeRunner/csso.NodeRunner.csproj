@@ -11,12 +11,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\csso.Calculator\csso.Calculator.csproj"/>
-        <ProjectReference Include="..\csso.Common\csso.Common.csproj"/>
-        <ProjectReference Include="..\csso.ImageProcessing\csso.ImageProcessing.csproj"/>
-        <ProjectReference Include="..\csso.NodeCore\csso.NodeCore.csproj"/>
-        <ProjectReference Include="..\csso.OpenCL\csso.OpenCL.csproj"/>
-        <ProjectReference Include="..\csso.WpfNode\csso.WpfNode.csproj"/>
+        <ProjectReference Include="..\csso.Calculator\csso.Calculator.csproj" />
+        <ProjectReference Include="..\csso.Common\csso.Common.csproj" />
+        <ProjectReference Include="..\csso.ImageProcessing\csso.ImageProcessing.csproj" />
+        <ProjectReference Include="..\csso.NodeCore\csso.NodeCore.csproj" />
+        <ProjectReference Include="..\csso.OpenCL\csso.OpenCL.csproj" />
+        <ProjectReference Include="..\csso.WpfNode\csso.WpfNode.csproj" />
     </ItemGroup>
 
 </Project>

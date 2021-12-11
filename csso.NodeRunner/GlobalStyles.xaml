@@ -5,6 +5,7 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Colors.xaml" />
+        <ResourceDictionary Source="Styles/ListView.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <BooleanToVisibilityConverter x:Key="BoolToVis" />
@@ -146,4 +147,6 @@
         <Setter Property="HeaderBackground" Value="{StaticResource ActiveContentBackgroundBrush}" />
     </Style>
     <Style TargetType="{x:Type WpfNode:Node}" BasedOn="{StaticResource NodeDefaultStyle}" />
+    
+    
 </ResourceDictionary>

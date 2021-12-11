@@ -130,6 +130,14 @@ public sealed class GraphView : INotifyPropertyChanged {
         Refresh();
     }
 
+    public NodeView CreateNode(Function func) {
+        NodeCore.Node node = new(func, Graph);
+        Graph.Add(node);
+        NodeView result = new(this, node);
+        _nodes.Add(result);
+        return result;
+    }
+
     public SerializedGraphView Serialize() {
         SerializedGraphView result = new();
 

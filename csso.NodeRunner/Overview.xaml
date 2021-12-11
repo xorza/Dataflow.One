@@ -42,8 +42,10 @@
                     NodeView="{Binding Path=GraphView.SelectedNode, ElementName=OverviewUserControl}" />
 
                 <WpfNode:FunctionFactoryBrowser Grid.Row="1" x:Name="FunctionFactoryBrowser"
+                                                ListViewItemStyle="{StaticResource ListViewItemDefault}"
                                                 FunctionFactory="{Binding ElementName=OverviewUserControl, Path=GraphView.FunctionFactory}"
-                                                NodeStyle="{StaticResource NodeDefaultStyle}" />
+                                                NodeStyle="{StaticResource NodeDefaultStyle}"
+                                                FunctionChosen="FunctionFactoryBrowser_OnFunctionChosen"/>
             </Grid>
         </Border>
 

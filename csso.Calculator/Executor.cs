@@ -259,7 +259,11 @@ public class Executor {
                                 .GetOutputValue(ArgDependencies[i]!.Output);
                         }
 
-                        if (ArgValues[i] == Empty) throw new Exception("dfgsdfhsfgh");
+                        if (ArgValues[i] == Empty) {
+                            // throw new Exception("dfgsdfhsfgh");
+                            System.Diagnostics.Debug.WriteLine("Missing one or more arguments. Skipping node invocation.");
+                            return;
+                        }
 
                         break;
 

@@ -18,7 +18,7 @@ using Node = csso.NodeCore.Node;
 
 namespace csso.NodeRunner;
 
-public partial class Overview  {
+public partial class Overview {
     public static readonly DependencyProperty GraphViewProperty = DependencyProperty.Register(
         nameof(GraphView), typeof(GraphView), typeof(Overview), new PropertyMetadata(default(GraphView)));
 
@@ -48,11 +48,11 @@ public partial class Overview  {
 
         _graph.FunctionFactory = _functionFactory;
 
-        _graph.Add(new Node(addFunc, _graph));
-        _graph.Add(new Node(divideWholeFunc, _graph));
-        _graph.Add(new Node(messageBoxFunc, _graph));
-        _graph.Add(new Node(valueFunc, _graph));
-        _graph.Add(new Node(_executor.FrameNoFunction, _graph));
+        // _graph.Add(new Node(addFunc, _graph));
+        // _graph.Add(new Node(divideWholeFunc, _graph));
+        // _graph.Add(new Node(messageBoxFunc, _graph));
+        // _graph.Add(new Node(valueFunc, _graph));
+        // _graph.Add(new Node(_executor.FrameNoFunction, _graph));
         // _graph.Add(new Node(valueFunc, _graph));
         // _graph.Add(new Node(valueFunc, _graph));
         // _graph.Add(new Node(_executor.DeltaTimeFunction, _graph));
@@ -191,5 +191,9 @@ public partial class Overview  {
             GraphView = new(_functionFactory, serializedGraphView);
             _graph = GraphView.Graph;
         }
+    }
+
+    private void FunctionFactoryBrowser_OnFunctionChosen(object? sender, Function e) {
+        GraphView.CreateNode(e);
     }
 }
