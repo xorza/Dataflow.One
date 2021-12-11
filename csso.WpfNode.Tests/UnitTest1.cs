@@ -9,13 +9,13 @@ using NUnit.Framework;
 namespace csso.WpfNode.Tests;
 
 public class Tests {
-    private static Int32 output;
+    private static Int32 _output;
 
     private string? _fileContent;
 
     [Description("messagebox")]
     private static bool Output(Int32 i) {
-        output = i;
+        _output = i;
         return true;
     }
 
@@ -58,13 +58,23 @@ public class Tests {
         GraphView graphView = new(functionFactory, serializedGraphView.Value);
         
         executor.Run(graphView.Graph);
-        Assert.AreEqual(12, output);  
+        Assert.AreEqual(12, _output);  
         executor.Run(graphView.Graph);
-        Assert.AreEqual(13, output);
+        Assert.AreEqual(13, _output);
         
         String serialized = JsonSerializer.Serialize(graphView.Serialize(), opts);
-        
         Assert.AreEqual(serialized, _fileContent);
+        
+        serializedGraphView = JsonSerializer.Deserialize<SerializedGraphView>(serialized);
+        Assert.NotNull(serializedGraphView);
+        graphView = new(functionFactory, serializedGraphView.Value);
+        
+        executor.Reset();
+        
+        executor.Run(graphView.Graph);
+        Assert.AreEqual(12, _output);  
+        executor.Run(graphView.Graph);
+        Assert.AreEqual(13, _output);
 
         Assert.Pass();
     }
