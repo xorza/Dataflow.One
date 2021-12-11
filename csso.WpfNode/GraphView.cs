@@ -32,6 +32,18 @@ public sealed class GraphView : INotifyPropertyChanged {
     public ReadOnlyObservableCollection<EdgeView> Edges { get; }
 
 
+    private FunctionFactoryView _functionFactory;
+    public FunctionFactoryView FunctionFactory {
+        get => _functionFactory;
+        set {
+            if (_functionFactory != value) {
+                _functionFactory = value;
+                OnPropertyChanged();
+            }  
+        } 
+    }
+
+
     private readonly ObservableCollection<NodeView> _nodes = new();
     public ReadOnlyObservableCollection<NodeView> Nodes { get; }
 
@@ -106,6 +118,8 @@ public sealed class GraphView : INotifyPropertyChanged {
 
                 _edges.Add(new EdgeView(binding, input, output));
             }
+
+        FunctionFactory = new FunctionFactoryView(Graph.FunctionFactory);
     }
 
     public void RemoveNode(NodeView nodeView) {
@@ -128,8 +142,8 @@ public sealed class GraphView : INotifyPropertyChanged {
         return result;
     }
 
-    public GraphView(FunctionFactory functionFactory, SerializedGraphView serialized) 
-        : this( new NodeCore.Graph(functionFactory, serialized.Graph)) {
+    public GraphView(FunctionFactory functionFactory, SerializedGraphView serialized)
+        : this(new NodeCore.Graph(functionFactory, serialized.Graph)) {
         serialized.NodeViews
             .Foreach(_ => {
                 var node = _nodes.Single(n => n.Node.Id == _.Id);

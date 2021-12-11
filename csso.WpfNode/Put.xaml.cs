@@ -22,7 +22,7 @@ public partial class Put : UserControl {
         put.UpdatePinPoint();
     }
 
-    public Canvas DragCanvas {
+    public Canvas? DragCanvas {
         get { return (Canvas) GetValue(DragCanvasProperty); }
         set { SetValue(DragCanvasProperty, value); }
     }
@@ -40,6 +40,9 @@ public partial class Put : UserControl {
             return;
         
         if(!IsVisible)
+            return;
+        
+        if(DragCanvas==null)
             return;
 
         var upperLeft = PutView.Control

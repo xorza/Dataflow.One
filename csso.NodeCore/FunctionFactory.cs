@@ -1,10 +1,15 @@
+using System.Collections.ObjectModel;
+
 namespace csso.NodeCore;
 
 public class FunctionFactory {
     private readonly Dictionary<String, Function> _functions = new();
+    
+    public ReadOnlyDictionary<String, Function> Functions { get; }
 
-
-    public FunctionFactory() { }
+    public FunctionFactory() {
+        Functions = new(_functions);
+    }
 
 
     public Function Get(String fullName) {

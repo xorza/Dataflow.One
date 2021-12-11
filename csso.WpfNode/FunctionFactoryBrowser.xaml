@@ -1,0 +1,40 @@
+<UserControl x:Class="csso.WpfNode.FunctionFactoryBrowser"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:csso.WpfNode"
+             xmlns:core="clr-namespace:csso.NodeCore;assembly=csso.NodeCore"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300"
+             x:Name="FunctionFactoryBrowserUserControl">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <ListView
+            ItemsSource="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=FunctionFactory.Functions}"
+            SelectedValue="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=SelectedFunction}">
+            <ItemsControl.Resources>
+
+            </ItemsControl.Resources>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate
+                    DataType="{x:Type core:Function}">
+                    <Grid>
+                        <TextBlock Text="{Binding Name}"></TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ListView>
+
+        <local:Node
+            Grid.Column="1"
+            DeletionEnabled="False"
+            NodeView="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview}" 
+            />
+
+
+    </Grid>
+</UserControl>

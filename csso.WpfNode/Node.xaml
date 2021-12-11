@@ -117,6 +117,7 @@
                                 BorderThickness="0"
                                 Background="{Binding Path=Background, ElementName=NodeUserControl}"
                                 x:Name="Button456N3"
+                                Visibility="{Binding ElementName=NodeUserControl, Path=DeletionEnabled, Converter={StaticResource BoolToVis}}"
                                 >
 
                             <Grid x:Name="Grid235B3"

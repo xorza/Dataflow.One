@@ -29,12 +29,23 @@
         <Border BorderThickness="0 0 0 0 "
                 Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" MinWidth="200"
                 Background="{StaticResource PanelBackgroundBrush}">
-            <WpfNode:NodeEdit
-                x:Name="NodeEdit"
-                Padding="{StaticResource DefaultPadding}"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                NodeView="{Binding Path=GraphView.SelectedNode, ElementName=OverviewUserControl}" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <WpfNode:NodeEdit
+                    x:Name="NodeEdit"
+                    Padding="{StaticResource DefaultPadding}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    NodeView="{Binding Path=GraphView.SelectedNode, ElementName=OverviewUserControl}" />
+            
+                <WpfNode:FunctionFactoryBrowser Grid.Row="1" x:Name="FunctionFactoryBrowser"
+                                                FunctionFactory="{Binding ElementName=OverviewUserControl, Path=GraphView.FunctionFactory}"
+                                                ></WpfNode:FunctionFactoryBrowser>
+            
+            </Grid>
         </Border>
 
         <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal"

@@ -32,11 +32,18 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     public static readonly DependencyProperty NodeViewProperty = DependencyProperty.Register(
         nameof(NodeView), typeof(NodeView), typeof(Node),
         new PropertyMetadata(default(NodeView), NodeView_PropertyChangedCallback));
-
-
+    
     public static readonly DependencyProperty DragCanvasProperty = DependencyProperty.Register(
         nameof(DragCanvas), typeof(Canvas), typeof(Node),
         new PropertyMetadata(default(Canvas), DragCanvas_PropertyChangedCallback));
+    
+    public static readonly DependencyProperty DeletionEnabledProperty = DependencyProperty.Register(
+        nameof(DeletionEnabled), typeof(bool), typeof(Node), new PropertyMetadata(default(bool)));
+
+    public bool DeletionEnabled {
+        get => (bool) GetValue(DeletionEnabledProperty);
+        set => SetValue(DeletionEnabledProperty, value);
+    }
 
     private static void DragCanvas_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
         Node graph = (Node) d;
@@ -81,14 +88,12 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     public event PinClickEventHandler? PinClick;
 
-    private void LayoutUpdated_EventHandler(object? sender, EventArgs e) {
-     
-    }
+    private void LayoutUpdated_EventHandler(object? sender, EventArgs e) { }
 
     private static void NodeView_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
         Node graph = (Node) d;
     }
-    
+
     private void PinButton_Click(object sender, RoutedEventArgs e) {
         var pv = ((Put) sender).PutView!;
         PinClick?.Invoke(this,

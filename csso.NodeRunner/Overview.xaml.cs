@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows;
-using System.Windows.Controls;
 using csso.Calculator;
 using csso.ImageProcessing;
 using csso.NodeCore;
@@ -19,7 +18,7 @@ using Node = csso.NodeCore.Node;
 
 namespace csso.NodeRunner;
 
-public partial class Overview : UserControl {
+public partial class Overview  {
     public static readonly DependencyProperty GraphViewProperty = DependencyProperty.Register(
         nameof(GraphView), typeof(GraphView), typeof(Overview), new PropertyMetadata(default(GraphView)));
 
@@ -37,28 +36,25 @@ public partial class Overview : UserControl {
 
         Function addFunc = new Function("Add", F.Add);
         Function divideWholeFunc = new Function("Divide whole", F.DivideWhole);
-
         Function messageBoxFunc = new Function("Output", Output);
         Function valueFunc = new Function("Value", Const);
-
 
         _functionFactory.Register(addFunc);
         _functionFactory.Register(divideWholeFunc);
         _functionFactory.Register(messageBoxFunc);
         _functionFactory.Register(valueFunc);
-
         _functionFactory.Register(_executor.FrameNoFunction);
         _functionFactory.Register(_executor.DeltaTimeFunction);
 
         _graph.FunctionFactory = _functionFactory;
 
-        // _graph.Add(new Node(addFunc, _graph));
-        // _graph.Add(new Node(divideWholeFunc, _graph));
-        // _graph.Add(new Node(messageBoxFunc, _graph));
+        _graph.Add(new Node(addFunc, _graph));
+        _graph.Add(new Node(divideWholeFunc, _graph));
+        _graph.Add(new Node(messageBoxFunc, _graph));
+        _graph.Add(new Node(valueFunc, _graph));
+        _graph.Add(new Node(_executor.FrameNoFunction, _graph));
         // _graph.Add(new Node(valueFunc, _graph));
         // _graph.Add(new Node(valueFunc, _graph));
-        // _graph.Add(new Node(valueFunc, _graph));/
-        // _graph.Add(new Node(_executor.FrameNoFunction, _graph));
         // _graph.Add(new Node(_executor.DeltaTimeFunction, _graph));
 
         GraphView = new(_graph);
