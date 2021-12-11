@@ -1,0 +1,96 @@
+{
+  "Graph": {
+    "Nodes": [
+      {
+        "Name": "Add",
+        "Id": "bf77d02c-75fc-450a-9d23-e4719ffad25a",
+        "FullName": "csso.NodeCore.Funcs.F::Add",
+        "ConfigValues": [],
+        "ValueConnections": [],
+        "Behavior": 0
+      },
+      {
+        "Name": "Output",
+        "Id": "51ec02c7-3ac3-48f0-8dbf-5accee179015",
+        "FullName": "csso.WpfNode.Tests.Tests::Output",
+        "ConfigValues": [],
+        "ValueConnections": [],
+        "Behavior": 1
+      },
+      {
+        "Name": "Value",
+        "Id": "ae89a6eb-d8fa-401b-a27a-a450a33e8f99",
+        "FullName": "csso.WpfNode.Tests.Tests::Value",
+        "ConfigValues": [
+          {
+            "Value": "12",
+            "ConfigIndex": 0
+          }
+        ],
+        "ValueConnections": [],
+        "Behavior": 0
+      },
+      {
+        "Name": "Frame number",
+        "Id": "6c7a4e3b-d9b5-457b-aa67-1dbbe41178e2",
+        "FullName": "csso.Calculator.Executor::Frame number",
+        "ConfigValues": [],
+        "ValueConnections": [],
+        "Behavior": 1
+      }
+    ],
+    "OutputConnections": [
+      {
+        "OutputIndex": 0,
+        "OutputNodeId": "6c7a4e3b-d9b5-457b-aa67-1dbbe41178e2",
+        "InputIndex": 0,
+        "InputNodeId": "bf77d02c-75fc-450a-9d23-e4719ffad25a",
+        "Behavior": 1
+      },
+      {
+        "OutputIndex": 1,
+        "OutputNodeId": "ae89a6eb-d8fa-401b-a27a-a450a33e8f99",
+        "InputIndex": 1,
+        "InputNodeId": "bf77d02c-75fc-450a-9d23-e4719ffad25a",
+        "Behavior": 0
+      },
+      {
+        "OutputIndex": 2,
+        "OutputNodeId": "bf77d02c-75fc-450a-9d23-e4719ffad25a",
+        "InputIndex": 0,
+        "InputNodeId": "51ec02c7-3ac3-48f0-8dbf-5accee179015",
+        "Behavior": 1
+      }
+    ]
+  },
+  "NodeViews": [
+    {
+      "Position": {
+        "X": 484.5714285714285,
+        "Y": 158.85714285714283
+      },
+      "Id": "bf77d02c-75fc-450a-9d23-e4719ffad25a"
+    },
+    {
+      "Position": {
+        "X": 725.4285714285713,
+        "Y": 142.57142857142856
+      },
+      "Id": "51ec02c7-3ac3-48f0-8dbf-5accee179015"
+    },
+    {
+      "Position": {
+        "X": 187.71428571428575,
+        "Y": 339.1428571428571
+      },
+      "Id": "ae89a6eb-d8fa-401b-a27a-a450a33e8f99"
+    },
+    {
+      "Position": {
+        "X": 177.7142857142857,
+        "Y": 83.42857142857142
+      },
+      "Id": "6c7a4e3b-d9b5-457b-aa67-1dbbe41178e2"
+    }
+  ]
+}
