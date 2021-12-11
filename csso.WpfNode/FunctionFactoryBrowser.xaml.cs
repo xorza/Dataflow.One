@@ -30,6 +30,14 @@ public partial class FunctionFactoryBrowser : UserControl {
             , NodePreview_PropertyChangedCallback));
 
 
+    public static readonly DependencyProperty NodeStyleProperty = DependencyProperty.Register(
+        nameof(NodeStyle), typeof(Style), typeof(FunctionFactoryBrowser), new PropertyMetadata(default(Style)));
+
+    public Style? NodeStyle {
+        get { return (Style) GetValue(NodeStyleProperty); }
+        set { SetValue(NodeStyleProperty, value); }
+    }
+
     public NodeView? NodePreview {
         get { return (NodeView) GetValue(NodePreviewProperty); }
         set { SetValue(NodePreviewProperty, value); }

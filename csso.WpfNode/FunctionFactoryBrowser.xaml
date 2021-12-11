@@ -10,8 +10,8 @@
              x:Name="FunctionFactoryBrowserUserControl">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <ListView
             ItemsSource="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=FunctionFactory.Functions}"
@@ -29,12 +29,16 @@
             </ItemsControl.ItemTemplate>
         </ListView>
 
-        <local:Node
+        <Grid
             Grid.Column="1"
-            DeletionEnabled="False"
-            NodeView="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview}" 
-            />
-
+            VerticalAlignment="Top"
+            HorizontalAlignment="Center"
+            Margin="8">
+            <local:Node
+                Style="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodeStyle}"
+                DeletionEnabled="False"
+                NodeView="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview}" />
+        </Grid>
 
     </Grid>
 </UserControl>

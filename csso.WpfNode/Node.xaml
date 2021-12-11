@@ -97,7 +97,7 @@
                         </Style>
                     </Border.Style>
 
-                    <Grid>
+                    <Grid Height="26">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -109,8 +109,14 @@
                                    Padding="0"
                                    Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
 
-                        <Button Grid.Column="1" Click="Close_Button_OnClick"
-                                Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                        <Button Grid.Column="1" 
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch"
+                                Click="Close_Button_OnClick"
+                                Height="18"
+                                Width="18"
                                 Template="{StaticResource EmptyButtonTemplate}"
                                 Margin="2" Padding="3" 
                                 BorderBrush="{x:Null}"
@@ -120,9 +126,9 @@
                                 Visibility="{Binding ElementName=NodeUserControl, Path=DeletionEnabled, Converter={StaticResource BoolToVis}}"
                                 >
 
-                            <Grid x:Name="Grid235B3"
-                                  Height="7"
-                                  Width="7">
+                            <Grid x:Name="Grid235B3" 
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch">
                                 <Line X1="0"
                                       Y1="0"
                                       X2="{Binding ElementName=Grid235B3, Path=ActualWidth}"

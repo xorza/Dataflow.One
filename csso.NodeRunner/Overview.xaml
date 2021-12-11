@@ -17,14 +17,14 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="350" />
         </Grid.ColumnDefinitions>
 
         <WpfNode:Graph x:Name="Graph"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"
                        NodeStyle="{StaticResource NodeDefaultStyle}"
-                       GraphView="{Binding Path=GraphView, ElementName=OverviewUserControl}"/>
+                       GraphView="{Binding Path=GraphView, ElementName=OverviewUserControl}" />
 
         <Border BorderThickness="0 0 0 0 "
                 Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" MinWidth="200"
@@ -40,11 +40,10 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     NodeView="{Binding Path=GraphView.SelectedNode, ElementName=OverviewUserControl}" />
-            
+
                 <WpfNode:FunctionFactoryBrowser Grid.Row="1" x:Name="FunctionFactoryBrowser"
                                                 FunctionFactory="{Binding ElementName=OverviewUserControl, Path=GraphView.FunctionFactory}"
-                                                ></WpfNode:FunctionFactoryBrowser>
-            
+                                                NodeStyle="{StaticResource NodeDefaultStyle}" />
             </Grid>
         </Border>
 
