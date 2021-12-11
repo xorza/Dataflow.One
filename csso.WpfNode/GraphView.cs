@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using csso.Common;
 using csso.NodeCore;
 using csso.WpfNode.Annotations;
@@ -135,6 +136,9 @@ public sealed class GraphView : INotifyPropertyChanged {
         Graph.Add(node);
         NodeView result = new(this, node);
         _nodes.Add(result);
+
+        result.Position = new Point(100, 100);
+        result.IsSelected = true;
         return result;
     }
 

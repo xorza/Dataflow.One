@@ -32,6 +32,7 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <WpfNode:NodeEdit
@@ -41,11 +42,20 @@
                     VerticalAlignment="Stretch"
                     NodeView="{Binding Path=GraphView.SelectedNode, ElementName=OverviewUserControl}" />
 
-                <WpfNode:FunctionFactoryBrowser Grid.Row="1" x:Name="FunctionFactoryBrowser"
+                <GridSplitter Grid.Row="1" Height="2"
+                              ResizeDirection="Rows"
+                              VerticalAlignment="Stretch"
+                              HorizontalAlignment="Stretch"
+                              ResizeBehavior="PreviousAndNext"
+                              Background="{StaticResource ActiveContentBackgroundBrush}"
+                              />
+                <!-- <Rectangle Grid.Row="1" Fill="Beige" Height="1" StrokeThickness="0" Stroke="{x:Null}" /> -->
+
+                <WpfNode:FunctionFactoryBrowser Grid.Row="2" x:Name="FunctionFactoryBrowser"
                                                 ListViewItemStyle="{StaticResource ListViewItemDefault}"
                                                 FunctionFactory="{Binding ElementName=OverviewUserControl, Path=GraphView.FunctionFactory}"
                                                 NodeStyle="{StaticResource NodeDefaultStyle}"
-                                                FunctionChosen="FunctionFactoryBrowser_OnFunctionChosen"/>
+                                                FunctionChosen="FunctionFactoryBrowser_OnFunctionChosen" />
             </Grid>
         </Border>
 
