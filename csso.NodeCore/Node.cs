@@ -103,11 +103,10 @@ public sealed class Node : WithId, INotifyPropertyChanged {
 
     internal Node(
         Graph graph,
-        FunctionFactory functionFactory,
         SerializedNode serialized) : this(serialized.Id) {
         Graph = graph;
         Name = serialized.Name;
-        Function = functionFactory.Get(serialized.FullName);
+        Function = graph.FunctionFactory.Get(serialized.FullName);
         Behavior = serialized.Behavior;
 
         serialized.ConfigValues

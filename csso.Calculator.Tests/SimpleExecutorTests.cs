@@ -24,14 +24,15 @@ public class Tests {
 
     private Graph _graph;
     private Executor _executor;
-    private Node _constNode;
+    private Node _constNode1;
+    private Node _constNode2;
     private Node _outputNode;
     private Node _frameNoNode;
     private Node _addNode;
 
-    private Function _constFunc = new("Value", Const);
+    private readonly Function _constFunc = new("Value", Const);
     private Function _outputFunc;
-    private Function _addFunc = new("Value", F.Add);
+    private readonly Function _addFunc = new("Value", F.Add);
 
     [SetUp]
     public void Setup() {
@@ -41,8 +42,8 @@ public class Tests {
         _outputFunc = new Function("Output", Output);
 
         _constFunc.Config.Single().DefaultValue = 13;
-        _constNode = new(_constFunc, _graph);
-        _graph.Add(_constNode);
+        _constNode1 = new(_constFunc, _graph);
+        _graph.Add(_constNode1);
 
         _outputNode = new(_outputFunc, _graph);
         _graph.Add(_outputNode);
@@ -52,6 +53,9 @@ public class Tests {
 
         _addNode = new(_addFunc, _graph);
         _graph.Add(_addNode);
+        
+        _constNode2 = new(_constFunc, _graph);
+        _graph.Add(_constNode2);
     }
 
     [Test]
@@ -59,15 +63,15 @@ public class Tests {
         OutputConnection connection = new(
             _outputNode,
             _outputNode.Function.Inputs.Single(),
-            _constNode,
-            _constNode.Function.Outputs.Single());
+            _constNode1,
+            _constNode1.Function.Outputs.Single());
         _outputNode.Add(connection);
 
         _executor.Reset();
         _executor.Run(_graph);
         Assert.AreEqual(13, _outputValue);
 
-        _constNode.ConfigValues.Single().Value = 1253;
+        _constNode1.ConfigValues.Single().Value = 1253;
         _executor.Reset();
         _executor.Run(_graph);
 
@@ -98,10 +102,7 @@ public class Tests {
     [Test]
     public void Test3() {
         _constFunc.Config.Single().DefaultValue = 3;
-
-        // Node const2Node = new(constFunc, graph);
-        // graph.Add(const2Node);
-
+        
         // const2Node.ConfigValues.Single().Value = 1253;
 
         OutputConnection connection = new(
@@ -115,15 +116,15 @@ public class Tests {
         OutputConnection connection2 = new(
             _addNode,
             _addNode.Function.Inputs[0],
-            _constNode,
-            _constNode.Function.Outputs.Single());
+            _constNode1,
+            _constNode1.Function.Outputs.Single());
         _addNode.Add(connection2);
 
         OutputConnection connection3 = new(
             _addNode,
             _addNode.Function.Inputs[1],
-            _constNode,
-            _constNode.Function.Outputs.Single());
+            _constNode1,
+            _constNode1.Function.Outputs.Single());
         _addNode.Add(connection3);
 
 
@@ -131,7 +132,7 @@ public class Tests {
         _executor.Run(_graph);
         Assert.AreEqual(26, _outputValue);
         
-        _constNode.ConfigValues.Single().Value = 13;
+        _constNode1.ConfigValues.Single().Value = 13;
         
         _executor.Run(_graph);
         Assert.AreEqual(26, _outputValue);
@@ -141,127 +142,69 @@ public class Tests {
 
     [Test]
     public void Test4() {
-        var outputValue = 0;
-
-        var graph = new Graph();
-        var executor = new Executor();
-
-        Function outputFunc = new Function("Output", (Int32 val) => {
-            outputValue = val;
-            return true;
-        });
-        Function constFunc = new Function("Value", Const);
-        Function addFunc = new Function("Value", F.Add);
-
-
-        constFunc.Config.Single().DefaultValue = 3;
-
-        Node outputNode = new(outputFunc, graph);
-        graph.Add(outputNode);
-
-        Node addNode = new(addFunc, graph);
-        graph.Add(addNode);
-
-        Node constNode = new(constFunc, graph);
-        graph.Add(constNode);
-        constNode.ConfigValues.Single().Value = 2;
-
-        Node frameNoNode = new(executor.FrameNoFunction, graph);
-        graph.Add(frameNoNode);
-
+        _constNode1.ConfigValues.Single().Value = 3;
 
         OutputConnection connection = new(
-            outputNode,
-            outputNode.Function.Inputs.Single(),
-            addNode,
-            addNode.Function.Outputs.Single());
-        outputNode.Add(connection);
-
+            _outputNode,
+            _outputNode.Function.Inputs.Single(),
+            _addNode,
+            _addNode.Function.Outputs.Single());
+        _outputNode.Add(connection);
 
         OutputConnection connection2 = new(
-            addNode,
-            addNode.Function.Inputs[0],
-            constNode,
-            constNode.Function.Outputs.Single());
-        addNode.Add(connection2);
+            _addNode,
+            _addNode.Function.Inputs[0],
+            _constNode1,
+            _constNode1.Function.Outputs.Single());
+        _addNode.Add(connection2);
 
         OutputConnection connection3 = new(
-            addNode,
-            addNode.Function.Inputs[1],
-            frameNoNode,
-            frameNoNode.Function.Outputs.Single());
-        addNode.Add(connection3);
+            _addNode,
+            _addNode.Function.Inputs[1],
+            _frameNoNode,
+            _frameNoNode.Function.Outputs.Single());
+        _addNode.Add(connection3);
 
-
-        executor.Reset();
-        executor.Run(graph);
-        Assert.AreEqual(outputValue, 2);
-        executor.Run(graph);
-        Assert.AreEqual(outputValue, 3);
+        _executor.Reset();
+        _executor.Run(_graph);
+        Assert.AreEqual( 3, _outputValue);
+        _executor.Run(_graph);
+        Assert.AreEqual( 4, _outputValue);
 
         Assert.Pass();
     }
 
     [Test]
     public void Test5() {
-        var outputValue = 0;
-
-        var graph = new Graph();
-        var executor = new Executor();
-
-        Function outputFunc = new Function("Output", (Int32 val) => {
-            outputValue = val;
-            return true;
-        });
-        Function constFunc = new Function("Value", Const);
-        Function addFunc = new Function("Add", F.Add);
-
-
-        constFunc.Config.Single().DefaultValue = 3;
-
-        Node outputNode = new(outputFunc, graph);
-        graph.Add(outputNode);
-
-        Node addNode = new(addFunc, graph);
-        graph.Add(addNode);
-
-        Node constNode = new(constFunc, graph);
-        graph.Add(constNode);
-        constNode.ConfigValues.Single().Value = 2;
-
-        Node frameNoNode = new(executor.FrameNoFunction, graph);
-        graph.Add(frameNoNode);
-
+        _constNode1.ConfigValues.Single().Value = 3;
 
         OutputConnection connection = new(
-            outputNode,
-            outputNode.Function.Inputs.Single(),
-            addNode,
-            addNode.Function.Outputs.Single());
+            _outputNode,
+            _outputNode.Function.Inputs.Single(),
+            _addNode,
+            _addNode.Function.Outputs.Single());
         connection.Behavior = ConnectionBehavior.Once;
-        outputNode.Add(connection);
-
+        _outputNode.Add(connection);
 
         OutputConnection connection2 = new(
-            addNode,
-            addNode.Function.Inputs[0],
-            constNode,
-            constNode.Function.Outputs.Single());
-        addNode.Add(connection2);
+            _addNode,
+            _addNode.Function.Inputs[0],
+            _constNode1,
+            _constNode1.Function.Outputs.Single());
+        _addNode.Add(connection2);
 
         OutputConnection connection3 = new(
-            addNode,
-            addNode.Function.Inputs[1],
-            frameNoNode,
-            frameNoNode.Function.Outputs.Single());
-        addNode.Add(connection3);
+            _addNode,
+            _addNode.Function.Inputs[1],
+            _frameNoNode,
+            _frameNoNode.Function.Outputs.Single());
+        _addNode.Add(connection3);
 
-
-        executor.Reset();
-        executor.Run(graph);
-        Assert.AreEqual(2, outputValue);
-        executor.Run(graph);
-        Assert.AreEqual(2, outputValue);
+        _executor.Reset();
+        _executor.Run(_graph);
+        Assert.AreEqual(3, _outputValue);
+        _executor.Run(_graph);
+        Assert.AreEqual(3, _outputValue);
 
         Assert.Pass();
     }
