@@ -59,7 +59,7 @@ public class Function {
 
             var argName = parameter.Name!;
             Type argType;
-            if (parameter.ParameterType.IsByRef)
+            if (parameter.ParameterType.IsByRef ||parameter.ParameterType.IsPointer )
                 argType = parameter.ParameterType.GetElementType()!;
             else
                 argType = parameter.ParameterType;
