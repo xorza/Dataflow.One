@@ -209,68 +209,8 @@ public class Tests {
         Assert.Pass();
     }
 
-
     [Test]
     public void Test6() {
-        var outputValue = 0;
 
-        var graph = new Graph();
-        var executor = new Executor();
-
-        Function outputFunc = new Function("Output", (Int32 val) => {
-            outputValue = val;
-            return true;
-        });
-        Function constFunc = new Function("Value", Const);
-        Function addFunc = new Function("Add", F.Add);
-
-
-        constFunc.Config.Single().DefaultValue = 3;
-
-        Node outputNode = new(outputFunc, graph);
-        graph.Add(outputNode);
-
-        Node addNode = new(addFunc, graph);
-        graph.Add(addNode);
-
-        Node constNode = new(constFunc, graph);
-        graph.Add(constNode);
-        constNode.ConfigValues.Single().Value = 2;
-
-        Node frameNoNode = new(executor.FrameNoFunction, graph);
-        graph.Add(frameNoNode);
-
-
-        OutputConnection connection = new(
-            outputNode,
-            outputNode.Function.Inputs.Single(),
-            addNode,
-            addNode.Function.Outputs.Single());
-        connection.Behavior = ConnectionBehavior.Always;
-        outputNode.Add(connection);
-
-
-        OutputConnection connection2 = new(
-            addNode,
-            addNode.Function.Inputs[0],
-            constNode,
-            constNode.Function.Outputs.Single());
-        addNode.Add(connection2);
-
-        OutputConnection connection3 = new(
-            addNode,
-            addNode.Function.Inputs[1],
-            frameNoNode,
-            frameNoNode.Function.Outputs.Single());
-        addNode.Add(connection3);
-
-
-        executor.Reset();
-        executor.Run(graph);
-        Assert.AreEqual(2, outputValue);
-        executor.Run(graph);
-        Assert.AreEqual(3, outputValue);
-
-        Assert.Pass();
     }
 }
