@@ -29,9 +29,9 @@ public class Tests {
     public void Setup() {
         _graph = new Graph();
         _executor = new Executor();
-
-        _valueFunction1.Value = 13;
-        _valueFunction2.Value = 13;
+        
+        _valueFunction1.Value = 3;
+        _valueFunction2.Value = 1253;
 
         _constFunc1 = new("Value", _valueFunction1.Delegate);
         _constFunc2 = new("Value", _valueFunction2.Delegate);
@@ -65,7 +65,7 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual(13, _outputFunction.Value);
+        Assert.AreEqual(3, _outputFunction.Value);
 
         _valueFunction1.Value = 1253;
         _executor.Reset();
@@ -96,16 +96,12 @@ public class Tests {
 
     [Test]
     public void Test3() {
-        _valueFunction1.Value = 3;
-        _valueFunction2.Value = 1253;
-
         OutputConnection connection = new(
             _outputNode,
             _outputNode.Function.Inputs.Single(),
             _addNode,
             _addNode.Function.Outputs.Single());
         _outputNode.Add(connection);
-
 
         OutputConnection connection2 = new(
             _addNode,
@@ -121,23 +117,18 @@ public class Tests {
             _constNode2.Function.Outputs.Single());
         _addNode.Add(connection3);
 
-
         _executor.Reset();
         _executor.Run(_graph);
         Assert.AreEqual(1256, _outputFunction.Value);
 
-        _valueFunction1.Value = 13;
-
         _executor.Run(_graph);
-        Assert.AreEqual(26, _outputFunction.Value);
+        Assert.AreEqual(1256, _outputFunction.Value);
 
         Assert.Pass();
     }
 
     [Test]
     public void Test4() {
-        _valueFunction1.Value = 3;
-
         OutputConnection connection = new(
             _outputNode,
             _outputNode.Function.Inputs.Single(),
@@ -170,8 +161,6 @@ public class Tests {
 
     [Test]
     public void Test5() {
-        _valueFunction1.Value = 3;
-
         OutputConnection connection = new(
             _outputNode,
             _outputNode.Function.Inputs.Single(),
