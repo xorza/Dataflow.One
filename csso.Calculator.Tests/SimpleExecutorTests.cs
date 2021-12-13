@@ -7,7 +7,6 @@ using NUnit.Framework;
 namespace csso.Calculator.Tests;
 
 public class Tests {
-    private readonly OutputFunc<Int32> _outputFunction = new();
 
     private Graph _graph;
     private Executor _executor;
@@ -19,8 +18,8 @@ public class Tests {
 
     private readonly ValueFunc<Int32> _constFunc1 = new();
     private readonly ValueFunc<Int32> _constFunc2 = new();
+    private readonly OutputFunc<Int32> _outputFunc = new();
 
-    private Function _outputFunc;
     private readonly Function _addFunc = new("Value", F.Add);
 
     [SetUp]
@@ -30,8 +29,6 @@ public class Tests {
         
         _constFunc1.Value = 3;
         _constFunc2.Value = 1253;
-
-        _outputFunc = new Function("Output", _outputFunction.Delegate);
 
         _constNode1 = new(_constFunc1, _graph);
         _graph.Add(_constNode1);
@@ -60,13 +57,13 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual(3, _outputFunction.Value);
+        Assert.AreEqual(3, _outputFunc.Value);
 
         _constFunc1.Value = 33;
         _executor.Reset();
         _executor.Run(_graph);
 
-        Assert.AreEqual(_outputFunction.Value, 33);
+        Assert.AreEqual(_outputFunc.Value, 33);
 
         Assert.Pass();
     }
@@ -82,9 +79,9 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual(0, _outputFunction.Value);
+        Assert.AreEqual(0, _outputFunc.Value);
         _executor.Run(_graph);
-        Assert.AreEqual(1, _outputFunction.Value);
+        Assert.AreEqual(1, _outputFunc.Value);
 
         Assert.Pass();
     }
@@ -114,10 +111,10 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual(1256, _outputFunction.Value);
+        Assert.AreEqual(1256, _outputFunc.Value);
 
         _executor.Run(_graph);
-        Assert.AreEqual(1256, _outputFunction.Value);
+        Assert.AreEqual(1256, _outputFunc.Value);
 
         Assert.Pass();
     }
@@ -147,9 +144,9 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual(3, _outputFunction.Value);
+        Assert.AreEqual(3, _outputFunc.Value);
         _executor.Run(_graph);
-        Assert.AreEqual(4, _outputFunction.Value);
+        Assert.AreEqual(4, _outputFunc.Value);
 
         Assert.Pass();
     }
@@ -180,9 +177,9 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual(3, _outputFunction.Value);
+        Assert.AreEqual(3, _outputFunc.Value);
         _executor.Run(_graph);
-        Assert.AreEqual(3, _outputFunction.Value);
+        Assert.AreEqual(3, _outputFunc.Value);
 
         Assert.Pass();
     }
