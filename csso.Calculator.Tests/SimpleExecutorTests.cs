@@ -7,22 +7,7 @@ using NUnit.Framework;
 namespace csso.Calculator.Tests;
 
 public class Tests {
-    [System.ComponentModel.Description("value")]
-    [Reactive]
-    private static bool ConfigConst([Config(12)] Int32 c, [Output] out Int32 i) {
-        i = c;
-        return true;
-    }
-
-    // private Int32 _outputValue = -1;
-    //
-    // [Reactive]
-    // private bool Output(Int32 value) {
-    //     _outputValue = value;
-    //     return true;
-    // }
-
-    private readonly OutputFunc<Int32> _outputFunction = new ();
+    private readonly OutputFunc<Int32> _outputFunction = new();
 
     private Graph _graph;
     private Executor _executor;
@@ -32,7 +17,11 @@ public class Tests {
     private Node _frameNoNode;
     private Node _addNode;
 
-    private readonly Function _constFunc = new("Value", ConfigConst);
+    private readonly ValueFunc<Int32> _valueFunction1 = new();
+    private readonly ValueFunc<Int32> _valueFunction2 = new();
+    private Function _constFunc1;
+    private Function _constFunc2;
+
     private Function _outputFunc;
     private readonly Function _addFunc = new("Value", F.Add);
 
@@ -41,10 +30,15 @@ public class Tests {
         _graph = new Graph();
         _executor = new Executor();
 
+        _valueFunction1.Value = 13;
+        _valueFunction2.Value = 13;
+
+        _constFunc1 = new("Value", _valueFunction1.Delegate);
+        _constFunc2 = new("Value", _valueFunction2.Delegate);
+
         _outputFunc = new Function("Output", _outputFunction.Delegate);
 
-        _constFunc.Config.Single().DefaultValue = 13;
-        _constNode1 = new(_constFunc, _graph);
+        _constNode1 = new(_constFunc1, _graph);
         _graph.Add(_constNode1);
 
         _outputNode = new(_outputFunc, _graph);
@@ -55,8 +49,8 @@ public class Tests {
 
         _addNode = new(_addFunc, _graph);
         _graph.Add(_addNode);
-        
-        _constNode2 = new(_constFunc, _graph);
+
+        _constNode2 = new(_constFunc2, _graph);
         _graph.Add(_constNode2);
     }
 
@@ -73,7 +67,7 @@ public class Tests {
         _executor.Run(_graph);
         Assert.AreEqual(13, _outputFunction.Value);
 
-        _constNode1.ConfigValues.Single().Value = 1253;
+        _valueFunction1.Value = 1253;
         _executor.Reset();
         _executor.Run(_graph);
 
@@ -99,12 +93,11 @@ public class Tests {
 
         Assert.Pass();
     }
-    
+
     [Test]
     public void Test3() {
-        _constFunc.Config.Single().DefaultValue = 3;
-        
-        // const2Node.ConfigValues.Single().Value = 1253;
+        _valueFunction1.Value = 3;
+        _valueFunction2.Value = 1253;
 
         OutputConnection connection = new(
             _outputNode,
@@ -124,17 +117,17 @@ public class Tests {
         OutputConnection connection3 = new(
             _addNode,
             _addNode.Function.Inputs[1],
-            _constNode1,
-            _constNode1.Function.Outputs.Single());
+            _constNode2,
+            _constNode2.Function.Outputs.Single());
         _addNode.Add(connection3);
 
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual(26, _outputFunction.Value);
-        
-        _constNode1.ConfigValues.Single().Value = 13;
-        
+        Assert.AreEqual(1256, _outputFunction.Value);
+
+        _valueFunction1.Value = 13;
+
         _executor.Run(_graph);
         Assert.AreEqual(26, _outputFunction.Value);
 
@@ -143,7 +136,7 @@ public class Tests {
 
     [Test]
     public void Test4() {
-        _constNode1.ConfigValues.Single().Value = 3;
+        _valueFunction1.Value = 3;
 
         OutputConnection connection = new(
             _outputNode,
@@ -168,16 +161,16 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual( 3, _outputFunction.Value);
+        Assert.AreEqual(3, _outputFunction.Value);
         _executor.Run(_graph);
-        Assert.AreEqual( 4, _outputFunction.Value);
+        Assert.AreEqual(4, _outputFunction.Value);
 
         Assert.Pass();
     }
 
     [Test]
     public void Test5() {
-        _constNode1.ConfigValues.Single().Value = 3;
+        _valueFunction1.Value = 3;
 
         OutputConnection connection = new(
             _outputNode,
@@ -209,6 +202,4 @@ public class Tests {
 
         Assert.Pass();
     }
-
-
 }

@@ -1,6 +1,7 @@
 using System.ComponentModel;
+using csso.NodeCore.Annotations;
 
-namespace csso.NodeCore.Funcs; 
+namespace csso.NodeCore.Funcs;
 
 public static class F {
     [Reactive]
@@ -30,7 +31,7 @@ public static class F {
 
 public class OutputFunc<T> {
     public T Value { get; set; }
-    
+
     public Delegate Delegate { get; }
 
     public OutputFunc() {
@@ -40,6 +41,22 @@ public class OutputFunc<T> {
     [Reactive]
     private bool Func_(T arg) {
         Value = arg;
+        return true;
+    }
+}
+
+public class ValueFunc<T> {
+    public T Value { get; set; }
+
+    public Delegate Delegate { get; }
+
+    public ValueFunc() {
+        Delegate = Func_;
+    }
+
+    [Reactive]
+    private bool Func_([Output] out T arg) {
+        arg = Value;
         return true;
     }
 }
