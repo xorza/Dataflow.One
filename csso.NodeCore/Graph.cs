@@ -13,14 +13,14 @@ public sealed class Graph {
     public IReadOnlyList<Node> Nodes { get; }
 
     public void Add(Node node) {
-        Debug.Assert.AreSame(node.Graph, this);
+        Check.True(node.Graph == null);
 
+        node.Graph = this;
         _nodes.Add(node);
     }
 
     public void Remove(Node node) {
-        // Check.True(node.Graph != null);
-        Debug.Assert.AreSame(node.Graph, this);
+        Check.True(node.Graph == this);
 
         if (!_nodes.Remove(node))
             throw new Exception("543b6u365");
@@ -31,6 +31,8 @@ public sealed class Graph {
             .Where(_ => _.OutputNode == node)
             .ToArray()
             .Foreach(_ => _.InputNode.Remove(_));
+
+        node.Graph = null;
     }
 
     public FunctionFactory FunctionFactory { get; set; } = new();
