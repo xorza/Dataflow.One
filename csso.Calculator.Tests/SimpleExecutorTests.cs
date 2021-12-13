@@ -17,10 +17,8 @@ public class Tests {
     private Node _frameNoNode;
     private Node _addNode;
 
-    private readonly ValueFunc<Int32> _valueFunction1 = new();
-    private readonly ValueFunc<Int32> _valueFunction2 = new();
-    private Function _constFunc1;
-    private Function _constFunc2;
+    private readonly ValueFunc<Int32> _constFunc1 = new();
+    private readonly ValueFunc<Int32> _constFunc2 = new();
 
     private Function _outputFunc;
     private readonly Function _addFunc = new("Value", F.Add);
@@ -30,11 +28,8 @@ public class Tests {
         _graph = new Graph();
         _executor = new Executor();
         
-        _valueFunction1.Value = 3;
-        _valueFunction2.Value = 1253;
-
-        _constFunc1 = new("Value", _valueFunction1.Delegate);
-        _constFunc2 = new("Value", _valueFunction2.Delegate);
+        _constFunc1.Value = 3;
+        _constFunc2.Value = 1253;
 
         _outputFunc = new Function("Output", _outputFunction.Delegate);
 
@@ -67,11 +62,11 @@ public class Tests {
         _executor.Run(_graph);
         Assert.AreEqual(3, _outputFunction.Value);
 
-        _valueFunction1.Value = 1253;
+        _constFunc1.Value = 33;
         _executor.Reset();
         _executor.Run(_graph);
 
-        Assert.AreEqual(_outputFunction.Value, 1253);
+        Assert.AreEqual(_outputFunction.Value, 33);
 
         Assert.Pass();
     }

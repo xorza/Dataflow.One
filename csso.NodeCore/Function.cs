@@ -26,7 +26,29 @@ public enum FunctionBehavior {
 }
 
 public class Function {
+    protected Function() { }
+
     public Function(String name, Delegate func) {
+        Refresh(name, func);
+    }
+
+    public Function(String name, Delegate func, FunctionBehavior functionBehavior) : this(name, func) {
+        Behavior = functionBehavior;
+    }
+
+    public String Namespace { get; private set; }
+    public Delegate Delegate { get; private set; }
+    public IReadOnlyList<FunctionInput> Inputs { get; private set; }
+    public IReadOnlyList<FunctionOutput> Outputs { get; private set; }
+    public IReadOnlyList<FunctionArg> Args { get; private set; }
+    public IReadOnlyList<FunctionConfig> Config { get; private set; }
+    public FunctionBehavior Behavior { get; private set; }
+    public string Name { get; private set; }
+    public string Description { get; private set; }
+    public bool IsProcedure => Outputs.Count == 0;
+    public string FullName => Namespace + "::" + Name;
+
+    protected void Refresh(String name, Delegate func) {
         Check.Argument(func.Method.ReturnType == typeof(bool), nameof(func));
 
         List<FunctionArg> args = new();
@@ -59,7 +81,7 @@ public class Function {
 
             var argName = parameter.Name!;
             Type argType;
-            if (parameter.ParameterType.IsByRef ||parameter.ParameterType.IsPointer )
+            if (parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer)
                 argType = parameter.ParameterType.GetElementType()!;
             else
                 argType = parameter.ParameterType;
@@ -90,22 +112,6 @@ public class Function {
         if (IsProcedure)
             Behavior = FunctionBehavior.Proactive;
     }
-
-    public Function(String name, Delegate func, FunctionBehavior functionBehavior) : this(name, func) {
-        Behavior = functionBehavior;
-    }
-
-    public String Namespace { get; private set; }
-    public Delegate Delegate { get; }
-    public IReadOnlyList<FunctionInput> Inputs { get; }
-    public IReadOnlyList<FunctionOutput> Outputs { get; }
-    public IReadOnlyList<FunctionArg> Args { get; }
-    public IReadOnlyList<FunctionConfig> Config { get; }
-    public FunctionBehavior Behavior { get; }
-    public string Name { get; }
-    public string Description { get; }
-    public bool IsProcedure => Outputs.Count == 0;
-    public string FullName => Namespace + "::" + Name;
 
     public void Invoke(object?[]? args) {
         CheckArgTypes(args);

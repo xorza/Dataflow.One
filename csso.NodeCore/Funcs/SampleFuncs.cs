@@ -29,13 +29,11 @@ public static class F {
     }
 }
 
-public class OutputFunc<T> {
+public class OutputFunc<T> : Function{
     public T Value { get; set; }
 
-    public Delegate Delegate { get; }
-
     public OutputFunc() {
-        Delegate = Func_;
+        Refresh("Const", Func_);
     }
 
     [Reactive]
@@ -45,13 +43,11 @@ public class OutputFunc<T> {
     }
 }
 
-public class ValueFunc<T> {
+public class ValueFunc<T> : Function {
     public T Value { get; set; }
 
-    public Delegate Delegate { get; }
-
     public ValueFunc() {
-        Delegate = Func_;
+        Refresh("Const", Func_);
     }
 
     [Reactive]
