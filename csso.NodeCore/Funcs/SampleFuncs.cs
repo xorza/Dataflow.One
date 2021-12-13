@@ -27,3 +27,19 @@ public static class F {
         return true;
     }
 }
+
+public class OutputFunc<T> {
+    public T Value { get; set; }
+    
+    public Delegate Delegate { get; }
+
+    public OutputFunc() {
+        Delegate = Func_;
+    }
+
+    [Reactive]
+    private bool Func_(T arg) {
+        Value = arg;
+        return true;
+    }
+}

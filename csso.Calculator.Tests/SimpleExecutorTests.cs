@@ -9,18 +9,20 @@ namespace csso.Calculator.Tests;
 public class Tests {
     [System.ComponentModel.Description("value")]
     [Reactive]
-    private static bool Const([Config(12)] Int32 c, [Output] out Int32 i) {
+    private static bool ConfigConst([Config(12)] Int32 c, [Output] out Int32 i) {
         i = c;
         return true;
     }
 
-    private Int32 _outputValue = -1;
+    // private Int32 _outputValue = -1;
+    //
+    // [Reactive]
+    // private bool Output(Int32 value) {
+    //     _outputValue = value;
+    //     return true;
+    // }
 
-    [Reactive]
-    private bool Output(Int32 value) {
-        _outputValue = value;
-        return true;
-    }
+    private readonly OutputFunc<Int32> _outputFunction = new ();
 
     private Graph _graph;
     private Executor _executor;
@@ -30,7 +32,7 @@ public class Tests {
     private Node _frameNoNode;
     private Node _addNode;
 
-    private readonly Function _constFunc = new("Value", Const);
+    private readonly Function _constFunc = new("Value", ConfigConst);
     private Function _outputFunc;
     private readonly Function _addFunc = new("Value", F.Add);
 
@@ -39,7 +41,7 @@ public class Tests {
         _graph = new Graph();
         _executor = new Executor();
 
-        _outputFunc = new Function("Output", Output);
+        _outputFunc = new Function("Output", _outputFunction.Delegate);
 
         _constFunc.Config.Single().DefaultValue = 13;
         _constNode1 = new(_constFunc, _graph);
@@ -69,13 +71,13 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual(13, _outputValue);
+        Assert.AreEqual(13, _outputFunction.Value);
 
         _constNode1.ConfigValues.Single().Value = 1253;
         _executor.Reset();
         _executor.Run(_graph);
 
-        Assert.AreEqual(_outputValue, 1253);
+        Assert.AreEqual(_outputFunction.Value, 1253);
 
         Assert.Pass();
     }
@@ -91,14 +93,13 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual(0, _outputValue);
+        Assert.AreEqual(0, _outputFunction.Value);
         _executor.Run(_graph);
-        Assert.AreEqual(1, _outputValue);
+        Assert.AreEqual(1, _outputFunction.Value);
 
         Assert.Pass();
     }
-
-
+    
     [Test]
     public void Test3() {
         _constFunc.Config.Single().DefaultValue = 3;
@@ -130,12 +131,12 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual(26, _outputValue);
+        Assert.AreEqual(26, _outputFunction.Value);
         
         _constNode1.ConfigValues.Single().Value = 13;
         
         _executor.Run(_graph);
-        Assert.AreEqual(26, _outputValue);
+        Assert.AreEqual(26, _outputFunction.Value);
 
         Assert.Pass();
     }
@@ -167,9 +168,9 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual( 3, _outputValue);
+        Assert.AreEqual( 3, _outputFunction.Value);
         _executor.Run(_graph);
-        Assert.AreEqual( 4, _outputValue);
+        Assert.AreEqual( 4, _outputFunction.Value);
 
         Assert.Pass();
     }
@@ -202,15 +203,12 @@ public class Tests {
 
         _executor.Reset();
         _executor.Run(_graph);
-        Assert.AreEqual(3, _outputValue);
+        Assert.AreEqual(3, _outputFunction.Value);
         _executor.Run(_graph);
-        Assert.AreEqual(3, _outputValue);
+        Assert.AreEqual(3, _outputFunction.Value);
 
         Assert.Pass();
     }
 
-    [Test]
-    public void Test6() {
 
-    }
 }
