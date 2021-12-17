@@ -8,19 +8,20 @@ namespace csso.Calculator.Tests;
 
 public class Tests {
 
-    private Graph _graph;
+    private Graph    _graph;
     private Executor _executor;
-    private Node _constNode1;
-    private Node _constNode2;
-    private Node _outputNode;
-    private Node _frameNoNode;
-    private Node _addNode;
+    private Node     _constNode1;
+    private Node     _constNode2;
+    private Node     _outputNode;
+    private Node     _frameNoNode;
+    private Node     _addNode;
 
     private readonly ValueFunc<Int32> _constFunc1 = new();
     private readonly ValueFunc<Int32> _constFunc2 = new();
     private readonly OutputFunc<Int32> _outputFunc = new();
 
     private readonly Function _addFunc = new("Value", F.Add);
+
 
     [SetUp]
     public void Setup() {
@@ -113,6 +114,7 @@ public class Tests {
         _executor.Run(_graph);
         Assert.AreEqual(1256, _outputFunc.Value);
 
+        // _constFunc2.Value = 127;
         _executor.Run(_graph);
         Assert.AreEqual(1256, _outputFunc.Value);
 
@@ -178,6 +180,7 @@ public class Tests {
         _executor.Reset();
         _executor.Run(_graph);
         Assert.AreEqual(3, _outputFunc.Value);
+        
         _executor.Run(_graph);
         Assert.AreEqual(3, _outputFunc.Value);
 
