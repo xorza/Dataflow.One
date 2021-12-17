@@ -122,7 +122,7 @@ public partial class FunctionFactoryBrowser : UserControl {
         });
 
         NodeView nv = new NodeView(graphView,
-            new NodeCore.Node(functionFactoryBrowser.SelectedFunction, graphView.Graph));
+            new NodeCore.Node(functionFactoryBrowser.SelectedFunction));
         functionFactoryBrowser.NodePreview = nv;
     }
 
