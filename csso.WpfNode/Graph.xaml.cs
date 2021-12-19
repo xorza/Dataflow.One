@@ -143,13 +143,11 @@ public partial class Graph : UserControl {
 
         Debug.Assert.True(p1 != p2);
 
-        OutputConnection connection = new(
-            input.NodeView.Node,
+        input.NodeView.Node.AddConnection(
             (FunctionInput) input.FunctionArg,
             output.NodeView.Node,
             (FunctionOutput) output.FunctionArg);
-
-        input.NodeView.Node.Add(connection);
+        
         input.NodeView.GraphView.Refresh();
     }
 

@@ -18,12 +18,12 @@ public sealed class OutputConnection : Connection {
         base(inputNode, input) {
         if (input.Type != output.Type && !output.Type.IsSubclassOf(input.Type))
             throw new Exception("type mismatch");
+        
+        Check.True(inputNode.Function.Inputs.Contains(input));
+        Check.True(outputNode.Function.Outputs.Contains(output));
 
         OutputNode = outputNode;
         Output = output;
-
-        Check.True(inputNode.Function.Inputs.Contains(input));
-        Check.True(outputNode.Function.Outputs.Contains(output));
     }
 
     public Node OutputNode { get; }

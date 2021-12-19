@@ -67,11 +67,23 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    public void Add(Connection connection) {
+    internal void Add(Connection connection) {
         Check.Argument(connection.InputNode == this, nameof(connection));
 
         _connections.RemoveAll(_ => _.Input == connection.Input);
         _connections.Add(connection);
+    }
+
+    public OutputConnection AddConnection(FunctionInput selfInput, Node outputNode, FunctionOutput nodeOutput) {
+        OutputConnection connection = new(
+            this,
+            selfInput,
+            outputNode,
+            nodeOutput);
+
+        Add(connection);
+
+        return connection;
     }
 
     public void Remove(Connection connection) {
@@ -87,7 +99,7 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         result.Id = Id;
         result.FullName = Function.FullName;
         result.Behavior = Behavior;
-        
+
         result.ConfigValues = _configValues
             .Select(_ => _.Serialize())
             .ToArray();
