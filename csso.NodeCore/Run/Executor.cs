@@ -3,7 +3,6 @@ using csso.Common;
 
 namespace csso.NodeCore.Run;
 
-
 internal static class Xtensions {
     public static Int32? FirstIndexOf<T>(this IEnumerable<T> enumerable, T element) {
         var i = 0;
@@ -19,11 +18,9 @@ internal static class Xtensions {
     }
 }
 
-
 public class Executor {
-
     public Int32 FrameNo { get; private set; } = 0;
-    
+
     public List<ExecutionNode> EvaluationNodes { get; set; } = new();
 
     public ExecutionNode? GetEvaluated(Node node) {
@@ -34,7 +31,7 @@ public class Executor {
     }
 
     public Graph Graph { get; }
-    
+
     internal Executor(Graph graph) {
         Graph = graph;
     }
@@ -42,11 +39,9 @@ public class Executor {
 
     public void Reset() {
         FrameNo = 0;
-        
-        EvaluationNodes.Clear();
-    }
 
-    public void Run() {
+        EvaluationNodes.Clear();
+
         var activeEvaluationNodes = Graph.Nodes
             .Select(n => {
                 ExecutionNode en = GetEvaluated(n)
@@ -55,15 +50,20 @@ public class Executor {
             })
             .SkipNulls()
             .ToList();
-        
+
         EvaluationNodes = activeEvaluationNodes;
-        
+    }
+
+    public void Run() {
+        if (FrameNo == 0)
+            Reset();
+
         EvaluationNodes.Foreach(_ => _.Refresh(this));
 
         var pathsFromProcedures = GetPathsToProcedures(Graph);
         pathsFromProcedures.Foreach(UpdateEvaluationNode);
-        
-        var invokationList = 
+
+        var invokationList =
             GetInvocationList()
                 .Distinct();
         invokationList.Foreach(_ => _.Invoke());
