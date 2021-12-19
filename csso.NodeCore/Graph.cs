@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using csso.Common;
+using csso.NodeCore.Run;
 
 namespace csso.NodeCore;
 
@@ -35,6 +36,10 @@ public sealed class Graph {
             .Where(_ => _.OutputNode == node)
             .ToArray()
             .Foreach(_ => _.InputNode.Remove(_));
+    }
+
+    public Executor Compile() {
+        return new Executor(this);
     }
 
     public FunctionFactory FunctionFactory { get; set; } = new();

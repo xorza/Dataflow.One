@@ -28,8 +28,6 @@ public class Tests {
     [SetUp]
     public void Setup() {
         _graph = new Graph();
-        _executor = new Executor(_graph);
-        _frameNoFunc.Executor = _executor;
 
         _constFunc1.Value = 3;
         _constFunc2.Value = 1253;
@@ -39,6 +37,9 @@ public class Tests {
         _frameNoNode = _graph.AddNode(_frameNoFunc);
         _addNode = _graph.AddNode(_addFunc);
         _constNode2 = _graph.AddNode(_constFunc2);
+        
+        _executor = _graph.Compile();
+        _frameNoFunc.Executor = _executor;
     }
 
     [Test]
@@ -55,7 +56,7 @@ public class Tests {
         _executor.Reset();
         _executor.Run();
 
-        Assert.AreEqual(_outputFunc.Value, 33);
+        Assert.AreEqual(33, _outputFunc.Value);
 
         Assert.Pass();
     }
@@ -67,8 +68,7 @@ public class Tests {
             _frameNoNode!,
             _frameNoNode!.Function.Outputs.Single());
 
-        _executor!.Reset();
-        _executor.Run();
+        _executor!.Run();
         Assert.AreEqual(0, _outputFunc.Value);
         _executor.Run();
         Assert.AreEqual(1, _outputFunc.Value);

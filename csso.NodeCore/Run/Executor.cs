@@ -24,52 +24,49 @@ public class Executor {
 
     public Int32 FrameNo { get; private set; } = 0;
     
-    
     public List<ExecutionNode> EvaluationNodes { get; set; } = new();
-    public List<ExecutionNode> InvokationList { get; set; } = new();
 
-    public ExecutionNode GetEvaluated(Node node) {
-        var result = EvaluationNodes.Single(_ => _.Node == node);
+    public ExecutionNode? GetEvaluated(Node node) {
+        var result = EvaluationNodes
+            .SingleOrDefault(_ => _.Node == node);
 
         return result;
     }
 
     public Graph Graph { get; }
     
-    public Executor(Graph graph) {
+    internal Executor(Graph graph) {
         Graph = graph;
     }
 
 
     public void Reset() {
-        EvaluationNodes.Clear();
-        InvokationList.Clear();
-        
         FrameNo = 0;
+        
+        EvaluationNodes.Clear();
     }
 
     public void Run() {
         var activeEvaluationNodes = Graph.Nodes
             .Select(n => {
-                ExecutionNode en =
-                    EvaluationNodes
-                        .SingleOrDefault(en => en.Node == n)
-                    ?? new(n);
+                ExecutionNode en = GetEvaluated(n)
+                                   ?? new(n);
                 return en;
             })
             .SkipNulls()
             .ToList();
+        
         EvaluationNodes = activeEvaluationNodes;
+        
         EvaluationNodes.Foreach(_ => _.Refresh(this));
 
         var pathsFromProcedures = GetPathsToProcedures(Graph);
         pathsFromProcedures.Foreach(UpdateEvaluationNode);
         
-        InvokationList = 
+        var invokationList = 
             GetInvocationList()
-                .Distinct()
-                .ToList();
-        InvokationList.Foreach(_ => _.Invoke());
+                .Distinct();
+        invokationList.Foreach(_ => _.Invoke());
 
         ++FrameNo;
     }
@@ -95,7 +92,7 @@ public class Executor {
     }
 
     private void UpdateEvaluationNode(Node node) {
-        var evaluationNode = GetEvaluated(node);
+        var evaluationNode = GetEvaluated(node)!;
         if (evaluationNode.ProcessedThisFrame)
             return;
 

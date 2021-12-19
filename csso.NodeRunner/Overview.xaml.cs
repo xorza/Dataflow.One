@@ -31,17 +31,14 @@ public partial class Overview {
     public Overview() {
         InitializeComponent();
 
-        _graph = new ();
-        _clContext = new ();
-        _executor = new(_graph);
+        _graph = new();
+        _clContext = new();
 
         Function addFunc = new Function("Add", F.Add);
         Function divideWholeFunc = new Function("Divide whole", F.DivideWhole);
         Function messageBoxFunc = new Function("Output", Output);
         Function valueFunc = new Function("Value", Const);
-        FrameNoFunc frameNoFunc = new() {
-            Executor = _executor
-        };
+        FrameNoFunc frameNoFunc = new();
 
         _functionFactory.Register(addFunc);
         _functionFactory.Register(divideWholeFunc);
@@ -61,6 +58,9 @@ public partial class Overview {
         // _graph.Add(new Node(_executor.DeltaTimeFunction, _graph));
 
         GraphView = new(_graph);
+
+        _executor = _graph.Compile();
+        frameNoFunc.Executor = _executor;
     }
 
     public GraphView? GraphView {
