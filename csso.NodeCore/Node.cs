@@ -18,7 +18,8 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         ConfigValues = _configValues.AsReadOnly();
     }
 
-    public Node(Function function) : this() {
+    public Node(Graph graph,  Function function) : this() {
+        Graph = graph;
         Function = function;
         Behavior = function.Behavior;
         Name = function.Name;
@@ -56,7 +57,7 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         }
     }
 
-    public Graph? Graph { get; internal set; }
+    public Graph Graph { get; }
     public IReadOnlyList<Connection> Connections { get; }
     public IReadOnlyList<ConfigValue> ConfigValues { get; }
 

@@ -31,20 +31,11 @@ public class Tests {
         _constFunc1.Value = 3;
         _constFunc2.Value = 1253;
 
-        _constNode1 = new(_constFunc1);
-        _graph.Add(_constNode1);
-
-        _outputNode = new(_outputFunc);
-        _graph.Add(_outputNode);
-
-        _frameNoNode = new(_executor.FrameNoFunction);
-        _graph.Add(_frameNoNode);
-
-        _addNode = new(_addFunc);
-        _graph.Add(_addNode);
-
-        _constNode2 = new(_constFunc2);
-        _graph.Add(_constNode2);
+        _constNode1 = _graph.AddNode(_constFunc1);
+        _outputNode = _graph.AddNode(_outputFunc);
+        _frameNoNode = _graph.AddNode(_executor.FrameNoFunction);
+        _addNode = _graph.AddNode(_addFunc);
+        _constNode2 = _graph.AddNode(_constFunc2);
     }
 
     [Test]
@@ -85,19 +76,19 @@ public class Tests {
     [Test]
     public void Test3() {
         _outputNode!.AddConnection(
-                _outputNode!.Function.Inputs.Single(),
-                _addNode!,
-                _addNode!.Function.Outputs.Single());
-        
+            _outputNode!.Function.Inputs.Single(),
+            _addNode!,
+            _addNode!.Function.Outputs.Single());
+
         _addNode.AddConnection(
-                _addNode.Function.Inputs[0],
-                _constNode1!,
-                _constNode1!.Function.Outputs.Single());
-        
+            _addNode.Function.Inputs[0],
+            _constNode1!,
+            _constNode1!.Function.Outputs.Single());
+
         _addNode.AddConnection(
-                _addNode.Function.Inputs[1],
-                _constNode2!,
-                _constNode2!.Function.Outputs.Single());
+            _addNode.Function.Inputs[1],
+            _constNode2!,
+            _constNode2!.Function.Outputs.Single());
 
         _executor!.Reset();
         _executor.Run(_graph!);
@@ -141,17 +132,17 @@ public class Tests {
             _outputNode!.Function.Inputs.Single(),
             _addNode!,
             _addNode!.Function.Outputs.Single());
-       connection.Behavior = ConnectionBehavior.Once;
-        
-        _addNode.AddConnection(
-                _addNode.Function.Inputs[0],
-                _constNode1!,
-                _constNode1!.Function.Outputs.Single());
+        connection.Behavior = ConnectionBehavior.Once;
 
         _addNode.AddConnection(
-                _addNode.Function.Inputs[1],
-                _frameNoNode!,
-                _frameNoNode!.Function.Outputs.Single());
+            _addNode.Function.Inputs[0],
+            _constNode1!,
+            _constNode1!.Function.Outputs.Single());
+
+        _addNode.AddConnection(
+            _addNode.Function.Inputs[1],
+            _frameNoNode!,
+            _frameNoNode!.Function.Outputs.Single());
 
         _executor!.Reset();
         _executor.Run(_graph!);

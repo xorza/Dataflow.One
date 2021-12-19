@@ -12,11 +12,15 @@ public sealed class Graph {
 
     public IReadOnlyList<Node> Nodes { get; }
 
-    public void Add(Node node) {
-        Check.True(node.Graph == null);
-
-        node.Graph = this;
+    private void Add(Node node) {
+        Check.True(node.Graph == this);
         _nodes.Add(node);
+    }
+
+    public Node AddNode(Function function) {
+        Node node = new (this, function);
+        Add(node);
+        return node;
     }
 
     public void Remove(Node node) {
@@ -31,8 +35,6 @@ public sealed class Graph {
             .Where(_ => _.OutputNode == node)
             .ToArray()
             .Foreach(_ => _.InputNode.Remove(_));
-
-        node.Graph = null;
     }
 
     public FunctionFactory FunctionFactory { get; set; } = new();

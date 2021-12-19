@@ -34,14 +34,15 @@ public sealed class GraphView : INotifyPropertyChanged {
 
 
     private FunctionFactoryView _functionFactory;
+
     public FunctionFactoryView FunctionFactory {
         get => _functionFactory;
         set {
             if (_functionFactory != value) {
                 _functionFactory = value;
                 OnPropertyChanged();
-            }  
-        } 
+            }
+        }
     }
 
 
@@ -132,8 +133,7 @@ public sealed class GraphView : INotifyPropertyChanged {
     }
 
     public NodeView CreateNode(Function func) {
-        NodeCore.Node node = new(func);
-        Graph.Add(node);
+        NodeCore.Node node = Graph.AddNode(func);
         NodeView result = new(this, node);
         _nodes.Add(result);
 
