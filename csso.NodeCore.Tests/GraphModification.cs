@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace csso.Calculator.Tests; 
+namespace csso.NodeCore.Tests; 
 
 
 public class GraphModification {

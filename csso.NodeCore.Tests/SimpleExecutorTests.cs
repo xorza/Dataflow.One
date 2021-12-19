@@ -5,7 +5,7 @@ using csso.NodeCore;
 using csso.NodeCore.Funcs;
 using NUnit.Framework;
 
-namespace csso.Calculator.Tests;
+namespace csso.NodeCore.Tests;
 
 public class Tests {
     private Graph? _graph;

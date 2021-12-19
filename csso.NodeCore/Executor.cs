@@ -1,7 +1,6 @@
 using csso.Common;
-using csso.NodeCore;
 
-namespace csso.Calculator;
+namespace csso.NodeCore;
 
 internal static class Xtensions {
     public static Int32? FirstIndexOf<T>(this IEnumerable<T> enumerable, T element) {
