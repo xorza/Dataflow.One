@@ -53,7 +53,6 @@ public class Tests {
         Assert.AreEqual(3, _outputFunc.Value);
 
         _constFunc1.Value = 33;
-        _executor.Reset();
         _executor.Run();
 
         Assert.AreEqual(33, _outputFunc.Value);
@@ -70,6 +69,7 @@ public class Tests {
 
         _executor!.Run();
         Assert.AreEqual(0, _outputFunc.Value);
+        
         _executor.Run();
         Assert.AreEqual(1, _outputFunc.Value);
 
@@ -93,8 +93,7 @@ public class Tests {
             _constNode2!,
             _constNode2!.Function.Outputs.Single());
 
-        _executor!.Reset();
-        _executor.Run();
+        _executor!.Run();
         Assert.AreEqual(1256, _outputFunc.Value);
 
         _executor.Run();
@@ -120,8 +119,7 @@ public class Tests {
             _frameNoNode!,
             _frameNoNode!.Function.Outputs.Single());
 
-        _executor!.Reset();
-        _executor.Run();
+        _executor!.Run();
         Assert.AreEqual(3, _outputFunc.Value);
         _executor.Run();
         Assert.AreEqual(4, _outputFunc.Value);
@@ -147,8 +145,7 @@ public class Tests {
             _frameNoNode!,
             _frameNoNode!.Function.Outputs.Single());
 
-        _executor!.Reset();
-        _executor.Run();
+        _executor!.Run();
         Assert.AreEqual(3, _outputFunc.Value);
         _executor.Run();
         Assert.AreEqual(3, _outputFunc.Value);
