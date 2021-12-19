@@ -33,7 +33,7 @@
       {
         "Name": "Frame number",
         "Id": "6c7a4e3b-d9b5-457b-aa67-1dbbe41178e2",
-        "FullName": "csso.NodeCore.Executor::Frame number",
+        "FullName": "csso.NodeCore.Funcs.FrameNoFunc::Frame number",
         "ConfigValues": [],
         "ValueConnections": [],
         "Behavior": 1

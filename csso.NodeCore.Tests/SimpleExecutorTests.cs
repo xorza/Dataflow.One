@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
+using csso.NodeCore.Run;
 using NUnit.Framework;
 
 namespace csso.NodeCore.Tests;
@@ -19,6 +20,7 @@ public class Tests {
     private readonly ValueFunc<Int32> _constFunc1 = new();
     private readonly ValueFunc<Int32> _constFunc2 = new();
     private readonly OutputFunc<Int32> _outputFunc = new();
+    private readonly FrameNoFunc _frameNoFunc = new();
 
     private readonly Function _addFunc = new("Value", F.Add);
 
@@ -26,14 +28,15 @@ public class Tests {
     [SetUp]
     public void Setup() {
         _graph = new Graph();
-        _executor = new Executor();
+        _executor = new Executor(_graph);
+        _frameNoFunc.Executor = _executor;
 
         _constFunc1.Value = 3;
         _constFunc2.Value = 1253;
 
         _constNode1 = _graph.AddNode(_constFunc1);
         _outputNode = _graph.AddNode(_outputFunc);
-        _frameNoNode = _graph.AddNode(_executor.FrameNoFunction);
+        _frameNoNode = _graph.AddNode(_frameNoFunc);
         _addNode = _graph.AddNode(_addFunc);
         _constNode2 = _graph.AddNode(_constFunc2);
     }
@@ -44,13 +47,13 @@ public class Tests {
             _outputNode!.Function.Inputs.Single(),
             _constNode1!,
             _constNode1!.Function.Outputs.Single());
-        _executor!.Reset();
-        _executor.Run(_graph!);
+
+        _executor!.Run();
         Assert.AreEqual(3, _outputFunc.Value);
 
         _constFunc1.Value = 33;
         _executor.Reset();
-        _executor.Run(_graph!);
+        _executor.Run();
 
         Assert.AreEqual(_outputFunc.Value, 33);
 
@@ -65,9 +68,9 @@ public class Tests {
             _frameNoNode!.Function.Outputs.Single());
 
         _executor!.Reset();
-        _executor.Run(_graph!);
+        _executor.Run();
         Assert.AreEqual(0, _outputFunc.Value);
-        _executor.Run(_graph!);
+        _executor.Run();
         Assert.AreEqual(1, _outputFunc.Value);
 
         Assert.Pass();
@@ -91,10 +94,10 @@ public class Tests {
             _constNode2!.Function.Outputs.Single());
 
         _executor!.Reset();
-        _executor.Run(_graph!);
+        _executor.Run();
         Assert.AreEqual(1256, _outputFunc.Value);
 
-        _executor.Run(_graph!);
+        _executor.Run();
         Assert.AreEqual(1256, _outputFunc.Value);
 
         Assert.Pass();
@@ -118,9 +121,9 @@ public class Tests {
             _frameNoNode!.Function.Outputs.Single());
 
         _executor!.Reset();
-        _executor.Run(_graph!);
+        _executor.Run();
         Assert.AreEqual(3, _outputFunc.Value);
-        _executor.Run(_graph!);
+        _executor.Run();
         Assert.AreEqual(4, _outputFunc.Value);
 
         Assert.Pass();
@@ -145,9 +148,9 @@ public class Tests {
             _frameNoNode!.Function.Outputs.Single());
 
         _executor!.Reset();
-        _executor.Run(_graph!);
+        _executor.Run();
         Assert.AreEqual(3, _outputFunc.Value);
-        _executor.Run(_graph!);
+        _executor.Run();
         Assert.AreEqual(3, _outputFunc.Value);
 
         Assert.Pass();

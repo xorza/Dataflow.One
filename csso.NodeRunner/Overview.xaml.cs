@@ -11,7 +11,7 @@ using csso.OpenCL;
 using csso.WpfNode;
 using Microsoft.Win32;
 using Buffer = csso.OpenCL.Buffer;
-using Executor = csso.NodeCore.Executor;
+using Executor = csso.NodeCore.Run.Executor;
 using Graph = csso.NodeCore.Graph;
 using Image = csso.ImageProcessing.Image;
 using Node = csso.NodeCore.Node;
@@ -23,7 +23,7 @@ public partial class Overview {
         nameof(GraphView), typeof(GraphView), typeof(Overview), new PropertyMetadata(default(GraphView)));
 
     private readonly Context? _clContext;
-    private readonly Executor _executor = new();
+    private readonly Executor _executor;
     private Graph _graph;
 
     private readonly FunctionFactory _functionFactory = new();
@@ -31,20 +31,23 @@ public partial class Overview {
     public Overview() {
         InitializeComponent();
 
-        _graph = new Graph();
-        _clContext = new Context();
+        _graph = new ();
+        _clContext = new ();
+        _executor = new(_graph);
 
         Function addFunc = new Function("Add", F.Add);
         Function divideWholeFunc = new Function("Divide whole", F.DivideWhole);
         Function messageBoxFunc = new Function("Output", Output);
         Function valueFunc = new Function("Value", Const);
+        FrameNoFunc frameNoFunc = new() {
+            Executor = _executor
+        };
 
         _functionFactory.Register(addFunc);
         _functionFactory.Register(divideWholeFunc);
         _functionFactory.Register(messageBoxFunc);
         _functionFactory.Register(valueFunc);
-        _functionFactory.Register(_executor.FrameNoFunction);
-        _functionFactory.Register(_executor.DeltaTimeFunction);
+        _functionFactory.Register(frameNoFunc);
 
         _graph.FunctionFactory = _functionFactory;
 
@@ -156,7 +159,7 @@ public partial class Overview {
     }
 
     private void RunGraph_Button_OnClick(object sender, RoutedEventArgs args) {
-        _executor.Run(_graph);
+        _executor.Run();
     }
 
     private void ResetCtx_Button_OnClick(object sender, RoutedEventArgs args) {
