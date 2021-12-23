@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
-namespace csso.WpfNode; 
+namespace csso.WpfNode;
 
 public class NodeView : INotifyPropertyChanged {
     private bool _isSelected;
@@ -28,6 +28,16 @@ public class NodeView : INotifyPropertyChanged {
     public GraphView GraphView { get; }
 
     public NodeCore.Node Node { get; }
+
+    private double _executionTime = Double.NaN;
+
+    public Double ExecutionTime {
+        get => _executionTime;
+        set {
+            _executionTime = value;
+            OnPropertyChanged();
+        }
+    }
 
     public List<PutView> Inputs { get; } = new();
     public List<PutView> Outputs { get; } = new();
@@ -67,7 +77,7 @@ public class NodeView : INotifyPropertyChanged {
 
         result.Position = Position;
         result.Id = Node.Id;
-        
+
         return result;
     }
 }

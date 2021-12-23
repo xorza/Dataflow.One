@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using csso.Common;
+using Debug = csso.Common.Debug;
 
 namespace csso.NodeCore.Run;
 
@@ -10,19 +12,21 @@ public class ExecutionNode {
         ArgCount = node.Function.Args.Count;
 
         ArgValues = Enumerable.Repeat(Empty, ArgCount).ToArray();
-        ArgDependencies = Enumerable.Repeat((Dependency?) null, ArgCount).ToArray();
+        ArgDependencies = Enumerable.Repeat((OutputConnection?) null, ArgCount).ToArray();
 
         Behavior = node.FinalBehavior;
     }
 
     public Node Node { get; }
     public Object?[] ArgValues { get; }
-    public Dependency?[] ArgDependencies { get; }
+    public OutputConnection?[] ArgDependencies { get; }
     public Int32 ArgCount { get; }
     public bool HasOutputValues { get; private set; }
-    public FunctionBehavior Behavior { get; private set; } = FunctionBehavior.Proactive;
+    public FunctionBehavior Behavior { get; private set; }
     public bool ArgumentsUpdatedThisFrame { get; set; }
     public bool ProcessedThisFrame { get; set; }
+
+    public double ExecutionTime { get; private set; } = Double.NaN;
 
     public object? GetOutputValue(FunctionOutput outputConnectionOutput) {
         Check.True(HasOutputValues);
@@ -33,15 +37,20 @@ public class ExecutionNode {
         return ArgValues[index.Value];
     }
 
-    public void Invoke() {
+    public void Invoke(Executor executor) {
         if (HasOutputValues
             && !ArgumentsUpdatedThisFrame
-            && Behavior != FunctionBehavior.Proactive)
+            && Behavior != FunctionBehavior.Proactive) {
             throw new Exception("rb56u etdg");
-        if (!ProcessedThisFrame)
+        }
+        if (!ProcessedThisFrame) {
             throw new Exception("veldkfgyuivhnwo4875");
+        }
 
-        for (var i = 0; i < ArgCount; i++)
+        Stopwatch sw = new();
+        sw.Start();
+
+        for (var i = 0; i < ArgCount; i++) {
             switch (Node.Function.Args[i].ArgType) {
                 case ArgType.Config:
                     break;
@@ -50,9 +59,10 @@ public class ExecutionNode {
                     break;
                 case ArgType.In:
                     if (ArgDependencies[i] != null) {
-                        Check.True(ArgDependencies[i]!.Node.HasOutputValues);
-                        ArgValues[i] = ArgDependencies[i]!.Node
-                            .GetOutputValue(ArgDependencies[i]!.Output);
+                        ExecutionNode en = executor.GetExecutionNode(ArgDependencies[i]!.OutputNode);
+
+                        Check.True(en.HasOutputValues);
+                        ArgValues[i] = en.GetOutputValue(ArgDependencies[i]!.Output);
                     }
 
                     if (ArgValues[i] == Empty) {
@@ -68,11 +78,16 @@ public class ExecutionNode {
                     Debug.Assert.False();
                     return;
             }
+        }
 
         Node.Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
 
-        if (!Node.Function.IsProcedure)
+        if (!Node.Function.IsProcedure) {
             HasOutputValues = true;
+        }
+        
+        sw.Stop();
+        ExecutionTime = sw.ElapsedMilliseconds / 1000.0;
     }
 
     private Object Pool(Type type) {
@@ -81,7 +96,7 @@ public class ExecutionNode {
 
     private class NotFound { }
 
-    public void Refresh(Executor graph) {
+    public void NextIteration() {
         Check.True(ArgCount == Node.Function.Args.Count);
         Check.True(ArgCount == ArgDependencies.Length);
         Check.True(ArgCount == ArgValues.Length);
@@ -100,25 +115,14 @@ public class ExecutionNode {
                     return;
                 }
 
-                if (connection is ValueConnection valueConnection)
+                if (connection is ValueConnection valueConnection) {
                     ArgValues[i] = valueConnection.Value;
-
-                if (connection is OutputConnection outputConnection) {
-                    var dependencyNode = graph.GetEvaluated(outputConnection.OutputNode);
-
-                    if (dependencyNode == null)
-                        throw new Exception("setsdfsdf");
-
-                    // if (dependencyNode.Behavior == FunctionBehavior.Proactive)
-                    //     Behavior = FunctionBehavior.Proactive;
-
-                    ArgDependencies[i] = new Dependency(
-                        dependencyNode,
-                        outputConnection.Output,
-                        outputConnection.Behavior
-                    );
                 }
-            } else if (arg is FunctionConfig config) {
+
+                ArgDependencies[i] = connection as OutputConnection;
+            } 
+            
+            if (arg is FunctionConfig config) {
                 var value = Node.ConfigValues
                     .Single(_ => _.Config == config);
                 ArgValues[i] = value.Value;

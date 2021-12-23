@@ -20,7 +20,6 @@ public partial class Graph : UserControl {
 
     private readonly List<Node> _nodes = new();
 
-
     private Point? _dragStart;
 
     private Canvas? _nodesCanvas;
@@ -64,7 +63,7 @@ public partial class Graph : UserControl {
         if (e.NewValue is GraphView graphView) {
             ((INotifyCollectionChanged) graphView.Edges).CollectionChanged += graph.Edges_CollectionChanged;
         }
-        
+
         graph.RedrawEdges();
     }
 
@@ -94,10 +93,10 @@ public partial class Graph : UserControl {
             inputPointBinding.Source = GraphView!.Edges[i];
 
             Binding outputPointBinding = new("Output.PinPoint");
-            outputPointBinding.Source = GraphView!.Edges[i];
+            outputPointBinding.Source = GraphView.Edges[i];
 
             Binding proactivePointBinding = new("IsProactive");
-            proactivePointBinding.Source = GraphView!.Edges[i];
+            proactivePointBinding.Source = GraphView.Edges[i];
 
             Binding contextBinding = new();
             contextBinding.Source = GraphView!.Edges[i];
@@ -147,7 +146,7 @@ public partial class Graph : UserControl {
             (FunctionInput) input.FunctionArg,
             output.NodeView.Node,
             (FunctionOutput) output.FunctionArg);
-        
+
         input.NodeView.GraphView.Refresh();
     }
 
@@ -156,16 +155,11 @@ public partial class Graph : UserControl {
         _nodes.Foreach(_ => _.DragCanvas = _nodesCanvas);
     }
 
-
-    private int asd = 0;
     private void Node_OnLoaded(object sender, RoutedEventArgs e) {
         var node = (Node) sender;
         node.DragCanvas = _nodesCanvas;
         Check.True(node.NodeView?.GraphView == GraphView);
         AddNode(node);
-
-        node.Tag = asd;
-        asd++;
     }
 
     private void Node_Unloaded_Handler(object sender, RoutedEventArgs e) {
@@ -177,6 +171,16 @@ public partial class Graph : UserControl {
     private void AddNode(Node node) {
         Check.True(node.NodeView != null);
 
+        EnableDrag(node);
+
+        _nodes.Add(node);
+
+        node.PinClick += Node_OnPinClick;
+        node.DragCanvas = _nodesCanvas;
+        node.Style = NodeStyle;
+    }
+
+    private void EnableDrag(Node node) {
         void Down(object sender, MouseButtonEventArgs args) {
             if (_dragStart == null) args.Handled = true;
 
@@ -202,17 +206,8 @@ public partial class Graph : UserControl {
             }
         }
 
-        void EnableDrag(UIElement element) {
-            element.MouseDown += Down;
-            element.MouseMove += Move;
-            element.MouseUp += Up;
-        }
-
-        EnableDrag(node);
-        _nodes.Add(node);
-
-        node.PinClick += Node_OnPinClick;
-        node.DragCanvas = _nodesCanvas;
-        node.Style = NodeStyle;
+        node.MouseDown += Down;
+        node.MouseMove += Move;
+        node.MouseUp += Up;
     }
 }

@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows;
+using csso.Common;
 using csso.ImageProcessing;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
+using csso.NodeCore.Run;
 using csso.OpenCL;
 using csso.WpfNode;
 using Microsoft.Win32;
@@ -164,6 +166,7 @@ public partial class Overview {
         }
 
         _executor.Run();
+        GraphView!.OnExecuted(_executor);
     }
 
     private void ResetCtx_Button_OnClick(object sender, RoutedEventArgs args) {

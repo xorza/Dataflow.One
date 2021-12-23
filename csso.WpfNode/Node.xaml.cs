@@ -32,11 +32,11 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     public static readonly DependencyProperty NodeViewProperty = DependencyProperty.Register(
         nameof(NodeView), typeof(NodeView), typeof(Node),
         new PropertyMetadata(default(NodeView), NodeView_PropertyChangedCallback));
-    
+
     public static readonly DependencyProperty DragCanvasProperty = DependencyProperty.Register(
         nameof(DragCanvas), typeof(Canvas), typeof(Node),
         new PropertyMetadata(default(Canvas), DragCanvas_PropertyChangedCallback));
-    
+
     public static readonly DependencyProperty DeletionEnabledProperty = DependencyProperty.Register(
         nameof(DeletionEnabled), typeof(bool), typeof(Node), new PropertyMetadata(default(bool)));
 
@@ -91,7 +91,19 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     private void LayoutUpdated_EventHandler(object? sender, EventArgs e) { }
 
     private static void NodeView_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        Node graph = (Node) d;
+        Node node = (Node) d;
+        if (e.OldValue is NodeView nv1)
+            nv1.PropertyChanged -= node.OnPropertyChanged;
+        if (e.OldValue is NodeView nv2)
+            nv2.PropertyChanged += node.OnPropertyChanged;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (double.IsFinite(NodeView!.ExecutionTime)) {
+            ExecutionTimeTextBlock.Visibility = Visibility.Hidden;
+        } else {
+            ExecutionTimeTextBlock.Visibility = Visibility.Visible;
+        }
     }
 
     private void PinButton_Click(object sender, RoutedEventArgs e) {

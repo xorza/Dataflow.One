@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using csso.Common;
 using csso.NodeCore;
+using csso.NodeCore.Run;
 using csso.WpfNode.Annotations;
 using DynamicData;
 using OpenTK.Compute.OpenCL;
@@ -32,7 +33,6 @@ public sealed class GraphView : INotifyPropertyChanged {
     private readonly ObservableCollection<EdgeView> _edges = new();
     public ReadOnlyObservableCollection<EdgeView> Edges { get; }
 
-
     private FunctionFactoryView _functionFactory;
 
     public FunctionFactoryView FunctionFactory {
@@ -45,10 +45,8 @@ public sealed class GraphView : INotifyPropertyChanged {
         }
     }
 
-
     private readonly ObservableCollection<NodeView> _nodes = new();
     public ReadOnlyObservableCollection<NodeView> Nodes { get; }
-
 
     public NodeView? SelectedNode {
         get => _selectedNode;
@@ -160,6 +158,14 @@ public sealed class GraphView : INotifyPropertyChanged {
             .Foreach(_ => {
                 var node = _nodes.Single(n => n.Node.Id == _.Id);
                 node.Position = _.Position;
+            });
+    }
+
+    public void OnExecuted(Executor executor) {
+        Nodes
+            .Foreach(_ => {
+                ExecutionNode en = executor.GetExecutionNode(_.Node);
+                _.ExecutionTime = en.ExecutionTime;
             });
     }
 }
