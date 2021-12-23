@@ -17,7 +17,7 @@ public class Tests {
     private Node? _addNode;
 
     private readonly ValueFunc<Int32> _constFunc1 = new();
-    private readonly ValueFunc<Int32> _constFunc2 = new();
+    private readonly ConfigValueFunc<Int32> _configConstFunc2 = new();
     private readonly OutputFunc<Int32> _outputFunc = new();
     private readonly FrameNoFunc _frameNoFunc = new();
 
@@ -29,13 +29,13 @@ public class Tests {
         _graph = new Graph();
 
         _constFunc1.Value = 3;
-        _constFunc2.Value = 1253;
+        _configConstFunc2.Config.Single().Value = 1253;
 
         _constNode1 = _graph.AddNode(_constFunc1);
+        _constNode2 = _graph.AddNode(_configConstFunc2);
         _outputNode = _graph.AddNode(_outputFunc);
         _frameNoNode = _graph.AddNode(_frameNoFunc);
         _addNode = _graph.AddNode(_addFunc);
-        _constNode2 = _graph.AddNode(_constFunc2);
     }
 
     [Test]
@@ -160,6 +160,29 @@ public class Tests {
         Assert.AreEqual(3, _outputFunc.Value);
         executor.Run();
         Assert.AreEqual(3, _outputFunc.Value);
+
+        Assert.Pass();
+    }
+    
+    [Test]
+    public void Test6() {
+        _outputNode!.AddConnection(
+            _outputNode!.Function.Inputs.Single(),
+            _constNode2!,
+            _constNode2!.Function.Outputs.Single());
+
+        var executor = _graph!.Compile();
+        _frameNoFunc.Executor = executor;
+
+        _constNode2.ConfigValues.Single().Value = 133;
+        
+        executor.Run();
+        Assert.AreEqual(133, _outputFunc.Value);
+        
+        
+        _constNode2.ConfigValues.Single().Value = 132;
+        executor.Run();
+        Assert.AreEqual(132, _outputFunc.Value);
 
         Assert.Pass();
     }

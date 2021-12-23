@@ -35,17 +35,13 @@ public class FunctionOutput : FunctionArg {
 }
 
 public class FunctionConfig : FunctionArg {
-    private Object? _defaultValue = default(Type);
-    protected FunctionConfig(String name, Type type, UInt32 index) : base(name, type, index) { }
+    private Object? _value = default(Type);
 
-    public Object? DefaultValue {
-        get => _defaultValue;
-        set {
-            if (value != null)
-                Check.True(value.GetType() == Type);
+    public FunctionConfig(String name, Type type, UInt32 index) : base(name, type, index) { }
 
-            _defaultValue = value;
-        }
+    public Object? Value {
+        get => _value;
+        set => _value = Convert.ChangeType(value, Type);
     }
 
     public override ArgType ArgType => ArgType.Config;
@@ -65,12 +61,12 @@ public class FunctionConfig<T> : FunctionConfig {
     public FunctionConfig(string name, Type type, UInt32 index) : base(name, type, index) { }
 
     public T TypedValue {
-        get => (T) DefaultValue!;
+        get => (T) Value!;
         set {
             if (value != null)
                 Check.True(value.GetType() == Type);
 
-            DefaultValue = value;
+            Value = value;
         }
     }
 }

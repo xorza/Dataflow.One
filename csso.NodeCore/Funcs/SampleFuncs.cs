@@ -57,6 +57,17 @@ public class ValueFunc<T> : Function {
     }
 }
 
+public class ConfigValueFunc<T> : Function {
+    public ConfigValueFunc() {
+        Refresh("Config Const", Func_);
+    }
+
+    private bool Func_([Config] T value, [Output] out T arg) {
+        arg = value;
+        return true;
+    }
+}
+
 public class FrameNoFunc : Function {
     public Executor? Executor { get; set; }
 

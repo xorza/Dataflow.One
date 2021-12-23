@@ -53,6 +53,7 @@ public class ExecutionNode {
         for (var i = 0; i < ArgCount; i++) {
             switch (Node.Function.Args[i].ArgType) {
                 case ArgType.Config:
+                    ArgValues[i] = Node.ConfigValues[i].Value;
                     break;
                 case ArgType.Out:
                     ArgValues[i] = Pool(Node.Function.Args[i].Type);
@@ -121,12 +122,6 @@ public class ExecutionNode {
 
                 ArgDependencies[i] = connection as OutputConnection;
             } 
-            
-            if (arg is FunctionConfig config) {
-                var value = Node.ConfigValues
-                    .Single(_ => _.Config == config);
-                ArgValues[i] = value.Value;
-            }
         }
     }
 }

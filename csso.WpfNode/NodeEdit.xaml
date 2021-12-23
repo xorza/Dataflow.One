@@ -25,9 +25,9 @@
                     <ResourceDictionary>
                         <DataTemplate
                             x:Key="Int32DataTemplate"
-                            DataType="{x:Type nodecore:FunctionConfig}">
+                            DataType="nodecore:FunctionConfig">
                             <Border Background="MediumVioletRed">
-                                <TextBox Text="{Binding TypedValue }" />
+                                <TextBox Text="{Binding Value }" />
                             </Border>
                         </DataTemplate>
 

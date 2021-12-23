@@ -6,7 +6,7 @@ namespace csso.NodeCore;
 public class ConfigValue {
     private Object? _value;
 
-    public ConfigValue(FunctionConfig config) : this(config, config.DefaultValue) { }
+    public ConfigValue(FunctionConfig config) : this(config, config.Value) { }
 
     public ConfigValue(FunctionConfig config, Object? value) {
         Config = config;
@@ -19,12 +19,7 @@ public class ConfigValue {
 
     public Object? Value {
         get => _value;
-        set {
-            if (value != null)
-                Check.True(value.GetType() == Type);
-
-            _value = value;
-        }
+        set => _value = Convert.ChangeType(value, Type);
     }
 
     internal SerializedConfigValue Serialize() {

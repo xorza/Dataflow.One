@@ -94,7 +94,7 @@ public class Function {
                 var config = FunctionConfig.Create(argName, argType, i);
                 if (configAttribute.DefaultValue != null) {
                     Check.True(argType == configAttribute.DefaultValue.GetType());
-                    config.DefaultValue = configAttribute.DefaultValue;
+                    config.Value = configAttribute.DefaultValue;
                 }
 
                 arg = config;

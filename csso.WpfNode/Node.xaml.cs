@@ -57,7 +57,13 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         Loaded += OnLoaded;
     }
 
-    private void OnLoaded(object sender, RoutedEventArgs e) { }
+    private void OnLoaded(object sender, RoutedEventArgs e) {
+        if (NodeView != null) {
+            NodeView.PropertyChanged += OnPropertyChanged;
+        }
+
+        RefreshExecutionTime();
+    }
 
     public Brush HighlightBrush {
         get => (Brush) GetValue(HighlightBrushProperty);
@@ -99,10 +105,12 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (double.IsFinite(NodeView!.ExecutionTime)) {
-            ExecutionTimeTextBlock.Visibility = Visibility.Hidden;
-        } else {
-            ExecutionTimeTextBlock.Visibility = Visibility.Visible;
+        RefreshExecutionTime();
+    }
+
+    private void RefreshExecutionTime() {
+        if (NodeView != null) {
+            ExecutionTimeTextBlock.Visibility = double.IsFinite(NodeView.ExecutionTime) ? Visibility.Visible : Visibility.Hidden;
         }
     }
 
