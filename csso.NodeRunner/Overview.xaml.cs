@@ -23,10 +23,12 @@ public partial class Overview {
         nameof(GraphView), typeof(GraphView), typeof(Overview), new PropertyMetadata(default(GraphView)));
 
     private readonly Context? _clContext;
-    private readonly Executor _executor;
+    private Executor? _executor;
     private Graph _graph;
 
     private readonly FunctionFactory _functionFactory = new();
+
+    private readonly FrameNoFunc _frameNoFunc;
 
     public Overview() {
         InitializeComponent();
@@ -38,13 +40,13 @@ public partial class Overview {
         Function divideWholeFunc = new Function("Divide whole", F.DivideWhole);
         Function messageBoxFunc = new Function("Output", Output);
         Function valueFunc = new Function("Value", Const);
-        FrameNoFunc frameNoFunc = new();
+        _frameNoFunc = new();
 
         _functionFactory.Register(addFunc);
         _functionFactory.Register(divideWholeFunc);
         _functionFactory.Register(messageBoxFunc);
         _functionFactory.Register(valueFunc);
-        _functionFactory.Register(frameNoFunc);
+        _functionFactory.Register(_frameNoFunc);
 
         _graph.FunctionFactory = _functionFactory;
 
@@ -58,9 +60,6 @@ public partial class Overview {
         // _graph.Add(new Node(_executor.DeltaTimeFunction, _graph));
 
         GraphView = new(_graph);
-
-        _executor = _graph.Compile();
-        frameNoFunc.Executor = _executor;
     }
 
     public GraphView? GraphView {
@@ -159,11 +158,16 @@ public partial class Overview {
     }
 
     private void RunGraph_Button_OnClick(object sender, RoutedEventArgs args) {
+        if (_executor == null) {
+            _executor = _graph.Compile();
+            _frameNoFunc.Executor = _executor;
+        }
+
         _executor.Run();
     }
 
     private void ResetCtx_Button_OnClick(object sender, RoutedEventArgs args) {
-        _executor.Reset();
+        _executor = null;
     }
 
     private void Serialize_Button_OnClick(object sender, RoutedEventArgs e) {

@@ -34,10 +34,11 @@ public class Executor {
 
     internal Executor(Graph graph) {
         Graph = graph;
+        Reset();
     }
 
 
-    public void Reset() {
+    private void Reset() {
         FrameNo = 0;
 
         EvaluationNodes.Clear();
@@ -55,8 +56,8 @@ public class Executor {
     }
 
     public void Run() {
-        if (FrameNo == 0)
-            Reset();
+        // if (FrameNo == 0)
+        //     Reset();
 
         EvaluationNodes.Foreach(_ => _.Refresh(this));
 
