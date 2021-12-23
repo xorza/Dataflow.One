@@ -107,7 +107,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void PinButton_Click(object sender, RoutedEventArgs e) {
-        var pv = ((Put) sender).PutView!;
+        PutView pv = ((Put) sender).PutView!;
         PinClick?.Invoke(this,
             new PinClickEventArgs(pv) {
                 RoutedEvent = e.RoutedEvent,
@@ -121,11 +121,8 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void Node_MouseLeftButtonDown(object sender, MouseButtonEventArgs args) {
-        Check.True(NodeView != null);
-
-        if (NodeView!.GraphView.SelectedNode != NodeView) NodeView!.GraphView.SelectedNode = NodeView;
+        NodeView!.GraphView.SelectedNode = NodeView;
     }
-
 
     private void Close_Button_OnClick(object sender, RoutedEventArgs e) {
         NodeView!.GraphView.RemoveNode(NodeView);
