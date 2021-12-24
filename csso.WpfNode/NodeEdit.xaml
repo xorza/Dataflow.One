@@ -5,9 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:csso.WpfNode"
              xmlns:nodecore="clr-namespace:csso.NodeCore;assembly=csso.NodeCore"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
 
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
              x:Name="NodeEditUserControl">
     <UserControl.Template>
         <ControlTemplate TargetType="local:NodeEdit">
@@ -20,30 +22,29 @@
 
             <TextBlock Text="{Binding Path=NodeView.Node.Function.Description, ElementName=NodeEditUserControl}" />
 
-            <ItemsControl ItemsSource="{Binding Path=NodeView.Node.Function.Config, ElementName=NodeEditUserControl}">
+            <ItemsControl ItemsSource="{Binding Path=NodeView.Node.ConfigValues, ElementName=NodeEditUserControl}">
                 <ItemsControl.Resources>
-                    <ResourceDictionary>
-                        <DataTemplate
-                            x:Key="Int32DataTemplate"
-                            DataType="nodecore:FunctionConfig">
-                            <Border Background="MediumVioletRed">
-                                <TextBox Text="{Binding Value }" />
-                            </Border>
-                        </DataTemplate>
 
-                        <local:NodeConfigTemplateSelector x:Key="NodeConfigTemplateSelector"
-                                                          Int32DataTemplate="{StaticResource Int32DataTemplate}" />
-
-                        <DataTemplate DataType="{x:Type nodecore:FunctionConfig}">
-                            <Border Background="MediumVioletRed">
-                                <ContentControl Content="{Binding}"
-                                                ContentTemplateSelector="{StaticResource NodeConfigTemplateSelector}" />
-                            </Border>
-                        </DataTemplate>
-                    </ResourceDictionary>
                 </ItemsControl.Resources>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="nodecore:ConfigValue">
+                        <Border Background="MediumVioletRed">
+                            <TextBox Text="{Binding Value}" />
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
             </ItemsControl>
 
+            <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.Outputs}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="local:PutView">
+                        <Grid>
+                            <local:Value ValueView="{Binding ValueView}" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </StackPanel>
     </Grid>
 </UserControl>

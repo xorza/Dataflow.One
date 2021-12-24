@@ -43,6 +43,18 @@ public sealed class PutView : INotifyPropertyChanged {
         }
     }
 
+    private ValueView? _valueView;
+    public ValueView? ValueView {
+        get => _valueView;
+        set {
+            if (_valueView == value)
+                return;
+
+            _valueView = value;
+            OnPropertyChanged();
+        }
+    }
+
     public NodeView NodeView { get; }
 
     public bool IsSelected {

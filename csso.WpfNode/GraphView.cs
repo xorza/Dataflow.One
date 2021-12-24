@@ -162,11 +162,16 @@ public sealed class GraphView : INotifyPropertyChanged {
     }
 
     public void OnExecuted(Executor executor) {
-        Nodes
-            .Foreach(_ => {
-                ExecutionNode en = executor.GetExecutionNode(_.Node);
-                _.ExecutionTime = en.ExecutionTime;
-            });
+        foreach (var nodeView in Nodes) {
+            ExecutionNode en = executor.GetExecutionNode(nodeView.Node);
+            nodeView.ExecutionTime = en.ExecutionTime;
+
+            foreach (var output in nodeView.Outputs) {
+                var index = output.FunctionArg.Index;
+                var value = en.ArgValues[index];
+                output.ValueView = new(value);
+            }
+        }
     }
 }
 

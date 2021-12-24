@@ -8,8 +8,6 @@
         <ResourceDictionary Source="Styles/ListView.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <BooleanToVisibilityConverter x:Key="BoolToVis" />
-
     <Style TargetType="Control">
         <Setter Property="Background" Value="{StaticResource InactiveContentBackgroundBrush}" />
         <Setter Property="Foreground" Value="{StaticResource InactiveForegroundBrush}" />

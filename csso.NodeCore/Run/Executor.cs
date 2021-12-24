@@ -38,8 +38,7 @@ public class Executor {
                 .Select(n => new ExecutionNode(n))
                 .ToList();
     }
-
-
+    
     public void Run() {
         EvaluationNodes.Foreach(_ => _.NextIteration());
 
