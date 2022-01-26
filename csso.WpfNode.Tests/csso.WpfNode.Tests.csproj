@@ -24,7 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\csso.Calculator\csso.Calculator.csproj" />
       <ProjectReference Include="..\csso.WpfNode\csso.WpfNode.csproj" />
     </ItemGroup>
 
