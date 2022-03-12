@@ -10,7 +10,8 @@ public static class Xtentions {
     }
 
     public static IEnumerable Foreach<T>(this IEnumerable e, Action<T> action) {
-        foreach (var item in e)
+        var enumerable = e as object[] ?? e.Cast<object>().ToArray();
+        foreach (var item in enumerable)
             if (item is T tItem)
                 action(tItem);
             else if (item == null)
@@ -18,7 +19,7 @@ public static class Xtentions {
             else
                 throw new Exception("sergtg2v45");
 
-        return e;
+        return enumerable;
     }
 
     public static IEnumerable<T> SkipNulls<T>(this IEnumerable<T?> e) {
@@ -29,5 +30,9 @@ public static class Xtentions {
         });
 
         return result;
+    }
+
+    public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate) {
+        return !source.Any(predicate);
     }
 }

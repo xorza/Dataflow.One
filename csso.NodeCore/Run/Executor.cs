@@ -20,11 +20,10 @@ internal static class Xtensions {
 
 public class Executor {
     public Int32 FrameNo { get; private set; }
-
-    public List<ExecutionNode> EvaluationNodes { get; }
+    public ExecutionGraph ExecutionGraph { get;  }
 
     public ExecutionNode GetExecutionNode(Node node) {
-        return EvaluationNodes.Single(_ => _.Node == node);;
+        return ExecutionGraph.EvaluationNodes.Single(_ => _.Node == node);
     }
 
     public Graph Graph { get; }
@@ -32,15 +31,13 @@ public class Executor {
     internal Executor(Graph graph) {
         Graph = graph;
         FrameNo = 0;
-
-        EvaluationNodes =
-            Graph.Nodes
-                .Select(n => new ExecutionNode(n))
-                .ToList();
+        ExecutionGraph = new ExecutionGraph(graph);
     }
-    
+
     public void Run() {
-        EvaluationNodes.Foreach(_ => _.NextIteration());
+        ExecutionGraph.Refresh();
+
+        ExecutionGraph.EvaluationNodes.Foreach(_ => _.NextIteration());
 
         GetPathsToProcedures()
             .Foreach(UpdateExecutionNode);
@@ -51,6 +48,7 @@ public class Executor {
 
         ++FrameNo;
     }
+
 
     private IReadOnlyList<Node> GetPathsToProcedures() {
         Queue<Node> yetToProcessNodes = new();
@@ -92,7 +90,7 @@ public class Executor {
 
     private IReadOnlyList<ExecutionNode> GetInvocationList() {
         Queue<ExecutionNode> yetToProcessENodes = new();
-        EvaluationNodes
+        ExecutionGraph.EvaluationNodes
             .Where(_ => _.Node.Function.IsProcedure)
             .Foreach(yetToProcessENodes.Enqueue);
 
