@@ -1,0 +1,111 @@
+{
+  "Graph": {
+    "Nodes": [
+      {
+        "Name": "Add",
+        "Id": "9a4f3ce4-5b8f-4321-9964-8c8e359482e4",
+        "FullName": "csso.NodeCore.Funcs.F::Add",
+        "ConfigValues": [],
+        "ValueConnections": [],
+        "Behavior": 0
+      },
+      {
+        "Name": "Divide whole",
+        "Id": "8010a9e8-f575-4c45-a685-c5ffeabe24b3",
+        "FullName": "csso.NodeCore.Funcs.F::Divide whole",
+        "ConfigValues": [],
+        "ValueConnections": [],
+        "Behavior": 0
+      },
+      {
+        "Name": "Output",
+        "Id": "efd0d5bc-3e07-4321-972b-cf16e73001d8",
+        "FullName": "csso.NodeRunner.Overview::Output",
+        "ConfigValues": [],
+        "ValueConnections": [],
+        "Behavior": 1
+      },
+      {
+        "Name": "Value",
+        "Id": "44883b28-d509-4f7a-bc14-9a57000992e9",
+        "FullName": "csso.NodeRunner.Overview::Value",
+        "ConfigValues": [
+          {
+            "Value": "12",
+            "ConfigIndex": 0
+          }
+        ],
+        "ValueConnections": [],
+        "Behavior": 0
+      },
+      {
+        "Name": "Frame number",
+        "Id": "500f32e3-c7d1-483e-b2ba-8ecf19b5b6b7",
+        "FullName": "csso.NodeCore.Funcs.FrameNoFunc::Frame number",
+        "ConfigValues": [],
+        "ValueConnections": [],
+        "Behavior": 1
+      }
+    ],
+    "OutputConnections": [
+      {
+        "OutputIndex": 1,
+        "OutputNodeId": "44883b28-d509-4f7a-bc14-9a57000992e9",
+        "InputIndex": 1,
+        "InputNodeId": "9a4f3ce4-5b8f-4321-9964-8c8e359482e4",
+        "Behavior": 1
+      },
+      {
+        "OutputIndex": 0,
+        "OutputNodeId": "500f32e3-c7d1-483e-b2ba-8ecf19b5b6b7",
+        "InputIndex": 0,
+        "InputNodeId": "9a4f3ce4-5b8f-4321-9964-8c8e359482e4",
+        "Behavior": 1
+      },
+      {
+        "OutputIndex": 2,
+        "OutputNodeId": "9a4f3ce4-5b8f-4321-9964-8c8e359482e4",
+        "InputIndex": 0,
+        "InputNodeId": "efd0d5bc-3e07-4321-972b-cf16e73001d8",
+        "Behavior": 1
+      }
+    ]
+  },
+  "NodeViews": [
+    {
+      "Position": {
+        "X": 498.2857142857143,
+        "Y": 172
+      },
+      "Id": "9a4f3ce4-5b8f-4321-9964-8c8e359482e4"
+    },
+    {
+      "Position": {
+        "X": 539.7142857142858,
+        "Y": 421.42857142857144
+      },
+      "Id": "8010a9e8-f575-4c45-a685-c5ffeabe24b3"
+    },
+    {
+      "Position": {
+        "X": 712.2857142857142,
+        "Y": 183.14285714285714
+      },
+      "Id": "efd0d5bc-3e07-4321-972b-cf16e73001d8"
+    },
+    {
+      "Position": {
+        "X": 300.28571428571433,
+        "Y": 373.99999999999994
+      },
+      "Id": "44883b28-d509-4f7a-bc14-9a57000992e9"
+    },
+    {
+      "Position": {
+        "X": 233.71428571428572,
+        "Y": 73.14285714285711
+      },
+      "Id": "500f32e3-c7d1-483e-b2ba-8ecf19b5b6b7"
+    }
+  ]
+}
