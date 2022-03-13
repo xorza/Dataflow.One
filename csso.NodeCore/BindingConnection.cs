@@ -9,6 +9,18 @@ public enum ConnectionBehavior {
 
 public sealed class BindingConnection : Connection {
     private ConnectionBehavior _behavior = ConnectionBehavior.Always;
+    
+    public Node TargetNode { get; }
+    public FunctionOutput Target { get; }
+
+    public ConnectionBehavior Behavior {
+        get => _behavior;
+        set {
+            if (_behavior == value) return;
+            _behavior = value;
+            OnPropertyChanged();
+        }
+    }
 
     public BindingConnection(
         Node inputNode,
@@ -36,17 +48,6 @@ public sealed class BindingConnection : Connection {
             .Single(output => output.ArgumentIndex == serialized.TargetIndex);
     }
     
-    public Node TargetNode { get; }
-    public FunctionOutput Target { get; }
-
-    public ConnectionBehavior Behavior {
-        get => _behavior;
-        set {
-            if (_behavior == value) return;
-            _behavior = value;
-            OnPropertyChanged();
-        }
-    }
 
     public SerializedOutputConnection Serialize() {
         SerializedOutputConnection result = new();

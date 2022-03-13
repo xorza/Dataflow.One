@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Runtime.Serialization;
 using csso.Common;
 
 namespace csso.NodeCore.Run;
@@ -72,6 +73,13 @@ public class Executor {
         var evaluationNode = GetExecutionNode(node);
         if (evaluationNode.UpdatedThisFrame) {
             return;
+        }
+
+        foreach (var config in evaluationNode.Node.ConfigValues) {
+            if (evaluationNode.ArgValues[config.Config.ArgumentIndex] != config.Value) {
+                evaluationNode.Update(true);
+                return;
+            }
         }
 
         var hasUpdatedDependencies = evaluationNode.ArgDependencies

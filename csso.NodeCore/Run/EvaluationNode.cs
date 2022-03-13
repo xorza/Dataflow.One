@@ -10,6 +10,8 @@ public class EvaluationNode {
     public EvaluationNode(Node node) {
         Node = node;
         Behavior = node.FinalBehavior;
+        
+        ArgValues = Enumerable.Repeat(Empty, Node.Function.Args.Count).ToArray();
 
         NextIteration();
 
@@ -65,46 +67,41 @@ public class EvaluationNode {
         Stopwatch sw = new();
         sw.Start();
 
-        ArgValues = Enumerable.Repeat(Empty, Node.Function.Args.Count).ToArray();
-        
-
         ProcessArguments(executor);
-
-        Debug.Assert.True(ArgValues.None(_ => _ == Empty));
-        
-
         Node.Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
+
+        sw.Stop();
+        ExecutionTime = sw.ElapsedMilliseconds * 1.0;
 
         if (!Node.Function.IsProcedure) {
             HasOutputValues = true;
         }
-
-        sw.Stop();
-        ExecutionTime = sw.ElapsedMilliseconds * 1.0;
     }
 
     private void ProcessArguments(Executor executor) {
+        ArgValues = Enumerable.Repeat(Empty, Node.Function.Args.Count).ToArray();
+
+
         Node.ConfigValues.Foreach(config => ArgValues[config.Config.ArgumentIndex] = config.Value);
         Node.Function.Outputs.Foreach(output => ArgValues[output.ArgumentIndex] = null);
 
         foreach (var connection in Node.Connections) {
             if (connection is ValueConnection valueConnection) {
-                ArgValues[connection.Input.ArgumentIndex] = valueConnection.Value;
+                ArgValues![connection.Input.ArgumentIndex] = valueConnection.Value;
             }
 
             if (connection is BindingConnection bindingConnection) {
-                Debug.Assert.AreSame(bindingConnection.Input, Node.Function.Args[bindingConnection.Input.ArgumentIndex]);
+                Debug.Assert.AreSame(bindingConnection.Input,
+                    Node.Function.Args[bindingConnection.Input.ArgumentIndex]);
 
                 EvaluationNode en = executor.GetExecutionNode(bindingConnection.TargetNode);
                 Check.True(en.HasOutputValues);
 
-                ArgValues[bindingConnection.Input.ArgumentIndex] = en.GetOutputValue(bindingConnection.Target);
+                ArgValues![bindingConnection.Input.ArgumentIndex] = en.GetOutputValue(bindingConnection.Target);
             }
-            
-            
-            
-            
         }
+
+        Debug.Assert.True(ArgValues.None(_ => _ == Empty));
     }
 
     private class NotFound { }

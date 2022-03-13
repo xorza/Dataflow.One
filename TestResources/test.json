@@ -28,7 +28,7 @@
           }
         ],
         "ValueConnections": [],
-        "Behavior": 0
+        "Behavior": 1
       },
       {
         "Name": "Frame number",
@@ -52,7 +52,7 @@
         "TargetNodeId": "ae89a6eb-d8fa-401b-a27a-a450a33e8f99",
         "InputIndex": 1,
         "InputNodeId": "bf77d02c-75fc-450a-9d23-e4719ffad25a",
-        "Behavior": 0
+        "Behavior": 1
       },
       {
         "TargetIndex": 2,
@@ -80,8 +80,8 @@
     },
     {
       "Position": {
-        "X": 187.71428571428575,
-        "Y": 339.1428571428571
+        "X": 332,
+        "Y": 481.14285714285705
       },
       "Id": "ae89a6eb-d8fa-401b-a27a-a450a33e8f99"
     },
