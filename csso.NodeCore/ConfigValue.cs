@@ -26,7 +26,7 @@ public class ConfigValue {
         SerializedConfigValue result = new();
 
         result.Value = Value?.ToString();
-        result.ConfigIndex = Config.Index;
+        result.ConfigIndex = Config.ArgumentIndex;
 
         return result;
     }
@@ -34,7 +34,7 @@ public class ConfigValue {
     public ConfigValue(
         Function func,
         SerializedConfigValue serialized) {
-        Config = func.Config.Single(_ => _.Index == serialized.ConfigIndex);
+        Config = func.Config.Single(_ => _.ArgumentIndex == serialized.ConfigIndex);
 
         if (serialized.Value != null
             && StringParser.TryParse(serialized.Value, Type, out Object? value))

@@ -9,27 +9,27 @@ public enum ArgType {
 }
 
 public abstract class FunctionArg {
-    protected FunctionArg(string name, Type type, Int32 index) {
+    protected FunctionArg(string name, Type type, Int32 argumentIndex) {
         Name = name;
         Type = type;
-        Index = index;
+        ArgumentIndex = argumentIndex;
     }
 
     public Type Type { get; } = typeof(void);
     public string Name { get; } = "";
     public string FullName => Name + ":" + Type.Name;
     public abstract ArgType ArgType { get; }
-    public Int32 Index { get; }
+    public Int32 ArgumentIndex { get; }
 }
 
 public class FunctionInput : FunctionArg {
-    public FunctionInput(string name, Type type, Int32 index) : base(name, type, index) { }
+    public FunctionInput(string name, Type type, Int32 argumentIndex) : base(name, type, argumentIndex) { }
 
     public override ArgType ArgType => ArgType.In;
 }
 
 public class FunctionOutput : FunctionArg {
-    public FunctionOutput(string name, Type type, Int32 index) : base(name, type, index) { }
+    public FunctionOutput(string name, Type type, Int32 argumentIndex) : base(name, type, argumentIndex) { }
 
     public override ArgType ArgType => ArgType.Out;
 }
@@ -37,7 +37,7 @@ public class FunctionOutput : FunctionArg {
 public class FunctionConfig : FunctionArg {
     private Object? _value = default(Type);
 
-    public FunctionConfig(String name, Type type, Int32 index) : base(name, type, index) { }
+    public FunctionConfig(String name, Type type, Int32 argumentIndex) : base(name, type, argumentIndex) { }
 
     public Object? Value {
         get => _value;
@@ -58,7 +58,7 @@ public class FunctionConfig : FunctionArg {
 }
 
 public class FunctionConfig<T> : FunctionConfig {
-    public FunctionConfig(string name, Type type, Int32 index) : base(name, type, index) { }
+    public FunctionConfig(string name, Type type, Int32 argumentIndex) : base(name, type, argumentIndex) { }
 
     public T TypedValue {
         get => (T) Value!;

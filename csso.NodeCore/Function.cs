@@ -125,16 +125,17 @@ public class Function {
 
     private void CheckArgTypes(object?[]? args) {
         for (var i = 0; i < Args.Count; i++) {
-            if (args == null)
+            if (args == null) {
                 throw new ArgumentNullException(nameof(args));
+            }
 
-            if (args.Length != Args.Count)
+            if (args.Length != Args.Count) {
                 throw new ArgumentException(nameof(args));
+            }
 
-            if (args[i] == null)
-                Check.True(!Args[i].Type.IsValueType);
-
-            Check.True(Args[i].Type.IsInstanceOfType(args[i]!));
+            if (args[i] != null) {
+                Check.True(Args[i].Type.IsInstanceOfType(args[i]!));
+            }
         }
     }
 }

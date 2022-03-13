@@ -9,18 +9,30 @@ public class EvaluationNode {
 
     public EvaluationNode(Node node) {
         Node = node;
-        ArgValues = Enumerable.Repeat(Empty, Node.Function.Args.Count).ToArray();
         Behavior = node.FinalBehavior;
+
+        NextIteration();
+
+        ArgDependencies.Clear();
+
+        foreach (var input in Node.Function.Inputs) {
+            var connection = Node.Connections.SingleOrDefault(_ => _.Input == input);
+
+            if (connection is BindingConnection bindingConnection) {
+                ArgDependencies.Add(bindingConnection);
+            }
+        }
     }
 
     public Node Node { get; }
-    public Object?[] ArgValues { get; }
+    public Object?[] ArgValues { get; private set; }
 
     public List<BindingConnection> ArgDependencies { get; } = new();
     public bool HasOutputValues { get; private set; }
     public FunctionBehavior Behavior { get; private set; }
-    public bool ArgumentsUpdatedThisFrame { get; set; }
-    public bool ProcessedThisFrame { get; set; }
+    public bool ArgumentsUpdatedThisFrame { get; private set; }
+    public bool ProcessedThisFrame { get; private set; }
+    public bool InvokedThisFrame { get; private set; }
 
     public double ExecutionTime { get; private set; } = Double.NaN;
 
@@ -44,24 +56,22 @@ public class EvaluationNode {
             throw new Exception("veldkfgyuivhnwo4875");
         }
 
+        if (InvokedThisFrame) {
+            return;
+        }
+
+        InvokedThisFrame = true;
+
         Stopwatch sw = new();
         sw.Start();
 
-        Node.ConfigValues.Foreach(config => ArgValues[config.Config.Index] = config.Value);
-        Node.Function.Outputs.Foreach(output => ArgValues[output.Index] = Pool(output.Type));
+        ArgValues = Enumerable.Repeat(Empty, Node.Function.Args.Count).ToArray();
+        
 
-        foreach (var input in Node.Function.Inputs) {
-            var dependency = ArgDependencies.Single(_ => _.Input == input);
-            Debug.Assert.AreSame(dependency.Input, Node.Function.Args[input.Index]);
-
-            EvaluationNode en = executor.GetExecutionNode(dependency.TargetNode);
-            Check.True(en.HasOutputValues);
-
-            ArgValues[input.Index] = en.GetOutputValue(dependency.Target);
-        }
-
+        ProcessArguments(executor);
 
         Debug.Assert.True(ArgValues.None(_ => _ == Empty));
+        
 
         Node.Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
 
@@ -70,11 +80,27 @@ public class EvaluationNode {
         }
 
         sw.Stop();
-        ExecutionTime = sw.ElapsedMilliseconds / 1000.0;
+        ExecutionTime = sw.ElapsedMilliseconds * 1.0;
     }
 
-    private Object Pool(Type type) {
-        return Activator.CreateInstance(type)!;
+    private void ProcessArguments(Executor executor) {
+        Node.ConfigValues.Foreach(config => ArgValues[config.Config.ArgumentIndex] = config.Value);
+        Node.Function.Outputs.Foreach(output => ArgValues[output.ArgumentIndex] = null);
+
+        foreach (var connection in Node.Connections) {
+            if (connection is ValueConnection valueConnection) {
+                ArgValues[connection.Input.ArgumentIndex] = valueConnection.Value;
+            }
+
+            if (connection is BindingConnection bindingConnection) {
+                Debug.Assert.AreSame(bindingConnection.Input, Node.Function.Args[bindingConnection.Input.ArgumentIndex]);
+
+                EvaluationNode en = executor.GetExecutionNode(bindingConnection.TargetNode);
+                Check.True(en.HasOutputValues);
+
+                ArgValues[bindingConnection.Input.ArgumentIndex] = en.GetOutputValue(bindingConnection.Target);
+            }
+        }
     }
 
     private class NotFound { }
@@ -83,22 +109,11 @@ public class EvaluationNode {
         ProcessedThisFrame = false;
         ArgumentsUpdatedThisFrame = false;
         Behavior = Node.FinalBehavior;
-        ArgDependencies.Clear();
+        InvokedThisFrame = false;
+    }
 
-        foreach (var input in Node.Function.Inputs) {
-            var connection = Node.Connections.SingleOrDefault(_ => _.Input == input);
-            if (connection == null) {
-                System.Diagnostics.Debug.WriteLine("asfdsdfgweg");
-                return;
-            }
-
-            if (connection is ValueConnection valueConnection) {
-                ArgValues[input.Index] = valueConnection.Value;
-            }
-
-            if (connection is BindingConnection bindingConnection) {
-                ArgDependencies.Add(bindingConnection);
-            }
-        }
+    public void Update(bool hasUpdatedArguments) {
+        ProcessedThisFrame = true;
+        ArgumentsUpdatedThisFrame = hasUpdatedArguments;
     }
 }

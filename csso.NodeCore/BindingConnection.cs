@@ -30,10 +30,10 @@ public sealed class BindingConnection : Connection {
         Behavior = serialized.Behavior;
         Node = graph.GetNode(serialized.InputNodeId);
         Input = Node.Function.Inputs
-            .Single(input => input.Index == serialized.InputIndex);
+            .Single(input => input.ArgumentIndex == serialized.InputIndex);
         TargetNode = graph.GetNode(serialized.TargetNodeId);
         Target = TargetNode.Function.Outputs
-            .Single(output => output.Index == serialized.TargetIndex);
+            .Single(output => output.ArgumentIndex == serialized.TargetIndex);
     }
     
     public Node TargetNode { get; }
@@ -51,18 +51,16 @@ public sealed class BindingConnection : Connection {
     public SerializedOutputConnection Serialize() {
         SerializedOutputConnection result = new();
 
-        result.TargetIndex = Target.Index;
+        result.TargetIndex = Target.ArgumentIndex;
         result.TargetNodeId = TargetNode.Id;
 
-        result.InputIndex = Input.Index;
+        result.InputIndex = Input.ArgumentIndex;
         result.InputNodeId = Node.Id;
 
         result.Behavior = Behavior;
 
         return result;
     }
-
-
 }
 
 public struct SerializedOutputConnection {

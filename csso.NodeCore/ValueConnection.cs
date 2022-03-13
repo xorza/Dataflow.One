@@ -10,7 +10,7 @@ public class ValueConnection : Connection {
     public SerializedValueConnection Serialize() {
         SerializedValueConnection result = new();
 
-        result.InputIndex = Input.Index;
+        result.InputIndex = Input.ArgumentIndex;
         result.InputNodeId = Node.Id;
         result.Value = Value?.ToString();
 
@@ -20,7 +20,7 @@ public class ValueConnection : Connection {
     public ValueConnection(Node node, SerializedValueConnection serialized) {
         Node = node;
         Input = Node.Function.Inputs
-            .Single(input => input.Index == serialized.InputIndex);
+            .Single(input => input.ArgumentIndex == serialized.InputIndex);
 
         if (
             serialized.Value != null

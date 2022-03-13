@@ -20,7 +20,7 @@ internal static class Xtensions {
 
 public class Executor {
     public Int32 FrameNo { get; private set; }
-    public ExecutionGraph ExecutionGraph { get;  }
+    public ExecutionGraph ExecutionGraph { get; }
 
     public EvaluationNode GetExecutionNode(Node node) {
         return ExecutionGraph.EvaluationNodes.Single(_ => _.Node == node);
@@ -39,36 +39,34 @@ public class Executor {
 
         ExecutionGraph.EvaluationNodes.Foreach(_ => _.NextIteration());
 
-        GetPathsToProcedures()
-            .Foreach(UpdateExecutionNode);
+        MarkActive();
 
-        GetInvocationList()
-            .Distinct()
-            .Foreach(_ => _.Invoke(this));
+        var invocationList = BuildInvocationList();
+        invocationList.Foreach(evaluationNode => evaluationNode.Invoke(this));
 
         ++FrameNo;
     }
 
-
-    private IReadOnlyList<Node> GetPathsToProcedures() {
+    private void MarkActive() {
         Queue<Node> yetToProcessNodes = new();
         Graph.Nodes
             .Where(_ => _.Function.IsProcedure)
             .Foreach(yetToProcessNodes.Enqueue);
 
-        List<Node> pathsFromProcedures = new();
+        Stack<Node> paths = new();
         while (yetToProcessNodes.TryDequeue(out var node)) {
             node.Connections
                 .OfType<BindingConnection>()
                 .Select(_ => _.TargetNode)
                 .Foreach(yetToProcessNodes.Enqueue);
 
-            pathsFromProcedures.Add(node);
+            paths.Push(node);
         }
 
-        pathsFromProcedures.Reverse();
-        return pathsFromProcedures.AsReadOnly();
+
+        paths.Foreach(UpdateExecutionNode);
     }
+
 
     private void UpdateExecutionNode(Node node) {
         var evaluationNode = GetExecutionNode(node);
@@ -76,29 +74,26 @@ public class Executor {
             return;
         }
 
-        evaluationNode.ProcessedThisFrame = true;
+        var hasUpdatedDependencies = evaluationNode.ArgDependencies
+            .Any(dependency => {
+                return
+                    dependency.TargetNode.Behavior == FunctionBehavior.Proactive
+                    || GetExecutionNode(dependency.TargetNode).ArgumentsUpdatedThisFrame;
+            });
 
-        Debug.Assert.True(evaluationNode.ArgValues.Length == node.Function.Args.Count);
-
-        evaluationNode.ArgumentsUpdatedThisFrame =
-            evaluationNode.ArgDependencies
-                .SkipNulls()
-                .Any(dependency => GetExecutionNode(dependency.TargetNode).ArgumentsUpdatedThisFrame
-                                   || dependency.TargetNode.Behavior == FunctionBehavior.Proactive
-                );
+        evaluationNode.Update(hasUpdatedDependencies);
     }
 
-    private IReadOnlyList<EvaluationNode> GetInvocationList() {
+    private Stack<EvaluationNode> BuildInvocationList() {
         Queue<EvaluationNode> yetToProcessENodes = new();
         ExecutionGraph.EvaluationNodes
             .Where(_ => _.Node.Function.IsProcedure)
             .Foreach(yetToProcessENodes.Enqueue);
 
-        List<EvaluationNode> invocationList = new();
+        Stack<EvaluationNode> invocationList = new();
 
-        while (yetToProcessENodes.Count > 0) {
-            var enode = yetToProcessENodes.Dequeue();
-            invocationList.Add(enode);
+        while (yetToProcessENodes.TryDequeue(out var enode)) {
+            invocationList.Push(enode);
 
             foreach (var dependency in enode.ArgDependencies) {
                 EvaluationNode en = GetExecutionNode(dependency.TargetNode);
@@ -108,19 +103,17 @@ public class Executor {
                     continue;
                 }
 
-                //exactly now and not earlier
                 if (dependency.Behavior == ConnectionBehavior.Once) {
                     continue;
                 }
 
-                if (en.ArgumentsUpdatedThisFrame ||
-                    en.Behavior == FunctionBehavior.Proactive) {
+                if (en.ArgumentsUpdatedThisFrame
+                    || en.Behavior == FunctionBehavior.Proactive) {
                     yetToProcessENodes.Enqueue(en);
                 }
             }
         }
 
-        invocationList.Reverse();
         return invocationList;
     }
 }
