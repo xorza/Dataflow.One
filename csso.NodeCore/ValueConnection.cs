@@ -24,8 +24,9 @@ public class ValueConnection : Connection {
 
         if (
             serialized.Value != null
-            && StringParser.TryParse(serialized.Value, Input.Type, out Object? value))
+            && StringParser.TryParse(serialized.Value, Input.Type, out Object? value)) {
             Value = value;
+        }
     }
 }
 

@@ -70,7 +70,7 @@ public class Executor {
 
     private void UpdateExecutionNode(Node node) {
         var evaluationNode = GetExecutionNode(node);
-        if (evaluationNode.ProcessedThisFrame) {
+        if (evaluationNode.UpdatedThisFrame) {
             return;
         }
 

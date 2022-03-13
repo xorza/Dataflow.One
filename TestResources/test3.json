@@ -62,8 +62,8 @@
     ],
     "OutputConnections": [
       {
-        "OutputIndex": 1,
-        "OutputNodeId": "e97c918c-51df-4064-be6b-3d2247f0d467",
+        "TargetIndex": 1,
+        "TargetNodeId": "e97c918c-51df-4064-be6b-3d2247f0d467",
         "InputIndex": 0,
         "InputNodeId": "09ee4c54-7ff6-46e1-92e3-2be00d494bef",
         "Behavior": 1

@@ -49,22 +49,22 @@
     ],
     "OutputConnections": [
       {
-        "OutputIndex": 1,
-        "OutputNodeId": "44883b28-d509-4f7a-bc14-9a57000992e9",
+        "TargetIndex": 1,
+        "TargetNodeId": "44883b28-d509-4f7a-bc14-9a57000992e9",
         "InputIndex": 1,
         "InputNodeId": "9a4f3ce4-5b8f-4321-9964-8c8e359482e4",
         "Behavior": 1
       },
       {
-        "OutputIndex": 0,
-        "OutputNodeId": "500f32e3-c7d1-483e-b2ba-8ecf19b5b6b7",
+        "TargetIndex": 0,
+        "TargetNodeId": "500f32e3-c7d1-483e-b2ba-8ecf19b5b6b7",
         "InputIndex": 0,
         "InputNodeId": "9a4f3ce4-5b8f-4321-9964-8c8e359482e4",
         "Behavior": 1
       },
       {
-        "OutputIndex": 2,
-        "OutputNodeId": "9a4f3ce4-5b8f-4321-9964-8c8e359482e4",
+        "TargetIndex": 2,
+        "TargetNodeId": "9a4f3ce4-5b8f-4321-9964-8c8e359482e4",
         "InputIndex": 0,
         "InputNodeId": "efd0d5bc-3e07-4321-972b-cf16e73001d8",
         "Behavior": 1

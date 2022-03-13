@@ -112,8 +112,8 @@
     ],
     "OutputConnections": [
       {
-        "OutputIndex": 0,
-        "OutputNodeId": "14182f22-aac7-4c3d-b644-99c4c511165b",
+        "TargetIndex": 0,
+        "TargetNodeId": "14182f22-aac7-4c3d-b644-99c4c511165b",
         "InputIndex": 0,
         "InputNodeId": "771a8b4e-e56c-4a9a-b3b8-8f8e810a4d43",
         "Behavior": 1
