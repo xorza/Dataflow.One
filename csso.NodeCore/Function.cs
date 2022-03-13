@@ -69,7 +69,7 @@ public class Function {
         Behavior = reactive == null ? FunctionBehavior.Proactive : FunctionBehavior.Reactive;
 
         var parameters = func.Method.GetParameters();
-        for (UInt32 i = 0; i < parameters.Length; i++) {
+        for (Int32 i = 0; i < parameters.Length; i++) {
             var parameter = parameters[i];
 
             var outputAttribute =

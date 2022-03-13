@@ -22,7 +22,7 @@ public class Executor {
     public Int32 FrameNo { get; private set; }
     public ExecutionGraph ExecutionGraph { get;  }
 
-    public ExecutionNode GetExecutionNode(Node node) {
+    public EvaluationNode GetExecutionNode(Node node) {
         return ExecutionGraph.EvaluationNodes.Single(_ => _.Node == node);
     }
 
@@ -35,7 +35,7 @@ public class Executor {
     }
 
     public void Run() {
-        ExecutionGraph.Refresh();
+        ExecutionGraph.Sync();
 
         ExecutionGraph.EvaluationNodes.Foreach(_ => _.NextIteration());
 
@@ -59,8 +59,8 @@ public class Executor {
         List<Node> pathsFromProcedures = new();
         while (yetToProcessNodes.TryDequeue(out var node)) {
             node.Connections
-                .OfType<OutputConnection>()
-                .Select(_ => _.OutputNode)
+                .OfType<BindingConnection>()
+                .Select(_ => _.TargetNode)
                 .Foreach(yetToProcessNodes.Enqueue);
 
             pathsFromProcedures.Add(node);
@@ -83,29 +83,25 @@ public class Executor {
         evaluationNode.ArgumentsUpdatedThisFrame =
             evaluationNode.ArgDependencies
                 .SkipNulls()
-                .Any(dependency => GetExecutionNode(dependency.OutputNode).ArgumentsUpdatedThisFrame
-                                   || dependency.OutputNode.Behavior == FunctionBehavior.Proactive
+                .Any(dependency => GetExecutionNode(dependency.TargetNode).ArgumentsUpdatedThisFrame
+                                   || dependency.TargetNode.Behavior == FunctionBehavior.Proactive
                 );
     }
 
-    private IReadOnlyList<ExecutionNode> GetInvocationList() {
-        Queue<ExecutionNode> yetToProcessENodes = new();
+    private IReadOnlyList<EvaluationNode> GetInvocationList() {
+        Queue<EvaluationNode> yetToProcessENodes = new();
         ExecutionGraph.EvaluationNodes
             .Where(_ => _.Node.Function.IsProcedure)
             .Foreach(yetToProcessENodes.Enqueue);
 
-        List<ExecutionNode> invocationList = new();
+        List<EvaluationNode> invocationList = new();
 
         while (yetToProcessENodes.Count > 0) {
             var enode = yetToProcessENodes.Dequeue();
             invocationList.Add(enode);
 
             foreach (var dependency in enode.ArgDependencies) {
-                if (dependency == null) {
-                    continue;
-                }
-
-                ExecutionNode en = GetExecutionNode(dependency.OutputNode);
+                EvaluationNode en = GetExecutionNode(dependency.TargetNode);
 
                 if (!en.HasOutputValues) {
                     yetToProcessENodes.Enqueue(en);

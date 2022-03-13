@@ -109,12 +109,12 @@ public sealed class GraphView : INotifyPropertyChanged {
         _edges.Clear();
         foreach (var node in Nodes)
         foreach (var edge in node.Node.Connections)
-            if (edge is OutputConnection binding) {
-                var inputNode = GetNodeView(binding.InputNode);
-                var outputNode = GetNodeView(binding.OutputNode);
+            if (edge is BindingConnection binding) {
+                var inputNode = GetNodeView(binding.Node);
+                var outputNode = GetNodeView(binding.TargetNode);
 
                 var input = inputNode.Inputs.Single(_ => _.FunctionArg == binding.Input);
-                var output = outputNode.Outputs.Single(_ => _.FunctionArg == binding.Output);
+                var output = outputNode.Outputs.Single(_ => _.FunctionArg == binding.Target);
 
                 _edges.Add(new EdgeView(binding, input, output));
             }
@@ -163,7 +163,7 @@ public sealed class GraphView : INotifyPropertyChanged {
 
     public void OnExecuted(Executor executor) {
         foreach (var nodeView in Nodes) {
-            ExecutionNode en = executor.GetExecutionNode(nodeView.Node);
+            EvaluationNode en = executor.GetExecutionNode(nodeView.Node);
             nodeView.ExecutionTime = en.ExecutionTime;
 
             foreach (var output in nodeView.Outputs) {

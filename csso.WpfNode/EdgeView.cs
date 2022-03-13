@@ -8,7 +8,7 @@ namespace csso.WpfNode;
 public sealed class EdgeView : INotifyPropertyChanged {
     private bool _isProactive;
 
-    public EdgeView(OutputConnection connection, PutView input, PutView output) {
+    public EdgeView(BindingConnection connection, PutView input, PutView output) {
         Input = input;
         Output = output;
         Connection = connection;
@@ -16,7 +16,7 @@ public sealed class EdgeView : INotifyPropertyChanged {
         _isProactive = connection.Behavior == ConnectionBehavior.Always;
     }
 
-    public OutputConnection Connection { get; }
+    public BindingConnection Connection { get; }
     public PutView Input { get; }
     public PutView Output { get; }
 

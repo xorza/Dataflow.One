@@ -44,5 +44,5 @@ public class ConfigValue {
 
 public struct SerializedConfigValue {
     public String? Value { get; set; }
-    public UInt32 ConfigIndex { get; set; }
+    public Int32 ConfigIndex { get; set; }
 }

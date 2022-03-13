@@ -32,10 +32,10 @@ public sealed class Graph {
 
         _nodes
             .SelectMany(_ => _.Connections)
-            .OfType<OutputConnection>()
-            .Where(_ => _.OutputNode == node)
+            .OfType<BindingConnection>()
+            .Where(_ => _.TargetNode == node)
             .ToArray()
-            .Foreach(_ => _.InputNode.Remove(_));
+            .Foreach(_ => _.Node.Remove(_));
     }
 
     public Executor Compile() {
@@ -52,7 +52,7 @@ public sealed class Graph {
 
         result.OutputConnections = _nodes
             .SelectMany(_ => _.Connections)
-            .OfType<OutputConnection>()
+            .OfType<BindingConnection>()
             .Select(_ => _.Serialize())
             .ToArray();
 
@@ -69,8 +69,8 @@ public sealed class Graph {
             .Foreach(_nodes.Add);
 
         serialized.OutputConnections
-            .Select(_ => new OutputConnection(this, _))
-            .Foreach(_ => { _.InputNode.Add(_); });
+            .Select(_ => new BindingConnection(this, _))
+            .Foreach(_ => { _.Node.Add(_); });
     }
 
     public Node GetNode(Guid id) {

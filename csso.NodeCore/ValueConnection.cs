@@ -11,15 +11,15 @@ public class ValueConnection : Connection {
         SerializedValueConnection result = new();
 
         result.InputIndex = Input.Index;
-        result.InputNodeId = InputNode.Id;
+        result.InputNodeId = Node.Id;
         result.Value = Value?.ToString();
 
         return result;
     }
 
-    public ValueConnection(Node inputNode, SerializedValueConnection serialized) {
-        InputNode = inputNode;
-        Input = InputNode.Function.Inputs
+    public ValueConnection(Node node, SerializedValueConnection serialized) {
+        Node = node;
+        Input = Node.Function.Inputs
             .Single(input => input.Index == serialized.InputIndex);
 
         if (
@@ -30,7 +30,7 @@ public class ValueConnection : Connection {
 }
 
 public class SerializedValueConnection {
-    public UInt32 InputIndex { get; set; }
+    public Int32 InputIndex { get; set; }
     public Guid InputNodeId { get; set; }
     public String? Value { get; set; }
 }

@@ -7,13 +7,13 @@ namespace csso.NodeCore;
 public abstract class Connection : INotifyPropertyChanged {
     protected Connection(Node node, FunctionInput input) {
         Input = input;
-        InputNode = node;
+        Node = node;
     }
 
     protected Connection() { }
 
     public FunctionInput Input { get; protected set; }
-    public Node InputNode { get; protected set; }
+    public Node Node { get; protected set; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

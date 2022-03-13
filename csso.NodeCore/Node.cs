@@ -69,14 +69,14 @@ public sealed class Node : WithId, INotifyPropertyChanged {
     }
 
     internal void Add(Connection connection) {
-        Check.Argument(connection.InputNode == this, nameof(connection));
+        Check.Argument(connection.Node == this, nameof(connection));
 
         _connections.RemoveAll(_ => _.Input == connection.Input);
         _connections.Add(connection);
     }
 
-    public OutputConnection AddConnection(FunctionInput selfInput, Node outputNode, FunctionOutput nodeOutput) {
-        OutputConnection connection = new(
+    public BindingConnection AddConnection(FunctionInput selfInput, Node outputNode, FunctionOutput nodeOutput) {
+        BindingConnection connection = new(
             this,
             selfInput,
             outputNode,
@@ -88,7 +88,7 @@ public sealed class Node : WithId, INotifyPropertyChanged {
     }
 
     public void Remove(Connection connection) {
-        Check.Argument(connection.InputNode == this, nameof(connection));
+        Check.Argument(connection.Node == this, nameof(connection));
         if (!_connections.Remove(connection))
             throw new Exception("dfgdvryui6");
     }

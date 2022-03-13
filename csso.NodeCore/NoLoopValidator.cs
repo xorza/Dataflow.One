@@ -11,10 +11,10 @@ public class NoLoopValidator {
     }
 
     private void Go(Connection connection, List<Node> pathBack) {
-        var outputBinding = connection as OutputConnection;
+        var outputBinding = connection as BindingConnection;
         if (outputBinding == null) return;
 
-        var node = outputBinding.OutputNode;
+        var node = outputBinding.TargetNode;
 
         if (pathBack.Contains(node))
             throw new Exception("loop detected");
