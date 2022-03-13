@@ -163,7 +163,7 @@ public sealed class GraphView : INotifyPropertyChanged {
 
     public void OnExecuted(Executor executor) {
         foreach (var nodeView in Nodes) {
-            EvaluationNode en = executor.GetExecutionNode(nodeView.Node);
+            EvaluationNode en = executor.GetEvaluationNode(nodeView.Node);
             nodeView.ExecutionTime = en.ExecutionTime;
 
             foreach (var output in nodeView.Outputs) {

@@ -23,7 +23,7 @@ public class Executor {
     public Int32 FrameNo { get; private set; }
     public ExecutionGraph ExecutionGraph { get; }
 
-    public EvaluationNode GetExecutionNode(Node node) {
+    public EvaluationNode GetEvaluationNode(Node node) {
         return ExecutionGraph.EvaluationNodes.Single(_ => _.Node == node);
     }
 
@@ -65,12 +65,12 @@ public class Executor {
         }
 
 
-        paths.Foreach(UpdateExecutionNode);
+        paths.Foreach(UpdateEvaluationNode);
     }
 
 
-    private void UpdateExecutionNode(Node node) {
-        var evaluationNode = GetExecutionNode(node);
+    private void UpdateEvaluationNode(Node node) {
+        var evaluationNode = GetEvaluationNode(node);
         if (evaluationNode.UpdatedThisFrame) {
             return;
         }
@@ -82,14 +82,22 @@ public class Executor {
             }
         }
 
-        var hasUpdatedDependencies = evaluationNode.ArgDependencies
-            .Any(dependency => {
-                return
-                    dependency.TargetNode.Behavior == FunctionBehavior.Proactive
-                    || GetExecutionNode(dependency.TargetNode).ArgumentsUpdatedThisFrame;
-            });
+        foreach (var dependency in evaluationNode.ArgDependencies) {
+            if (dependency.TargetNode.Behavior == FunctionBehavior.Proactive) {
+                evaluationNode.Update(true);
+                return;
+            }
 
-        evaluationNode.Update(hasUpdatedDependencies);
+            var targetEvaluationNode = GetEvaluationNode(dependency.TargetNode);
+            Debug.Assert.True(targetEvaluationNode.UpdatedThisFrame);
+            
+            if (targetEvaluationNode.ArgumentsUpdatedThisFrame) {
+                evaluationNode.Update(true);
+                return;
+            }
+        }
+
+        evaluationNode.Update(false);
     }
 
     private Stack<EvaluationNode> BuildInvocationList() {
@@ -104,7 +112,7 @@ public class Executor {
             invocationList.Push(enode);
 
             foreach (var dependency in enode.ArgDependencies) {
-                EvaluationNode en = GetExecutionNode(dependency.TargetNode);
+                EvaluationNode en = GetEvaluationNode(dependency.TargetNode);
 
                 if (!en.HasOutputValues) {
                     yetToProcessENodes.Enqueue(en);

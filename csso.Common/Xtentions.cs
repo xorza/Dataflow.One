@@ -35,4 +35,16 @@ public static class Xtentions {
     public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate) {
         return !source.Any(predicate);
     }
+
+    // public static void Populate<T>(this T[] arr, T value) {
+    //     for (int i = 0; i < arr.Length; i++) {
+    //         arr[i] = value;
+    //     }
+    // }
+    
+    public static void Populate<T>(this IList<T> list, T value) {
+        for (int i = 0; i < list.Count; i++) {
+            list[i] = value;
+        }
+    }
 }
