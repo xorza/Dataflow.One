@@ -5,6 +5,7 @@ using csso.NodeCore;
 using csso.NodeCore.Funcs;
 using csso.NodeCore.Run;
 using NUnit.Framework;
+using Debug = csso.Common.Debug;
 
 namespace csso.NodeCore.Tests;
 
@@ -21,7 +22,7 @@ public class Tests {
     private readonly OutputFunc<Int32> _outputFunc = new();
     private readonly FrameNoFunc _frameNoFunc = new();
 
-    private readonly Function _addFunc = new("Value", F.Add);
+    private readonly Function _addFunc = new("Add", F.Add);
 
 
     [SetUp]
@@ -44,14 +45,23 @@ public class Tests {
             _outputNode!.Function.Inputs.Single(),
             _constNode1!,
             _constNode1!.Function.Outputs.Single());
-        
-        var executor = _graph!.Compile();
+
+        var executor = new Executor( _graph!);
         _frameNoFunc.Executor = executor;
-        
+
         executor.Run();
+
+        var constEvaluationNode = executor.GetEvaluationNode(_constNode1!);
         Assert.AreEqual(3, _outputFunc.Value);
+        Assert.True(constEvaluationNode.InvokedThisFrame);
 
         _constFunc1.Value = 33;
+        executor.Compile();
+        executor.Run();
+
+        Assert.AreEqual(33, _outputFunc.Value);
+        
+        _constFunc1.Value = 4;
         executor.Run();
 
         Assert.AreEqual(33, _outputFunc.Value);
@@ -66,12 +76,12 @@ public class Tests {
             _frameNoNode!,
             _frameNoNode!.Function.Outputs.Single());
 
-        var executor = _graph!.Compile();
+        var executor = new Executor( _graph!);
         _frameNoFunc.Executor = executor;
-        
+
         executor.Run();
         Assert.AreEqual(0, _outputFunc.Value);
-        
+
         executor.Run();
         Assert.AreEqual(1, _outputFunc.Value);
 
@@ -94,8 +104,8 @@ public class Tests {
             _addNode.Function.Inputs[1],
             _constNode2!,
             _constNode2!.Function.Outputs.Single());
-        
-        var executor = _graph!.Compile();
+
+        var executor = new Executor( _graph!);
         _frameNoFunc.Executor = executor;
 
         executor.Run();
@@ -123,14 +133,27 @@ public class Tests {
             _addNode.Function.Inputs[1],
             _frameNoNode!,
             _frameNoNode!.Function.Outputs.Single());
-        
-        var executor = _graph!.Compile();
+
+        var executor = new Executor( _graph!);
         _frameNoFunc.Executor = executor;
 
         executor.Run();
+
         Assert.AreEqual(3, _outputFunc.Value);
+
+        var addEvaluationNode = executor.GetEvaluationNode(_addNode);
+        var frameNoEvaluationNode = executor.GetEvaluationNode(_frameNoNode);
+        var constEvaluationNode = executor.GetEvaluationNode(_constNode1);
+        Assert.True(frameNoEvaluationNode.InvokedThisFrame);
+        Assert.True(constEvaluationNode.InvokedThisFrame);
+        Assert.True(addEvaluationNode.InvokedThisFrame);
+
         executor.Run();
+
         Assert.AreEqual(4, _outputFunc.Value);
+        Assert.True(frameNoEvaluationNode.InvokedThisFrame);
+        Assert.False(constEvaluationNode.InvokedThisFrame);
+        Assert.True(addEvaluationNode.InvokedThisFrame);
 
         Assert.Pass();
     }
@@ -152,18 +175,29 @@ public class Tests {
             _addNode.Function.Inputs[1],
             _frameNoNode!,
             _frameNoNode!.Function.Outputs.Single());
-        
-        var executor = _graph!.Compile();
+
+        var executor = new Executor( _graph!);
         _frameNoFunc.Executor = executor;
 
         executor.Run();
+
         Assert.AreEqual(3, _outputFunc.Value);
+
+        var addEvaluationNode = executor.GetEvaluationNode(_addNode!);
+        var outputEvaluationNode = executor.GetEvaluationNode(_outputNode!);
+        Assert.True(addEvaluationNode.InvokedThisFrame);
+        Assert.True(outputEvaluationNode.InvokedThisFrame);
+
         executor.Run();
+
         Assert.AreEqual(3, _outputFunc.Value);
+
+        Assert.False(addEvaluationNode.InvokedThisFrame);
+        Assert.True(outputEvaluationNode.InvokedThisFrame);
 
         Assert.Pass();
     }
-    
+
     [Test]
     public void Test6() {
         _outputNode!.AddConnection(
@@ -171,15 +205,14 @@ public class Tests {
             _constNode2!,
             _constNode2!.Function.Outputs.Single());
 
-        var executor = _graph!.Compile();
+        var executor = new Executor( _graph!);
         _frameNoFunc.Executor = executor;
 
         _constNode2.ConfigValues.Single().Value = 133;
-        
+
         executor.Run();
         Assert.AreEqual(133, _outputFunc.Value);
-        
-        
+
         _constNode2.ConfigValues.Single().Value = 132;
         executor.Run();
         Assert.AreEqual(132, _outputFunc.Value);

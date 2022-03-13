@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Runtime.Serialization;
 using csso.Common;
+using Debug = csso.Common.Debug;
 
 namespace csso.NodeCore.Run;
 
@@ -21,24 +23,51 @@ internal static class Xtensions {
 
 public class Executor {
     public Int32 FrameNo { get; private set; }
-    public ExecutionGraph ExecutionGraph { get; }
+
+    public List<EvaluationNode> EvaluationNodes { get; private set; } = new ();
 
     public EvaluationNode GetEvaluationNode(Node node) {
-        return ExecutionGraph.EvaluationNodes.Single(_ => _.Node == node);
+        return EvaluationNodes.Single(_ => _.Node == node);
     }
 
     public Graph Graph { get; }
 
-    internal Executor(Graph graph) {
+    public Executor(Graph graph) {
         Graph = graph;
         FrameNo = 0;
-        ExecutionGraph = new ExecutionGraph(graph);
+        Compile();
     }
 
-    public void Run() {
-        ExecutionGraph.Sync();
+    public void Compile() {
+        List<EvaluationNode> newEvaluationNodes = new(Graph.Nodes.Count);
 
-        ExecutionGraph.EvaluationNodes.Foreach(_ => _.NextIteration());
+        for (int i = 0; i < Graph.Nodes.Count; i++) {
+            EvaluationNode? existing = EvaluationNodes.SingleOrDefault(_ => _.Node == Graph.Nodes[i]);
+
+            if (existing != null) {
+                existing.Reset();
+                newEvaluationNodes.Add(existing);
+            } else {
+                newEvaluationNodes.Add(new EvaluationNode(Graph.Nodes[i]));
+            }
+        }
+
+        EvaluationNodes = newEvaluationNodes;
+
+        ValidateNodeOrder();
+    }  
+    
+    [Conditional("DEBUG")]
+    private void ValidateNodeOrder() {
+        Debug.Assert.True(EvaluationNodes.Count == Graph.Nodes.Count);
+
+        for (int i = 0; i < EvaluationNodes.Count; i++) {
+            Debug.Assert.AreSame(EvaluationNodes[i].Node, Graph.Nodes[i]);
+        }
+    }
+    
+    public void Run() {
+        EvaluationNodes.Foreach(_ => _.NextIteration());
 
         MarkActive();
 
@@ -102,20 +131,20 @@ public class Executor {
 
     private Stack<EvaluationNode> BuildInvocationList() {
         Queue<EvaluationNode> yetToProcessENodes = new();
-        ExecutionGraph.EvaluationNodes
+        EvaluationNodes
             .Where(_ => _.Node.Function.IsProcedure)
             .Foreach(yetToProcessENodes.Enqueue);
 
         Stack<EvaluationNode> invocationList = new();
 
-        while (yetToProcessENodes.TryDequeue(out var enode)) {
-            invocationList.Push(enode);
+        while (yetToProcessENodes.TryDequeue(out var evaluationNode)) {
+            invocationList.Push(evaluationNode);
 
-            foreach (var dependency in enode.ArgDependencies) {
-                EvaluationNode en = GetEvaluationNode(dependency.TargetNode);
+            foreach (var dependency in evaluationNode.ArgDependencies) {
+                EvaluationNode targetEvaluationNode = GetEvaluationNode(dependency.TargetNode);
 
-                if (!en.HasOutputValues) {
-                    yetToProcessENodes.Enqueue(en);
+                if (!targetEvaluationNode.HasOutputValues) {
+                    yetToProcessENodes.Enqueue(targetEvaluationNode);
                     continue;
                 }
 
@@ -123,9 +152,9 @@ public class Executor {
                     continue;
                 }
 
-                if (en.ArgumentsUpdatedThisFrame
-                    || en.Behavior == FunctionBehavior.Proactive) {
-                    yetToProcessENodes.Enqueue(en);
+                if (targetEvaluationNode.ArgumentsUpdatedThisFrame
+                    || targetEvaluationNode.Behavior == FunctionBehavior.Proactive) {
+                    yetToProcessENodes.Enqueue(targetEvaluationNode);
                 }
             }
         }

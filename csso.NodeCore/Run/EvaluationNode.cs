@@ -10,10 +10,10 @@ public class EvaluationNode {
     public EvaluationNode(Node node) {
         Node = node;
         Behavior = node.FinalBehavior;
-        
+
         ArgValues = Enumerable.Repeat(Empty, Node.Function.Args.Count).ToArray();
         ArgDependencies = new List<BindingConnection>();
-        
+
         foreach (var input in Node.Function.Inputs) {
             var connection = Node.Connections.SingleOrDefault(_ => _.Input == input);
 
@@ -23,16 +23,14 @@ public class EvaluationNode {
         }
 
         NextIteration();
-
-
     }
 
     public Node Node { get; }
-    public Object?[] ArgValues { get; private set; }
+    public Object?[] ArgValues { get; }
 
     public List<BindingConnection> ArgDependencies { get; }
     public bool HasOutputValues { get; private set; }
-    public FunctionBehavior Behavior { get;  }
+    public FunctionBehavior Behavior { get; }
     public bool ArgumentsUpdatedThisFrame { get; private set; }
     public bool UpdatedThisFrame { get; private set; }
     public bool InvokedThisFrame { get; private set; }
@@ -83,7 +81,6 @@ public class EvaluationNode {
 
     private void ProcessArguments(Executor executor) {
         ArgValues.Populate(Empty);
-        Debug.Assert.True(ArgValues.All(_ => _ == Empty));
 
         Node.ConfigValues.Foreach(config => ArgValues[config.Config.ArgumentIndex] = config.Value);
         Node.Function.Outputs.Foreach(output => ArgValues[output.ArgumentIndex] = null);
@@ -104,7 +101,9 @@ public class EvaluationNode {
             }
         }
 
-        Debug.Assert.True(ArgValues.None(_ => _ == Empty));
+        if (Debug.IsDebug) {
+            Debug.Assert.True(ArgValues.None(_ => _ == Empty));
+        }
     }
 
     private class NotFound { }
@@ -118,5 +117,10 @@ public class EvaluationNode {
     public void Update(bool hasUpdatedArguments) {
         UpdatedThisFrame = true;
         ArgumentsUpdatedThisFrame = hasUpdatedArguments;
+    }
+
+    public void Reset() {
+        NextIteration();
+        HasOutputValues = false;
     }
 }

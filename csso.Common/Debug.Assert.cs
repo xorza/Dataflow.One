@@ -3,6 +3,19 @@
 namespace csso.Common; 
 
 public static class Debug {
+    public static bool IsDebug { get;private set; }
+    
+    static Debug() {
+        IsDebug = false;
+        Init();
+    }
+    
+    [Conditional("DEBUG")]
+    static void Init() {
+        IsDebug = true;
+    }
+    
+    
     public static class Assert {
         [Conditional("DEBUG")]
         [DebuggerStepThrough]

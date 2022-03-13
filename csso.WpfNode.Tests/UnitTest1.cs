@@ -55,7 +55,7 @@ public class Tests {
         Assert.NotNull(serializedGraphView);
         GraphView graphView = new(functionFactory, serializedGraphView.Value);
 
-        Executor executor = graphView.Graph.Compile();
+        Executor executor = new ( graphView.Graph);
         frameNoFunc.Executor = executor;
 
         executor.Run();
@@ -70,7 +70,7 @@ public class Tests {
         Assert.NotNull(serializedGraphView);
         graphView = new(functionFactory, serializedGraphView.Value);
 
-        executor = graphView.Graph.Compile();
+        executor =  new ( graphView.Graph);
         frameNoFunc.Executor = executor;
 
         executor.Run();

@@ -38,10 +38,6 @@ public sealed class Graph {
             .Foreach(_ => _.Node.Remove(_));
     }
 
-    public Executor Compile() {
-        return new Executor(this);
-    }
-
     public FunctionFactory FunctionFactory { get; set; } = new();
 
     public SerializedGraph Serialize() {

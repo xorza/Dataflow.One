@@ -51,6 +51,7 @@ public class ValueFunc<T> : Function {
         Refresh("Const", Func_);
     }
 
+    [Reactive]
     private bool Func_([Output] out T arg) {
         arg = Value;
         return true;
@@ -62,6 +63,7 @@ public class ConfigValueFunc<T> : Function {
         Refresh("Config Const", Func_);
     }
 
+    [Reactive]
     private bool Func_([Config] T value, [Output] out T arg) {
         arg = value;
         return true;
