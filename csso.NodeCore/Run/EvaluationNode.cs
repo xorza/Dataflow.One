@@ -13,6 +13,7 @@ public enum EvaluationState {
 
 public class EvaluationNode {
     private class NotFound { }
+
     private static readonly Object Empty = new NotFound();
 
     public Node Node { get; }
@@ -23,7 +24,7 @@ public class EvaluationNode {
     public bool ArgumentsUpdatedThisFrame { get; private set; }
     public EvaluationState State { get; private set; } = EvaluationState.Exists;
     public double ExecutionTime { get; private set; } = Double.NaN;
-    
+
     private struct DependencyValue {
         public int Index { get; set; }
         public Node TargetNode { get; set; }
@@ -31,31 +32,27 @@ public class EvaluationNode {
     }
 
     private readonly List<DependencyValue> _dependencyValues = new();
-    
+
     public EvaluationNode(Node node) {
         Node = node;
         Behavior = node.FinalBehavior;
 
         ArgValues = Enumerable.Repeat(Empty, Node.Function.Args.Count).ToArray();
-        
+
         Reset(true);
     }
-    
+
     public object? GetOutputValue(FunctionOutput output) {
         Check.True(HasOutputValues);
 
         var index = Node.Function.Args.FirstIndexOf(output);
-        if (index == null) {
-            throw new Exception("unerty i");
-        }
+        Check.False(index == null);
 
-        return ArgValues[index.Value];
+        return ArgValues[index!.Value];
     }
 
     public void ProcessArguments() {
-        if (State < EvaluationState.Processed) {
-            throw new Exception("drtgubvut634");
-        }
+        Check.False(State < EvaluationState.Processed);
 
         ArgValues.Populate(Empty);
         _dependencyValues.Clear();
@@ -81,7 +78,7 @@ public class EvaluationNode {
                         Target = bindingConnection.Target
                     });
                 } else {
-                    throw new NotImplementedException("3v46y245vh");
+                    Check.Fail();
                 }
             } else if (functionArg is FunctionOutput outputArg) {
                 ArgValues[functionArg.ArgumentIndex] = null;
@@ -89,40 +86,33 @@ public class EvaluationNode {
                 var configValue = Node.ConfigValues.Single(_ => _.Config == configArg);
                 ArgValues[functionArg.ArgumentIndex] = configValue.Value;
             } else {
-                throw new NotImplementedException("3v46y245vh");
+                Check.Fail();
             }
         }
 
         State = EvaluationState.ArgumentsSet;
     }
-    
+
     public void Invoke(Executor executor) {
         if (State == EvaluationState.Invoked) {
             return;
         }
-        
-        if (State < EvaluationState.ArgumentsSet) {
-            throw new Exception("veldkfgyuivhnwo4875");
-        }
-        
-        if (HasOutputValues
-            && !ArgumentsUpdatedThisFrame
-            && Behavior != FunctionBehavior.Proactive) {
-            throw new Exception("rb56u etdg");
-        }
-        
+
+        Check.True(State >= EvaluationState.ArgumentsSet);
+        Check.False(HasOutputValues
+                    && !ArgumentsUpdatedThisFrame
+                    && Behavior != FunctionBehavior.Proactive);
+
         Stopwatch sw = new();
         sw.Start();
-        
+
         _dependencyValues.ForEach(_ => {
             EvaluationNode targetEvaluationNode = executor.GetEvaluationNode(_.TargetNode);
             Check.True(targetEvaluationNode.State >= EvaluationState.Processed);
             ArgValues[_.Index] = targetEvaluationNode.GetOutputValue(_.Target);
         });
 
-        if (ArgValues.Contains(Empty)) {
-            throw new GraphEvaluationException("3v46y245vh");
-        }
+        Check.False(ArgValues.Contains(Empty));
 
         Node.Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
 
@@ -145,7 +135,7 @@ public class EvaluationNode {
         State = EvaluationState.Exists;
         if (resetOutputValues) {
             HasOutputValues = false;
-            
+
             ArgDependencies.Clear();
             foreach (var input in Node.Function.Inputs) {
                 var connection = Node.Connections.SingleOrDefault(_ => _.Input == input);
