@@ -129,11 +129,11 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void Node_MouseLeftButtonDown(object sender, MouseButtonEventArgs args) {
-        NodeView!.GraphView.SelectedNode = NodeView;
+        NodeView!.GraphVm.SelectedNode = NodeView;
     }
 
     private void Close_Button_OnClick(object sender, RoutedEventArgs e) {
-        NodeView!.GraphView.RemoveNode(NodeView);
+        NodeView!.GraphVm.RemoveNode(NodeView);
     }
 
     private void PinButton_OnLoaded(object sender, RoutedEventArgs e) {

@@ -10,9 +10,9 @@ public class NodeView : INotifyPropertyChanged {
     private bool _isSelected;
     private Point _position;
 
-    public NodeView(GraphView graphView, NodeCore.Node node) {
+    public NodeView(GraphVM graphVm, NodeCore.Node node) {
         Node = node;
-        GraphView = graphView;
+        GraphVm = graphVm;
 
         foreach (var input in Node.Function.Inputs) {
             PutView pv = new(input, this);
@@ -25,7 +25,7 @@ public class NodeView : INotifyPropertyChanged {
         }
     }
 
-    public GraphView GraphView { get; }
+    public GraphVM GraphVm { get; }
 
     public NodeCore.Node Node { get; }
 
@@ -49,7 +49,7 @@ public class NodeView : INotifyPropertyChanged {
                 return;
 
             _isSelected = value;
-            GraphView.SelectedNode = value ? this : null;
+            GraphVm.SelectedNode = value ? this : null;
 
             OnPropertyChanged();
         }

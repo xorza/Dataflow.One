@@ -35,10 +35,10 @@ public class Executor {
     public Executor(Graph graph) {
         Graph = graph;
         FrameNo = 0;
-        Compile();
+        Recompile();
     }
 
-    public void Compile() {
+    public void Recompile() {
         List<EvaluationNode> newEvaluationNodes = new(Graph.Nodes.Count);
 
         for (int i = 0; i < Graph.Nodes.Count; i++) {

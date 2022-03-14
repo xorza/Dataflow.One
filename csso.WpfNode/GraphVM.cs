@@ -13,17 +13,17 @@ using OpenTK.Compute.OpenCL;
 
 namespace csso.WpfNode;
 
-public sealed class GraphView : INotifyPropertyChanged {
+public sealed class GraphVM : INotifyPropertyChanged {
     private NodeView? _selectedNode;
 
     private PutView? _selectedPutView;
 
-    public GraphView(NodeCore.Graph graph) : this() {
+    public GraphVM(NodeCore.Graph graph) : this() {
         Graph = graph;
         Refresh();
     }
 
-    public GraphView() {
+    public GraphVM() {
         Nodes = new ReadOnlyObservableCollection<NodeView>(_nodes);
         Edges = new ReadOnlyObservableCollection<EdgeView>(_edges);
     }
@@ -123,7 +123,7 @@ public sealed class GraphView : INotifyPropertyChanged {
     }
 
     public void RemoveNode(NodeView nodeView) {
-        Check.True(nodeView.GraphView == this);
+        Check.True(nodeView.GraphVm == this);
 
         Graph.Remove(nodeView.Node);
 
@@ -152,7 +152,7 @@ public sealed class GraphView : INotifyPropertyChanged {
         return result;
     }
 
-    public GraphView(FunctionFactory functionFactory, SerializedGraphView serialized)
+    public GraphVM(FunctionFactory functionFactory, SerializedGraphView serialized)
         : this(new NodeCore.Graph(functionFactory, serialized.Graph)) {
         serialized.NodeViews
             .Foreach(_ => {

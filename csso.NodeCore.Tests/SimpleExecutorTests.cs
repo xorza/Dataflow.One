@@ -56,7 +56,7 @@ public class Tests {
         Assert.True(constEvaluationNode.InvokedThisFrame);
 
         _constFunc1.Value = 33;
-        executor.Compile();
+        executor.Recompile();
         executor.Run();
 
         Assert.AreEqual(33, _outputFunc.Value);

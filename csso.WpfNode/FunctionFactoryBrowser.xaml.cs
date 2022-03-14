@@ -116,14 +116,14 @@ public partial class FunctionFactoryBrowser : UserControl {
             return;
         }
 
-        GraphView graphView = new(new NodeCore.Graph() {
+        GraphVM graphVm = new(new NodeCore.Graph() {
             FunctionFactory = functionFactoryBrowser.FunctionFactory!.FunctionFactory
         });
 
         NodeCore.Node node 
-            = graphView.Graph.AddNode(functionFactoryBrowser.SelectedFunction);
+            = graphVm.Graph.AddNode(functionFactoryBrowser.SelectedFunction);
         
-        NodeView nv = new NodeView(graphView,node);
+        NodeView nv = new NodeView(graphVm,node);
         functionFactoryBrowser.NodePreview = nv;
     }
 

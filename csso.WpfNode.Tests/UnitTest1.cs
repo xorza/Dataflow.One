@@ -53,9 +53,9 @@ public class Tests {
 
         SerializedGraphView? serializedGraphView = JsonSerializer.Deserialize<SerializedGraphView>(_fileContent!);
         Assert.NotNull(serializedGraphView);
-        GraphView graphView = new(functionFactory, serializedGraphView.Value);
+        GraphVM graphVm = new(functionFactory, serializedGraphView.Value);
 
-        Executor executor = new ( graphView.Graph);
+        Executor executor = new ( graphVm.Graph);
         frameNoFunc.Executor = executor;
 
         executor.Run();
@@ -63,14 +63,14 @@ public class Tests {
         executor.Run();
         Assert.AreEqual(13, _output);
 
-        String serialized = JsonSerializer.Serialize(graphView.Serialize(), opts);
+        String serialized = JsonSerializer.Serialize(graphVm.Serialize(), opts);
         Assert.AreEqual(serialized, _fileContent);
 
         serializedGraphView = JsonSerializer.Deserialize<SerializedGraphView>(serialized);
         Assert.NotNull(serializedGraphView);
-        graphView = new(functionFactory, serializedGraphView.Value);
+        graphVm = new(functionFactory, serializedGraphView.Value);
 
-        executor =  new ( graphView.Graph);
+        executor =  new ( graphVm.Graph);
         frameNoFunc.Executor = executor;
 
         executor.Run();

@@ -64,7 +64,7 @@ public sealed class PutView : INotifyPropertyChanged {
                 return;
 
             _isSelected = value;
-            NodeView.GraphView.SelectedPutView = value ? this : null;
+            NodeView.GraphVm.SelectedPutView = value ? this : null;
 
             OnPropertyChanged();
         }

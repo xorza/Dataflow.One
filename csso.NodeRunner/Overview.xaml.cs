@@ -22,81 +22,40 @@ namespace csso.NodeRunner;
 
 public partial class Overview {
     public static readonly DependencyProperty GraphViewProperty = DependencyProperty.Register(
-        nameof(GraphView), typeof(GraphView), typeof(Overview), new PropertyMetadata(default(GraphView)));
+        nameof(GraphView), typeof(GraphVM), typeof(Overview), new PropertyMetadata(default(GraphVM)));
 
-    private readonly Context? _clContext;
+
+    private readonly Context _clContext;
     private Executor? _executor;
-    private Graph _graph;
 
-    private readonly FunctionFactory _functionFactory = new();
-
-    private readonly FrameNoFunc _frameNoFunc;
-
+    public GraphVM? GraphView {
+        get => (GraphVM) GetValue(GraphViewProperty);
+        private set => SetValue(GraphViewProperty, value);
+    }
+    
     public Overview() {
         InitializeComponent();
 
-        _graph = new();
-        _clContext = new();
-
-        Function addFunc = new Function("Add", F.Add);
-        Function divideWholeFunc = new Function("Divide whole", F.DivideWhole);
-        Function messageBoxFunc = new Function("Output", Output);
-        Function valueFunc = new Function("Value", Const);
-        _frameNoFunc = new();
-
-        _functionFactory.Register(addFunc);
-        _functionFactory.Register(divideWholeFunc);
-        _functionFactory.Register(messageBoxFunc);
-        _functionFactory.Register(valueFunc);
-        _functionFactory.Register(_frameNoFunc);
-
-        _graph.FunctionFactory = _functionFactory;
-
-        // _graph.Add(new Node(addFunc, _graph));
-        // _graph.Add(new Node(divideWholeFunc, _graph));
-        // _graph.Add(new Node(messageBoxFunc, _graph));
-        // _graph.Add(new Node(valueFunc, _graph));
-        // _graph.Add(new Node(_executor.FrameNoFunction, _graph));
-        // _graph.Add(new Node(valueFunc, _graph));
-        // _graph.Add(new Node(valueFunc, _graph));
-        // _graph.Add(new Node(_executor.DeltaTimeFunction, _graph));
-
-        GraphView = new(_graph);
+        _clContext = new Context();
+        
     }
 
-    public GraphView? GraphView {
-        get => (GraphView) GetValue(GraphViewProperty);
-        set => SetValue(GraphViewProperty, value);
-    }
-
-    [Description("messagebox")]
-    private static bool Output(object i) {
-        MessageBox.Show(i.ToString());
-        return true;
-    }
-
-    [Description("value")]
-    [Reactive]
-    private static bool Const([Config(12)] Int32 c, [Output] ref Int32 i) {
-        i = c;
-        return true;
+    public void Init(NodeRunner nodeRunner) {
+        GraphView = nodeRunner.GraphVM;
+        _executor = nodeRunner.Executor;
     }
 
     private void DetectCycles_Button_OnClick(object sender, RoutedEventArgs e) {
         NoLoopValidator validator = new();
-        validator.Go(_graph);
+        validator.Go(GraphView!.Graph);
     }
 
     private void OpenCLTest1_Button_OnClick(object sender, RoutedEventArgs e) {
-        if (_clContext != null) {
-            var result = _clContext.Test1();
-            MessageBox.Show(result, "OpenCL test results");
-        }
+        var result = _clContext.Test1();
+        MessageBox.Show(result, "OpenCL test results");
     }
 
     private void OpenCLTest2_Button_OnClick(object sender, RoutedEventArgs e) {
-        if (_clContext == null) return;
-
         var code = @"
                 __kernel void add(__global float* A, __global float* B,__global float* result, const float C)
                 {
@@ -115,20 +74,17 @@ public partial class Overview {
     }
 
     private void PngLoadTest_Button_OnClick(object sender, RoutedEventArgs e) {
-        if (_clContext == null)
-            return;
-
         Image img = new("C:\\1.png");
         var pixelCount = img.TotalPixels;
 
-        var pixels8u = img.As<RGB8U>();
-        var pixels16u = new RGB16U[pixelCount];
+        var pixels8U = img.As<RGB8U>();
+        var pixels16U = new RGB16U[pixelCount];
         for (var i = 0; i < pixelCount; i++)
-            pixels16u[i] = new RGB16U(pixels8u[i]);
+            pixels16U[i] = new RGB16U(pixels8U[i]);
 
         var resultPixels = new RGB16U[pixelCount];
 
-        var a = Buffer.Create(_clContext!, pixels16u);
+        var a = Buffer.Create(_clContext!, pixels16U);
         Buffer b = new(_clContext!, sizeof(ushort) * 3 * pixelCount);
 
         var code = @"
@@ -160,17 +116,8 @@ public partial class Overview {
     }
 
     private void RunGraph_Button_OnClick(object sender, RoutedEventArgs args) {
-        if (_executor == null) {
-            _executor = _graph.Compile();
-            _frameNoFunc.Executor = _executor;
-        }
-
-        _executor.Run();
+        _executor!.Run();
         GraphView!.OnExecuted(_executor);
-    }
-
-    private void ResetCtx_Button_OnClick(object sender, RoutedEventArgs args) {
-        _executor = null;
     }
 
     private void Serialize_Button_OnClick(object sender, RoutedEventArgs e) {
@@ -189,18 +136,17 @@ public partial class Overview {
     }
 
     private void Deserialize_Button_OnClick(object sender, RoutedEventArgs e) {
-        var ofd = new OpenFileDialog();
-        ofd.Filter = "Json files | *.json";
-        ofd.DefaultExt = "json";
-        if (ofd.ShowDialog() ?? false) {
-            JsonSerializerOptions opts = new();
-            opts.WriteIndented = true;
-
-            string jsonString = File.ReadAllText(ofd.FileName);
-            SerializedGraphView serializedGraphView = JsonSerializer.Deserialize<SerializedGraphView>(jsonString);
-            GraphView = new(_functionFactory, serializedGraphView);
-            _graph = GraphView.Graph;
-        }
+        // var ofd = new OpenFileDialog();
+        // ofd.Filter = "Json files | *.json";
+        // ofd.DefaultExt = "json";
+        // if (ofd.ShowDialog() ?? false) {
+        //     JsonSerializerOptions opts = new();
+        //     opts.WriteIndented = true;
+        //
+        //     string jsonString = File.ReadAllText(ofd.FileName);
+        //     SerializedGraphView serializedGraphView = JsonSerializer.Deserialize<SerializedGraphView>(jsonString);
+        //     GraphView = new(_functionFactory, serializedGraphView);
+        // }
     }
 
     private void FunctionFactoryBrowser_OnFunctionChosen(object? sender, Function e) {
