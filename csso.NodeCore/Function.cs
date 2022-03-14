@@ -37,13 +37,14 @@ public class Function {
     }
 
     public String Namespace { get; private set; }
+    public string Name { get; private set; }
+    public Guid? Id { get; private set; } = null;
     public Delegate Delegate { get; private set; }
     public IReadOnlyList<FunctionInput> Inputs { get; private set; }
     public IReadOnlyList<FunctionOutput> Outputs { get; private set; }
     public IReadOnlyList<FunctionArg> Args { get; private set; }
     public IReadOnlyList<FunctionConfig> Config { get; private set; }
     public FunctionBehavior Behavior { get; private set; }
-    public string Name { get; private set; }
     public string Description { get; private set; }
     public bool IsProcedure => Outputs.Count == 0;
     public string FullName => Namespace + "::" + Name;
@@ -63,10 +64,15 @@ public class Function {
                 as DescriptionAttribute;
         Description = descr?.Description ?? "";
 
-        var reactive =
+        var reactiveAttribute =
             Attribute.GetCustomAttribute(func.Method, typeof(ReactiveAttribute))
                 as ReactiveAttribute;
-        Behavior = reactive == null ? FunctionBehavior.Proactive : FunctionBehavior.Reactive;
+        Behavior = reactiveAttribute == null ? FunctionBehavior.Proactive : FunctionBehavior.Reactive;
+        
+        var idAttribute =
+            Attribute.GetCustomAttribute(func.Method, typeof(FunctionIdAttribute))
+                as FunctionIdAttribute;
+        Id = idAttribute?.Id;
 
         var parameters = func.Method.GetParameters();
         for (Int32 i = 0; i < parameters.Length; i++) {
@@ -81,10 +87,11 @@ public class Function {
 
             var argName = parameter.Name!;
             Type argType;
-            if (parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer)
+            if (parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer) {
                 argType = parameter.ParameterType.GetElementType()!;
-            else
+            } else {
                 argType = parameter.ParameterType;
+            }
 
             FunctionArg arg;
 
@@ -109,18 +116,20 @@ public class Function {
         Outputs = args.OfType<FunctionOutput>().ToList().AsReadOnly();
         Config = args.OfType<FunctionConfig>().ToList().AsReadOnly();
 
-        if (IsProcedure)
+        if (IsProcedure) {
             Behavior = FunctionBehavior.Proactive;
+        }
     }
 
     public void Invoke(object?[]? args) {
         CheckArgTypes(args);
 
         var result = Delegate.DynamicInvoke(args);
-        if (result is bool boolResult)
+        if (result is bool boolResult) {
             Check.True(boolResult);
-        else
+        } else {
             throw new InvalidOperationException();
+        }
     }
 
     private void CheckArgTypes(object?[]? args) {

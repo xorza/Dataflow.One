@@ -15,8 +15,7 @@ public class FunctionFactoryView {
         FunctionFactory = functionFactory;
         Functions = new(_functions);
 
-        FunctionFactory.Functions
-            .Select(_ => _.Value)
+        FunctionFactory.BuildFunctionsArray()
             .Foreach(_functions.Add);
         
         

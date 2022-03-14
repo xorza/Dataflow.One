@@ -121,32 +121,11 @@ public partial class Overview {
     }
 
     private void Serialize_Button_OnClick(object sender, RoutedEventArgs e) {
-        var sfd = new SaveFileDialog();
-        sfd.Filter = "Json files | *.json";
-        sfd.DefaultExt = "json";
-        if (sfd.ShowDialog() ?? false) {
-            JsonSerializerOptions opts = new();
-            opts.WriteIndented = true;
 
-            SerializedGraphView serializedGraphView = GraphView!.Serialize();
-
-            string jsonString = JsonSerializer.Serialize(serializedGraphView, opts);
-            File.WriteAllText(sfd.FileName, jsonString);
-        }
     }
 
     private void Deserialize_Button_OnClick(object sender, RoutedEventArgs e) {
-        // var ofd = new OpenFileDialog();
-        // ofd.Filter = "Json files | *.json";
-        // ofd.DefaultExt = "json";
-        // if (ofd.ShowDialog() ?? false) {
-        //     JsonSerializerOptions opts = new();
-        //     opts.WriteIndented = true;
-        //
-        //     string jsonString = File.ReadAllText(ofd.FileName);
-        //     SerializedGraphView serializedGraphView = JsonSerializer.Deserialize<SerializedGraphView>(jsonString);
-        //     GraphView = new(_functionFactory, serializedGraphView);
-        // }
+ 
     }
 
     private void FunctionFactoryBrowser_OnFunctionChosen(object? sender, Function e) {

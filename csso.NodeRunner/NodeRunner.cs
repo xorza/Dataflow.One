@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
@@ -13,7 +14,7 @@ public class NodeRunner {
     public FunctionFactory Factory { get; } = new();
     public FrameNoFunc FrameNoFunc { get; }
     public Executor Executor { get; }
-    public GraphVM GraphVM { get; }
+    public GraphVM GraphVM { get; set; }
 
     public NodeRunner() {
         Graph graph = new();
@@ -37,8 +38,16 @@ public class NodeRunner {
 
         GraphVM = new(graph);
     }
+
+    public void Deserialize(SerializedGraphView serialized) {
+        GraphVM = new(Factory, serialized);
+    }
+    public  SerializedGraphView Serialize() {
+        return GraphVM.Serialize();
+    }
     
     [Description("messagebox")]
+    [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]
     private static bool Output(object i) {
         MessageBox.Show(i.ToString());
         return true;
@@ -46,6 +55,7 @@ public class NodeRunner {
 
     [Description("value")]
     [Reactive]
+    [FunctionId("28005F51-BD05-4871-BD0B-AA23C2ADCB9C")]
     private static bool Const([Config(12)] Int32 c, [Output] ref Int32 i) {
         i = c;
         return true;

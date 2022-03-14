@@ -4,7 +4,7 @@
       {
         "Name": "Add",
         "Id": "9a4f3ce4-5b8f-4321-9964-8c8e359482e4",
-        "FullName": "csso.NodeCore.Funcs.F::Add",
+        "FunctionName": "csso.NodeCore.Funcs.F::Add",
         "ConfigValues": [],
         "ValueConnections": [],
         "Behavior": 0
@@ -12,7 +12,7 @@
       {
         "Name": "Divide whole",
         "Id": "8010a9e8-f575-4c45-a685-c5ffeabe24b3",
-        "FullName": "csso.NodeCore.Funcs.F::Divide whole",
+        "FunctionName": "csso.NodeCore.Funcs.F::Divide whole",
         "ConfigValues": [],
         "ValueConnections": [],
         "Behavior": 0
@@ -20,7 +20,7 @@
       {
         "Name": "Output",
         "Id": "efd0d5bc-3e07-4321-972b-cf16e73001d8",
-        "FullName": "csso.NodeRunner.Overview::Output",
+        "FunctionName": "csso.NodeRunner.NodeRunner::Output",
         "ConfigValues": [],
         "ValueConnections": [],
         "Behavior": 1
@@ -28,7 +28,7 @@
       {
         "Name": "Value",
         "Id": "44883b28-d509-4f7a-bc14-9a57000992e9",
-        "FullName": "csso.NodeRunner.Overview::Value",
+        "FunctionName": "csso.NodeRunner.NodeRunner::Value",
         "ConfigValues": [
           {
             "Value": "12",
@@ -41,7 +41,7 @@
       {
         "Name": "Frame number",
         "Id": "500f32e3-c7d1-483e-b2ba-8ecf19b5b6b7",
-        "FullName": "csso.NodeCore.Funcs.FrameNoFunc::Frame number",
+        "FunctionName": "csso.NodeCore.Funcs.FrameNoFunc::Frame number",
         "ConfigValues": [],
         "ValueConnections": [],
         "Behavior": 1

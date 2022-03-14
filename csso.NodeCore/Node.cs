@@ -18,7 +18,7 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         ConfigValues = _configValues.AsReadOnly();
     }
 
-    public Node(Graph graph,  Function function) : this() {
+    public Node(Graph graph, Function function) : this() {
         Graph = graph;
         Function = function;
         Behavior = function.Behavior;
@@ -98,7 +98,7 @@ public sealed class Node : WithId, INotifyPropertyChanged {
 
         result.Name = Name;
         result.Id = Id;
-        result.FullName = Function.FullName;
+        result.FunctionName = Function.FullName;
         result.Behavior = Behavior;
 
         result.ConfigValues = _configValues
@@ -118,7 +118,13 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         SerializedNode serialized) : this(serialized.Id) {
         Graph = graph;
         Name = serialized.Name;
-        Function = graph.FunctionFactory.Get(serialized.FullName);
+
+        if (serialized.FunctionId != null) {
+            Function = graph.FunctionFactory.Get(serialized.FunctionId.Value);
+        } else {
+            Function = graph.FunctionFactory.Get(serialized.FunctionName);
+        }
+
         Behavior = serialized.Behavior;
 
         serialized.ConfigValues
@@ -134,7 +140,8 @@ public sealed class Node : WithId, INotifyPropertyChanged {
 public class SerializedNode {
     public string Name { get; set; }
     public Guid Id { get; set; }
-    public String FullName { get; set; }
+    public String FunctionName { get; set; }
+    public Guid? FunctionId { get; set; }
     public SerializedConfigValue[] ConfigValues { get; set; }
     public SerializedValueConnection[] ValueConnections { get; set; }
     public FunctionBehavior Behavior { get; set; }
