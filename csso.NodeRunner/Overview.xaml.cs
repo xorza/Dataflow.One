@@ -37,7 +37,6 @@ public partial class Overview {
         InitializeComponent();
 
         _clContext = new Context();
-        
     }
 
     public void Init(NodeRunner nodeRunner) {

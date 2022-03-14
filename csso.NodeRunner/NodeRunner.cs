@@ -8,12 +8,12 @@ using csso.NodeCore.Run;
 using csso.WpfNode;
 using Graph = csso.NodeCore.Graph;
 
-namespace csso.NodeRunner; 
+namespace csso.NodeRunner;
 
 public class NodeRunner {
     public FunctionFactory Factory { get; } = new();
     public FrameNoFunc FrameNoFunc { get; }
-    public Executor Executor { get; }
+    public Executor Executor { get; private set; }
     public GraphVM GraphVM { get; set; }
 
     public NodeRunner() {
@@ -32,20 +32,23 @@ public class NodeRunner {
         Factory.Register(FrameNoFunc);
 
         graph.FunctionFactory = Factory;
-        
-        Executor = new(graph);
-        FrameNoFunc.Executor = Executor;
 
-        GraphVM = new(graph);
+        GraphVM = new GraphVM(graph);
+        Executor = new(GraphVM.Graph);
+        FrameNoFunc.Executor = Executor;
     }
 
     public void Deserialize(SerializedGraphView serialized) {
-        GraphVM = new(Factory, serialized);
+        GraphVM = new GraphVM(Factory, serialized);
+        Executor = new(GraphVM.Graph);
+        FrameNoFunc.Executor = Executor;
     }
-    public  SerializedGraphView Serialize() {
+
+    public SerializedGraphView Serialize() {
         return GraphVM.Serialize();
     }
-    
+
+
     [Description("messagebox")]
     [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]
     private static bool Output(object i) {
