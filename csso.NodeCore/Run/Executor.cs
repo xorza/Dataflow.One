@@ -9,6 +9,7 @@ namespace csso.NodeCore.Run;
 internal static class Xtensions {
     public static Int32? FirstIndexOf<T>(this IEnumerable<T> enumerable, T element) {
         var i = 0;
+        
         foreach (var item in enumerable) {
             if (item == null && element == null)
                 return i;
@@ -45,38 +46,10 @@ public class Executor {
         Recompile();
     }
 
-    public void Recompile() {
-        List<EvaluationNode> newEvaluationNodes = new(Graph.Nodes.Count);
-
-        for (int i = 0; i < Graph.Nodes.Count; i++) {
-            EvaluationNode? existing = EvaluationNodes.SingleOrDefault(_ => _.Node == Graph.Nodes[i]);
-
-            if (existing != null) {
-                existing.Reset(true);
-                newEvaluationNodes.Add(existing);
-            } else {
-                newEvaluationNodes.Add(new EvaluationNode(Graph.Nodes[i]));
-            }
-        }
-
-        EvaluationNodes = newEvaluationNodes;
-
-        ValidateNodeOrder();
-    }
-
-    [Conditional("DEBUG")]
-    private void ValidateNodeOrder() {
-        Debug.Assert.True(EvaluationNodes.Count == Graph.Nodes.Count);
-
-        for (int i = 0; i < EvaluationNodes.Count; i++) {
-            Debug.Assert.AreSame(EvaluationNodes[i].Node, Graph.Nodes[i]);
-        }
-    }
-
     public void Run() {
-        EvaluationNodes.Foreach(_ => _.Reset());
+        Recompile();
 
-        MarkActive();
+        ProcessEvaluationNodes();
 
         var invocationList = BuildInvocationList();
         invocationList.Foreach(evaluationNode => evaluationNode.ProcessArguments());
@@ -85,7 +58,30 @@ public class Executor {
         ++FrameNo;
     }
 
-    private void MarkActive() {
+    private void Recompile() {
+        List<EvaluationNode> newEvaluationNodes = new(Graph.Nodes.Count);
+
+        foreach (var node in Graph.Nodes) {
+            EvaluationNode? existing = EvaluationNodes.SingleOrDefault(_ => _.Node == node);
+            newEvaluationNodes.Add(existing ?? new EvaluationNode(node));
+        }
+
+        ValidateNodeOrder(Graph, newEvaluationNodes);
+
+        EvaluationNodes = newEvaluationNodes;
+        EvaluationNodes.Foreach(_ => _.Reset());
+    }
+
+    [Conditional("DEBUG")]
+    private static void ValidateNodeOrder(Graph graph, IList<EvaluationNode> evaluationNodes) {
+        Debug.Assert.True(evaluationNodes.Count == graph.Nodes.Count);
+
+        for (int i = 0; i < evaluationNodes.Count; i++) {
+            Debug.Assert.AreSame(evaluationNodes[i].Node, graph.Nodes[i]);
+        }
+    }
+
+    private void ProcessEvaluationNodes() {
         Queue<Node> yetToProcessNodes = new();
         Graph.Nodes
             .Where(_ => _.Function.IsProcedure)
@@ -93,22 +89,19 @@ public class Executor {
 
         Stack<Node> paths = new();
         while (yetToProcessNodes.TryDequeue(out var node)) {
-            node.Connections
-                .OfType<BindingConnection>()
+            node.BindingConnections
                 .Select(_ => _.TargetNode)
                 .Foreach(yetToProcessNodes.Enqueue);
 
             paths.Push(node);
         }
 
-
         paths.Foreach(UpdateEvaluationNode);
     }
 
-
     private void UpdateEvaluationNode(Node node) {
         var evaluationNode = GetEvaluationNode(node);
-        if (evaluationNode.State>= EvaluationState.Processed) {
+        if (evaluationNode.State >= EvaluationState.Processed) {
             return;
         }
 
@@ -119,14 +112,14 @@ public class Executor {
             }
         }
 
-        foreach (var dependency in evaluationNode.ArgDependencies) {
-            if (dependency.TargetNode.Behavior == FunctionBehavior.Proactive) {
+        foreach (var binding in evaluationNode.Node.BindingConnections) {
+            if (binding.TargetNode.Behavior == FunctionBehavior.Proactive) {
                 evaluationNode.Process(true);
                 return;
             }
 
-            var targetEvaluationNode = GetEvaluationNode(dependency.TargetNode);
-            Debug.Assert.True(targetEvaluationNode.State>= EvaluationState.Processed);
+            var targetEvaluationNode = GetEvaluationNode(binding.TargetNode);
+            Check.True(targetEvaluationNode.State >= EvaluationState.Processed);
 
             if (targetEvaluationNode.ArgumentsUpdatedThisFrame) {
                 evaluationNode.Process(true);
@@ -148,15 +141,15 @@ public class Executor {
         while (yetToProcessENodes.TryDequeue(out var evaluationNode)) {
             invocationList.Push(evaluationNode);
 
-            foreach (var dependency in evaluationNode.ArgDependencies) {
-                EvaluationNode targetEvaluationNode = GetEvaluationNode(dependency.TargetNode);
+            foreach (var binding in evaluationNode.Node.BindingConnections) {
+                EvaluationNode targetEvaluationNode = GetEvaluationNode(binding.TargetNode);
 
                 if (!targetEvaluationNode.HasOutputValues) {
                     yetToProcessENodes.Enqueue(targetEvaluationNode);
                     continue;
                 }
 
-                if (dependency.Behavior == ConnectionBehavior.Once) {
+                if (binding.Behavior == ConnectionBehavior.Once) {
                     continue;
                 }
 

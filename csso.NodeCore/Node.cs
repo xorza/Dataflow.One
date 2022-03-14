@@ -7,14 +7,16 @@ namespace csso.NodeCore;
 
 public sealed class Node : WithId, INotifyPropertyChanged {
     private readonly List<ConfigValue> _configValues = new();
-    private readonly List<Connection> _connections = new();
+    private readonly List<ValueConnection> _valueConnections = new();
+    private readonly List<BindingConnection> _bindingConnections = new();
 
     private FunctionBehavior _behavior = FunctionBehavior.Proactive;
 
     private Node() : this(Guid.NewGuid()) { }
 
     private Node(Guid id) : base(id) {
-        Connections = _connections.AsReadOnly();
+        ValueConnections = _valueConnections.AsReadOnly();
+        BindingConnections = _bindingConnections.AsReadOnly();
         ConfigValues = _configValues.AsReadOnly();
     }
 
@@ -58,7 +60,8 @@ public sealed class Node : WithId, INotifyPropertyChanged {
     }
 
     public Graph Graph { get; }
-    public IReadOnlyList<Connection> Connections { get; }
+    public IReadOnlyList<ValueConnection> ValueConnections { get; }
+    public IReadOnlyList<BindingConnection> BindingConnections { get; }
     //1:1 mapping to Function.Config
     public IReadOnlyList<ConfigValue> ConfigValues { get; }
 
@@ -69,11 +72,17 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    internal void Add(Connection connection) {
+    internal void Add(ValueConnection connection) {
         Check.Argument(connection.Node == this, nameof(connection));
 
-        _connections.RemoveAll(_ => _.Input == connection.Input);
-        _connections.Add(connection);
+        _valueConnections.RemoveAll(_ => _.Input == connection.Input);
+        _valueConnections.Add(connection);
+    }
+    internal void Add(BindingConnection connection) {
+        Check.Argument(connection.Node == this, nameof(connection));
+
+        _bindingConnections.RemoveAll(_ => _.Input == connection.Input);
+        _bindingConnections.Add(connection);
     }
 
     public BindingConnection AddConnection(FunctionInput selfInput, Node outputNode, FunctionOutput nodeOutput) {
@@ -90,8 +99,12 @@ public sealed class Node : WithId, INotifyPropertyChanged {
 
     public void Remove(Connection connection) {
         Check.Argument(connection.Node == this, nameof(connection));
-        if (!_connections.Remove(connection))
-            throw new Exception("dfgdvryui6");
+        if (connection is ValueConnection valueConnection) {
+            Check.True(_valueConnections.Remove(valueConnection));
+        }
+        if (connection is BindingConnection bindingConnection) {
+            Check.True(_bindingConnections.Remove(bindingConnection));
+        }
     }
 
     internal SerializedNode Serialize() {
@@ -106,8 +119,7 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         result.ConfigValues = _configValues
             .Select(_ => _.Serialize())
             .ToArray();
-        result.ValueConnections = _connections
-            .OfType<ValueConnection>()
+        result.ValueConnections = ValueConnections
             .Select(_ => _.Serialize())
             .ToArray();
 

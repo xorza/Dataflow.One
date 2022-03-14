@@ -52,18 +52,18 @@ public class Tests {
         executor.Run();
 
         var constEvaluationNode = executor.GetEvaluationNode(_constNode1!);
+        
         Assert.AreEqual(3, _outputFunc.Value);
         Assert.True(constEvaluationNode.State >= EvaluationState.Invoked);
 
         _constFunc1.Value = 33;
-        executor.Recompile();
+        executor = new Executor(_graph!);
+        _frameNoFunc.Executor = executor;
         executor.Run();
-
         Assert.AreEqual(33, _outputFunc.Value);
 
         _constFunc1.Value = 4;
         executor.Run();
-
         Assert.AreEqual(33, _outputFunc.Value);
 
         Assert.Pass();

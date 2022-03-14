@@ -120,13 +120,12 @@ public partial class Overview {
     }
 
     private void Run_ButtonBase_OnClick(object sender, RoutedEventArgs e) {
-        _executor!.Recompile();
         try {
             _executor!.Run();
-        } catch (InputMissingException ex) {
+        } catch (ArgumentMissingException) {
             
         }
         
-        GraphView!.OnExecuted(_executor);
+        GraphView!.OnExecuted(_executor!);
     }
 }

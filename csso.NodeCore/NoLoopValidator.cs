@@ -5,23 +5,25 @@ public class NoLoopValidator {
         var nodeCount = graph.Nodes.Count;
 
         List<Node> path = new();
-        foreach (var outputNode in graph.Nodes)
-        foreach (var binding in outputNode.Connections)
-            Go(binding, path);
+        foreach (var outputNode in graph.Nodes) {
+            foreach (var binding in outputNode.BindingConnections) {
+                Go(binding, path);
+            }
+        }
     }
 
-    private void Go(Connection connection, List<Node> pathBack) {
-        var outputBinding = connection as BindingConnection;
-        if (outputBinding == null) return;
+    private void Go(BindingConnection connection, List<Node> pathBack) {
+        var node = connection.TargetNode;
 
-        var node = outputBinding.TargetNode;
-
-        if (pathBack.Contains(node))
+        if (pathBack.Contains(node)) {
             throw new Exception("loop detected");
+        }
 
         pathBack.Add(node);
 
-        foreach (var b in node.Connections) Go(b, pathBack);
+        foreach (var b in node.BindingConnections) {
+            Go(b, pathBack);
+        }
 
         pathBack.RemoveAt(pathBack.Count - 1);
     }

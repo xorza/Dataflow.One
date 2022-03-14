@@ -31,8 +31,7 @@ public sealed class Graph {
             throw new Exception("543b6u365");
 
         _nodes
-            .SelectMany(_ => _.Connections)
-            .OfType<BindingConnection>()
+            .SelectMany(_ => _.BindingConnections)
             .Where(_ => _.TargetNode == node)
             .ToArray()
             .Foreach(_ => _.Node.Remove(_));
@@ -47,8 +46,7 @@ public sealed class Graph {
             .ToArray();
 
         result.OutputConnections = _nodes
-            .SelectMany(_ => _.Connections)
-            .OfType<BindingConnection>()
+            .SelectMany(_ => _.BindingConnections)
             .Select(_ => _.Serialize())
             .ToArray();
 

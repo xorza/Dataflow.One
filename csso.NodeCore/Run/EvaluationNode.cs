@@ -5,7 +5,7 @@ using Debug = csso.Common.Debug;
 namespace csso.NodeCore.Run;
 
 public enum EvaluationState {
-    Exists,
+    Idle,
     Processed,
     ArgumentsSet,
     Invoked
@@ -18,11 +18,10 @@ public class EvaluationNode {
 
     public Node Node { get; }
     public Object?[] ArgValues { get; }
-    public List<BindingConnection> ArgDependencies { get; } = new();
     public bool HasOutputValues { get; private set; }
     public FunctionBehavior Behavior { get; }
     public bool ArgumentsUpdatedThisFrame { get; private set; }
-    public EvaluationState State { get; private set; } = EvaluationState.Exists;
+    public EvaluationState State { get; private set; } = EvaluationState.Idle;
     public double ExecutionTime { get; private set; } = Double.NaN;
 
     private struct DependencyValue {
@@ -36,10 +35,9 @@ public class EvaluationNode {
     public EvaluationNode(Node node) {
         Node = node;
         Behavior = node.FinalBehavior;
-
         ArgValues = Enumerable.Repeat(Empty, Node.Function.Args.Count).ToArray();
-
-        Reset(true);
+        HasOutputValues = false;
+        Reset();
     }
 
     public object? GetOutputValue(FunctionOutput output) {
@@ -51,8 +49,19 @@ public class EvaluationNode {
         return ArgValues[index!.Value];
     }
 
+    public void Reset() {
+        State = EvaluationState.Idle;
+    }
+
+    public void Process(bool hasUpdatedArguments) {
+        Check.True(State == EvaluationState.Idle);
+
+        ArgumentsUpdatedThisFrame = hasUpdatedArguments;
+        State = EvaluationState.Processed;
+    }
+
     public void ProcessArguments() {
-        Check.False(State < EvaluationState.Processed);
+        Check.True(State == EvaluationState.Processed);
 
         ArgValues.Populate(Empty);
         _dependencyValues.Clear();
@@ -61,26 +70,27 @@ public class EvaluationNode {
 
         foreach (var functionArg in Node.Function.Args) {
             if (functionArg is FunctionInput inputArg) {
-                var connection = Node.Connections.SingleOrDefault(_ => _.Input == inputArg);
-                if (connection == null) {
-                    throw new InputMissingException(Node, inputArg);
+                var valueConnection = Node.ValueConnections.SingleOrDefault(_ => _.Input == inputArg);
+                var bindingConnection = Node.BindingConnections.SingleOrDefault(_ => _.Input == inputArg);
+
+                if (valueConnection != null) {
+                    Check.True(bindingConnection == null);
+                    ArgValues[valueConnection.Input.ArgumentIndex] = valueConnection.Value;
                 }
 
-                if (connection is ValueConnection valueConnection) {
-                    ArgValues[connection.Input.ArgumentIndex] = valueConnection.Value;
-                } else if (connection is BindingConnection bindingConnection) {
-                    Debug.Assert.AreSame(bindingConnection.Input,
-                        Node.Function.Args[bindingConnection.Input.ArgumentIndex]);
+                if (bindingConnection != null) {
+                    Check.True(valueConnection == null);
+                    Check.True(
+                        bindingConnection.Input == Node.Function.Args[bindingConnection.Input.ArgumentIndex]
+                    );
 
                     _dependencyValues.Add(new DependencyValue() {
                         TargetNode = bindingConnection.TargetNode,
                         Index = bindingConnection.Input.ArgumentIndex,
                         Target = bindingConnection.Target
                     });
-                } else {
-                    Check.Fail();
                 }
-            } else if (functionArg is FunctionOutput outputArg) {
+            } else if (functionArg is FunctionOutput) {
                 ArgValues[functionArg.ArgumentIndex] = null;
             } else if (functionArg is FunctionConfig configArg) {
                 var configValue = Node.ConfigValues.Single(_ => _.Config == configArg);
@@ -103,21 +113,23 @@ public class EvaluationNode {
                     && !ArgumentsUpdatedThisFrame
                     && Behavior != FunctionBehavior.Proactive);
 
-        Stopwatch sw = new();
-        sw.Start();
+        {
+            Stopwatch sw = new();
+            sw.Start();
 
-        _dependencyValues.ForEach(_ => {
-            EvaluationNode targetEvaluationNode = executor.GetEvaluationNode(_.TargetNode);
-            Check.True(targetEvaluationNode.State >= EvaluationState.Processed);
-            ArgValues[_.Index] = targetEvaluationNode.GetOutputValue(_.Target);
-        });
+            _dependencyValues.ForEach(_ => {
+                EvaluationNode targetEvaluationNode = executor.GetEvaluationNode(_.TargetNode);
+                Check.True(targetEvaluationNode.State >= EvaluationState.Processed);
+                ArgValues[_.Index] = targetEvaluationNode.GetOutputValue(_.Target);
+            });
 
-        Check.False(ArgValues.Contains(Empty));
+            ValidateArguments();
 
-        Node.Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
+            Node.Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
 
-        sw.Stop();
-        ExecutionTime = sw.ElapsedMilliseconds * 1.0;
+            sw.Stop();
+            ExecutionTime = sw.ElapsedMilliseconds * 1.0;
+        }
 
         if (!Node.Function.IsProcedure) {
             HasOutputValues = true;
@@ -126,23 +138,10 @@ public class EvaluationNode {
         State = EvaluationState.Invoked;
     }
 
-    public void Process(bool hasUpdatedArguments) {
-        State = EvaluationState.Processed;
-        ArgumentsUpdatedThisFrame = hasUpdatedArguments;
-    }
-
-    public void Reset(bool resetOutputValues = false) {
-        State = EvaluationState.Exists;
-        if (resetOutputValues) {
-            HasOutputValues = false;
-
-            ArgDependencies.Clear();
-            foreach (var input in Node.Function.Inputs) {
-                var connection = Node.Connections.SingleOrDefault(_ => _.Input == input);
-
-                if (connection is BindingConnection bindingConnection) {
-                    ArgDependencies.Add(bindingConnection);
-                }
+    private void ValidateArguments() {
+        for (int i = 0; i < ArgValues.Length; i++) {
+            if (ArgValues[i] == Empty) {
+                throw new ArgumentMissingException(Node, (FunctionInput) Node.Function.Args[i]);
             }
         }
     }

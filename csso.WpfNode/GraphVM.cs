@@ -107,9 +107,8 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
 
         _edges.Clear();
-        foreach (var node in Nodes)
-        foreach (var edge in node.Node.Connections)
-            if (edge is BindingConnection binding) {
+        foreach (var node in Nodes) {
+            foreach (var binding in node.Node.BindingConnections) {
                 var inputNode = GetNodeView(binding.Node);
                 var outputNode = GetNodeView(binding.TargetNode);
 
@@ -118,6 +117,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
                 _edges.Add(new EdgeView(binding, input, output));
             }
+        }
 
         FunctionFactory = new FunctionFactoryView(Graph.FunctionFactory);
     }

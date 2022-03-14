@@ -28,9 +28,10 @@ public sealed class BindingConnection : Connection {
         Node targetNode,
         FunctionOutput target) :
         base(inputNode, input) {
-        if (input.Type != target.Type && !target.Type.IsSubclassOf(input.Type))
-            throw new Exception("type mismatch");
-        
+        if (input.Type != target.Type && !target.Type.IsSubclassOf(input.Type)) {
+            throw new Exception("type mismatch 4fv56g2456g");
+        }
+
         Check.True(inputNode.Function.Inputs.Contains(input));
         Check.True(targetNode.Function.Outputs.Contains(target));
 
