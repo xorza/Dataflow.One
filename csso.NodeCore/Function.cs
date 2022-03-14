@@ -38,7 +38,7 @@ public class Function {
 
     public String Namespace { get; private set; }
     public string Name { get; private set; }
-    public Guid? Id { get; private set; } = null;
+    public Guid? Id { get; private set; }
     public Delegate Delegate { get; private set; }
     public IReadOnlyList<FunctionInput> Inputs { get; private set; }
     public IReadOnlyList<FunctionOutput> Outputs { get; private set; }
