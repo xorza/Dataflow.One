@@ -61,6 +61,10 @@ public class EvaluationNode {
     }
 
     public void ProcessArguments() {
+        if(State == EvaluationState.ArgumentsSet) {
+            return;
+        }
+        
         Check.True(State == EvaluationState.Processed);
 
         ArgValues.Populate(Empty);
@@ -108,7 +112,7 @@ public class EvaluationNode {
             return;
         }
 
-        Check.True(State >= EvaluationState.ArgumentsSet);
+        Check.True(State == EvaluationState.ArgumentsSet);
         Check.False(HasOutputValues
                     && !ArgumentsUpdatedThisFrame
                     && Behavior != FunctionBehavior.Proactive);

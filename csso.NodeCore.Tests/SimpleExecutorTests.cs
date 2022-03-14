@@ -52,7 +52,7 @@ public class Tests {
         executor.Run();
 
         var constEvaluationNode = executor.GetEvaluationNode(_constNode1!);
-        
+
         Assert.AreEqual(3, _outputFunc.Value);
         Assert.True(constEvaluationNode.State >= EvaluationState.Invoked);
 
@@ -216,6 +216,45 @@ public class Tests {
         _constNode2.ConfigValues.Single().Value = 132;
         executor.Run();
         Assert.AreEqual(132, _outputFunc.Value);
+
+        Assert.Pass();
+    }
+
+    [Test]
+    public void Test7() {
+        _outputNode!.AddConnection(
+            _outputNode!.Function.Inputs.Single(),
+            _addNode!,
+            _addNode!.Function.Outputs.Single());
+
+        _addNode.AddConnection(
+            _addNode.Function.Inputs[0],
+            _frameNoNode!,
+            _frameNoNode!.Function.Outputs.Single());
+
+        _addNode.AddConnection(
+            _addNode.Function.Inputs[1],
+            _frameNoNode!,
+            _frameNoNode!.Function.Outputs.Single());
+
+        var executor = new Executor(_graph!);
+        _frameNoFunc.Executor = executor;
+
+        executor.Run();
+
+        Assert.AreEqual(0, _outputFunc.Value);
+
+        var addEvaluationNode = executor.GetEvaluationNode(_addNode!);
+        var outputEvaluationNode = executor.GetEvaluationNode(_outputNode!);
+        Assert.True(addEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.True(outputEvaluationNode.State >= EvaluationState.Invoked);
+
+        executor.Run();
+
+        Assert.AreEqual(2, _outputFunc.Value);
+
+        Assert.True(addEvaluationNode.State == EvaluationState.Invoked);
+        Assert.True(outputEvaluationNode.State == EvaluationState.Invoked);
 
         Assert.Pass();
     }
