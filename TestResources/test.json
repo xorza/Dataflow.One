@@ -5,6 +5,7 @@
         "Name": "Add",
         "Id": "bf77d02c-75fc-450a-9d23-e4719ffad25a",
         "FunctionName": "csso.NodeCore.Funcs.F::Add",
+        "FunctionId": null,
         "ConfigValues": [],
         "ValueConnections": [],
         "Behavior": 0
@@ -13,6 +14,7 @@
         "Name": "Output",
         "Id": "51ec02c7-3ac3-48f0-8dbf-5accee179015",
         "FunctionName": "csso.NodeRunner.NodeRunner::Output",
+        "FunctionId": "a982aa64-d455-4eb5-8ce9-d7a75edb00e5",
         "ConfigValues": [],
         "ValueConnections": [],
         "Behavior": 1
@@ -21,6 +23,7 @@
         "Name": "Value",
         "Id": "ae89a6eb-d8fa-401b-a27a-a450a33e8f99",
         "FunctionName": "csso.NodeRunner.NodeRunner::Value",
+        "FunctionId": "28005f51-bd05-4871-bd0b-aa23c2adcb9c",
         "ConfigValues": [
           {
             "Value": "12",
@@ -34,6 +37,7 @@
         "Name": "Frame number",
         "Id": "6c7a4e3b-d9b5-457b-aa67-1dbbe41178e2",
         "FunctionName": "csso.NodeCore.Funcs.FrameNoFunc::Frame number",
+        "FunctionId": null,
         "ConfigValues": [],
         "ValueConnections": [],
         "Behavior": 1

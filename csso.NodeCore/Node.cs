@@ -100,6 +100,7 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         result.Id = Id;
         result.FunctionName = Function.FullName;
         result.Behavior = Behavior;
+        result.FunctionId = Function.Id;
 
         result.ConfigValues = _configValues
             .Select(_ => _.Serialize())
