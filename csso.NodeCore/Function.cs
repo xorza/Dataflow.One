@@ -42,8 +42,8 @@ public class Function {
     public Delegate Delegate { get; private set; }
     public IReadOnlyList<FunctionInput> Inputs { get; private set; }
     public IReadOnlyList<FunctionOutput> Outputs { get; private set; }
-    public IReadOnlyList<FunctionArg> Args { get; private set; }
     public IReadOnlyList<FunctionConfig> Config { get; private set; }
+    public IReadOnlyList<FunctionArg> Args { get; private set; }
     public FunctionBehavior Behavior { get; private set; }
     public string Description { get; private set; }
     public bool IsProcedure => Outputs.Count == 0;

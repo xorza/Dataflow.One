@@ -59,6 +59,7 @@ public sealed class Node : WithId, INotifyPropertyChanged {
 
     public Graph Graph { get; }
     public IReadOnlyList<Connection> Connections { get; }
+    //1:1 mapping to Function.Config
     public IReadOnlyList<ConfigValue> ConfigValues { get; }
 
     public event PropertyChangedEventHandler? PropertyChanged;

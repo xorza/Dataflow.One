@@ -114,21 +114,19 @@ public partial class Overview {
             kernel.Dispose();
         }
     }
-
-    private void RunGraph_Button_OnClick(object sender, RoutedEventArgs args) {
-        _executor!.Run();
-        GraphView!.OnExecuted(_executor);
-    }
-
-    private void Serialize_Button_OnClick(object sender, RoutedEventArgs e) {
-
-    }
-
-    private void Deserialize_Button_OnClick(object sender, RoutedEventArgs e) {
- 
-    }
-
+    
     private void FunctionFactoryBrowser_OnFunctionChosen(object? sender, Function e) {
         GraphView!.CreateNode(e);
+    }
+
+    private void Run_ButtonBase_OnClick(object sender, RoutedEventArgs e) {
+        _executor!.Recompile();
+        try {
+            _executor!.Run();
+        } catch (InputMissingException ex) {
+            
+        }
+        
+        GraphView!.OnExecuted(_executor);
     }
 }

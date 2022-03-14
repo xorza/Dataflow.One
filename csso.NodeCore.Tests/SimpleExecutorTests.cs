@@ -46,21 +46,21 @@ public class Tests {
             _constNode1!,
             _constNode1!.Function.Outputs.Single());
 
-        var executor = new Executor( _graph!);
+        var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
 
         executor.Run();
 
         var constEvaluationNode = executor.GetEvaluationNode(_constNode1!);
         Assert.AreEqual(3, _outputFunc.Value);
-        Assert.True(constEvaluationNode.InvokedThisFrame);
+        Assert.True(constEvaluationNode.State >= EvaluationState.Invoked);
 
         _constFunc1.Value = 33;
         executor.Recompile();
         executor.Run();
 
         Assert.AreEqual(33, _outputFunc.Value);
-        
+
         _constFunc1.Value = 4;
         executor.Run();
 
@@ -76,7 +76,7 @@ public class Tests {
             _frameNoNode!,
             _frameNoNode!.Function.Outputs.Single());
 
-        var executor = new Executor( _graph!);
+        var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
 
         executor.Run();
@@ -105,7 +105,7 @@ public class Tests {
             _constNode2!,
             _constNode2!.Function.Outputs.Single());
 
-        var executor = new Executor( _graph!);
+        var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
 
         executor.Run();
@@ -134,7 +134,7 @@ public class Tests {
             _frameNoNode!,
             _frameNoNode!.Function.Outputs.Single());
 
-        var executor = new Executor( _graph!);
+        var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
 
         executor.Run();
@@ -144,16 +144,16 @@ public class Tests {
         var addEvaluationNode = executor.GetEvaluationNode(_addNode);
         var frameNoEvaluationNode = executor.GetEvaluationNode(_frameNoNode);
         var constEvaluationNode = executor.GetEvaluationNode(_constNode1);
-        Assert.True(frameNoEvaluationNode.InvokedThisFrame);
-        Assert.True(constEvaluationNode.InvokedThisFrame);
-        Assert.True(addEvaluationNode.InvokedThisFrame);
+        Assert.True(frameNoEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.True(constEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.True(addEvaluationNode.State >= EvaluationState.Invoked);
 
         executor.Run();
 
         Assert.AreEqual(4, _outputFunc.Value);
-        Assert.True(frameNoEvaluationNode.InvokedThisFrame);
-        Assert.False(constEvaluationNode.InvokedThisFrame);
-        Assert.True(addEvaluationNode.InvokedThisFrame);
+        Assert.True(frameNoEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.False(constEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.True(addEvaluationNode.State >= EvaluationState.Invoked);
 
         Assert.Pass();
     }
@@ -176,7 +176,7 @@ public class Tests {
             _frameNoNode!,
             _frameNoNode!.Function.Outputs.Single());
 
-        var executor = new Executor( _graph!);
+        var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
 
         executor.Run();
@@ -185,15 +185,15 @@ public class Tests {
 
         var addEvaluationNode = executor.GetEvaluationNode(_addNode!);
         var outputEvaluationNode = executor.GetEvaluationNode(_outputNode!);
-        Assert.True(addEvaluationNode.InvokedThisFrame);
-        Assert.True(outputEvaluationNode.InvokedThisFrame);
+        Assert.True(addEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.True(outputEvaluationNode.State >= EvaluationState.Invoked);
 
         executor.Run();
 
         Assert.AreEqual(3, _outputFunc.Value);
 
-        Assert.False(addEvaluationNode.InvokedThisFrame);
-        Assert.True(outputEvaluationNode.InvokedThisFrame);
+        Assert.False(addEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.True(outputEvaluationNode.State >= EvaluationState.Invoked);
 
         Assert.Pass();
     }
@@ -205,7 +205,7 @@ public class Tests {
             _constNode2!,
             _constNode2!.Function.Outputs.Single());
 
-        var executor = new Executor( _graph!);
+        var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
 
         _constNode2.ConfigValues.Single().Value = 133;

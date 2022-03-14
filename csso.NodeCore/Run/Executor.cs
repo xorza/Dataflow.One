@@ -24,10 +24,17 @@ internal static class Xtensions {
 public class Executor {
     public Int32 FrameNo { get; private set; }
 
-    public List<EvaluationNode> EvaluationNodes { get; private set; } = new ();
+    public List<EvaluationNode> EvaluationNodes { get; private set; } = new();
 
     public EvaluationNode GetEvaluationNode(Node node) {
         return EvaluationNodes.Single(_ => _.Node == node);
+    }
+
+    public bool TryGetEvaluationNode(Node node, out EvaluationNode? evaluationNode) {
+        var result = EvaluationNodes.SingleOrDefault(_ => _.Node == node);
+
+        evaluationNode = result;
+        return result != null;
     }
 
     public Graph Graph { get; }
@@ -45,7 +52,7 @@ public class Executor {
             EvaluationNode? existing = EvaluationNodes.SingleOrDefault(_ => _.Node == Graph.Nodes[i]);
 
             if (existing != null) {
-                existing.Reset();
+                existing.Reset(true);
                 newEvaluationNodes.Add(existing);
             } else {
                 newEvaluationNodes.Add(new EvaluationNode(Graph.Nodes[i]));
@@ -55,8 +62,8 @@ public class Executor {
         EvaluationNodes = newEvaluationNodes;
 
         ValidateNodeOrder();
-    }  
-    
+    }
+
     [Conditional("DEBUG")]
     private void ValidateNodeOrder() {
         Debug.Assert.True(EvaluationNodes.Count == Graph.Nodes.Count);
@@ -65,13 +72,14 @@ public class Executor {
             Debug.Assert.AreSame(EvaluationNodes[i].Node, Graph.Nodes[i]);
         }
     }
-    
+
     public void Run() {
-        EvaluationNodes.Foreach(_ => _.NextIteration());
+        EvaluationNodes.Foreach(_ => _.Reset());
 
         MarkActive();
 
         var invocationList = BuildInvocationList();
+        invocationList.Foreach(evaluationNode => evaluationNode.ProcessArguments());
         invocationList.Foreach(evaluationNode => evaluationNode.Invoke(this));
 
         ++FrameNo;
@@ -100,33 +108,33 @@ public class Executor {
 
     private void UpdateEvaluationNode(Node node) {
         var evaluationNode = GetEvaluationNode(node);
-        if (evaluationNode.UpdatedThisFrame) {
+        if (evaluationNode.State>= EvaluationState.Processed) {
             return;
         }
 
         foreach (var config in evaluationNode.Node.ConfigValues) {
             if (evaluationNode.ArgValues[config.Config.ArgumentIndex] != config.Value) {
-                evaluationNode.Update(true);
+                evaluationNode.Process(true);
                 return;
             }
         }
 
         foreach (var dependency in evaluationNode.ArgDependencies) {
             if (dependency.TargetNode.Behavior == FunctionBehavior.Proactive) {
-                evaluationNode.Update(true);
+                evaluationNode.Process(true);
                 return;
             }
 
             var targetEvaluationNode = GetEvaluationNode(dependency.TargetNode);
-            Debug.Assert.True(targetEvaluationNode.UpdatedThisFrame);
-            
+            Debug.Assert.True(targetEvaluationNode.State>= EvaluationState.Processed);
+
             if (targetEvaluationNode.ArgumentsUpdatedThisFrame) {
-                evaluationNode.Update(true);
+                evaluationNode.Process(true);
                 return;
             }
         }
 
-        evaluationNode.Update(false);
+        evaluationNode.Process(false);
     }
 
     private Stack<EvaluationNode> BuildInvocationList() {
