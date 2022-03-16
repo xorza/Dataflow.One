@@ -1,5 +1,11 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/csso.WpfCommon;component/Colors.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    
+    
     <ControlTemplate TargetType="Button" x:Key="EmptyButtonTemplate">
         <Border
             BorderBrush="{TemplateBinding BorderBrush}"

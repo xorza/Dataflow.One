@@ -97,7 +97,7 @@
                                         Value="True">
                                         <Setter
                                             Property="Background"
-                                            Value="#1b739d" />
+                                            Value="{StaticResource HighlightBackgroundBrush}" />
                                         <Setter
                                             Property="TextBlock.Foreground"
                                             Value="Black" />

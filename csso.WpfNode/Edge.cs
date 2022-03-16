@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -34,6 +35,13 @@ public class Edge : ClickControl {
     public Edge() {
         LeftButtonClick += LeftButtonClickHandler;
         MouseDoubleClick += MouseButtonEventHandler;
+        
+        
+        var myResourceDictionary = new ResourceDictionary();
+        myResourceDictionary.Source =
+            new Uri("pack://application:,,,/csso.WpfCommon;component/Colors.xaml",
+                UriKind.RelativeOrAbsolute);
+        this.Resources = myResourceDictionary;
     }
 
     public bool IsProactive {
@@ -71,7 +79,7 @@ public class Edge : ClickControl {
         if (IsMouseOver)
             pen = new Pen(Brushes.Coral, 2);
         else if (IsProactive)
-            pen = new Pen(Brushes.Teal, 1.5);
+            pen = new Pen(this.Resources["HighlightBackgroundBrush"] as Brush, 1.5);
         else
             pen = new Pen(Brushes.SlateGray, 1.5);
 
