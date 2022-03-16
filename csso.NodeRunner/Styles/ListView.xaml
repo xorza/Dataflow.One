@@ -11,7 +11,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListViewItem">
-                    <Border BorderThickness="0"
+                    <Border
+                        Name="ItemBorder"
+                        BorderThickness="1"
                             BorderBrush="{x:Null}"
                             Padding="6 3"
                             Background="{TemplateBinding Background}"
@@ -29,7 +31,10 @@
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Background"
-                                    Value="Teal" />
+                                    Value="{StaticResource HighlightBackgroundBrush}" />
+                            <Setter Property="BorderBrush"
+                                    TargetName="ItemBorder"
+                                    Value="{StaticResource HighlightBorderBrush}" />
                             <Setter Property="Foreground"
                                     Value="Black" />
                         </Trigger>

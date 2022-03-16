@@ -145,6 +145,30 @@
         <Setter Property="HeaderBackground" Value="{StaticResource ActiveContentBackgroundBrush}" />
     </Style>
     <Style TargetType="{x:Type WpfNode:Node}" BasedOn="{StaticResource NodeDefaultStyle}" />
+
+
+    <Style TargetType="{x:Type Menu}">
+        <Setter Property="OverridesDefaultStyle"
+                Value="True" />
+        <Setter Property="SnapsToDevicePixels"
+                Value="True" />
+        <Setter Property="Foreground"
+                Value="{StaticResource ActiveForegroundBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Menu}">
+                    <Border BorderThickness="0" 
+                            Background="{StaticResource ActiveContentBackgroundBrush}" Padding="2">
+                        <StackPanel ClipToBounds="True"
+                                    Orientation="Horizontal"
+                                    IsItemsHost="True" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     
+
     
+
 </ResourceDictionary>

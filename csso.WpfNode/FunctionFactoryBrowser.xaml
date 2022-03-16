@@ -17,34 +17,26 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" MinWidth="100" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <TextBlock Margin="2" Text="Select a node, double click to instantiate" TextWrapping="Wrap" Width="130"></TextBlock>
-            <ListView
-                x:Name="FunctionsListView"
-                ItemsSource="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=FunctionFactory.Functions}"
-                SelectedValue="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=SelectedFunction}"
-                Grid.Row="1">
-                <ItemsControl.Resources>
-                </ItemsControl.Resources>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate
-                        DataType="{x:Type core:Function}">
+        <ListView
+            x:Name="FunctionsListView"
+            ItemsSource="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=FunctionFactory.Functions}"
+            SelectedValue="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=SelectedFunction}">
+            <ItemsControl.Resources>
+            </ItemsControl.Resources>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate
+                    DataType="{x:Type core:Function}">
 
-                        <TextBlock Text="{Binding Name}"></TextBlock>
+                    <TextBlock Text="{Binding Name}"></TextBlock>
 
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
 
-            </ListView>
-        </Grid>
+        </ListView>
 
         <Grid
             Grid.Column="1"

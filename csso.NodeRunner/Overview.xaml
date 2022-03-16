@@ -28,22 +28,13 @@
                        NodeStyle="{StaticResource NodeDefaultStyle}"
                        GraphView="{Binding Path=GraphView, ElementName=OverviewUserControl}" />
 
-        <Grid Grid.Row="1" Grid.Column="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="100" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Slider
-                Orientation="Horizontal"
-                VerticalAlignment="Center"
-                Margin="2">
-
-            </Slider>
-
-            <Button Grid.Column="1" Content="Run"
-                    Width="70" Height="35"
-                   Click="Run_ButtonBase_OnClick" ></Button>
-        </Grid>
+        <Button Grid.Row="0" Grid.Column="1" Content="Run"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Width="70" Height="35"
+                Margin="4"
+                Click="Run_ButtonBase_OnClick">
+        </Button>
 
         <GridSplitter
             Grid.Column="1"

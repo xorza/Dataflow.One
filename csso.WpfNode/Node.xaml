@@ -49,8 +49,8 @@
         Background="{x:Null}"
         Margin="{Binding Path=Margin, ElementName=NodeUserControl}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
         <TextBlock 
@@ -97,7 +97,7 @@
                                         Value="True">
                                         <Setter
                                             Property="Background"
-                                            Value="Teal" />
+                                            Value="#1b739d" />
                                         <Setter
                                             Property="TextBlock.Foreground"
                                             Value="Black" />
