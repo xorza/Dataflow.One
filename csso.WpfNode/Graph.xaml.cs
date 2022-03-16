@@ -25,12 +25,20 @@ public partial class Graph : UserControl {
     private Canvas? _nodesCanvas;
 
     public Graph() {
+        Resources.Source = new Uri(
+            "pack://application:,,,/csso.WpfNode;component/Styles.xaml",
+            UriKind.RelativeOrAbsolute
+        );
+        Style = Resources["DefaultGraphStyle"] as Style;
+        
         InitializeComponent();
 
         LayoutUpdated += LayoutUpdated_Handler;
         Loaded += Loaded_Handler;
         MouseLeftButtonDown += NodeDeselectButton_Handler;
         MouseRightButtonDown += NodeDeselectButton_Handler;
+        
+     
     }
 
     public GraphVM? GraphView {

@@ -6,12 +6,27 @@
 
              xmlns:view="clr-namespace:csso.WpfNode"
              xmlns:core="clr-namespace:csso.NodeCore;assembly=csso.NodeCore"
+             xmlns:wpfNode="clr-namespace:csso.WpfNode"
 
              mc:Ignorable="d"
              d:DesignHeight="350" d:DesignWidth="300"
              VerticalAlignment="Top"
              HorizontalAlignment="Left"
-             x:Name="NodeUserControl">
+             x:Name="NodeUserControl"
+            >
+    <UserControl.Style>
+        <Style TargetType="{x:Type wpfNode:Node}" >
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Padding" Value="10 6" />
+            <Setter Property="HighlightBrush" Value="Coral" />
+            <Setter Property="Foreground" Value="{StaticResource InactiveForegroundBrush}" />
+            <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource PanelBorderBrush}" />
+            <Setter Property="BorderThickness" Value="{StaticResource DefaultBorderThickness}" />
+            <Setter Property="CornerRadius" Value="{StaticResource DefaultCornerRadius}" />
+            <Setter Property="HeaderBackground" Value="{StaticResource ActiveContentBackgroundBrush}" />
+        </Style>
+    </UserControl.Style>
 
     <UserControl.Resources>
         <ResourceDictionary>

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:WpfNode="clr-namespace:csso.WpfNode;assembly=csso.WpfNode"
+             xmlns:wpfNode="clr-namespace:csso.WpfNode;assembly=csso.WpfNode"
 
              mc:Ignorable="d"
              x:Name="OverviewUserControl"
@@ -22,10 +22,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <WpfNode:Graph x:Name="Graph"
+        <wpfNode:Graph x:Name="Graph"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"
-                       NodeStyle="{StaticResource NodeDefaultStyle}"
                        GraphView="{Binding Path=GraphView, ElementName=OverviewUserControl}" />
 
         <Button Grid.Row="0" Grid.Column="1" Content="Run"
@@ -57,7 +56,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <WpfNode:NodeEdit
+                <wpfNode:NodeEdit
                     x:Name="NodeEdit"
                     Padding="{StaticResource DefaultPadding}"
                     HorizontalAlignment="Stretch"
@@ -72,10 +71,9 @@
                               Background="{StaticResource ActiveContentBackgroundBrush}" />
                 <!-- <Rectangle Grid.Row="1" Fill="Beige" Height="1" StrokeThickness="0" Stroke="{x:Null}" /> -->
 
-                <WpfNode:FunctionFactoryBrowser Grid.Row="2" x:Name="FunctionFactoryBrowser"
+                <wpfNode:FunctionFactoryBrowser Grid.Row="2" x:Name="FunctionFactoryBrowser"
                                                 ListViewItemStyle="{StaticResource ListViewItemDefault}"
                                                 FunctionFactory="{Binding ElementName=OverviewUserControl, Path=GraphView.FunctionFactory}"
-                                                NodeStyle="{StaticResource NodeDefaultStyle}"
                                                 FunctionChosen="FunctionFactoryBrowser_OnFunctionChosen" />
             </Grid>
         </Border>

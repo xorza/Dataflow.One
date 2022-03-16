@@ -50,11 +50,19 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     public Node() {
+        Resources.Source = new Uri(
+            "pack://application:,,,/csso.WpfNode;component/Styles.xaml",
+            UriKind.RelativeOrAbsolute
+        );
+        Style = Resources["DefaultNodeStyle"] as Style;
+        
         InitializeComponent();
 
         MouseLeftButtonDown += Node_MouseLeftButtonDown;
         LayoutUpdated += LayoutUpdated_EventHandler;
         Loaded += OnLoaded;
+
+    
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e) {
@@ -110,7 +118,8 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     private void RefreshExecutionTime() {
         if (NodeView != null) {
-            ExecutionTimeTextBlock.Visibility = double.IsFinite(NodeView.ExecutionTime) ? Visibility.Visible : Visibility.Hidden;
+            ExecutionTimeTextBlock.Visibility =
+                double.IsFinite(NodeView.ExecutionTime) ? Visibility.Visible : Visibility.Hidden;
         }
     }
 
