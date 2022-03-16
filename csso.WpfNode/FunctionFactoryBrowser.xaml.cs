@@ -33,15 +33,6 @@ public partial class FunctionFactoryBrowser : UserControl {
         new PropertyMetadata(default(NodeView)
             , NodePreview_PropertyChangedCallback));
 
-
-    public static readonly DependencyProperty NodeStyleProperty = DependencyProperty.Register(
-        nameof(NodeStyle), typeof(Style), typeof(FunctionFactoryBrowser), new PropertyMetadata(default(Style)));
-
-    public Style? NodeStyle {
-        get { return (Style) GetValue(NodeStyleProperty); }
-        set { SetValue(NodeStyleProperty, value); }
-    }
-
     public static readonly DependencyProperty ListViewItemStyleProperty = DependencyProperty.Register(
         nameof(ListViewItemStyle), typeof(Style), typeof(FunctionFactoryBrowser), new PropertyMetadata(default(Style)));
 

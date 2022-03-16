@@ -13,26 +13,28 @@
              VerticalAlignment="Top"
              HorizontalAlignment="Left"
              x:Name="NodeUserControl"
+             Style="{DynamicResource DefaultNodeStyle}"
             >
-    <UserControl.Style>
-        <Style TargetType="{x:Type wpfNode:Node}" >
-            <Setter Property="Margin" Value="2" />
-            <Setter Property="Padding" Value="10 6" />
-            <Setter Property="HighlightBrush" Value="Coral" />
-            <Setter Property="Foreground" Value="{StaticResource InactiveForegroundBrush}" />
-            <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}" />
-            <Setter Property="BorderBrush" Value="{StaticResource PanelBorderBrush}" />
-            <Setter Property="BorderThickness" Value="{StaticResource DefaultBorderThickness}" />
-            <Setter Property="CornerRadius" Value="{StaticResource DefaultCornerRadius}" />
-            <Setter Property="HeaderBackground" Value="{StaticResource ActiveContentBackgroundBrush}" />
-        </Style>
-    </UserControl.Style>
+  
 
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml" />
+                <ResourceDictionary 
+                    Source="Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
+            <Style TargetType="{x:Type wpfNode:Node}" x:Key="DefaultNodeStyle" >
+                <Setter Property="Margin" Value="2" />
+                <Setter Property="Padding" Value="10 6" />
+                <Setter Property="HighlightBrush" Value="Coral" />
+                <Setter Property="Foreground" Value="{StaticResource InactiveForegroundBrush}" />
+                <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource PanelBorderBrush}" />
+                <Setter Property="BorderThickness" Value="{StaticResource DefaultBorderThickness}" />
+                <Setter Property="CornerRadius" Value="{StaticResource DefaultCornerRadius}" />
+                <Setter Property="HeaderBackground" Value="{StaticResource ActiveContentBackgroundBrush}" />
+            </Style>
 
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
 

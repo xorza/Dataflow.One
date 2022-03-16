@@ -44,7 +44,6 @@
             HorizontalAlignment="Center"
             Margin="8">
             <local:Node
-                Style="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodeStyle}"
                 DeletionEnabled="False"
                 NodeView="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview}"
                 Visibility="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview, Converter={StaticResource NullVisibilityConverter1}}" />

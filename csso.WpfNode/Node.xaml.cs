@@ -50,19 +50,11 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     public Node() {
-        Resources.Source = new Uri(
-            "pack://application:,,,/csso.WpfNode;component/Styles.xaml",
-            UriKind.RelativeOrAbsolute
-        );
-        Style = Resources["DefaultNodeStyle"] as Style;
-        
         InitializeComponent();
 
         MouseLeftButtonDown += Node_MouseLeftButtonDown;
         LayoutUpdated += LayoutUpdated_EventHandler;
         Loaded += OnLoaded;
-
-    
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e) {
