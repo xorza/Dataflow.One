@@ -20,12 +20,20 @@
     </UserControl.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MinWidth="100" />
             <ColumnDefinition Width="*" MinWidth="300" />
         </Grid.ColumnDefinitions>
 
+        <TextBox Margin="0" Text=""></TextBox>
+
         <ListView
+            Grid.Row="1"
+            Grid.Column="0"
             x:Name="FunctionsListView"
             ItemsSource="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=FunctionFactory.Functions}"
             SelectedValue="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=SelectedFunction}">
@@ -42,12 +50,16 @@
 
         </ListView>
 
-        <Grid
-
+        <Grid 
+            Grid.Row="0"
+            Grid.RowSpan="2"
             Grid.Column="1"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center"
-            Margin="8">
+            PreviewMouseMove="UIElement_OnPreviewMouse_Skip"
+            PreviewMouseDown="UIElement_OnPreviewMouse_Skip"
+            
+              VerticalAlignment="Center"
+              HorizontalAlignment="Center"
+              Margin="8">
             <local:Node
                 DeletionEnabled="False"
                 NodeView="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview}"

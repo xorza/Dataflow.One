@@ -120,4 +120,8 @@ public partial class FunctionFactoryBrowser : UserControl {
 
     private static void
         NodePreview_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) { }
+
+    private void UIElement_OnPreviewMouse_Skip(object sender, MouseEventArgs e) {
+        e.Handled = true;
+    }
 }

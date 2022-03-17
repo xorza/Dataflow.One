@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Windows;
 using csso.Common;
@@ -20,12 +21,23 @@ using Node = csso.NodeCore.Node;
 
 namespace csso.NodeRunner;
 
-public partial class Overview {
+public partial class Overview :INotifyPropertyChanged{
     private readonly Context _clContext;
     private Executor? _executor;
 
     private GraphVM? _graphView;
-    
+    public GraphVM GraphView {
+        get => _graphView ??= new GraphVM();
+        set {
+            _graphView = value; 
+            Graph.GraphView = _graphView;
+            if (_functionFactoryBrowser != null) {
+                _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;
+            }
+            OnPropertyChanged();
+        }
+    }
+
     private  FunctionFactoryBrowser? _functionFactoryBrowser;
 
 
@@ -36,14 +48,8 @@ public partial class Overview {
     }
 
     public void Init(NodeRunner nodeRunner) {
-        _graphView = nodeRunner.GraphVM;
+        GraphView = nodeRunner.GraphVM;
         _executor = nodeRunner.Executor;
-
-        Graph.GraphView = _graphView;
-
-        if (_functionFactoryBrowser != null) {
-            _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;
-        }
     }
 
     private void DetectCycles_Button_OnClick(object sender, RoutedEventArgs e) {
@@ -132,5 +138,11 @@ public partial class Overview {
         _functionFactoryBrowser = (FunctionFactoryBrowser) sender;
         
         _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
