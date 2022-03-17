@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using csso.Common;
-using Debug = csso.Common.Debug;
 
 namespace csso.NodeCore.Run;
 
@@ -12,23 +11,7 @@ public enum EvaluationState {
 }
 
 public class EvaluationNode {
-    private class NotFound { }
-
     private static readonly Object Empty = new NotFound();
-
-    public Node Node { get; }
-    public Object?[] ArgValues { get; }
-    public bool HasOutputValues { get; private set; }
-    public FunctionBehavior Behavior { get; }
-    public bool ArgumentsUpdatedThisFrame { get; private set; }
-    public EvaluationState State { get; private set; } = EvaluationState.Idle;
-    public double ExecutionTime { get; private set; } = Double.NaN;
-
-    private struct DependencyValue {
-        public int Index { get; set; }
-        public Node TargetNode { get; set; }
-        public FunctionOutput Target { get; set; }
-    }
 
     private readonly List<DependencyValue> _dependencyValues = new();
 
@@ -39,6 +22,14 @@ public class EvaluationNode {
         HasOutputValues = false;
         Reset();
     }
+
+    public Node Node { get; }
+    public Object?[] ArgValues { get; }
+    public bool HasOutputValues { get; private set; }
+    public FunctionBehavior Behavior { get; }
+    public bool ArgumentsUpdatedThisFrame { get; private set; }
+    public EvaluationState State { get; private set; } = EvaluationState.Idle;
+    public double ExecutionTime { get; private set; } = double.NaN;
 
     public object? GetOutputValue(FunctionOutput output) {
         Check.True(HasOutputValues);
@@ -61,10 +52,8 @@ public class EvaluationNode {
     }
 
     public void ProcessArguments() {
-        if(State == EvaluationState.ArgumentsSet) {
-            return;
-        }
-        
+        if (State == EvaluationState.ArgumentsSet) return;
+
         Check.True(State == EvaluationState.Processed);
 
         ArgValues.Populate(Empty);
@@ -72,7 +61,7 @@ public class EvaluationNode {
 
         Node.ConfigValues.Foreach(config => ArgValues[config.Config.ArgumentIndex] = config.Value);
 
-        foreach (var functionArg in Node.Function.Args) {
+        foreach (var functionArg in Node.Function.Args)
             if (functionArg is FunctionInput inputArg) {
                 var valueConnection = Node.ValueConnections.SingleOrDefault(_ => _.Input == inputArg);
                 var bindingConnection = Node.BindingConnections.SingleOrDefault(_ => _.Input == inputArg);
@@ -88,7 +77,7 @@ public class EvaluationNode {
                         bindingConnection.Input == Node.Function.Args[bindingConnection.Input.ArgumentIndex]
                     );
 
-                    _dependencyValues.Add(new DependencyValue() {
+                    _dependencyValues.Add(new DependencyValue {
                         TargetNode = bindingConnection.TargetNode,
                         Index = bindingConnection.Input.ArgumentIndex,
                         Target = bindingConnection.Target
@@ -102,15 +91,12 @@ public class EvaluationNode {
             } else {
                 Check.Fail();
             }
-        }
 
         State = EvaluationState.ArgumentsSet;
     }
 
     public void Invoke(Executor executor) {
-        if (State == EvaluationState.Invoked) {
-            return;
-        }
+        if (State == EvaluationState.Invoked) return;
 
         Check.True(State == EvaluationState.ArgumentsSet);
         Check.False(HasOutputValues
@@ -122,7 +108,7 @@ public class EvaluationNode {
             sw.Start();
 
             _dependencyValues.ForEach(_ => {
-                EvaluationNode targetEvaluationNode = executor.GetEvaluationNode(_.TargetNode);
+                var targetEvaluationNode = executor.GetEvaluationNode(_.TargetNode);
                 Check.True(targetEvaluationNode.State >= EvaluationState.Processed);
                 ArgValues[_.Index] = targetEvaluationNode.GetOutputValue(_.Target);
             });
@@ -135,18 +121,22 @@ public class EvaluationNode {
             ExecutionTime = sw.ElapsedMilliseconds * 1.0;
         }
 
-        if (!Node.Function.IsProcedure) {
-            HasOutputValues = true;
-        }
+        if (!Node.Function.IsProcedure) HasOutputValues = true;
 
         State = EvaluationState.Invoked;
     }
 
     private void ValidateArguments() {
-        for (int i = 0; i < ArgValues.Length; i++) {
-            if (ArgValues[i] == Empty) {
+        for (var i = 0; i < ArgValues.Length; i++)
+            if (ArgValues[i] == Empty)
                 throw new ArgumentMissingException(Node, (FunctionInput) Node.Function.Args[i]);
-            }
-        }
+    }
+
+    private class NotFound { }
+
+    private struct DependencyValue {
+        public int Index { get; set; }
+        public Node TargetNode { get; set; }
+        public FunctionOutput Target { get; set; }
     }
 }

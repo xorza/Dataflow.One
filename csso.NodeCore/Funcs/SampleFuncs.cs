@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using csso.NodeCore.Annotations;
 using csso.NodeCore.Run;
 
 namespace csso.NodeCore.Funcs;
@@ -31,11 +30,11 @@ public static class F {
 }
 
 public class OutputFunc<T> : Function {
-    public T Value { get; set; }
-
     public OutputFunc() {
         Refresh("Output", Func_);
     }
+
+    public T Value { get; set; }
 
     [Reactive]
     private bool Func_(T arg) {
@@ -45,11 +44,11 @@ public class OutputFunc<T> : Function {
 }
 
 public class ValueFunc<T> : Function {
-    public T Value { get; set; }
-
     public ValueFunc() {
         Refresh("Const", Func_);
     }
+
+    public T Value { get; set; }
 
     [Reactive]
     private bool Func_([Output] out T arg) {
@@ -71,11 +70,11 @@ public class ConfigValueFunc<T> : Function {
 }
 
 public class FrameNoFunc : Function {
-    public Executor? Executor { get; set; }
-
     public FrameNoFunc() {
         Refresh("Frame number", Func_);
     }
+
+    public Executor? Executor { get; set; }
 
     private bool Func_([Output] out Int32 frameNo) {
         frameNo = Executor?.FrameNo ?? 0;

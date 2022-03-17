@@ -1,6 +1,6 @@
 ﻿using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL; 
+namespace csso.OpenCL;
 
 public class Program : IDisposable {
     public Program(Context context, string code) {

@@ -1,21 +1,21 @@
 ﻿using System.Diagnostics;
 
-namespace csso.Common; 
+namespace csso.Common;
 
 public static class Debug {
-    public static bool IsDebug { get;private set; }
-    
     static Debug() {
         IsDebug = false;
         Init();
     }
-    
+
+    public static bool IsDebug { get; private set; }
+
     [Conditional("DEBUG")]
-    static void Init() {
+    private static void Init() {
         IsDebug = true;
     }
-    
-    
+
+
     public static class Assert {
         [Conditional("DEBUG")]
         [DebuggerStepThrough]

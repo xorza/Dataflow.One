@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -9,11 +8,15 @@ using csso.NodeCore;
 using csso.NodeCore.Run;
 using csso.WpfNode.Annotations;
 using DynamicData;
-using OpenTK.Compute.OpenCL;
 
 namespace csso.WpfNode;
 
 public sealed class GraphVM : INotifyPropertyChanged {
+    private readonly ObservableCollection<EdgeView> _edges = new();
+
+    private readonly ObservableCollection<NodeView> _nodes = new();
+
+    private FunctionFactoryView _functionFactory;
     private NodeView? _selectedNode;
 
     private PutView? _selectedPutView;
@@ -28,12 +31,17 @@ public sealed class GraphVM : INotifyPropertyChanged {
         Edges = new ReadOnlyObservableCollection<EdgeView>(_edges);
     }
 
+    public GraphVM(FunctionFactory functionFactory, SerializedGraphView serialized)
+        : this(new NodeCore.Graph(functionFactory, serialized.Graph)) {
+        serialized.NodeViews
+            .Foreach(_ => {
+                var node = _nodes.Single(n => n.Node.Id == _.Id);
+                node.Position = _.Position;
+            });
+    }
+
     public NodeCore.Graph Graph { get; }
-
-    private readonly ObservableCollection<EdgeView> _edges = new();
     public ReadOnlyObservableCollection<EdgeView> Edges { get; }
-
-    private FunctionFactoryView _functionFactory;
 
     public FunctionFactoryView FunctionFactory {
         get => _functionFactory;
@@ -45,7 +53,6 @@ public sealed class GraphVM : INotifyPropertyChanged {
         }
     }
 
-    private readonly ObservableCollection<NodeView> _nodes = new();
     public ReadOnlyObservableCollection<NodeView> Nodes { get; }
 
     public NodeView? SelectedNode {
@@ -107,16 +114,15 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
 
         _edges.Clear();
-        foreach (var node in Nodes) {
-            foreach (var binding in node.Node.BindingConnections) {
-                var inputNode = GetNodeView(binding.Node);
-                var outputNode = GetNodeView(binding.TargetNode);
+        foreach (var node in Nodes)
+        foreach (var binding in node.Node.BindingConnections) {
+            var inputNode = GetNodeView(binding.Node);
+            var outputNode = GetNodeView(binding.TargetNode);
 
-                var input = inputNode.Inputs.Single(_ => _.FunctionArg == binding.Input);
-                var output = outputNode.Outputs.Single(_ => _.FunctionArg == binding.Target);
+            var input = inputNode.Inputs.Single(_ => _.FunctionArg == binding.Input);
+            var output = outputNode.Outputs.Single(_ => _.FunctionArg == binding.Target);
 
-                _edges.Add(new EdgeView(binding, input, output));
-            }
+            _edges.Add(new EdgeView(binding, input, output));
         }
 
         FunctionFactory = new FunctionFactoryView(Graph.FunctionFactory);
@@ -131,7 +137,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
     }
 
     public NodeView CreateNode(Function func) {
-        NodeCore.Node node = Graph.AddNode(func);
+        var node = Graph.AddNode(func);
         NodeView result = new(this, node);
         _nodes.Add(result);
 
@@ -152,28 +158,18 @@ public sealed class GraphVM : INotifyPropertyChanged {
         return result;
     }
 
-    public GraphVM(FunctionFactory functionFactory, SerializedGraphView serialized)
-        : this(new NodeCore.Graph(functionFactory, serialized.Graph)) {
-        serialized.NodeViews
-            .Foreach(_ => {
-                var node = _nodes.Single(n => n.Node.Id == _.Id);
-                node.Position = _.Position;
-            });
-    }
-
     public void OnExecuted(Executor executor) {
-        foreach (var nodeView in Nodes) {
-            if (executor.TryGetEvaluationNode(nodeView.Node, out EvaluationNode? en)) {
+        foreach (var nodeView in Nodes)
+            if (executor.TryGetEvaluationNode(nodeView.Node, out var en)) {
                 // EvaluationNode en = executor.GetEvaluationNode(nodeView.Node);
                 nodeView.ExecutionTime = en!.ExecutionTime;
 
                 foreach (var output in nodeView.Outputs) {
                     var index = output.FunctionArg.ArgumentIndex;
                     var value = en.ArgValues?[index];
-                    output.ValueView = new(value);
+                    output.ValueView = new ValueView(value);
                 }
             }
-        }
     }
 }
 

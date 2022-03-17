@@ -52,8 +52,7 @@
                 HorizontalAlignment="Right"
                 Width="70" Height="35"
                 Margin="4"
-                Click="Run_ButtonBase_OnClick">
-        </Button>
+                Click="Run_ButtonBase_OnClick" />
 
         <GridSplitter
             Grid.Column="1"
@@ -64,22 +63,20 @@
             ResizeBehavior="PreviousAndNext"
             Background="{StaticResource ActiveContentBackgroundBrush}" />
 
-        <Border BorderThickness="0 0 0 0 "
-                Grid.Row="0"
-                Grid.Column="2"
-                Grid.RowSpan="2"
-                MinWidth="200"
-                Background="{StaticResource PanelBackgroundBrush}">
+   
 
             <wpfNode:NodeEdit
                 x:Name="NodeEdit"
+                Grid.Row="0"
+                Grid.Column="2"
+                Grid.RowSpan="2"
                 Padding="{StaticResource DefaultPadding}"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 NodeView="{Binding Path=GraphView.SelectedNode, ElementName=OverviewUserControl}" />
 
 
-        </Border>
+  
 
     </Grid>
 </UserControl>

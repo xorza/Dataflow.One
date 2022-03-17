@@ -34,7 +34,7 @@ public partial class Graph : UserControl {
         get => (GraphVM) GetValue(GraphViewProperty);
         set => SetValue(GraphViewProperty, value);
     }
-    
+
     private void NodeDeselectButton_Handler(object sender, MouseButtonEventArgs e) {
         if (GraphView != null)
             GraphView.SelectedNode = null;
@@ -48,13 +48,11 @@ public partial class Graph : UserControl {
         DependencyPropertyChangedEventArgs e) {
         var graph = (Graph) d;
 
-        if (e.OldValue is GraphVM oldGraphView) {
+        if (e.OldValue is GraphVM oldGraphView)
             ((INotifyCollectionChanged) oldGraphView.Edges).CollectionChanged -= graph.Edges_CollectionChanged;
-        }
 
-        if (e.NewValue is GraphVM graphView) {
+        if (e.NewValue is GraphVM graphView)
             ((INotifyCollectionChanged) graphView.Edges).CollectionChanged += graph.Edges_CollectionChanged;
-        }
 
         graph.RedrawEdges();
     }

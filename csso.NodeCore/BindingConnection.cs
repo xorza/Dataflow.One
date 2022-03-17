@@ -9,7 +9,33 @@ public enum ConnectionBehavior {
 
 public sealed class BindingConnection : Connection {
     private ConnectionBehavior _behavior = ConnectionBehavior.Always;
-    
+
+    public BindingConnection(
+        Node inputNode,
+        FunctionInput input,
+        Node targetNode,
+        FunctionOutput target) :
+        base(inputNode, input) {
+        if (input.Type != target.Type && !target.Type.IsSubclassOf(input.Type))
+            throw new Exception("type mismatch 4fv56g2456g");
+
+        Check.True(inputNode.Function.Inputs.Contains(input));
+        Check.True(targetNode.Function.Outputs.Contains(target));
+
+        TargetNode = targetNode;
+        Target = target;
+    }
+
+    internal BindingConnection(Graph graph, SerializedOutputConnection serialized) {
+        Behavior = serialized.Behavior;
+        Node = graph.GetNode(serialized.InputNodeId);
+        Input = Node.Function.Inputs
+            .Single(input => input.ArgumentIndex == serialized.InputIndex);
+        TargetNode = graph.GetNode(serialized.TargetNodeId);
+        Target = TargetNode.Function.Outputs
+            .Single(output => output.ArgumentIndex == serialized.TargetIndex);
+    }
+
     public Node TargetNode { get; }
     public FunctionOutput Target { get; }
 
@@ -22,33 +48,6 @@ public sealed class BindingConnection : Connection {
         }
     }
 
-    public BindingConnection(
-        Node inputNode,
-        FunctionInput input,
-        Node targetNode,
-        FunctionOutput target) :
-        base(inputNode, input) {
-        if (input.Type != target.Type && !target.Type.IsSubclassOf(input.Type)) {
-            throw new Exception("type mismatch 4fv56g2456g");
-        }
-
-        Check.True(inputNode.Function.Inputs.Contains(input));
-        Check.True(targetNode.Function.Outputs.Contains(target));
-
-        TargetNode = targetNode;
-        Target = target;
-    }
-    
-    internal BindingConnection(Graph graph, SerializedOutputConnection serialized) {
-        Behavior = serialized.Behavior;
-        Node = graph.GetNode(serialized.InputNodeId);
-        Input = Node.Function.Inputs
-            .Single(input => input.ArgumentIndex == serialized.InputIndex);
-        TargetNode = graph.GetNode(serialized.TargetNodeId);
-        Target = TargetNode.Function.Outputs
-            .Single(output => output.ArgumentIndex == serialized.TargetIndex);
-    }
-    
 
     public SerializedOutputConnection Serialize() {
         SerializedOutputConnection result = new();

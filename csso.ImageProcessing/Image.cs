@@ -2,7 +2,7 @@
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-namespace csso.ImageProcessing; 
+namespace csso.ImageProcessing;
 
 public class Image : IDisposable {
     private IntPtr _ptr;

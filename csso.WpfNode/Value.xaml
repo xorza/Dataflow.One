@@ -3,14 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:csso.WpfNode"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              x:Name="ValueUserControl">
     <UserControl.Resources>
         <ResourceDictionary Source="Resources.xaml" />
     </UserControl.Resources>
-    
+
     <Grid>
         <Grid x:Name="LoaderGrid"
               Visibility="{Binding ElementName=ValueUserControl, Path=ValueView.IsLoading, Converter={StaticResource BoolToVis}}">
@@ -22,7 +21,7 @@
         <Grid x:Name="ValueGrid"
               Visibility="{Binding ElementName=ValueUserControl, Path=ValueView.HasValue, Converter={StaticResource BoolToVis}}">
 
-            <ContentPresenter 
+            <ContentPresenter
                 Content="{Binding ElementName=ValueUserControl, Path=ValueView.Value}" />
 
         </Grid>

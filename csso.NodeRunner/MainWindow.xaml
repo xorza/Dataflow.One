@@ -1,7 +1,6 @@
 ﻿<Window x:Class="csso.NodeRunner.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:WpfApp1"
         xmlns:nodeRunner="clr-namespace:csso.NodeRunner"
         Padding="0"
         Margin="0"
@@ -17,9 +16,9 @@
 
         <Menu>
             <MenuItem Header="_File">
-                <MenuItem Header="_New"  Click="New_MenuItem_OnClick"  />
-                <MenuItem Header="_Open" Click="Open_MenuItem_OnClick"  />
-                <MenuItem Header="_Save" Click="Save_MenuItem_OnClick"  />
+                <MenuItem Header="_New" Click="New_MenuItem_OnClick" />
+                <MenuItem Header="_Open" Click="Open_MenuItem_OnClick" />
+                <MenuItem Header="_Save" Click="Save_MenuItem_OnClick" />
                 <Separator />
                 <MenuItem Header="_Exit" Click="Exit_MenuItem_OnClick" />
             </MenuItem>

@@ -15,7 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\csso.Common\csso.Common.csproj" />
+        <ProjectReference Include="..\csso.Common\csso.Common.csproj"/>
     </ItemGroup>
 
 </Project>

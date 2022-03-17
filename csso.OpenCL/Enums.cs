@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using csso.Common;
 
-namespace csso.OpenCL; 
+namespace csso.OpenCL;
 
 public enum DataType {
     Float,

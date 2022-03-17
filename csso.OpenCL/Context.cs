@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL; 
+namespace csso.OpenCL;
 
 public class Context : IDisposable {
     public Context() {

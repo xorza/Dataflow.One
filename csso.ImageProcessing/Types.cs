@@ -1,4 +1,4 @@
-﻿namespace csso.ImageProcessing; 
+﻿namespace csso.ImageProcessing;
 
 public struct RGB8U {
     public byte r;

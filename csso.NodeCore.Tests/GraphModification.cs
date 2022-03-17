@@ -7,17 +7,16 @@ using NUnit.Framework;
 namespace csso.NodeCore.Tests;
 
 public class GraphModification {
-    private Graph? _graph;
-    private Node? _constNode1;
-    private Node? _outputNode;
-    private Node? _frameNoNode;
-    private Node? _addNode;
+    private readonly Function _addFunc = new("Add", F.Add);
 
     private readonly ConfigValueFunc<Int32> _configConstFunc1 = new();
-    private readonly OutputFunc<Int32> _outputFunc = new();
     private readonly FrameNoFunc _frameNoFunc = new();
-
-    private readonly Function _addFunc = new("Add", F.Add);
+    private readonly OutputFunc<Int32> _outputFunc = new();
+    private Node? _addNode;
+    private Node? _constNode1;
+    private Node? _frameNoNode;
+    private Graph? _graph;
+    private Node? _outputNode;
 
 
     [SetUp]
@@ -66,7 +65,7 @@ public class GraphModification {
 
         executor.Run();
         Assert.AreEqual(1254, _outputFunc.Value);
-        
+
         Assert.Pass();
     }
 }

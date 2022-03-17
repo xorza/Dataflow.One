@@ -1,4 +1,4 @@
-﻿namespace csso.NodeCore; 
+﻿namespace csso.NodeCore;
 
 public class Input {
     public Input(Node node) {

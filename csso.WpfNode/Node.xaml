@@ -62,6 +62,7 @@
     </UserControl.Template>
 
     <Grid
+        Background="{x:Null}"
         Margin="{Binding Path=Margin, ElementName=NodeUserControl}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -73,152 +74,164 @@
             Text="{Binding ElementName=NodeUserControl, Path=NodeView.ExecutionTime}"
             x:Name="ExecutionTimeTextBlock" />
 
-        <Grid Grid.Row="1">
-            <Border BorderThickness="{Binding Path=BorderThickness, ElementName=NodeUserControl}"
-                    CornerRadius="{Binding Path=CornerRadius, ElementName=NodeUserControl}"
-                    BorderBrush="{Binding Path=BorderBrush, ElementName=NodeUserControl}"
-                    Background="{StaticResource PanelBackgroundBrush}">
-                <Grid Margin="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Border
-                        VerticalAlignment="Stretch"
-                        HorizontalAlignment="Stretch"
-                        BorderBrush="{x:Null}"
-                        BorderThickness="0">
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Background" Value="{StaticResource InactiveContentBackgroundBrush}" />
-                                
-                                <Style.Triggers>
-                                    <DataTrigger
-                                        Binding="{Binding Path=NodeView.Node.FinalBehavior, ElementName=NodeUserControl}"
-                                        Value="{x:Static core:FunctionBehavior.Proactive}">
-                                        <Setter
-                                            Property="Background"
-                                            Value="{StaticResource HighlightBackgroundBrush}" />    
-                                        <Setter
-                                            Property="TextBlock.Foreground"
-                                            Value="Black" />
-                                    </DataTrigger>
-                                    <DataTrigger
-                                        Binding="{Binding Path=NodeView.Node.Function.IsProcedure, ElementName=NodeUserControl}"
-                                        Value="True">
-                                        <Setter
-                                            Property="Background"
-                                            Value="{StaticResource HighlightBackgroundBrush}" />
-                                        <Setter
-                                            Property="TextBlock.Foreground"
-                                            Value="Black" />
-                                    </DataTrigger>
+        <Border
+            ClipToBounds="True"
+            BorderThickness="1"
+            CornerRadius="{StaticResource DefaultCornerRadius}"
+            Background="{StaticResource PanelBackgroundBrush}"
+            Grid.Row="1">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="BorderBrush" Value="Black"></Setter>
+                    <Style.Triggers>
+                        <DataTrigger
+                            Binding="{Binding ElementName=NodeUserControl, Path=NodeView.IsSelected}"
+                            Value="True">
+                            <Setter
+                                Property="BorderBrush"
+                                Value="{StaticResource HighlightBorderBrush}" />
+                     
+                        </DataTrigger> 
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Border
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch"
+                    BorderBrush="{x:Null}"
+                    BorderThickness="0">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background"
+                                    Value="{StaticResource InactiveContentBackgroundBrush}" />
+
+                            <Style.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding Path=NodeView.Node.FinalBehavior, ElementName=NodeUserControl}"
+                                    Value="{x:Static core:FunctionBehavior.Proactive}">
+                                    <Setter
+                                        Property="Background"
+                                        Value="{StaticResource HighlightBackgroundBrush}" />
+                                    <Setter
+                                        Property="TextBlock.Foreground"
+                                        Value="Black" />
+                                </DataTrigger>
+                                <DataTrigger
+                                    Binding="{Binding Path=NodeView.Node.Function.IsProcedure, ElementName=NodeUserControl}"
+                                    Value="True">
+                                    <Setter
+                                        Property="Background"
+                                        Value="{StaticResource HighlightBackgroundBrush}" />
+                                    <Setter
+                                        Property="TextBlock.Foreground"
+                                        Value="Black" />
+                                </DataTrigger>
 
 
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
 
-                        <Grid Height="26">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeUserControl}"
-                                       HorizontalAlignment="Left"
-                                       FontWeight="Bold"
-                                       FontSize="10"
-                                       Padding="0"
-                                       Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
-
-                            <Button Grid.Column="1"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    HorizontalContentAlignment="Stretch"
-                                    VerticalContentAlignment="Stretch"
-                                    Click="Close_Button_OnClick"
-                                    Height="18"
-                                    Width="18"
-                                    Template="{StaticResource EmptyButtonTemplate}"
-                                    Margin="2" Padding="3"
-                                    BorderBrush="{x:Null}"
-                                    BorderThickness="0"
-                                    Background="{Binding Path=Background, ElementName=NodeUserControl}"
-                                    x:Name="Button456N3"
-                                    Visibility="{Binding ElementName=NodeUserControl, Path=DeletionEnabled, Converter={StaticResource BoolToVis}}">
-
-                                <Grid x:Name="Grid235B3"
-                                      HorizontalAlignment="Stretch"
-                                      VerticalAlignment="Stretch">
-                                    <Line X1="0"
-                                          Y1="0"
-                                          X2="{Binding ElementName=Grid235B3, Path=ActualWidth}"
-                                          Y2="{Binding ElementName=Grid235B3, Path=ActualHeight}"
-                                          Stroke="{Binding ElementName=Button456N3, Path=Foreground}"
-                                          StrokeThickness="1"
-                                          x:Name="Line1" />
-                                    <Line X1="0"
-                                          Y1="{Binding ElementName=Grid235B3, Path=ActualHeight}"
-                                          X2="{Binding ElementName=Grid235B3, Path=ActualWidth}"
-                                          Y2="0"
-                                          Stroke="{Binding ElementName=Button456N3, Path=Foreground}"
-                                          StrokeThickness="1"
-                                          x:Name="Line2" />
-                                </Grid>
-
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Foreground" Value="Azure"></Setter>
-                                            </Trigger>
-                                            <Trigger Property="IsMouseOver" Value="False">
-                                                <Setter Property="Foreground" Value="DarkGray"></Setter>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-
-                            </Button>
-                        </Grid>
-                    </Border>
-
-                    <Grid Grid.Row="1"
-                          HorizontalAlignment="Stretch">
+                    <Grid Height="26">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeUserControl}"
+                                   HorizontalAlignment="Left"
+                                   FontWeight="Bold"
+                                   FontSize="10"
+                                   Padding="0"
+                                   Margin="{Binding Path=Padding, ElementName=NodeUserControl}" />
 
-                        <StackPanel
-                            HorizontalAlignment="Left"
-                            Margin="{Binding Path=Padding, ElementName=NodeUserControl}">
-                            <ItemsControl
-                                ItemsSource="{Binding Path=NodeView.Inputs, ElementName=NodeUserControl}"
-                                ItemTemplate="{StaticResource PinViewTemplate}" />
-                        </StackPanel>
+                        <Button Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch"
+                                Click="Close_Button_OnClick"
+                                Height="18"
+                                Width="18"
+                                Template="{StaticResource EmptyButtonTemplate}"
+                                Margin="2" Padding="3"
+                                BorderBrush="{x:Null}"
+                                BorderThickness="0"
+                                Background="{Binding Path=Background, ElementName=NodeUserControl}"
+                                x:Name="Button456N3"
+                                Visibility="{Binding ElementName=NodeUserControl, Path=DeletionEnabled, Converter={StaticResource BoolToVis}}">
 
-                        <StackPanel
+                            <Grid x:Name="Grid235B3"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch">
+                                <Line X1="0"
+                                      Y1="0"
+                                      X2="{Binding ElementName=Grid235B3, Path=ActualWidth}"
+                                      Y2="{Binding ElementName=Grid235B3, Path=ActualHeight}"
+                                      Stroke="{Binding ElementName=Button456N3, Path=Foreground}"
+                                      StrokeThickness="1"
+                                      x:Name="Line1" />
+                                <Line X1="0"
+                                      Y1="{Binding ElementName=Grid235B3, Path=ActualHeight}"
+                                      X2="{Binding ElementName=Grid235B3, Path=ActualWidth}"
+                                      Y2="0"
+                                      Stroke="{Binding ElementName=Button456N3, Path=Foreground}"
+                                      StrokeThickness="1"
+                                      x:Name="Line2" />
+                            </Grid>
 
-                            HorizontalAlignment="Right"
-                            Grid.Column="1"
-                            Margin="{Binding Path=Padding, ElementName=NodeUserControl}">
-                            <ItemsControl
-                                HorizontalAlignment="Right"
-                                HorizontalContentAlignment="Right"
-                                ItemsSource="{Binding Path=NodeView.Outputs, ElementName=NodeUserControl}"
-                                ItemTemplate="{StaticResource PinViewTemplate}" />
-                        </StackPanel>
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Foreground" Value="Azure" />
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="False">
+                                            <Setter Property="Foreground" Value="DarkGray" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+
+                        </Button>
                     </Grid>
+                </Border>
+
+                <Grid Grid.Row="1"
+                      HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel
+                        HorizontalAlignment="Left"
+                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}">
+                        <ItemsControl
+                            ItemsSource="{Binding Path=NodeView.Inputs, ElementName=NodeUserControl}"
+                            ItemTemplate="{StaticResource PinViewTemplate}" />
+                    </StackPanel>
+
+                    <StackPanel
+
+                        HorizontalAlignment="Right"
+                        Grid.Column="1"
+                        Margin="{Binding Path=Padding, ElementName=NodeUserControl}">
+                        <ItemsControl
+                            HorizontalAlignment="Right"
+                            HorizontalContentAlignment="Right"
+                            ItemsSource="{Binding Path=NodeView.Outputs, ElementName=NodeUserControl}"
+                            ItemTemplate="{StaticResource PinViewTemplate}" />
+                    </StackPanel>
                 </Grid>
-            </Border>
+                
+            </Grid>
 
-            <Border Grid.Row="0"
-                    BorderBrush="{Binding Path=HighlightBrush, ElementName=NodeUserControl }"
-                    BorderThickness="1"
-                    Visibility="{Binding Path=IsSelected, Converter={StaticResource BoolToVis}}" />
-
-        </Grid>
-
+        </Border>
     </Grid>
 </UserControl>

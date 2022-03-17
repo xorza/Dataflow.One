@@ -2,7 +2,7 @@
 using csso.Common;
 using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL; 
+namespace csso.OpenCL;
 
 public class Kernel : IDisposable {
     private readonly List<KernelArg> _args = new();

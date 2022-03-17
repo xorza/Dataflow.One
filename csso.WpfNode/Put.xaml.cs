@@ -8,24 +8,9 @@ public partial class Put : UserControl {
     public static readonly DependencyProperty PutViewProperty = DependencyProperty.Register(
         nameof(PutView), typeof(PutView), typeof(Put), new PropertyMetadata(default(PutView?)));
 
-    public PutView? PutView {
-        get { return (PutView?) GetValue(PutViewProperty); }
-        set { SetValue(PutViewProperty, value); }
-    }
-
     public static readonly DependencyProperty DragCanvasProperty = DependencyProperty.Register(
         nameof(DragCanvas), typeof(Canvas), typeof(Put),
         new PropertyMetadata(default(Canvas), DragCanvas_PropertyChangedCallback));
-
-    private static void DragCanvas_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        Put put = (Put) d;
-        put.UpdatePinPoint();
-    }
-
-    public Canvas? DragCanvas {
-        get { return (Canvas) GetValue(DragCanvasProperty); }
-        set { SetValue(DragCanvasProperty, value); }
-    }
 
 
     public Put() {
@@ -35,14 +20,29 @@ public partial class Put : UserControl {
         LayoutUpdated += (object? sender, EventArgs e) => { UpdatePinPoint(); };
     }
 
+    public PutView? PutView {
+        get { return (PutView?) GetValue(PutViewProperty); }
+        set { SetValue(PutViewProperty, value); }
+    }
+
+    public Canvas? DragCanvas {
+        get { return (Canvas) GetValue(DragCanvasProperty); }
+        set { SetValue(DragCanvasProperty, value); }
+    }
+
+    private static void DragCanvas_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        Put put = (Put) d;
+        put.UpdatePinPoint();
+    }
+
     private void UpdatePinPoint() {
         if (PutView!.Control == null)
             return;
-        
-        if(!IsVisible)
+
+        if (!IsVisible)
             return;
-        
-        if(DragCanvas==null)
+
+        if (DragCanvas == null)
             return;
 
         var upperLeft = PutView.Control
@@ -61,7 +61,7 @@ public partial class Put : UserControl {
     private void PinHighlight_LoadedHandler(object sender, RoutedEventArgs args) {
         var element = (FrameworkElement) sender;
         PutView!.Control = element;
-        
+
         UpdatePinPoint();
     }
 

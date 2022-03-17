@@ -4,28 +4,31 @@ using System.Windows;
 using csso.NodeCore;
 using csso.WpfNode.Annotations;
 
-namespace csso.WpfNode; 
+namespace csso.WpfNode;
 
 public sealed class PutView : INotifyPropertyChanged {
+    private UIElement? _control;
     private bool _isSelected;
 
     private Point _pinPoint;
+
+    private ValueView? _valueView;
 
     public PutView(FunctionArg functionArg, NodeView nodeView) {
         FunctionArg = functionArg;
         NodeView = nodeView;
     }
 
-    private UIElement? _control; 
     public UIElement? Control {
         get => _control;
         set {
             if (value != _control) {
                 _control = value;
                 OnPropertyChanged();
-            }  
-        } 
+            }
+        }
     }
+
     public ArgType ArgType => FunctionArg.ArgType;
     public bool IsInput => ArgType == ArgType.In;
     public bool IsOutput => ArgType == ArgType.Out;
@@ -43,7 +46,6 @@ public sealed class PutView : INotifyPropertyChanged {
         }
     }
 
-    private ValueView? _valueView;
     public ValueView? ValueView {
         get => _valueView;
         set {

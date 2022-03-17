@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Windows;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
@@ -11,19 +10,14 @@ using Graph = csso.NodeCore.Graph;
 namespace csso.NodeRunner;
 
 public class NodeRunner {
-    public FunctionFactory Factory { get; } = new();
-    public FrameNoFunc FrameNoFunc { get; }
-    public Executor Executor { get; private set; }
-    public GraphVM GraphVM { get; set; }
-
     public NodeRunner() {
         Graph graph = new();
 
-        Function addFunc = new Function("Add", F.Add);
-        Function divideWholeFunc = new Function("Divide whole", F.DivideWhole);
-        Function messageBoxFunc = new Function("Output", Output);
-        Function valueFunc = new Function("Value", Const);
-        FrameNoFunc = new();
+        var addFunc = new Function("Add", F.Add);
+        var divideWholeFunc = new Function("Divide whole", F.DivideWhole);
+        var messageBoxFunc = new Function("Output", Output);
+        var valueFunc = new Function("Value", Const);
+        FrameNoFunc = new FrameNoFunc();
 
         Factory.Register(addFunc);
         Factory.Register(divideWholeFunc);
@@ -34,13 +28,18 @@ public class NodeRunner {
         graph.FunctionFactory = Factory;
 
         GraphVM = new GraphVM(graph);
-        Executor = new(GraphVM.Graph);
+        Executor = new Executor(GraphVM.Graph);
         FrameNoFunc.Executor = Executor;
     }
 
+    public FunctionFactory Factory { get; } = new();
+    public FrameNoFunc FrameNoFunc { get; }
+    public Executor Executor { get; private set; }
+    public GraphVM GraphVM { get; set; }
+
     public void Deserialize(SerializedGraphView serialized) {
         GraphVM = new GraphVM(Factory, serialized);
-        Executor = new(GraphVM.Graph);
+        Executor = new Executor(GraphVM.Graph);
         FrameNoFunc.Executor = Executor;
     }
 

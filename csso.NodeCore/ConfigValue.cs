@@ -1,4 +1,3 @@
-using System.Reflection;
 using csso.Common;
 
 namespace csso.NodeCore;
@@ -11,6 +10,16 @@ public class ConfigValue {
     public ConfigValue(FunctionConfig config, Object? value) {
         Config = config;
         Value = value;
+    }
+
+    public ConfigValue(
+        Function func,
+        SerializedConfigValue serialized) {
+        Config = func.Config.Single(_ => _.ArgumentIndex == serialized.ConfigIndex);
+
+        if (serialized.Value != null
+            && StringParser.TryParse(serialized.Value, Type, out var value))
+            Value = value;
     }
 
     public FunctionConfig Config { get; }
@@ -29,16 +38,6 @@ public class ConfigValue {
         result.ConfigIndex = Config.ArgumentIndex;
 
         return result;
-    }
-
-    public ConfigValue(
-        Function func,
-        SerializedConfigValue serialized) {
-        Config = func.Config.Single(_ => _.ArgumentIndex == serialized.ConfigIndex);
-
-        if (serialized.Value != null
-            && StringParser.TryParse(serialized.Value, Type, out Object? value))
-            Value = value;
     }
 }
 

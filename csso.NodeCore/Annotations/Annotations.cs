@@ -21,7 +21,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
 
-
 // ReSharper disable UnusedType.Global
 
 #pragma warning disable 1591
@@ -32,7 +31,7 @@ SOFTWARE. */
 // ReSharper disable MemberCanBeProtected.Global
 // ReSharper disable InconsistentNaming
 
-namespace csso.NodeCore.Annotations; 
+namespace csso.NodeCore.Annotations;
 
 /// <summary>
 ///     Indicates that the value of the marked element could be <c>null</c> sometimes,
@@ -132,10 +131,10 @@ public sealed class ItemCanBeNullAttribute : Attribute { }
     AttributeTargets.Constructor | AttributeTargets.Method |
     AttributeTargets.Property | AttributeTargets.Delegate)]
 public sealed class StringFormatMethodAttribute : Attribute {
-  /// <param name="formatParameterName">
-  ///     Specifies which parameter of an annotated method should be treated as the format string
-  /// </param>
-  public StringFormatMethodAttribute([NotNull] string formatParameterName) {
+    /// <param name="formatParameterName">
+    ///     Specifies which parameter of an annotated method should be treated as the format string
+    /// </param>
+    public StringFormatMethodAttribute([NotNull] string formatParameterName) {
         FormatParameterName = formatParameterName;
     }
 
@@ -768,28 +767,28 @@ public sealed class SourceTemplateAttribute : Attribute { }
 /// </example>
 [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method, AllowMultiple = true)]
 public sealed class MacroAttribute : Attribute {
-  /// <summary>
-  ///     Allows specifying a macro that will be executed for a <see cref="SourceTemplateAttribute">source template</see>
-  ///     parameter when the template is expanded.
-  /// </summary>
-  [CanBeNull]
+    /// <summary>
+    ///     Allows specifying a macro that will be executed for a <see cref="SourceTemplateAttribute">source template</see>
+    ///     parameter when the template is expanded.
+    /// </summary>
+    [CanBeNull]
     public string Expression { get; set; }
 
-  /// <summary>
-  ///     Allows specifying which occurrence of the target parameter becomes editable when the template is deployed.
-  /// </summary>
-  /// <remarks>
-  ///     If the target parameter is used several times in the template, only one occurrence becomes editable;
-  ///     other occurrences are changed synchronously. To specify the zero-based index of the editable occurrence,
-  ///     use values >= 0. To make the parameter non-editable when the template is expanded, use -1.
-  /// </remarks>
-  public int Editable { get; set; }
+    /// <summary>
+    ///     Allows specifying which occurrence of the target parameter becomes editable when the template is deployed.
+    /// </summary>
+    /// <remarks>
+    ///     If the target parameter is used several times in the template, only one occurrence becomes editable;
+    ///     other occurrences are changed synchronously. To specify the zero-based index of the editable occurrence,
+    ///     use values >= 0. To make the parameter non-editable when the template is expanded, use -1.
+    /// </remarks>
+    public int Editable { get; set; }
 
-  /// <summary>
-  ///     Identifies the target parameter of a <see cref="SourceTemplateAttribute">source template</see> if the
-  ///     <see cref="MacroAttribute" /> is applied on a template method.
-  /// </summary>
-  [CanBeNull]
+    /// <summary>
+    ///     Identifies the target parameter of a <see cref="SourceTemplateAttribute">source template</see> if the
+    ///     <see cref="MacroAttribute" /> is applied on a template method.
+    /// </summary>
+    [CanBeNull]
     public string Target { get; set; }
 }
 

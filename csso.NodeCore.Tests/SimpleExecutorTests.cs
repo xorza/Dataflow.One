@@ -1,28 +1,24 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
-using csso.NodeCore;
 using csso.NodeCore.Funcs;
 using csso.NodeCore.Run;
 using NUnit.Framework;
-using Debug = csso.Common.Debug;
 
 namespace csso.NodeCore.Tests;
 
 public class Tests {
-    private Graph? _graph;
-    private Node? _constNode1;
-    private Node? _constNode2;
-    private Node? _outputNode;
-    private Node? _frameNoNode;
-    private Node? _addNode;
+    private readonly Function _addFunc = new("Add", F.Add);
+    private readonly ConfigValueFunc<Int32> _configConstFunc2 = new();
 
     private readonly ValueFunc<Int32> _constFunc1 = new();
-    private readonly ConfigValueFunc<Int32> _configConstFunc2 = new();
-    private readonly OutputFunc<Int32> _outputFunc = new();
     private readonly FrameNoFunc _frameNoFunc = new();
-
-    private readonly Function _addFunc = new("Add", F.Add);
+    private readonly OutputFunc<Int32> _outputFunc = new();
+    private Node? _addNode;
+    private Node? _constNode1;
+    private Node? _constNode2;
+    private Node? _frameNoNode;
+    private Graph? _graph;
+    private Node? _outputNode;
 
 
     [SetUp]

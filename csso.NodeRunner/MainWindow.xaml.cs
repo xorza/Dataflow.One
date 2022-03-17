@@ -1,14 +1,8 @@
-﻿using System;
-using System.ComponentModel;
-using System.IO;
+﻿using System.IO;
 using System.Text.Json;
 using System.Windows;
-using csso.NodeCore;
-using csso.NodeCore.Funcs;
-using csso.NodeCore.Run;
 using csso.WpfNode;
 using Microsoft.Win32;
-using Graph = csso.NodeCore.Graph;
 
 namespace csso.NodeRunner;
 
@@ -39,8 +33,8 @@ public partial class MainWindow : Window {
             JsonSerializerOptions opts = new();
             opts.WriteIndented = true;
 
-            string jsonString = File.ReadAllText(ofd.FileName);
-            SerializedGraphView serializedGraphView = JsonSerializer.Deserialize<SerializedGraphView>(jsonString);
+            var jsonString = File.ReadAllText(ofd.FileName);
+            var serializedGraphView = JsonSerializer.Deserialize<SerializedGraphView>(jsonString);
 
             _nodeRunner.Deserialize(serializedGraphView);
             GraphOverview.Init(_nodeRunner);
@@ -55,9 +49,9 @@ public partial class MainWindow : Window {
             JsonSerializerOptions opts = new();
             opts.WriteIndented = true;
 
-            SerializedGraphView serializedGraphView = _nodeRunner.Serialize();
+            var serializedGraphView = _nodeRunner.Serialize();
 
-            string jsonString = JsonSerializer.Serialize(serializedGraphView, opts);
+            var jsonString = JsonSerializer.Serialize(serializedGraphView, opts);
             File.WriteAllText(sfd.FileName, jsonString);
         }
     }

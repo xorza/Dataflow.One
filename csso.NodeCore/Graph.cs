@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using csso.Common;
-using csso.NodeCore.Run;
+﻿using csso.Common;
 
 namespace csso.NodeCore;
 
@@ -11,7 +9,23 @@ public sealed class Graph {
         Nodes = _nodes.AsReadOnly();
     }
 
+    public Graph(
+        FunctionFactory functionFactory,
+        SerializedGraph serialized) : this() {
+        FunctionFactory = functionFactory;
+
+        serialized.Nodes
+            .Select(_ => new Node(this, _))
+            .Foreach(_nodes.Add);
+
+        serialized.OutputConnections
+            .Select(_ => new BindingConnection(this, _))
+            .Foreach(_ => { _.Node.Add(_); });
+    }
+
     public IReadOnlyList<Node> Nodes { get; }
+
+    public FunctionFactory FunctionFactory { get; set; } = new();
 
     private void Add(Node node) {
         Check.True(node.Graph == this);
@@ -19,7 +33,7 @@ public sealed class Graph {
     }
 
     public Node AddNode(Function function) {
-        Node node = new (this, function);
+        Node node = new(this, function);
         Add(node);
         return node;
     }
@@ -37,8 +51,6 @@ public sealed class Graph {
             .Foreach(_ => _.Node.Remove(_));
     }
 
-    public FunctionFactory FunctionFactory { get; set; } = new();
-
     public SerializedGraph Serialize() {
         SerializedGraph result = new();
         result.Nodes = _nodes
@@ -51,20 +63,6 @@ public sealed class Graph {
             .ToArray();
 
         return result;
-    }
-
-    public Graph(
-        FunctionFactory functionFactory,
-        SerializedGraph serialized) : this() {
-        FunctionFactory = functionFactory;
-
-        serialized.Nodes
-            .Select(_ => new Node(this, _))
-            .Foreach(_nodes.Add);
-
-        serialized.OutputConnections
-            .Select(_ => new BindingConnection(this, _))
-            .Foreach(_ => { _.Node.Add(_); });
     }
 
     public Node GetNode(Guid id) {

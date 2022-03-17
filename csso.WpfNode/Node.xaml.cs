@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using csso.Common;
 
 namespace csso.WpfNode;
 
@@ -40,15 +39,6 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     public static readonly DependencyProperty DeletionEnabledProperty = DependencyProperty.Register(
         nameof(DeletionEnabled), typeof(bool), typeof(Node), new PropertyMetadata(default(bool)));
 
-    public bool DeletionEnabled {
-        get => (bool) GetValue(DeletionEnabledProperty);
-        set => SetValue(DeletionEnabledProperty, value);
-    }
-
-    private static void DragCanvas_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        Node graph = (Node) d;
-    }
-
     public Node() {
         InitializeComponent();
 
@@ -59,12 +49,9 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         RefreshExecutionTime();
     }
 
-    private void OnLoaded(object sender, RoutedEventArgs e) {
-        if (NodeView != null) {
-            NodeView.PropertyChanged += NodeView_PropertyChanged;
-        }
-
-        RefreshExecutionTime();
+    public bool DeletionEnabled {
+        get => (bool) GetValue(DeletionEnabledProperty);
+        set => SetValue(DeletionEnabledProperty, value);
     }
 
     public Brush HighlightBrush {
@@ -94,12 +81,22 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    private static void DragCanvas_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        var graph = (Node) d;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e) {
+        if (NodeView != null) NodeView.PropertyChanged += NodeView_PropertyChanged;
+
+        RefreshExecutionTime();
+    }
+
     public event PinClickEventHandler? PinClick;
 
     private void LayoutUpdated_EventHandler(object? sender, EventArgs e) { }
 
     private static void NodeView_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        Node node = (Node) d;
+        var node = (Node) d;
         if (e.OldValue is NodeView nv1)
             nv1.PropertyChanged -= node.NodeView_PropertyChanged;
         if (e.OldValue is NodeView nv2)
@@ -111,14 +108,13 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void RefreshExecutionTime() {
-        if (NodeView != null) {
+        if (NodeView != null)
             ExecutionTimeTextBlock.Visibility =
                 NodeView.ExecutionTime.HasValue ? Visibility.Visible : Visibility.Hidden;
-        }
     }
 
     private void PinButton_Click(object sender, RoutedEventArgs e) {
-        PutView pv = ((Put) sender).PutView!;
+        var pv = ((Put) sender).PutView!;
         PinClick?.Invoke(this,
             new PinClickEventArgs(pv) {
                 RoutedEvent = e.RoutedEvent,
@@ -140,7 +136,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void PinButton_OnLoaded(object sender, RoutedEventArgs e) {
-        Put put = (Put) sender;
+        var put = (Put) sender;
         put.PinClick += PinButton_Click;
     }
 }

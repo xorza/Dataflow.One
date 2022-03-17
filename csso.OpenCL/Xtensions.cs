@@ -2,7 +2,7 @@
 using System.Text;
 using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL; 
+namespace csso.OpenCL;
 
 internal static partial class Xtensions {
     internal static string DecodeString(this byte[] bytes) {

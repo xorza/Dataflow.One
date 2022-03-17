@@ -1,6 +1,4 @@
-using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Runtime.Serialization;
 using csso.Common;
 using Debug = csso.Common.Debug;
 
@@ -9,7 +7,7 @@ namespace csso.NodeCore.Run;
 internal static class Xtensions {
     public static Int32? FirstIndexOf<T>(this IEnumerable<T> enumerable, T element) {
         var i = 0;
-        
+
         foreach (var item in enumerable) {
             if (item == null && element == null)
                 return i;
@@ -23,9 +21,17 @@ internal static class Xtensions {
 }
 
 public class Executor {
+    public Executor(Graph graph) {
+        Graph = graph;
+        FrameNo = 0;
+        Recompile();
+    }
+
     public Int32 FrameNo { get; private set; }
 
     public List<EvaluationNode> EvaluationNodes { get; private set; } = new();
+
+    public Graph Graph { get; }
 
     public EvaluationNode GetEvaluationNode(Node node) {
         return EvaluationNodes.Single(_ => _.Node == node);
@@ -36,14 +42,6 @@ public class Executor {
 
         evaluationNode = result;
         return result != null;
-    }
-
-    public Graph Graph { get; }
-
-    public Executor(Graph graph) {
-        Graph = graph;
-        FrameNo = 0;
-        Recompile();
     }
 
     public void Run() {
@@ -62,7 +60,7 @@ public class Executor {
         List<EvaluationNode> newEvaluationNodes = new(Graph.Nodes.Count);
 
         foreach (var node in Graph.Nodes) {
-            EvaluationNode? existing = EvaluationNodes.SingleOrDefault(_ => _.Node == node);
+            var existing = EvaluationNodes.SingleOrDefault(_ => _.Node == node);
             newEvaluationNodes.Add(existing ?? new EvaluationNode(node));
         }
 
@@ -76,9 +74,7 @@ public class Executor {
     private static void ValidateNodeOrder(Graph graph, IList<EvaluationNode> evaluationNodes) {
         Debug.Assert.True(evaluationNodes.Count == graph.Nodes.Count);
 
-        for (int i = 0; i < evaluationNodes.Count; i++) {
-            Debug.Assert.AreSame(evaluationNodes[i].Node, graph.Nodes[i]);
-        }
+        for (var i = 0; i < evaluationNodes.Count; i++) Debug.Assert.AreSame(evaluationNodes[i].Node, graph.Nodes[i]);
     }
 
     private void ProcessEvaluationNodes() {
@@ -101,16 +97,13 @@ public class Executor {
 
     private void UpdateEvaluationNode(Node node) {
         var evaluationNode = GetEvaluationNode(node);
-        if (evaluationNode.State >= EvaluationState.Processed) {
-            return;
-        }
+        if (evaluationNode.State >= EvaluationState.Processed) return;
 
-        foreach (var config in evaluationNode.Node.ConfigValues) {
+        foreach (var config in evaluationNode.Node.ConfigValues)
             if (evaluationNode.ArgValues[config.Config.ArgumentIndex] != config.Value) {
                 evaluationNode.Process(true);
                 return;
             }
-        }
 
         foreach (var binding in evaluationNode.Node.BindingConnections) {
             if (binding.TargetNode.Behavior == FunctionBehavior.Proactive) {
@@ -142,21 +135,18 @@ public class Executor {
             invocationList.Push(evaluationNode);
 
             foreach (var binding in evaluationNode.Node.BindingConnections) {
-                EvaluationNode targetEvaluationNode = GetEvaluationNode(binding.TargetNode);
+                var targetEvaluationNode = GetEvaluationNode(binding.TargetNode);
 
                 if (!targetEvaluationNode.HasOutputValues) {
                     yetToProcessENodes.Enqueue(targetEvaluationNode);
                     continue;
                 }
 
-                if (binding.Behavior == ConnectionBehavior.Once) {
-                    continue;
-                }
+                if (binding.Behavior == ConnectionBehavior.Once) continue;
 
                 if (targetEvaluationNode.ArgumentsUpdatedThisFrame
-                    || targetEvaluationNode.Behavior == FunctionBehavior.Proactive) {
+                    || targetEvaluationNode.Behavior == FunctionBehavior.Proactive)
                     yetToProcessENodes.Enqueue(targetEvaluationNode);
-                }
             }
         }
 

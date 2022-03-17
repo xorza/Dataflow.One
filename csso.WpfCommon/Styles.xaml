@@ -4,7 +4,7 @@
         <ResourceDictionary Source="Colors.xaml" />
         <ResourceDictionary Source="Styles/ListView.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    
+
     <ControlTemplate TargetType="Button" x:Key="EmptyButtonTemplate">
         <Border
             BorderBrush="{TemplateBinding BorderBrush}"
@@ -18,15 +18,12 @@
 
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="Border123" Property="BorderBrush" Value="LightGray"></Setter>
+                <Setter TargetName="Border123" Property="BorderBrush" Value="LightGray" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    
-    
-    
-    
-    
+
+
     <Style TargetType="Control">
         <Setter Property="Background" Value="{StaticResource InactiveContentBackgroundBrush}" />
         <Setter Property="Foreground" Value="{StaticResource InactiveForegroundBrush}" />
@@ -161,7 +158,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Menu}">
-                    <Border BorderThickness="0" 
+                    <Border BorderThickness="0"
                             Background="{StaticResource ActiveContentBackgroundBrush}" Padding="2">
                         <StackPanel ClipToBounds="True"
                                     Orientation="Horizontal"
@@ -171,5 +168,5 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
 </ResourceDictionary>

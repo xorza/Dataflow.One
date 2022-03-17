@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:csso.WpfNode"
              xmlns:nodecore="clr-namespace:csso.NodeCore;assembly=csso.NodeCore"
-             xmlns:system="clr-namespace:System;assembly=System.Runtime"
 
              mc:Ignorable="d"
              d:DesignHeight="300"
@@ -16,35 +15,42 @@
             <ContentPresenter />
         </ControlTemplate>
     </UserControl.Template>
-    <Grid>
-        <StackPanel Orientation="Vertical" Margin="{Binding Path=Padding, ElementName=NodeEditUserControl}">
-            <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeEditUserControl}" />
+    <UserControl.Resources>
+        <ResourceDictionary Source="Styles.xaml"></ResourceDictionary>
+    </UserControl.Resources>
+    <Border BorderThickness="0"
+            BorderBrush="{x:Null}"
+            Background="{StaticResource InactiveContentBackgroundBrush}">
+        <Grid>
+            <StackPanel Orientation="Vertical" Margin="{Binding Path=Padding, ElementName=NodeEditUserControl}">
+                <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeEditUserControl}" />
 
-            <TextBlock Text="{Binding Path=NodeView.Node.Function.Description, ElementName=NodeEditUserControl}" />
+                <TextBlock Text="{Binding Path=NodeView.Node.Function.Description, ElementName=NodeEditUserControl}" />
 
-            <ItemsControl ItemsSource="{Binding Path=NodeView.Node.ConfigValues, ElementName=NodeEditUserControl}">
-                <ItemsControl.Resources>
+                <ItemsControl ItemsSource="{Binding Path=NodeView.Node.ConfigValues, ElementName=NodeEditUserControl}">
+                    <ItemsControl.Resources>
 
-                </ItemsControl.Resources>
+                    </ItemsControl.Resources>
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="nodecore:ConfigValue">
-                        <Border Background="MediumVioletRed">
-                            <TextBox Text="{Binding Value}" />
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="nodecore:ConfigValue">
+                            <Border Background="MediumVioletRed">
+                                <TextBox Text="{Binding Value}" />
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-            <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.Outputs}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="local:PutView">
-                        <Grid>
-                            <local:Value ValueView="{Binding ValueView}" />
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </StackPanel>
-    </Grid>
+                <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.Outputs}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="local:PutView">
+                            <Grid>
+                                <local:Value ValueView="{Binding ValueView}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Grid>
+    </Border>
 </UserControl>

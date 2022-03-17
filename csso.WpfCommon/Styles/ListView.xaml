@@ -14,10 +14,10 @@
                     <Border
                         Name="ItemBorder"
                         BorderThickness="1"
-                            BorderBrush="{x:Null}"
-                            Padding="6 3"
-                            Background="{TemplateBinding Background}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                        BorderBrush="{x:Null}"
+                        Padding="6 3"
+                        Background="{TemplateBinding Background}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
 
                         <ContentPresenter VerticalAlignment="Stretch"
                                           HorizontalAlignment="Left"
@@ -44,7 +44,7 @@
         </Setter>
 
     </Style>
-    
+
     <Style TargetType="ListViewItem" BasedOn="{StaticResource ListViewItemDefault}" />
 
     <Style TargetType="ListView">

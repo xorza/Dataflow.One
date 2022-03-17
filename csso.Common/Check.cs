@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace csso.Common; 
+namespace csso.Common;
 
 public static class Check {
     [DebuggerStepThrough]
@@ -20,7 +20,7 @@ public static class Check {
     public static void Argument(bool condition, string argname) {
         if (!condition) throw new ArgumentException("argname");
     }
-    
+
     [DebuggerStepThrough]
     [DebuggerHidden]
     public static void Fail() {

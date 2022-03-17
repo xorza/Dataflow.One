@@ -1,4 +1,4 @@
-﻿namespace csso.OpenCL; 
+﻿namespace csso.OpenCL;
 
 public class Tensor1 { }
 

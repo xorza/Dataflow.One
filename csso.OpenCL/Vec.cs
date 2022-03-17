@@ -1,4 +1,4 @@
-﻿namespace csso.OpenCL; 
+﻿namespace csso.OpenCL;
 
 public struct Vec2d {
     public double x;

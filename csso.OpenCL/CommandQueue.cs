@@ -1,6 +1,6 @@
 ﻿using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL; 
+namespace csso.OpenCL;
 
 public class CommandQueue : IDisposable {
     public CommandQueue(Context context) {

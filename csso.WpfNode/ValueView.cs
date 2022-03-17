@@ -5,14 +5,19 @@ using csso.NodeCore.Annotations;
 namespace csso.WpfNode;
 
 public class ValueView : INotifyPropertyChanged {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    [NotifyPropertyChangedInvocator]
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    private bool _isLoading;
 
     private object? _value;
+
+    public ValueView() {
+        IsLoading = false;
+        Value = "hi123";
+    }
+
+    public ValueView(object? value) {
+        IsLoading = false;
+        Value = value;
+    }
 
     public object? Value {
         get => _value;
@@ -22,8 +27,6 @@ public class ValueView : INotifyPropertyChanged {
             OnPropertyChanged();
         }
     }
-
-    private bool _isLoading = false;
 
     public bool IsLoading {
         get => _isLoading;
@@ -37,15 +40,10 @@ public class ValueView : INotifyPropertyChanged {
     }
 
     public bool HasValue => !IsLoading;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    public ValueView() {
-        IsLoading = false;
-        Value = "hi123";
-        
-    }
-    public ValueView(object? value) {
-        IsLoading = false;
-        Value = value;
-        
+    [NotifyPropertyChangedInvocator]
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

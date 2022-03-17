@@ -8,19 +8,17 @@ public partial class Value : UserControl {
         nameof(ValueView), typeof(ValueView), typeof(Value),
         new PropertyMetadata(default(ValueView), PropertyChangedCallback));
 
-    private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        Value value = (Value) d;
-        ValueView? valueView = e.NewValue as ValueView;
-        
-        
+    public Value() {
+        InitializeComponent();
     }
 
     public ValueView? ValueView {
-        get { return GetValue(ValueViewProperty) as ValueView; }
-        set { SetValue(ValueViewProperty, value); }
+        get => GetValue(ValueViewProperty) as ValueView;
+        set => SetValue(ValueViewProperty, value);
     }
 
-    public Value() {
-        InitializeComponent();
+    private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        var value = (Value) d;
+        var valueView = e.NewValue as ValueView;
     }
 }

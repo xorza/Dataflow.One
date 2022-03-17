@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace csso.WpfNode; 
+namespace csso.WpfNode;
 
 public class EdgeEventArgs : RoutedEventArgs {
     public EdgeEventArgs(Edge edge) {
@@ -15,7 +15,7 @@ public class EdgeEventArgs : RoutedEventArgs {
 
 public class Edge : ClickControl {
     public static readonly DependencyProperty InputPositionDependencyProperty = DependencyProperty.Register(
-        nameof(InputPosition),   
+        nameof(InputPosition),
         typeof(Point),
         typeof(Edge),
         new PropertyMetadata(Position_PropertyChangedCallback)
@@ -35,8 +35,8 @@ public class Edge : ClickControl {
     public Edge() {
         LeftButtonClick += LeftButtonClickHandler;
         MouseDoubleClick += MouseButtonEventHandler;
-        
-        
+
+
         Resources.Source =
             new Uri("pack://application:,,,/csso.WpfCommon;component/Styles.xaml",
                 UriKind.RelativeOrAbsolute);

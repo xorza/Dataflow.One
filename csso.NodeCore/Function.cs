@@ -68,14 +68,14 @@ public class Function {
             Attribute.GetCustomAttribute(func.Method, typeof(ReactiveAttribute))
                 as ReactiveAttribute;
         Behavior = reactiveAttribute == null ? FunctionBehavior.Proactive : FunctionBehavior.Reactive;
-        
+
         var idAttribute =
             Attribute.GetCustomAttribute(func.Method, typeof(FunctionIdAttribute))
                 as FunctionIdAttribute;
         Id = idAttribute?.Id;
 
         var parameters = func.Method.GetParameters();
-        for (Int32 i = 0; i < parameters.Length; i++) {
+        for (var i = 0; i < parameters.Length; i++) {
             var parameter = parameters[i];
 
             var outputAttribute =
@@ -87,11 +87,10 @@ public class Function {
 
             var argName = parameter.Name!;
             Type argType;
-            if (parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer) {
+            if (parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer)
                 argType = parameter.ParameterType.GetElementType()!;
-            } else {
+            else
                 argType = parameter.ParameterType;
-            }
 
             FunctionArg arg;
 
@@ -116,35 +115,26 @@ public class Function {
         Outputs = args.OfType<FunctionOutput>().ToList().AsReadOnly();
         Config = args.OfType<FunctionConfig>().ToList().AsReadOnly();
 
-        if (IsProcedure) {
-            Behavior = FunctionBehavior.Proactive;
-        }
+        if (IsProcedure) Behavior = FunctionBehavior.Proactive;
     }
 
     public void Invoke(object?[]? args) {
         CheckArgTypes(args);
 
         var result = Delegate.DynamicInvoke(args);
-        if (result is bool boolResult) {
+        if (result is bool boolResult)
             Check.True(boolResult);
-        } else {
+        else
             throw new InvalidOperationException();
-        }
     }
 
     private void CheckArgTypes(object?[]? args) {
         for (var i = 0; i < Args.Count; i++) {
-            if (args == null) {
-                throw new ArgumentNullException(nameof(args));
-            }
+            if (args == null) throw new ArgumentNullException(nameof(args));
 
-            if (args.Length != Args.Count) {
-                throw new ArgumentException(nameof(args));
-            }
+            if (args.Length != Args.Count) throw new ArgumentException(nameof(args));
 
-            if (args[i] != null) {
-                Check.True(Args[i].Type.IsInstanceOfType(args[i]!));
-            }
+            if (args[i] != null) Check.True(Args[i].Type.IsInstanceOfType(args[i]!));
         }
     }
 }

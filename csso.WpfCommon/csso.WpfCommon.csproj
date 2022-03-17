@@ -7,7 +7,7 @@
         <LangVersion>default</LangVersion>
     </PropertyGroup>
     <ItemGroup>
-      <Folder Include="Properties" />
+        <Folder Include="Properties"/>
     </ItemGroup>
 
 </Project>

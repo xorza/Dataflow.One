@@ -5,6 +5,17 @@ namespace csso.NodeCore;
 public class ValueConnection : Connection {
     public ValueConnection(Node node, FunctionInput input) : base(node, input) { }
 
+    public ValueConnection(Node node, SerializedValueConnection serialized) {
+        Node = node;
+        Input = Node.Function.Inputs
+            .Single(input => input.ArgumentIndex == serialized.InputIndex);
+
+        if (
+            serialized.Value != null
+            && StringParser.TryParse(serialized.Value, Input.Type, out var value))
+            Value = value;
+    }
+
     public Object? Value { get; set; }
 
     public SerializedValueConnection Serialize() {
@@ -15,18 +26,6 @@ public class ValueConnection : Connection {
         result.Value = Value?.ToString();
 
         return result;
-    }
-
-    public ValueConnection(Node node, SerializedValueConnection serialized) {
-        Node = node;
-        Input = Node.Function.Inputs
-            .Single(input => input.ArgumentIndex == serialized.InputIndex);
-
-        if (
-            serialized.Value != null
-            && StringParser.TryParse(serialized.Value, Input.Type, out Object? value)) {
-            Value = value;
-        }
     }
 }
 

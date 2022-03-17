@@ -1,6 +1,6 @@
 ﻿using OpenTK.Compute.OpenCL;
 
-namespace csso.OpenCL; 
+namespace csso.OpenCL;
 
 public abstract class KernelArgValue {
     internal abstract void Set(Kernel kernel, int index);

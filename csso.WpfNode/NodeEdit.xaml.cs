@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace csso.WpfNode; 
+namespace csso.WpfNode;
 
 public partial class NodeEdit : UserControl {
     public static readonly DependencyProperty NodeViewProperty = DependencyProperty.Register(

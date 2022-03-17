@@ -6,9 +6,9 @@ using csso.NodeCore.Annotations;
 namespace csso.NodeCore;
 
 public sealed class Node : WithId, INotifyPropertyChanged {
+    private readonly List<BindingConnection> _bindingConnections = new();
     private readonly List<ConfigValue> _configValues = new();
     private readonly List<ValueConnection> _valueConnections = new();
-    private readonly List<BindingConnection> _bindingConnections = new();
 
     private FunctionBehavior _behavior = FunctionBehavior.Proactive;
 
@@ -32,6 +32,28 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         }
     }
 
+    internal Node(
+        Graph graph,
+        SerializedNode serialized) : this(serialized.Id) {
+        Graph = graph;
+        Name = serialized.Name;
+
+        if (serialized.FunctionId != null)
+            Function = graph.FunctionFactory.Get(serialized.FunctionId.Value);
+        else
+            Function = graph.FunctionFactory.Get(serialized.FunctionName);
+
+        Behavior = serialized.Behavior;
+
+        serialized.ConfigValues
+            .Select(serializedValue => new ConfigValue(Function, serializedValue))
+            .Foreach(_configValues.Add);
+
+        serialized.ValueConnections
+            .Select(_ => new ValueConnection(this, _))
+            .Foreach(Add);
+    }
+
     public string Name { get; set; }
 
     public Function Function { get; }
@@ -50,9 +72,7 @@ public sealed class Node : WithId, INotifyPropertyChanged {
 
     public FunctionBehavior FinalBehavior {
         get {
-            if (_behavior == FunctionBehavior.Proactive) {
-                return Function.Behavior;
-            }
+            if (_behavior == FunctionBehavior.Proactive) return Function.Behavior;
 
             Check.True(_behavior == FunctionBehavior.Reactive);
             return FunctionBehavior.Reactive;
@@ -61,7 +81,9 @@ public sealed class Node : WithId, INotifyPropertyChanged {
 
     public Graph Graph { get; }
     public IReadOnlyList<ValueConnection> ValueConnections { get; }
+
     public IReadOnlyList<BindingConnection> BindingConnections { get; }
+
     //1:1 mapping to Function.Config
     public IReadOnlyList<ConfigValue> ConfigValues { get; }
 
@@ -78,6 +100,7 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         _valueConnections.RemoveAll(_ => _.Input == connection.Input);
         _valueConnections.Add(connection);
     }
+
     internal void Add(BindingConnection connection) {
         Check.Argument(connection.Node == this, nameof(connection));
 
@@ -99,12 +122,9 @@ public sealed class Node : WithId, INotifyPropertyChanged {
 
     public void Remove(Connection connection) {
         Check.Argument(connection.Node == this, nameof(connection));
-        if (connection is ValueConnection valueConnection) {
-            Check.True(_valueConnections.Remove(valueConnection));
-        }
-        if (connection is BindingConnection bindingConnection) {
+        if (connection is ValueConnection valueConnection) Check.True(_valueConnections.Remove(valueConnection));
+        if (connection is BindingConnection bindingConnection)
             Check.True(_bindingConnections.Remove(bindingConnection));
-        }
     }
 
     internal SerializedNode Serialize() {
@@ -125,29 +145,6 @@ public sealed class Node : WithId, INotifyPropertyChanged {
 
 
         return result;
-    }
-
-    internal Node(
-        Graph graph,
-        SerializedNode serialized) : this(serialized.Id) {
-        Graph = graph;
-        Name = serialized.Name;
-
-        if (serialized.FunctionId != null) {
-            Function = graph.FunctionFactory.Get(serialized.FunctionId.Value);
-        } else {
-            Function = graph.FunctionFactory.Get(serialized.FunctionName);
-        }
-
-        Behavior = serialized.Behavior;
-
-        serialized.ConfigValues
-            .Select(serializedValue => new ConfigValue(Function, serializedValue))
-            .Foreach(_configValues.Add);
-
-        serialized.ValueConnections
-            .Select(_ => new ValueConnection(this, _))
-            .Foreach(Add);
     }
 }
 

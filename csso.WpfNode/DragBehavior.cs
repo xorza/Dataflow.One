@@ -2,7 +2,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace csso.WpfNode; 
+namespace csso.WpfNode;
 
 public class DragBehavior {
     public static readonly DependencyProperty IsDragProperty =

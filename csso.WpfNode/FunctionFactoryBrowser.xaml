@@ -11,9 +11,9 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <local:NullVisibilityConverter x:Key="NullVisibilityConverter1"></local:NullVisibilityConverter>
+            <local:NullVisibilityConverter x:Key="NullVisibilityConverter1" />
 
 
         </ResourceDictionary>
@@ -21,15 +21,15 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MinWidth="100" />
             <ColumnDefinition Width="*" MinWidth="300" />
         </Grid.ColumnDefinitions>
 
-        <TextBox Margin="0" Text=""></TextBox>
+        <TextBox Margin="0" Text="" />
 
         <ListView
             Grid.Row="1"
@@ -43,23 +43,23 @@
                 <DataTemplate
                     DataType="{x:Type core:Function}">
 
-                    <TextBlock Text="{Binding Name}"></TextBlock>
+                    <TextBlock Text="{Binding Name}" />
 
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
 
         </ListView>
 
-        <Grid 
+        <Grid
             Grid.Row="0"
             Grid.RowSpan="2"
             Grid.Column="1"
             PreviewMouseMove="UIElement_OnPreviewMouse_Skip"
             PreviewMouseDown="UIElement_OnPreviewMouse_Skip"
-            
-              VerticalAlignment="Center"
-              HorizontalAlignment="Center"
-              Margin="8">
+
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Margin="8">
             <local:Node
                 DeletionEnabled="False"
                 NodeView="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview}"

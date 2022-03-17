@@ -1,44 +1,22 @@
-﻿using System;
-using System.ComponentModel;
-using System.IO;
+﻿using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using System.Windows;
-using csso.Common;
 using csso.ImageProcessing;
 using csso.NodeCore;
-using csso.NodeCore.Funcs;
 using csso.NodeCore.Run;
 using csso.OpenCL;
 using csso.WpfNode;
-using Microsoft.Win32;
-using Buffer = csso.OpenCL.Buffer;
-using Executor = csso.NodeCore.Run.Executor;
-using Graph = csso.NodeCore.Graph;
-using Image = csso.ImageProcessing.Image;
-using Node = csso.NodeCore.Node;
 
 namespace csso.NodeRunner;
 
-public partial class Overview :INotifyPropertyChanged{
+public partial class Overview : INotifyPropertyChanged {
     private readonly Context _clContext;
     private Executor? _executor;
 
-    private GraphVM? _graphView;
-    public GraphVM GraphView {
-        get => _graphView ??= new GraphVM();
-        set {
-            _graphView = value; 
-            Graph.GraphView = _graphView;
-            if (_functionFactoryBrowser != null) {
-                _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;
-            }
-            OnPropertyChanged();
-        }
-    }
+    private FunctionFactoryBrowser? _functionFactoryBrowser;
 
-    private  FunctionFactoryBrowser? _functionFactoryBrowser;
+    private GraphVM? _graphView;
 
 
     public Overview() {
@@ -47,19 +25,21 @@ public partial class Overview :INotifyPropertyChanged{
         _clContext = new Context();
     }
 
+    public GraphVM GraphView {
+        get => _graphView ??= new GraphVM();
+        set {
+            _graphView = value;
+            Graph.GraphView = _graphView;
+            if (_functionFactoryBrowser != null) _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;
+            OnPropertyChanged();
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
     public void Init(NodeRunner nodeRunner) {
         GraphView = nodeRunner.GraphVM;
         _executor = nodeRunner.Executor;
-    }
-
-    private void DetectCycles_Button_OnClick(object sender, RoutedEventArgs e) {
-        NoLoopValidator validator = new();
-        validator.Go(_graphView!.Graph);
-    }
-
-    private void OpenCLTest1_Button_OnClick(object sender, RoutedEventArgs e) {
-        var result = _clContext.Test1();
-        MessageBox.Show(result, "OpenCL test results");
     }
 
     private void OpenCLTest2_Button_OnClick(object sender, RoutedEventArgs e) {
@@ -136,11 +116,9 @@ public partial class Overview :INotifyPropertyChanged{
 
     private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e) {
         _functionFactoryBrowser = (FunctionFactoryBrowser) sender;
-        
+
         _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;
     }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
