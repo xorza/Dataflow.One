@@ -28,6 +28,44 @@ public partial class Graph : UserControl {
         Loaded += Loaded_Handler;
         MouseLeftButtonDown += NodeDeselectButton_Handler;
         MouseRightButtonDown += NodeDeselectButton_Handler;
+
+
+        Subscribe();
+    }
+
+    private void Subscribe() {
+        Point startPoint;
+        Vector offset;
+        bool isMoving = false;
+
+        MouseEventHandler onMove = (object sender, MouseEventArgs ea) => {
+            if (!isMoving) {
+                return;
+            }
+
+            var point = ea.GetPosition(this);
+            System.Diagnostics.Debug.WriteLine(offset.ToString());
+
+            GraphView!.ViewOffset = point - startPoint + offset;
+        };
+
+        MouseEventHandler onLeave = (object sender, MouseEventArgs ea) => { isMoving = false; };
+        MouseButtonEventHandler onButtonUp = (object sender, MouseButtonEventArgs ea) => { isMoving = false; };
+        MouseButtonEventHandler onMouseDown = (object sender, MouseButtonEventArgs ea) => {
+            if (isMoving) {
+                isMoving = false;
+                return;
+            }
+
+            startPoint = ea.GetPosition(this);
+            offset = GraphView!.ViewOffset;
+            isMoving = true;
+        };
+
+        MouseUp += onButtonUp;
+        MouseLeave += onLeave;
+        MouseMove += onMove;
+        MouseDown += onMouseDown;
     }
 
     public GraphVM? GraphView {
@@ -69,7 +107,8 @@ public partial class Graph : UserControl {
         while (GraphView!.Edges.Count != EdgesCanvas.Children.Count)
             if (GraphView!.Edges.Count < EdgesCanvas.Children.Count) {
                 EdgesCanvas.Children.RemoveAt(EdgesCanvas.Children.Count - 1);
-            } else {
+            }
+            else {
                 Edge line = new();
                 line.LeftButtonClick += LeftButtonClickHandler;
 

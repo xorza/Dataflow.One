@@ -33,6 +33,9 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
     public GraphVM(FunctionFactory functionFactory, SerializedGraphView serialized)
         : this(new NodeCore.Graph(functionFactory, serialized.Graph)) {
+        
+        ViewOffset = serialized.ViewOffset;
+        
         serialized.NodeViews
             .Foreach(_ => {
                 var node = _nodes.Single(n => n.Node.Id == _.Id);
@@ -42,6 +45,20 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
     public NodeCore.Graph Graph { get; }
     public ReadOnlyObservableCollection<EdgeView> Edges { get; }
+
+    private Vector _viewOffset;
+
+    public Vector ViewOffset {
+        get => _viewOffset;
+        set {
+            if (_viewOffset == value) {
+                return;
+            }
+            
+            _viewOffset = value;
+            OnPropertyChanged();
+        }
+    }
 
     public FunctionFactoryView FunctionFactory {
         get => _functionFactory;
@@ -155,6 +172,8 @@ public sealed class GraphVM : INotifyPropertyChanged {
             .Select(_ => _.Serialize())
             .ToArray();
 
+        result.ViewOffset = ViewOffset;
+
         return result;
     }
 
@@ -176,4 +195,5 @@ public sealed class GraphVM : INotifyPropertyChanged {
 public struct SerializedGraphView {
     public SerializedGraph Graph { get; set; }
     public SerializedNodeView[] NodeViews { get; set; }
+    public Vector ViewOffset { get; set; }
 }

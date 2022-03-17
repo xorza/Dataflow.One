@@ -29,8 +29,8 @@
         BorderThickness="0"
         BorderBrush="{x:Null}">
         <Border.Background>
-            <VisualBrush 
-                TileMode="Tile" 
+            <VisualBrush
+                TileMode="Tile"
                 Viewport="0,0,15,15"
                 ViewportUnits="Absolute"
                 Viewbox="0,0,15,15"
@@ -41,9 +41,15 @@
                         <Path Data="M 0 0 L 0 15" Stroke="{StaticResource ActiveContentBackgroundBrush}" />
                     </Grid>
                 </VisualBrush.Visual>
+                <VisualBrush.Transform>
+                    <TranslateTransform
+                        X="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.X}"
+                        Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}">
+                    </TranslateTransform>
+                </VisualBrush.Transform>
             </VisualBrush>
         </Border.Background>
-        
+
         <Grid>
 
             <ItemsControl
@@ -65,7 +71,14 @@
                         <Canvas Margin="0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Loaded="NodesCanvas_OnLoaded" />
+                                Loaded="NodesCanvas_OnLoaded">
+                            <Canvas.RenderTransform>
+                                <TranslateTransform
+                                    X="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.X}"
+                                    Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}">
+                                </TranslateTransform>
+                            </Canvas.RenderTransform>
+                        </Canvas>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>
@@ -79,7 +92,14 @@
             <Canvas Margin="0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    x:Name="EdgesCanvas" />
+                    x:Name="EdgesCanvas">
+                <Canvas.RenderTransform>
+                    <TranslateTransform
+                        X="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.X}"
+                        Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}">
+                    </TranslateTransform>
+                </Canvas.RenderTransform>
+            </Canvas>
 
         </Grid>
     </Border>
