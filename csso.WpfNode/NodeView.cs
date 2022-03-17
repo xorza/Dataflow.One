@@ -29,9 +29,9 @@ public class NodeView : INotifyPropertyChanged {
 
     public NodeCore.Node Node { get; }
 
-    private double _executionTime = Double.NaN;
+    private double? _executionTime = null;
 
-    public Double ExecutionTime {
+    public Double? ExecutionTime {
         get => _executionTime;
         set {
             _executionTime = value;

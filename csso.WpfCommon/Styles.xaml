@@ -56,6 +56,9 @@
         <Setter Property="Background" Value="{StaticResource InactiveContentBackgroundBrush}" />
     </Style>
 
+    <Style TargetType="UserControl" x:Key="UserControlDefaultStyle">
+        <Setter Property="Background" Value="{DynamicResource InactiveContentBackgroundBrush}" />
+    </Style>
 
     <Style TargetType="Button">
         <Setter Property="SnapsToDevicePixels" Value="true" />

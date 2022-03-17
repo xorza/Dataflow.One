@@ -21,18 +21,14 @@ using Node = csso.NodeCore.Node;
 namespace csso.NodeRunner;
 
 public partial class Overview {
-    public static readonly DependencyProperty GraphViewProperty = DependencyProperty.Register(
-        nameof(GraphView), typeof(GraphVM), typeof(Overview), new PropertyMetadata(default(GraphVM)));
-
-
     private readonly Context _clContext;
     private Executor? _executor;
 
-    public GraphVM? GraphView {
-        get => (GraphVM) GetValue(GraphViewProperty);
-        private set => SetValue(GraphViewProperty, value);
-    }
+    private GraphVM? _graphView;
     
+    private  FunctionFactoryBrowser? _functionFactoryBrowser;
+
+
     public Overview() {
         InitializeComponent();
 
@@ -40,13 +36,19 @@ public partial class Overview {
     }
 
     public void Init(NodeRunner nodeRunner) {
-        GraphView = nodeRunner.GraphVM;
+        _graphView = nodeRunner.GraphVM;
         _executor = nodeRunner.Executor;
+
+        Graph.GraphView = _graphView;
+
+        if (_functionFactoryBrowser != null) {
+            _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;
+        }
     }
 
     private void DetectCycles_Button_OnClick(object sender, RoutedEventArgs e) {
         NoLoopValidator validator = new();
-        validator.Go(GraphView!.Graph);
+        validator.Go(_graphView!.Graph);
     }
 
     private void OpenCLTest1_Button_OnClick(object sender, RoutedEventArgs e) {
@@ -113,18 +115,22 @@ public partial class Overview {
             kernel.Dispose();
         }
     }
-    
+
     private void FunctionFactoryBrowser_OnFunctionChosen(object? sender, Function e) {
-        GraphView!.CreateNode(e);
+        _graphView!.CreateNode(e);
     }
 
     private void Run_ButtonBase_OnClick(object sender, RoutedEventArgs e) {
         try {
             _executor!.Run();
-        } catch (ArgumentMissingException) {
-            
-        }
+        } catch (ArgumentMissingException) { }
+
+        _graphView!.OnExecuted(_executor!);
+    }
+
+    private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e) {
+        _functionFactoryBrowser = (FunctionFactoryBrowser) sender;
         
-        GraphView!.OnExecuted(_executor!);
+        _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;
     }
 }

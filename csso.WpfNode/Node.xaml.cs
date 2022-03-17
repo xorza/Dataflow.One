@@ -55,11 +55,13 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         MouseLeftButtonDown += Node_MouseLeftButtonDown;
         LayoutUpdated += LayoutUpdated_EventHandler;
         Loaded += OnLoaded;
+
+        RefreshExecutionTime();
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e) {
         if (NodeView != null) {
-            NodeView.PropertyChanged += OnPropertyChanged;
+            NodeView.PropertyChanged += NodeView_PropertyChanged;
         }
 
         RefreshExecutionTime();
@@ -99,19 +101,19 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     private static void NodeView_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
         Node node = (Node) d;
         if (e.OldValue is NodeView nv1)
-            nv1.PropertyChanged -= node.OnPropertyChanged;
+            nv1.PropertyChanged -= node.NodeView_PropertyChanged;
         if (e.OldValue is NodeView nv2)
-            nv2.PropertyChanged += node.OnPropertyChanged;
+            nv2.PropertyChanged += node.NodeView_PropertyChanged;
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+    private void NodeView_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
         RefreshExecutionTime();
     }
 
     private void RefreshExecutionTime() {
         if (NodeView != null) {
             ExecutionTimeTextBlock.Visibility =
-                double.IsFinite(NodeView.ExecutionTime) ? Visibility.Visible : Visibility.Hidden;
+                NodeView.ExecutionTime.HasValue ? Visibility.Visible : Visibility.Hidden;
         }
     }
 

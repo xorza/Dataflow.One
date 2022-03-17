@@ -8,33 +8,32 @@
              xmlns:core="clr-namespace:csso.NodeCore;assembly=csso.NodeCore"
              xmlns:wpfNode="clr-namespace:csso.WpfNode"
 
+             Style="{DynamicResource DefaultNodeStyle}"
              mc:Ignorable="d"
              d:DesignHeight="350" d:DesignWidth="300"
              VerticalAlignment="Top"
              HorizontalAlignment="Left"
-             x:Name="NodeUserControl"
-             Style="{DynamicResource DefaultNodeStyle}"
-            >
-  
+             x:Name="NodeUserControl">
 
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary 
+                <ResourceDictionary
                     Source="Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
-            <Style TargetType="{x:Type wpfNode:Node}" x:Key="DefaultNodeStyle" >
+
+            <Style TargetType="{x:Type wpfNode:Node}" x:Key="DefaultNodeStyle">
                 <Setter Property="Margin" Value="2" />
                 <Setter Property="Padding" Value="10 6" />
                 <Setter Property="HighlightBrush" Value="Coral" />
-                <Setter Property="Foreground" Value="{StaticResource InactiveForegroundBrush}" />
-                <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}" />
-                <Setter Property="BorderBrush" Value="{StaticResource PanelBorderBrush}" />
-                <Setter Property="BorderThickness" Value="{StaticResource DefaultBorderThickness}" />
-                <Setter Property="CornerRadius" Value="{StaticResource DefaultCornerRadius}" />
-                <Setter Property="HeaderBackground" Value="{StaticResource ActiveContentBackgroundBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource InactiveForegroundBrush}" />
+                <Setter Property="Background" Value="{DynamicResource PanelBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource PanelBorderBrush}" />
+                <Setter Property="BorderThickness" Value="{DynamicResource DefaultBorderThickness}" />
+                <Setter Property="CornerRadius" Value="{DynamicResource DefaultCornerRadius}" />
+                <Setter Property="HeaderBackground" Value="{DynamicResource ActiveContentBackgroundBrush}" />
             </Style>
+
 
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
@@ -61,16 +60,15 @@
             <ContentPresenter />
         </ControlTemplate>
     </UserControl.Template>
-    
+
     <Grid
-        Background="{x:Null}"
         Margin="{Binding Path=Margin, ElementName=NodeUserControl}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
-        <TextBlock 
+
+        <TextBlock
             Foreground="DarkGray"
             Text="{Binding ElementName=NodeUserControl, Path=NodeView.ExecutionTime}"
             x:Name="ExecutionTimeTextBlock" />
@@ -79,35 +77,31 @@
             <Border BorderThickness="{Binding Path=BorderThickness, ElementName=NodeUserControl}"
                     CornerRadius="{Binding Path=CornerRadius, ElementName=NodeUserControl}"
                     BorderBrush="{Binding Path=BorderBrush, ElementName=NodeUserControl}"
-                    Background="{Binding Path=Background, ElementName=NodeUserControl}">
+                    Background="{StaticResource PanelBackgroundBrush}">
                 <Grid Margin="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Border
-                        x:Name="Border123"
                         VerticalAlignment="Stretch"
                         HorizontalAlignment="Stretch"
                         BorderBrush="{x:Null}"
                         BorderThickness="0">
                         <Border.Style>
                             <Style TargetType="Border">
+                                <Setter Property="Background" Value="{StaticResource InactiveContentBackgroundBrush}" />
+                                
                                 <Style.Triggers>
-                                    <DataTrigger
-                                        Binding="{Binding Path=NodeView.Node.Function.IsProcedure, ElementName=NodeUserControl}"
-                                        Value="False">
-                                        <Setter
-                                            Property="Background"
-                                            Value="{Binding Path=HeaderBackground, ElementName=NodeUserControl}" />
-                                    </DataTrigger>
                                     <DataTrigger
                                         Binding="{Binding Path=NodeView.Node.FinalBehavior, ElementName=NodeUserControl}"
                                         Value="{x:Static core:FunctionBehavior.Proactive}">
                                         <Setter
                                             Property="Background"
-                                            Value="DarkSlateGray" />
-
+                                            Value="{StaticResource HighlightBackgroundBrush}" />    
+                                        <Setter
+                                            Property="TextBlock.Foreground"
+                                            Value="Black" />
                                     </DataTrigger>
                                     <DataTrigger
                                         Binding="{Binding Path=NodeView.Node.Function.IsProcedure, ElementName=NodeUserControl}"

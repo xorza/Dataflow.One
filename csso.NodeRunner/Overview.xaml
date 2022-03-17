@@ -10,9 +10,11 @@
              Background="{StaticResource InactiveContentBackgroundBrush}"
              Foreground="{StaticResource InactiveForegroundBrush}">
 
-    <Grid>
+    <Grid
+        MinHeight="300"
+        MinWidth="300">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
+            <ColumnDefinition MinWidth="300" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition MinWidth="300" Width="300" />
         </Grid.ColumnDefinitions>
@@ -25,9 +27,27 @@
         <wpfNode:Graph x:Name="Graph"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"
-                       GraphView="{Binding Path=GraphView, ElementName=OverviewUserControl}" />
+                       GraphView="{Binding Path=GraphView, ElementName=OverviewUserControl}">
+            <wpfNode:Graph.ContextMenu>
+                <ContextMenu>
+                    <ContextMenu.Template>
+                        <ControlTemplate>
+                            <Border>
+                                <Grid>
 
-        <Button Grid.Row="0" Grid.Column="1" Content="Run"
+                                    <wpfNode:FunctionFactoryBrowser
+                                        ListViewItemStyle="{StaticResource ListViewItemDefault}"
+                                        FunctionChosen="FunctionFactoryBrowser_OnFunctionChosen"
+                                        Loaded="FrameworkElement_OnLoaded" />
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </ContextMenu.Template>
+                </ContextMenu>
+            </wpfNode:Graph.ContextMenu>
+        </wpfNode:Graph>
+
+        <Button Grid.Row="0" Grid.Column="0" Content="Run"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
                 Width="70" Height="35"
@@ -50,32 +70,15 @@
                 Grid.RowSpan="2"
                 MinWidth="200"
                 Background="{StaticResource PanelBackgroundBrush}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <wpfNode:NodeEdit
-                    x:Name="NodeEdit"
-                    Padding="{StaticResource DefaultPadding}"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    NodeView="{Binding Path=GraphView.SelectedNode, ElementName=OverviewUserControl}" />
 
-                <GridSplitter Grid.Row="1" Height="2"
-                              ResizeDirection="Rows"
-                              VerticalAlignment="Stretch"
-                              HorizontalAlignment="Stretch"
-                              ResizeBehavior="PreviousAndNext"
-                              Background="{StaticResource ActiveContentBackgroundBrush}" />
-                <!-- <Rectangle Grid.Row="1" Fill="Beige" Height="1" StrokeThickness="0" Stroke="{x:Null}" /> -->
+            <wpfNode:NodeEdit
+                x:Name="NodeEdit"
+                Padding="{StaticResource DefaultPadding}"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                NodeView="{Binding Path=GraphView.SelectedNode, ElementName=OverviewUserControl}" />
 
-                <wpfNode:FunctionFactoryBrowser Grid.Row="2" x:Name="FunctionFactoryBrowser"
-                                                ListViewItemStyle="{StaticResource ListViewItemDefault}"
-                                                FunctionFactory="{Binding ElementName=OverviewUserControl, Path=GraphView.FunctionFactory}"
-                                                FunctionChosen="FunctionFactoryBrowser_OnFunctionChosen" />
-            </Grid>
+
         </Border>
 
     </Grid>

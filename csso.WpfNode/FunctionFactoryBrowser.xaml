@@ -6,11 +6,15 @@
              xmlns:local="clr-namespace:csso.WpfNode"
              xmlns:core="clr-namespace:csso.NodeCore;assembly=csso.NodeCore"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
+             Background="{DynamicResource InactiveContentBackgroundBrush}"
              x:Name="FunctionFactoryBrowserUserControl">
     <UserControl.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
             <local:NullVisibilityConverter x:Key="NullVisibilityConverter1"></local:NullVisibilityConverter>
+
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -18,7 +22,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" MinWidth="100" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" MinWidth="300" />
         </Grid.ColumnDefinitions>
 
         <ListView
@@ -39,8 +43,9 @@
         </ListView>
 
         <Grid
+
             Grid.Column="1"
-            VerticalAlignment="Top"
+            VerticalAlignment="Center"
             HorizontalAlignment="Center"
             Margin="8">
             <local:Node
