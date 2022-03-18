@@ -78,8 +78,6 @@ public abstract class Node : WithId, INotifyPropertyChanged {
         if (connection is BindingConnection bindingConnection)
             Check.True(_bindingConnections.Remove(bindingConnection));
     }
-
-    internal abstract SerializedNode Serialize();
 }
 
 public sealed class FunctionNode : Node {
@@ -131,7 +129,7 @@ public sealed class FunctionNode : Node {
 
     internal FunctionNode(
         Graph graph,
-        SerializedNode serialized) : base(graph, serialized.Id) {
+        SerializedFunctionNode serialized) : base(graph, serialized.Id) {
         Name = serialized.Name;
 
         if (serialized.FunctionId != null) {
@@ -152,8 +150,8 @@ public sealed class FunctionNode : Node {
     }
 
 
-    internal override SerializedNode Serialize() {
-        SerializedNode result = new();
+    internal SerializedFunctionNode Serialize() {
+        SerializedFunctionNode result = new();
 
         result.Name = Name;
         result.Id = Id;
@@ -173,7 +171,32 @@ public sealed class FunctionNode : Node {
     }
 }
 
-public class SerializedNode {
+public sealed class GraphNode : Node {
+    public GraphNode(Graph graph) : base(graph, Guid.NewGuid()) { }
+
+    internal GraphNode(
+        Graph graph,
+        SerializedGraphNode serialized) : base(graph, serialized.Id) {
+        Name = serialized.Name;
+        SubGraph = new Graph(Graph.FunctionFactory, serialized.SubGraph);
+    }
+
+    public override FunctionBehavior Behavior { get; set; }
+    public Graph SubGraph { get; set; }
+
+    internal SerializedGraphNode Serialize() {
+        SerializedGraphNode result = new();
+
+        result.Name = Name;
+        result.Id = Id;
+        result.Behavior = Behavior;
+        result.SubGraph = SubGraph.Serialize();
+        
+        return result;
+    }
+}
+
+public class SerializedFunctionNode {
     public string Name { get; set; }
     public Guid Id { get; set; }
     public String FunctionName { get; set; }
@@ -181,4 +204,11 @@ public class SerializedNode {
     public SerializedConfigValue[] ConfigValues { get; set; }
     public SerializedValueConnection[] ValueConnections { get; set; }
     public FunctionBehavior Behavior { get; set; }
+}
+
+public class SerializedGraphNode {
+    public string Name { get; set; }
+    public Guid Id { get; set; }
+    public FunctionBehavior Behavior { get; set; }
+    public SerializedGraph SubGraph { get; set; }
 }

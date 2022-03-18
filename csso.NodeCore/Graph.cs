@@ -14,8 +14,12 @@ public sealed class Graph {
         SerializedGraph serialized) : this() {
         FunctionFactory = functionFactory;
 
-        serialized.Nodes
+        serialized.FunctionNodes
             .Select(_ => new FunctionNode(this, _))
+            .Foreach(_nodes.Add);
+
+        serialized.GraphNodes?
+            .Select(_ => new GraphNode(this, _))
             .Foreach(_nodes.Add);
 
         serialized.OutputConnections
@@ -42,7 +46,7 @@ public sealed class Graph {
         Check.True(node.Graph == this);
 
         if (!_nodes.Remove(node))
-            throw new Exception("543b6u365");
+            throw new Exception("5h4gub677ge657");
 
         _nodes
             .SelectMany(_ => _.BindingConnections)
@@ -53,9 +57,19 @@ public sealed class Graph {
 
     public SerializedGraph Serialize() {
         SerializedGraph result = new();
-        result.Nodes = _nodes
-            .Select(node => node.Serialize())
-            .ToArray();
+        result.FunctionNodes = new List<SerializedFunctionNode>();
+        result.GraphNodes = new List<SerializedGraphNode>();
+
+        foreach (var node in _nodes) {
+            if (node is FunctionNode functionNode) {
+                result.FunctionNodes.Add(functionNode.Serialize());
+            } else if (node is GraphNode graphNode) {
+                result.GraphNodes.Add(graphNode.Serialize());
+            } else {
+                throw new NotImplementedException("ervthhb35e65");
+            }
+        }
+
 
         result.OutputConnections = _nodes
             .SelectMany(_ => _.BindingConnections)
@@ -71,6 +85,7 @@ public sealed class Graph {
 }
 
 public struct SerializedGraph {
-    public SerializedNode[] Nodes { get; set; }
+    public List<SerializedFunctionNode> FunctionNodes { get; set; }
+    public List<SerializedGraphNode> GraphNodes { get; set; }
     public SerializedOutputConnection[] OutputConnections { get; set; }
 }

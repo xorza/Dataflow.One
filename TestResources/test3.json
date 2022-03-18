@@ -1,6 +1,6 @@
 {
   "Graph": {
-    "Nodes": [
+    "FunctionNodes": [
       {
         "Name": "Add",
         "Id": "3f8cf234-b08e-47ed-98dc-b47d0c7d8983",
