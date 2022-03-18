@@ -38,7 +38,7 @@ public partial class Graph : UserControl {
         Vector offset;
         bool isMoving = false;
 
-        MouseEventHandler onMove = (object sender, MouseEventArgs ea) => {
+        void OnMove(object sender, MouseEventArgs ea) {
             if (!isMoving) {
                 return;
             }
@@ -47,25 +47,32 @@ public partial class Graph : UserControl {
             System.Diagnostics.Debug.WriteLine(offset.ToString());
 
             GraphView!.ViewOffset = point - startPoint + offset;
-        };
-
-        MouseEventHandler onLeave = (object sender, MouseEventArgs ea) => { isMoving = false; };
-        MouseButtonEventHandler onButtonUp = (object sender, MouseButtonEventArgs ea) => { isMoving = false; };
-        MouseButtonEventHandler onMouseDown = (object sender, MouseButtonEventArgs ea) => {
+        }
+        void OnLeave(object sender, MouseEventArgs ea) {
+            isMoving = false;
+        }
+        void OnButtonUp(object sender, MouseButtonEventArgs ea) {
+            isMoving = false;
+        }
+        void Down(object sender, MouseButtonEventArgs ea) {
             if (isMoving) {
                 isMoving = false;
+                return;
+            }
+
+            if (ea.ChangedButton != MouseButton.Left) {
                 return;
             }
 
             startPoint = ea.GetPosition(this);
             offset = GraphView!.ViewOffset;
             isMoving = true;
-        };
+        }
 
-        MouseUp += onButtonUp;
-        MouseLeave += onLeave;
-        MouseMove += onMove;
-        MouseDown += onMouseDown;
+        MouseUp += OnButtonUp;
+        MouseLeave += OnLeave;
+        MouseMove += OnMove;
+        MouseDown += Down;
     }
 
     public GraphVM? GraphView {
