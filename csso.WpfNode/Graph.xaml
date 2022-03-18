@@ -73,10 +73,16 @@
                                 VerticalAlignment="Stretch"
                                 Loaded="NodesCanvas_OnLoaded">
                             <Canvas.RenderTransform>
-                                <TranslateTransform
-                                    X="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.X}"
-                                    Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}">
-                                </TranslateTransform>
+                                <TransformGroup>
+                                    <ScaleTransform
+                                        ScaleX="{Binding ElementName=GraphUserControl, Path=GraphView.ViewScale}"
+                                        ScaleY="{Binding ElementName=GraphUserControl, Path=GraphView.ViewScale}"
+                                       />
+                                    <TranslateTransform
+                                        X="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.X}"
+                                        Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}"
+                                        />
+                                </TransformGroup>
                             </Canvas.RenderTransform>
                         </Canvas>
                     </ItemsPanelTemplate>
@@ -94,10 +100,16 @@
                     VerticalAlignment="Stretch"
                     x:Name="EdgesCanvas">
                 <Canvas.RenderTransform>
-                    <TranslateTransform
-                        X="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.X}"
-                        Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}">
-                    </TranslateTransform>
+                    <TransformGroup>
+                        <ScaleTransform
+                            ScaleX="{Binding ElementName=GraphUserControl, Path=GraphView.ViewScale}"
+                            ScaleY="{Binding ElementName=GraphUserControl, Path=GraphView.ViewScale}">
+                        </ScaleTransform>
+                        <TranslateTransform
+                            X="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.X}"
+                            Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}">
+                        </TranslateTransform>
+                    </TransformGroup>
                 </Canvas.RenderTransform>
             </Canvas>
 

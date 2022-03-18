@@ -39,4 +39,9 @@ public static class Xtentions {
     public static void Populate<T>(this IList<T> list, T value) {
         for (var i = 0; i < list.Count; i++) list[i] = value;
     }
+
+
+    public static bool IsEmpty(this String s) {
+        return s.Trim().Length == 0;
+    }
 }

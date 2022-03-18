@@ -7,7 +7,7 @@ public class ValueConnection : Connection {
 
     public ValueConnection(Node node, SerializedValueConnection serialized) {
         Node = node;
-        Input = Node.Function.Inputs
+        Input = Node.Inputs
             .Single(input => input.ArgumentIndex == serialized.InputIndex);
 
         if (

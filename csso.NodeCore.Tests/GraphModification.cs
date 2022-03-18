@@ -31,19 +31,19 @@ public class GraphModification {
         _addNode = _graph.AddNode(_addFunc);
 
         _outputNode!.AddConnection(
-            _outputNode!.Function.Inputs.Single(),
+            _outputNode!.Inputs.Single(),
             _addNode!,
-            _addNode!.Function.Outputs.Single());
+            _addNode!.Outputs.Single());
 
         _addNode!.AddConnection(
-            _addNode!.Function.Inputs[0],
+            _addNode!.Inputs[0],
             _frameNoNode!,
-            _frameNoNode!.Function.Outputs.Single());
+            _frameNoNode!.Outputs.Single());
 
         // _addNode!.AddConnection(
-        //     _addNode!.Function.Inputs[1],
+        //     _addNode!.Inputs[1],
         //     _frameNoNode!,
-        //     _frameNoNode!.Function.Outputs.Single());
+        //     _frameNoNode!.Outputs.Single());
     }
 
     [Test]
@@ -56,9 +56,9 @@ public class GraphModification {
         Assert.Throws<ArgumentMissingException>(() => executor.Run());
 
         _addNode!.AddConnection(
-            _addNode!.Function.Inputs[1],
+            _addNode!.Inputs[1],
             _constNode1!,
-            _constNode1!.Function.Outputs.Single());
+            _constNode1!.Outputs.Single());
 
         executor.Run();
         Assert.AreEqual(1253, _outputFunc.Value);

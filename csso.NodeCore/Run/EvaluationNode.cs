@@ -15,15 +15,15 @@ public class EvaluationNode {
 
     private readonly List<DependencyValue> _dependencyValues = new();
 
-    public EvaluationNode(Node node) {
+    public EvaluationNode(FunctionNode node) {
         Node = node;
-        Behavior = node.FinalBehavior;
-        ArgValues = Enumerable.Repeat(Empty, Node.Function.Args.Count).ToArray();
+        Behavior = node.Behavior;
+        ArgValues = Enumerable.Repeat(Empty, Node.Args.Count).ToArray();
         HasOutputValues = false;
         Reset();
     }
 
-    public Node Node { get; }
+    public FunctionNode Node { get; }
     public Object?[] ArgValues { get; }
     public bool HasOutputValues { get; private set; }
     public FunctionBehavior Behavior { get; }
@@ -34,7 +34,7 @@ public class EvaluationNode {
     public object? GetOutputValue(FunctionOutput output) {
         Check.True(HasOutputValues);
 
-        var index = Node.Function.Args.FirstIndexOf(output);
+        var index = Node.Args.FirstIndexOf(output);
         Check.False(index == null);
 
         return ArgValues[index!.Value];
@@ -61,7 +61,7 @@ public class EvaluationNode {
 
         Node.ConfigValues.Foreach(config => ArgValues[config.Config.ArgumentIndex] = config.Value);
 
-        foreach (var functionArg in Node.Function.Args)
+        foreach (var functionArg in Node.Args)
             if (functionArg is FunctionInput inputArg) {
                 var valueConnection = Node.ValueConnections.SingleOrDefault(_ => _.Input == inputArg);
                 var bindingConnection = Node.BindingConnections.SingleOrDefault(_ => _.Input == inputArg);
@@ -74,7 +74,7 @@ public class EvaluationNode {
                 if (bindingConnection != null) {
                     Check.True(valueConnection == null);
                     Check.True(
-                        bindingConnection.Input == Node.Function.Args[bindingConnection.Input.ArgumentIndex]
+                        bindingConnection.Input == Node.Args[bindingConnection.Input.ArgumentIndex]
                     );
 
                     _dependencyValues.Add(new DependencyValue {
@@ -121,7 +121,7 @@ public class EvaluationNode {
             ExecutionTime = sw.ElapsedMilliseconds * 1.0;
         }
 
-        if (!Node.Function.IsProcedure) HasOutputValues = true;
+        if (!Node.IsProcedure) HasOutputValues = true;
 
         State = EvaluationState.Invoked;
     }
@@ -129,7 +129,7 @@ public class EvaluationNode {
     private void ValidateArguments() {
         for (var i = 0; i < ArgValues.Length; i++)
             if (ArgValues[i] == Empty)
-                throw new ArgumentMissingException(Node, (FunctionInput) Node.Function.Args[i]);
+                throw new ArgumentMissingException(Node, (FunctionInput) Node.Args[i]);
     }
 
     private class NotFound { }

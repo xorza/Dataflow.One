@@ -96,5 +96,12 @@
       },
       "Id": "6c7a4e3b-d9b5-457b-aa67-1dbbe41178e2"
     }
-  ]
+  ],
+  "ViewOffset": {
+    "X": 0,
+    "Y": 0,
+    "Length": 0,
+    "LengthSquared": 0
+  },
+  "ViewScale": 1
 }

@@ -38,9 +38,9 @@ public class Tests {
     [Test]
     public void Test1() {
         _outputNode!.AddConnection(
-            _outputNode!.Function.Inputs.Single(),
+            _outputNode!.Inputs.Single(),
             _constNode1!,
-            _constNode1!.Function.Outputs.Single());
+            _constNode1!.Outputs.Single());
 
         var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
@@ -68,9 +68,9 @@ public class Tests {
     [Test]
     public void Test2() {
         _outputNode!.AddConnection(
-            _outputNode!.Function.Inputs.Single(),
+            _outputNode!.Inputs.Single(),
             _frameNoNode!,
-            _frameNoNode!.Function.Outputs.Single());
+            _frameNoNode!.Outputs.Single());
 
         var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
@@ -87,19 +87,19 @@ public class Tests {
     [Test]
     public void Test3() {
         _outputNode!.AddConnection(
-            _outputNode!.Function.Inputs.Single(),
+            _outputNode!.Inputs.Single(),
             _addNode!,
-            _addNode!.Function.Outputs.Single());
+            _addNode!.Outputs.Single());
 
         _addNode.AddConnection(
-            _addNode.Function.Inputs[0],
+            _addNode.Inputs[0],
             _constNode1!,
-            _constNode1!.Function.Outputs.Single());
+            _constNode1!.Outputs.Single());
 
         _addNode.AddConnection(
-            _addNode.Function.Inputs[1],
+            _addNode.Inputs[1],
             _constNode2!,
-            _constNode2!.Function.Outputs.Single());
+            _constNode2!.Outputs.Single());
 
         var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
@@ -116,19 +116,19 @@ public class Tests {
     [Test]
     public void Test4() {
         _outputNode!.AddConnection(
-            _outputNode!.Function.Inputs.Single(),
+            _outputNode!.Inputs.Single(),
             _addNode!,
-            _addNode!.Function.Outputs.Single());
+            _addNode!.Outputs.Single());
 
         _addNode.AddConnection(
-            _addNode.Function.Inputs[0],
+            _addNode.Inputs[0],
             _constNode1!,
-            _constNode1!.Function.Outputs.Single());
+            _constNode1!.Outputs.Single());
 
         _addNode.AddConnection(
-            _addNode.Function.Inputs[1],
+            _addNode.Inputs[1],
             _frameNoNode!,
-            _frameNoNode!.Function.Outputs.Single());
+            _frameNoNode!.Outputs.Single());
 
         var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
@@ -157,20 +157,20 @@ public class Tests {
     [Test]
     public void Test5() {
         var connection = _outputNode!.AddConnection(
-            _outputNode!.Function.Inputs.Single(),
+            _outputNode!.Inputs.Single(),
             _addNode!,
-            _addNode!.Function.Outputs.Single());
+            _addNode!.Outputs.Single());
         connection.Behavior = ConnectionBehavior.Once;
 
         _addNode.AddConnection(
-            _addNode.Function.Inputs[0],
+            _addNode.Inputs[0],
             _constNode1!,
-            _constNode1!.Function.Outputs.Single());
+            _constNode1!.Outputs.Single());
 
         _addNode.AddConnection(
-            _addNode.Function.Inputs[1],
+            _addNode.Inputs[1],
             _frameNoNode!,
-            _frameNoNode!.Function.Outputs.Single());
+            _frameNoNode!.Outputs.Single());
 
         var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
@@ -197,9 +197,9 @@ public class Tests {
     [Test]
     public void Test6() {
         _outputNode!.AddConnection(
-            _outputNode!.Function.Inputs.Single(),
+            _outputNode!.Inputs.Single(),
             _constNode2!,
-            _constNode2!.Function.Outputs.Single());
+            _constNode2!.Outputs.Single());
 
         var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
@@ -219,19 +219,19 @@ public class Tests {
     [Test]
     public void Test7() {
         _outputNode!.AddConnection(
-            _outputNode!.Function.Inputs.Single(),
+            _outputNode!.Inputs.Single(),
             _addNode!,
-            _addNode!.Function.Outputs.Single());
+            _addNode!.Outputs.Single());
 
         _addNode.AddConnection(
-            _addNode.Function.Inputs[0],
+            _addNode.Inputs[0],
             _frameNoNode!,
-            _frameNoNode!.Function.Outputs.Single());
+            _frameNoNode!.Outputs.Single());
 
         _addNode.AddConnection(
-            _addNode.Function.Inputs[1],
+            _addNode.Inputs[1],
             _frameNoNode!,
-            _frameNoNode!.Function.Outputs.Single());
+            _frameNoNode!.Outputs.Single());
 
         var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;

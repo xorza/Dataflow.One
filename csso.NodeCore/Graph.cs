@@ -15,7 +15,7 @@ public sealed class Graph {
         FunctionFactory = functionFactory;
 
         serialized.Nodes
-            .Select(_ => new Node(this, _))
+            .Select(_ => new FunctionNode(this, _))
             .Foreach(_nodes.Add);
 
         serialized.OutputConnections
@@ -33,7 +33,7 @@ public sealed class Graph {
     }
 
     public Node AddNode(Function function) {
-        Node node = new(this, function);
+        Node node = new FunctionNode(this, function);
         Add(node);
         return node;
     }

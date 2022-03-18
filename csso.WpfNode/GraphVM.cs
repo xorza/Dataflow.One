@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -33,9 +34,9 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
     public GraphVM(FunctionFactory functionFactory, SerializedGraphView serialized)
         : this(new NodeCore.Graph(functionFactory, serialized.Graph)) {
-        
         ViewOffset = serialized.ViewOffset;
-        
+        ViewScale = serialized.ViewScale;
+
         serialized.NodeViews
             .Foreach(_ => {
                 var node = _nodes.Single(n => n.Node.Id == _.Id);
@@ -54,8 +55,22 @@ public sealed class GraphVM : INotifyPropertyChanged {
             if (_viewOffset == value) {
                 return;
             }
-            
+
             _viewOffset = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private float _viewScale = 1.0f;
+
+    public float ViewScale {
+        get => _viewScale;
+        set {
+            if (Math.Abs(_viewScale - value) < 1e-3) {
+                return;
+            }
+
+            _viewScale = value > 0.2f ? value : 1.0f;
             OnPropertyChanged();
         }
     }
@@ -172,6 +187,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
             .Select(_ => _.Serialize())
             .ToArray();
 
+        result.ViewScale = ViewScale;
         result.ViewOffset = ViewOffset;
 
         return result;
@@ -196,4 +212,5 @@ public struct SerializedGraphView {
     public SerializedGraph Graph { get; set; }
     public SerializedNodeView[] NodeViews { get; set; }
     public Vector ViewOffset { get; set; }
+    public float ViewScale { get; set; }
 }

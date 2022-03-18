@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using csso.Common;
 
 namespace csso.WpfNode;
 
@@ -109,7 +110,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     private void RefreshExecutionTime() {
         if (NodeView != null)
-            ExecutionTimeTextBlock.Visibility =
+            ExecutionTimePanel.Visibility =
                 NodeView.ExecutionTime.HasValue ? Visibility.Visible : Visibility.Hidden;
     }
 

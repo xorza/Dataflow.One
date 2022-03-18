@@ -7,7 +7,6 @@ using System.Windows;
 namespace csso.WpfNode;
 
 public class NodeView : INotifyPropertyChanged {
-    private double? _executionTime;
     private bool _isSelected;
     private Point _position;
 
@@ -15,12 +14,12 @@ public class NodeView : INotifyPropertyChanged {
         Node = node;
         GraphVm = graphVm;
 
-        foreach (var input in Node.Function.Inputs) {
+        foreach (var input in Node.Inputs) {
             PutView pv = new(input, this);
             Inputs.Add(pv);
         }
 
-        foreach (var output in Node.Function.Outputs) {
+        foreach (var output in Node.Outputs) {
             PutView pv = new(output, this);
             Outputs.Add(pv);
         }
@@ -30,6 +29,8 @@ public class NodeView : INotifyPropertyChanged {
 
     public NodeCore.Node Node { get; }
 
+    
+    private double? _executionTime;
     public Double? ExecutionTime {
         get => _executionTime;
         set {

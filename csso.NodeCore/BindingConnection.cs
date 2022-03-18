@@ -19,8 +19,8 @@ public sealed class BindingConnection : Connection {
         if (input.Type != target.Type && !target.Type.IsSubclassOf(input.Type))
             throw new Exception("type mismatch 4fv56g2456g");
 
-        Check.True(inputNode.Function.Inputs.Contains(input));
-        Check.True(targetNode.Function.Outputs.Contains(target));
+        Check.True(inputNode.Inputs.Contains(input));
+        Check.True(targetNode.Outputs.Contains(target));
 
         TargetNode = targetNode;
         Target = target;
@@ -29,10 +29,10 @@ public sealed class BindingConnection : Connection {
     internal BindingConnection(Graph graph, SerializedOutputConnection serialized) {
         Behavior = serialized.Behavior;
         Node = graph.GetNode(serialized.InputNodeId);
-        Input = Node.Function.Inputs
+        Input = Node.Inputs
             .Single(input => input.ArgumentIndex == serialized.InputIndex);
         TargetNode = graph.GetNode(serialized.TargetNodeId);
-        Target = TargetNode.Function.Outputs
+        Target = TargetNode.Outputs
             .Single(output => output.ArgumentIndex == serialized.TargetIndex);
     }
 

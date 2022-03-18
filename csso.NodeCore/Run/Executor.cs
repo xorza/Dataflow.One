@@ -60,8 +60,12 @@ public class Executor {
         List<EvaluationNode> newEvaluationNodes = new(Graph.Nodes.Count);
 
         foreach (var node in Graph.Nodes) {
-            var existing = EvaluationNodes.SingleOrDefault(_ => _.Node == node);
-            newEvaluationNodes.Add(existing ?? new EvaluationNode(node));
+            if (node is FunctionNode functionNode) {
+                var existing = EvaluationNodes.SingleOrDefault(_ => _.Node == functionNode);
+                newEvaluationNodes.Add(existing ?? new EvaluationNode(functionNode));
+            } else {
+                throw new NotImplementedException("wv435ty5yt ");
+            }
         }
 
         ValidateNodeOrder(Graph, newEvaluationNodes);
@@ -80,7 +84,7 @@ public class Executor {
     private void ProcessEvaluationNodes() {
         Queue<Node> yetToProcessNodes = new();
         Graph.Nodes
-            .Where(_ => _.Function.IsProcedure)
+            .Where(_ => _.IsProcedure)
             .Foreach(yetToProcessNodes.Enqueue);
 
         Stack<Node> paths = new();
@@ -126,7 +130,7 @@ public class Executor {
     private Stack<EvaluationNode> BuildInvocationList() {
         Queue<EvaluationNode> yetToProcessENodes = new();
         EvaluationNodes
-            .Where(_ => _.Node.Function.IsProcedure)
+            .Where(_ => _.Node.IsProcedure)
             .Foreach(yetToProcessENodes.Enqueue);
 
         Stack<EvaluationNode> invocationList = new();

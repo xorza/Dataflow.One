@@ -69,10 +69,18 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock
+        <StackPanel
+            Orientation="Horizontal"
+            x:Name="ExecutionTimePanel" >
+            <TextBlock
+                Foreground="DarkGray"
+                Text="Runtime: "
+                />
+            <TextBlock
             Foreground="DarkGray"
             Text="{Binding ElementName=NodeUserControl, Path=NodeView.ExecutionTime}"
-            x:Name="ExecutionTimeTextBlock" />
+            />
+        </StackPanel>
 
         <Border
             ClipToBounds="True"

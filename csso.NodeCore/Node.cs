@@ -5,92 +5,44 @@ using csso.NodeCore.Annotations;
 
 namespace csso.NodeCore;
 
-public sealed class Node : WithId, INotifyPropertyChanged {
+public abstract class Node : WithId, INotifyPropertyChanged {
     private readonly List<BindingConnection> _bindingConnections = new();
-    private readonly List<ConfigValue> _configValues = new();
     private readonly List<ValueConnection> _valueConnections = new();
 
-    private FunctionBehavior _behavior = FunctionBehavior.Proactive;
-
-    private Node() : this(Guid.NewGuid()) { }
-
-    private Node(Guid id) : base(id) {
+    protected Node(Graph graph, Guid id) : base(id) {
         ValueConnections = _valueConnections.AsReadOnly();
         BindingConnections = _bindingConnections.AsReadOnly();
-        ConfigValues = _configValues.AsReadOnly();
-    }
+        ConfigValues = new List<ConfigValue>();
 
-    public Node(Graph graph, Function function) : this() {
         Graph = graph;
-        Function = function;
-        Behavior = function.Behavior;
-        Name = function.Name;
-
-        foreach (var funcConfig in function.Config) {
-            ConfigValue value = new(funcConfig);
-            _configValues.Add(value);
-        }
-    }
-
-    internal Node(
-        Graph graph,
-        SerializedNode serialized) : this(serialized.Id) {
-        Graph = graph;
-        Name = serialized.Name;
-
-        if (serialized.FunctionId != null)
-            Function = graph.FunctionFactory.Get(serialized.FunctionId.Value);
-        else
-            Function = graph.FunctionFactory.Get(serialized.FunctionName);
-
-        Behavior = serialized.Behavior;
-
-        serialized.ConfigValues
-            .Select(serializedValue => new ConfigValue(Function, serializedValue))
-            .Foreach(_configValues.Add);
-
-        serialized.ValueConnections
-            .Select(_ => new ValueConnection(this, _))
-            .Foreach(Add);
     }
 
     public string Name { get; set; }
 
-    public Function Function { get; }
+    public bool IsProcedure { get; protected set; } = false;
 
-    public FunctionBehavior Behavior {
-        get => _behavior;
-        set {
-            if (_behavior != value) {
-                Check.Argument(value != FunctionBehavior.Proactive, nameof(value));
-                _behavior = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(FinalBehavior));
-            }
-        }
-    }
+    public abstract FunctionBehavior Behavior { get; set; }
 
-    public FunctionBehavior FinalBehavior {
-        get {
-            if (_behavior == FunctionBehavior.Proactive) return Function.Behavior;
-
-            Check.True(_behavior == FunctionBehavior.Reactive);
-            return FunctionBehavior.Reactive;
-        }
-    }
 
     public Graph Graph { get; }
     public IReadOnlyList<ValueConnection> ValueConnections { get; }
 
     public IReadOnlyList<BindingConnection> BindingConnections { get; }
 
-    //1:1 mapping to Function.Config
-    public IReadOnlyList<ConfigValue> ConfigValues { get; }
+    //1:1 mapping to Node.Config
+    public IReadOnlyList<ConfigValue> ConfigValues { get; protected set; }
+    public IReadOnlyList<FunctionConfig> Config { get; protected set; }
+
+
+    public IReadOnlyList<FunctionInput> Inputs { get; protected set; }
+    public IReadOnlyList<FunctionOutput> Outputs { get; protected set; }
+    public IReadOnlyList<FunctionArg> Args { get; protected set; }
+
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
-    private void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
@@ -127,7 +79,80 @@ public sealed class Node : WithId, INotifyPropertyChanged {
             Check.True(_bindingConnections.Remove(bindingConnection));
     }
 
-    internal SerializedNode Serialize() {
+    internal abstract SerializedNode Serialize();
+}
+
+public sealed class FunctionNode : Node {
+    private Function _function;
+
+    public Function Function {
+        get => _function;
+        set {
+            if (value == _function) return;
+
+            _function = value;
+
+            Behavior = value.Behavior;
+            Name = value.Name;
+            IsProcedure = value.IsProcedure;
+            Config = value.Config;
+            Inputs = value.Inputs;
+            Outputs = value.Outputs;
+            Args = value.Args;
+
+            ConfigValues =
+                value.Config
+                    .Select(_ => new ConfigValue(_))
+                    .ToList();
+        }
+    }
+
+
+    public FunctionNode(Graph graph, Function function) : base(graph, Guid.NewGuid()) {
+        Function = function;
+    }
+
+    private FunctionBehavior _behavior = FunctionBehavior.Reactive;
+
+    public override FunctionBehavior Behavior {
+        get => _behavior;
+        set {
+            if (value > Function.Behavior) {
+                return;
+            }
+
+            if (_behavior != value) {
+                _behavior = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+
+    internal FunctionNode(
+        Graph graph,
+        SerializedNode serialized) : base(graph, serialized.Id) {
+        Name = serialized.Name;
+
+        if (serialized.FunctionId != null) {
+            Function = graph.FunctionFactory.Get(serialized.FunctionId.Value);
+        } else {
+            Function = graph.FunctionFactory.Get(serialized.FunctionName);
+        }
+
+        Behavior = serialized.Behavior;
+
+        ConfigValues = serialized.ConfigValues
+            .Select(serializedValue => new ConfigValue(Function, serializedValue))
+            .ToList();
+
+        serialized.ValueConnections
+            .Select(_ => new ValueConnection(this, _))
+            .Foreach(Add);
+    }
+
+
+    internal override SerializedNode Serialize() {
         SerializedNode result = new();
 
         result.Name = Name;
@@ -136,7 +161,7 @@ public sealed class Node : WithId, INotifyPropertyChanged {
         result.Behavior = Behavior;
         result.FunctionId = Function.Id;
 
-        result.ConfigValues = _configValues
+        result.ConfigValues = ConfigValues
             .Select(_ => _.Serialize())
             .ToArray();
         result.ValueConnections = ValueConnections
