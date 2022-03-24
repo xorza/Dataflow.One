@@ -9,7 +9,13 @@
              x:Name="OverviewUserControl"
              Background="{StaticResource InactiveContentBackgroundBrush}"
              Foreground="{StaticResource InactiveForegroundBrush}">
-
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid
         MinHeight="300"
         MinWidth="300">
@@ -66,11 +72,12 @@
    
 
             <wpfNode:NodeEdit
+                Margin="0"
+                Padding="0"
                 x:Name="NodeEdit"
                 Grid.Row="0"
                 Grid.Column="2"
                 Grid.RowSpan="2"
-                Padding="{StaticResource DefaultPadding}"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 NodeView="{Binding Path=GraphView.SelectedNode, ElementName=OverviewUserControl}" />

@@ -21,7 +21,6 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -29,10 +28,7 @@
             <ColumnDefinition Width="*" MinWidth="300" />
         </Grid.ColumnDefinitions>
 
-        <TextBox Margin="0" Text="" />
-
         <ListView
-            Grid.Row="1"
             Grid.Column="0"
             x:Name="FunctionsListView"
             ItemsSource="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=FunctionFactory.Functions}"
@@ -51,8 +47,6 @@
         </ListView>
 
         <Grid
-            Grid.Row="0"
-            Grid.RowSpan="2"
             Grid.Column="1"
             PreviewMouseMove="UIElement_OnPreviewMouse_Skip"
             PreviewMouseDown="UIElement_OnPreviewMouse_Skip"

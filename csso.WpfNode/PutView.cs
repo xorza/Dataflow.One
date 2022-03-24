@@ -12,7 +12,6 @@ public sealed class PutView : INotifyPropertyChanged {
 
     private Point _pinPoint;
 
-    private ValueView? _valueView;
 
     public PutView(FunctionArg functionArg, NodeView nodeView) {
         FunctionArg = functionArg;
@@ -42,17 +41,6 @@ public sealed class PutView : INotifyPropertyChanged {
                 return;
 
             _pinPoint = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public ValueView? ValueView {
-        get => _valueView;
-        set {
-            if (_valueView == value)
-                return;
-
-            _valueView = value;
             OnPropertyChanged();
         }
     }

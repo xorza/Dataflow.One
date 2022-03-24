@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -41,6 +42,7 @@ public class NodeView : INotifyPropertyChanged {
 
     public List<PutView> Inputs { get; } = new();
     public List<PutView> Outputs { get; } = new();
+    public ObservableCollection<ValueView> Values { get; } = new();
 
     public bool IsSelected {
         get => _isSelected;
@@ -65,7 +67,6 @@ public class NodeView : INotifyPropertyChanged {
         }
     }
 
-    // public string Name {get;}
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null) {

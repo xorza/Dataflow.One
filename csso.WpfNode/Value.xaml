@@ -5,24 +5,44 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             x:Name="ValueUserControl">
+             x:Name="ThisUserControl">
     <UserControl.Resources>
         <ResourceDictionary Source="Resources.xaml" />
     </UserControl.Resources>
 
     <Grid>
-        <Grid x:Name="LoaderGrid"
-              Visibility="{Binding ElementName=ValueUserControl, Path=ValueView.IsLoading, Converter={StaticResource BoolToVis}}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
-            <Ellipse Width="20" Height="20" Fill="Blue" />
+        <StackPanel
+            Orientation="Horizontal">
+            <TextBlock
+                Text="{Binding ElementName=ThisUserControl, Path=ValueView.PutView.FunctionArg.Name}">
+            </TextBlock>
+
+            <TextBlock Text=" : " Margin="0"></TextBlock>
+            <TextBlock
+                Text="{Binding ElementName=ThisUserControl, Path=ValueView.PutView.FunctionArg.Type}">
+            </TextBlock>
+        </StackPanel>
+
+
+        <Grid
+            x:Name="LoaderGrid"
+            Grid.Row="1"
+            Visibility="{Binding ElementName=ThisUserControl, Path=ValueView.IsLoading, Converter={StaticResource BoolToVis}}">
 
         </Grid>
 
-        <Grid x:Name="ValueGrid"
-              Visibility="{Binding ElementName=ValueUserControl, Path=ValueView.HasValue, Converter={StaticResource BoolToVis}}">
+        <Grid
+            x:Name="ValueGrid"
+            Grid.Row="1"
+            Visibility="{Binding ElementName=ThisUserControl, Path=ValueView.HasValue, Converter={StaticResource BoolToVis}}">
 
             <ContentPresenter
-                Content="{Binding ElementName=ValueUserControl, Path=ValueView.Value}" />
+                Content="{Binding ElementName=ThisUserControl, Path=ValueView.Value}" />
 
         </Grid>
     </Grid>

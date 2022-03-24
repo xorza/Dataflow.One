@@ -196,13 +196,25 @@ public sealed class GraphVM : INotifyPropertyChanged {
     public void OnExecuted(Executor executor) {
         foreach (var nodeView in Nodes)
             if (executor.TryGetEvaluationNode(nodeView.Node, out var en)) {
-                // EvaluationNode en = executor.GetEvaluationNode(nodeView.Node);
                 nodeView.ExecutionTime = en!.ExecutionTime;
+
+                nodeView.Values.Clear();
+                
+                
+                foreach (var output in nodeView.Inputs) {
+                    var index = output.FunctionArg.ArgumentIndex;
+                    var value = en.ArgValues?[index];
+                    nodeView.Values.Add(
+                        ValueView.FromValue(output, value)
+                    );
+                }
 
                 foreach (var output in nodeView.Outputs) {
                     var index = output.FunctionArg.ArgumentIndex;
                     var value = en.ArgValues?[index];
-                    output.ValueView = new ValueView(value);
+                    nodeView.Values.Add(
+                        ValueView.FromValue(output, value)
+                    );
                 }
             }
     }

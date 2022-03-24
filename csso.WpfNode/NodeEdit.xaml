@@ -5,52 +5,49 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:csso.WpfNode"
              xmlns:nodecore="clr-namespace:csso.NodeCore;assembly=csso.NodeCore"
-
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="300"
              x:Name="NodeEditUserControl">
-    <UserControl.Template>
-        <ControlTemplate TargetType="local:NodeEdit">
-            <ContentPresenter />
-        </ControlTemplate>
-    </UserControl.Template>
     <UserControl.Resources>
         <ResourceDictionary Source="Styles.xaml"></ResourceDictionary>
     </UserControl.Resources>
     <Border BorderThickness="0"
             BorderBrush="{x:Null}"
             Background="{StaticResource InactiveContentBackgroundBrush}">
-        <Grid>
-            <StackPanel Orientation="Vertical" Margin="{Binding Path=Padding, ElementName=NodeEditUserControl}">
-                <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeEditUserControl}" />
+        <StackPanel Orientation="Vertical" Margin="{Binding Path=Padding, ElementName=NodeEditUserControl}">
+            <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeEditUserControl}"
+                       d:Text="Node name" />
 
-                <TextBlock Text="{Binding Path=NodeView.Node.Function.Description, ElementName=NodeEditUserControl}" />
+            <!-- <TextBlock Text="{Binding Path=NodeView.Node.Function.Description, ElementName=NodeEditUserControl}" -->
+            <!--            d:Text="Description"/> -->
 
-                <ItemsControl ItemsSource="{Binding Path=NodeView.Node.ConfigValues, ElementName=NodeEditUserControl}">
-                    <ItemsControl.Resources>
 
-                    </ItemsControl.Resources>
+            <TextBlock Text="Config values:" />
+            <ItemsControl ItemsSource="{Binding Path=NodeView.Node.ConfigValues, ElementName=NodeEditUserControl}">
+                <ItemsControl.Resources>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="nodecore:ConfigValue">
-                            <Border Background="MediumVioletRed">
-                                <TextBox Text="{Binding Value}" />
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                </ItemsControl.Resources>
 
-                <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.Outputs}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="local:PutView">
-                            <Grid>
-                                <local:Value ValueView="{Binding ValueView}" />
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </Grid>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="nodecore:ConfigValue">
+                        <Border Background="MediumVioletRed">
+                            <TextBox Text="{Binding Value}" />
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="Debug arguments:" />
+            <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.Values}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="local:PutView">
+                        <Grid>
+                            <local:Value ValueView="{Binding }" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
     </Border>
 </UserControl>

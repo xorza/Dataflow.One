@@ -20,11 +20,6 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <UserControl.Template>
-        <ControlTemplate TargetType="wpfNode:Graph">
-            <ContentPresenter />
-        </ControlTemplate>
-    </UserControl.Template>
     <Border
         BorderThickness="0"
         BorderBrush="{x:Null}">
