@@ -50,8 +50,8 @@ public class Executor {
         ProcessEvaluationNodes();
 
         var invocationList = BuildInvocationList();
-        invocationList.Foreach(evaluationNode => evaluationNode.ProcessArguments());
-        invocationList.Foreach(evaluationNode => evaluationNode.Invoke(this));
+        invocationList.ForEach(evaluationNode => evaluationNode.ProcessArguments());
+        invocationList.ForEach(evaluationNode => evaluationNode.Invoke(this));
 
         ++FrameNo;
     }
@@ -71,7 +71,7 @@ public class Executor {
         ValidateNodeOrder(Graph, newEvaluationNodes);
 
         EvaluationNodes = newEvaluationNodes;
-        EvaluationNodes.Foreach(_ => _.Reset());
+        Xtentions.ForEach(EvaluationNodes, _ => _.Reset());
     }
 
     [Conditional("DEBUG")]
@@ -85,30 +85,24 @@ public class Executor {
         Queue<Node> yetToProcessNodes = new();
         Graph.Nodes
             .Where(_ => _.IsProcedure)
-            .Foreach(yetToProcessNodes.Enqueue);
+            .ForEach(yetToProcessNodes.Enqueue);
 
         Stack<Node> paths = new();
         while (yetToProcessNodes.TryDequeue(out var node)) {
             node.BindingConnections
                 .Select(_ => _.TargetNode)
-                .Foreach(yetToProcessNodes.Enqueue);
+                .ForEach(yetToProcessNodes.Enqueue);
 
             paths.Push(node);
         }
 
-        paths.Foreach(UpdateEvaluationNode);
+        paths.ForEach(UpdateEvaluationNode);
     }
 
     private void UpdateEvaluationNode(Node node) {
         var evaluationNode = GetEvaluationNode(node);
         if (evaluationNode.State >= EvaluationState.Processed) return;
-
-        foreach (var config in evaluationNode.Node.ConfigValues)
-            if (evaluationNode.ArgValues[config.Config.ArgumentIndex] != config.Value) {
-                evaluationNode.Process(true);
-                return;
-            }
-
+        
         foreach (var binding in evaluationNode.Node.BindingConnections) {
             if (binding.TargetNode.Behavior == FunctionBehavior.Proactive) {
                 evaluationNode.Process(true);
@@ -131,7 +125,7 @@ public class Executor {
         Queue<EvaluationNode> yetToProcessENodes = new();
         EvaluationNodes
             .Where(_ => _.Node.IsProcedure)
-            .Foreach(yetToProcessENodes.Enqueue);
+            .ForEach(yetToProcessENodes.Enqueue);
 
         Stack<EvaluationNode> invocationList = new();
 

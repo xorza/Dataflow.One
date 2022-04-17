@@ -12,7 +12,7 @@ public class FunctionFactoryView {
         Functions = new ReadOnlyObservableCollection<Function>(_functions);
 
         FunctionFactory.BuildFunctionsArray()
-            .Foreach(_functions.Add);
+            .ForEach(_functions.Add);
     }
 
     public FunctionFactory FunctionFactory { get; }

@@ -16,15 +16,15 @@ public sealed class Graph {
 
         serialized.FunctionNodes
             .Select(_ => new FunctionNode(this, _))
-            .Foreach(_nodes.Add);
+            .ForEach(_nodes.Add);
 
         serialized.GraphNodes?
             .Select(_ => new GraphNode(this, _))
-            .Foreach(_nodes.Add);
+            .ForEach(_nodes.Add);
 
         serialized.OutputConnections
             .Select(_ => new BindingConnection(this, _))
-            .Foreach(_ => { _.Node.Add(_); });
+            .ForEach(_ => { _.Node.Add(_); });
     }
 
     public IReadOnlyList<Node> Nodes { get; }
@@ -45,14 +45,15 @@ public sealed class Graph {
     public void Remove(Node node) {
         Check.True(node.Graph == this);
 
-        if (!_nodes.Remove(node))
+        if (!_nodes.Remove(node)) {
             throw new Exception("5h4gub677ge657");
+        }
 
         _nodes
             .SelectMany(_ => _.BindingConnections)
             .Where(_ => _.TargetNode == node)
             .ToArray()
-            .Foreach(_ => _.Node.Remove(_));
+            .ForEach(_ => _.Node.Remove(_));
     }
 
     public SerializedGraph Serialize() {

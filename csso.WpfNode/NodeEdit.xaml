@@ -24,13 +24,13 @@
 
 
             <TextBlock Text="Config values:" />
-            <ItemsControl ItemsSource="{Binding Path=NodeView.Node.ConfigValues, ElementName=NodeEditUserControl}">
+            <ItemsControl ItemsSource="{Binding Path=NodeView.Node.StaticValues, ElementName=NodeEditUserControl}">
                 <ItemsControl.Resources>
 
                 </ItemsControl.Resources>
 
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="nodecore:ConfigValue">
+                    <DataTemplate DataType="nodecore:StaticValue">
                         <Border Background="MediumVioletRed">
                             <TextBox Text="{Binding Value}" />
                         </Border>

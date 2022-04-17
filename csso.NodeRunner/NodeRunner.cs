@@ -58,7 +58,7 @@ public class NodeRunner {
     [Description("value")]
     [Reactive]
     [FunctionId("28005F51-BD05-4871-BD0B-AA23C2ADCB9C")]
-    private static bool Const([Config(12)] Int32 c, [Output] ref Int32 i) {
+    private static bool Const([StaticValue(12)] Int32 c, [Output] ref Int32 i) {
         i = c;
         return true;
     }

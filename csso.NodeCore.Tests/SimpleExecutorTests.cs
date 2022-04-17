@@ -8,9 +8,9 @@ namespace csso.NodeCore.Tests;
 
 public class Tests {
     private readonly Function _addFunc = new("Add", F.Add);
-    private readonly ConfigValueFunc<Int32> _configConstFunc2 = new();
 
     private readonly ValueFunc<Int32> _constFunc1 = new();
+    private readonly ValueFunc<Int32> _constFunc2 = new();
     private readonly FrameNoFunc _frameNoFunc = new();
     private readonly OutputFunc<Int32> _outputFunc = new();
     private Node? _addNode;
@@ -26,10 +26,11 @@ public class Tests {
         _graph = new Graph();
 
         _constFunc1.Value = 3;
-        _configConstFunc2.Config.Single().Value = 1253;
+        _constFunc2.Value = 1253;
 
         _constNode1 = _graph.AddNode(_constFunc1);
-        _constNode2 = _graph.AddNode(_configConstFunc2);
+        _constNode2 = _graph.AddNode(_constFunc2);
+
         _outputNode = _graph.AddNode(_outputFunc);
         _frameNoNode = _graph.AddNode(_frameNoFunc);
         _addNode = _graph.AddNode(_addFunc);
@@ -60,7 +61,7 @@ public class Tests {
 
         _constFunc1.Value = 4;
         executor.Run();
-        Assert.AreEqual(33, _outputFunc.Value);
+        Assert.AreEqual(4, _outputFunc.Value);
 
         Assert.Pass();
     }
@@ -148,7 +149,7 @@ public class Tests {
 
         Assert.AreEqual(4, _outputFunc.Value);
         Assert.True(frameNoEvaluationNode.State >= EvaluationState.Invoked);
-        Assert.False(constEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.True(constEvaluationNode.State >= EvaluationState.Invoked);
         Assert.True(addEvaluationNode.State >= EvaluationState.Invoked);
 
         Assert.Pass();
@@ -204,12 +205,12 @@ public class Tests {
         var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
 
-        _constNode2.ConfigValues.Single().Value = 133;
+        _constFunc2.Value = 133;
 
         executor.Run();
         Assert.AreEqual(133, _outputFunc.Value);
 
-        _constNode2.ConfigValues.Single().Value = 132;
+        _constFunc2.Value = 132;
         executor.Run();
         Assert.AreEqual(132, _outputFunc.Value);
 

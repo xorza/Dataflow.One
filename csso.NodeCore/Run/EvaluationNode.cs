@@ -59,8 +59,6 @@ public class EvaluationNode {
         ArgValues.Populate(Empty);
         _dependencyValues.Clear();
 
-        Node.ConfigValues.Foreach(config => ArgValues[config.Config.ArgumentIndex] = config.Value);
-
         foreach (var functionArg in Node.Args)
             if (functionArg is FunctionInput inputArg) {
                 var valueConnection = Node.ValueConnections.SingleOrDefault(_ => _.Input == inputArg);
@@ -85,9 +83,6 @@ public class EvaluationNode {
                 }
             } else if (functionArg is FunctionOutput) {
                 ArgValues[functionArg.ArgumentIndex] = null;
-            } else if (functionArg is FunctionConfig configArg) {
-                var configValue = Node.ConfigValues.Single(_ => _.Config == configArg);
-                ArgValues[functionArg.ArgumentIndex] = configValue.Value;
             } else {
                 Check.Fail();
             }
@@ -127,9 +122,11 @@ public class EvaluationNode {
     }
 
     private void ValidateArguments() {
-        for (var i = 0; i < ArgValues.Length; i++)
-            if (ArgValues[i] == Empty)
+        for (var i = 0; i < ArgValues.Length; i++) {
+            if (ArgValues[i] == Empty) {
                 throw new ArgumentMissingException(Node, (FunctionInput) Node.Args[i]);
+            }
+        }
     }
 
     private class NotFound { }

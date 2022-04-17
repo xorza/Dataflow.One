@@ -38,7 +38,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
         ViewScale = serialized.ViewScale;
 
         serialized.NodeViews
-            .Foreach(_ => {
+            .ForEach(_ => {
                 var node = _nodes.Single(n => n.Node.Id == _.Id);
                 node.Position = _.Position;
             });
@@ -139,7 +139,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
         Graph.Nodes
             .Where(n => _nodes.All(nv => nv.Node != n))
             .Select(_ => new NodeView(this, _))
-            .Foreach(_nodes.Add);
+            .ForEach(_nodes.Add);
 
         if (_selectedNode != null && !Nodes.Contains(_selectedNode))
             SelectedNode = null;

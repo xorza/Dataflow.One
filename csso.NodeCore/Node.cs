@@ -12,7 +12,6 @@ public abstract class Node : WithId, INotifyPropertyChanged {
     protected Node(Graph graph, Guid id) : base(id) {
         ValueConnections = _valueConnections.AsReadOnly();
         BindingConnections = _bindingConnections.AsReadOnly();
-        ConfigValues = new List<ConfigValue>();
 
         Graph = graph;
     }
@@ -28,11 +27,6 @@ public abstract class Node : WithId, INotifyPropertyChanged {
     public IReadOnlyList<ValueConnection> ValueConnections { get; }
 
     public IReadOnlyList<BindingConnection> BindingConnections { get; }
-
-    //1:1 mapping to Node.Config
-    public IReadOnlyList<ConfigValue> ConfigValues { get; protected set; }
-    public IReadOnlyList<FunctionConfig> Config { get; protected set; }
-
 
     public IReadOnlyList<FunctionInput> Inputs { get; protected set; }
     public IReadOnlyList<FunctionOutput> Outputs { get; protected set; }
@@ -74,43 +68,45 @@ public abstract class Node : WithId, INotifyPropertyChanged {
 
     public void Remove(Connection connection) {
         Check.Argument(connection.Node == this, nameof(connection));
-        if (connection is ValueConnection valueConnection) Check.True(_valueConnections.Remove(valueConnection));
-        if (connection is BindingConnection bindingConnection)
+        if (connection is ValueConnection valueConnection) {
+            Check.True(_valueConnections.Remove(valueConnection));
+        }
+
+        if (connection is BindingConnection bindingConnection) {
             Check.True(_bindingConnections.Remove(bindingConnection));
+        }
     }
 }
 
 public sealed class FunctionNode : Node {
-    private Function _function;
-
     public Function Function {
         get => _function;
-        set {
-            if (value == _function) return;
-
+        private set {
+            if (_function == value) {
+                return;
+            }
             _function = value;
 
-            Behavior = value.Behavior;
-            Name = value.Name;
-            IsProcedure = value.IsProcedure;
-            Config = value.Config;
-            Inputs = value.Inputs;
-            Outputs = value.Outputs;
-            Args = value.Args;
-
-            ConfigValues =
-                value.Config
-                    .Select(_ => new ConfigValue(_))
-                    .ToList();
+            Behavior = _function.Behavior;
+            Name = _function.Name;
+            IsProcedure = _function.IsProcedure;
+            Inputs = _function.Inputs;
+            Outputs = _function.Outputs;
+            Args = _function.Args;
+        
+            _function.Inputs
+                .Where(_=>_.HasStaticValue)
+                .Select(_ => new ValueConnection(this, _, _.StaticValue))
+                .ForEach(Add);
         }
     }
-
 
     public FunctionNode(Graph graph, Function function) : base(graph, Guid.NewGuid()) {
         Function = function;
     }
 
     private FunctionBehavior _behavior = FunctionBehavior.Reactive;
+    private Function _function;
 
     public override FunctionBehavior Behavior {
         get => _behavior;
@@ -139,14 +135,10 @@ public sealed class FunctionNode : Node {
         }
 
         Behavior = serialized.Behavior;
-
-        ConfigValues = serialized.ConfigValues
-            .Select(serializedValue => new ConfigValue(Function, serializedValue))
-            .ToList();
-
+        
         serialized.ValueConnections
             .Select(_ => new ValueConnection(this, _))
-            .Foreach(Add);
+            .ForEach(Add);
     }
 
 
@@ -158,10 +150,7 @@ public sealed class FunctionNode : Node {
         result.FunctionName = Function.FullName;
         result.Behavior = Behavior;
         result.FunctionId = Function.Id;
-
-        result.ConfigValues = ConfigValues
-            .Select(_ => _.Serialize())
-            .ToArray();
+        
         result.ValueConnections = ValueConnections
             .Select(_ => _.Serialize())
             .ToArray();
@@ -191,7 +180,7 @@ public sealed class GraphNode : Node {
         result.Id = Id;
         result.Behavior = Behavior;
         result.SubGraph = SubGraph.Serialize();
-        
+
         return result;
     }
 }
@@ -201,7 +190,6 @@ public class SerializedFunctionNode {
     public Guid Id { get; set; }
     public String FunctionName { get; set; }
     public Guid? FunctionId { get; set; }
-    public SerializedConfigValue[] ConfigValues { get; set; }
     public SerializedValueConnection[] ValueConnections { get; set; }
     public FunctionBehavior Behavior { get; set; }
 }

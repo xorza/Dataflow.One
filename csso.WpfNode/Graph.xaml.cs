@@ -194,7 +194,7 @@ public partial class Graph : UserControl {
 
     private void NodesCanvas_OnLoaded(object sender, RoutedEventArgs e) {
         _nodesCanvas = (Canvas) sender;
-        _nodes.Foreach(_ => _.DragCanvas = _nodesCanvas);
+        Xtentions.ForEach(_nodes, _ => _.DragCanvas = _nodesCanvas);
     }
 
     private void Node_OnLoaded(object sender, RoutedEventArgs e) {

@@ -7,10 +7,10 @@ namespace csso.NodeCore;
 public sealed class OutputAttribute : Attribute { }
 
 [AttributeUsage(AttributeTargets.Parameter)]
-public sealed class ConfigAttribute : Attribute {
-    public ConfigAttribute() { }
+public sealed class StaticValueAttribute : Attribute {
+    public StaticValueAttribute() { }
 
-    public ConfigAttribute(Object defaultValue) {
+    public StaticValueAttribute(Object defaultValue) {
         DefaultValue = defaultValue;
     }
 
@@ -42,7 +42,6 @@ public class Function {
     public Delegate Delegate { get; private set; }
     public IReadOnlyList<FunctionInput> Inputs { get; private set; }
     public IReadOnlyList<FunctionOutput> Outputs { get; private set; }
-    public IReadOnlyList<FunctionConfig> Config { get; private set; }
     public IReadOnlyList<FunctionArg> Args { get; private set; }
     public FunctionBehavior Behavior { get; private set; }
     public string Description { get; private set; }
@@ -81,9 +80,11 @@ public class Function {
             var outputAttribute =
                 Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) as OutputAttribute;
             var configAttribute =
-                Attribute.GetCustomAttribute(parameter, typeof(ConfigAttribute)) as ConfigAttribute;
+                Attribute.GetCustomAttribute(parameter, typeof(StaticValueAttribute)) as StaticValueAttribute;
 
-            if (outputAttribute != null && configAttribute != null) throw new Exception("fghoji4r5");
+            if (outputAttribute != null && configAttribute != null) {
+                throw new Exception("fghoji4r5");
+            }
 
             var argName = parameter.Name!;
             Type argType;
@@ -96,16 +97,13 @@ public class Function {
 
             if (outputAttribute != null) {
                 arg = new FunctionOutput(argName, argType, i);
-            } else if (configAttribute != null) {
-                var config = FunctionConfig.Create(argName, argType, i);
-                if (configAttribute.DefaultValue != null) {
-                    Check.True(argType == configAttribute.DefaultValue.GetType());
-                    config.Value = configAttribute.DefaultValue;
+            } else {
+                var input = new FunctionInput(argName, argType, i);
+                if (configAttribute != null) {
+                    input.StaticValue = configAttribute.DefaultValue;
                 }
 
-                arg = config;
-            } else {
-                arg = new FunctionInput(argName, argType, i);
+                arg = input;
             }
 
             args.Add(arg);
@@ -113,7 +111,6 @@ public class Function {
 
         Inputs = args.OfType<FunctionInput>().ToList().AsReadOnly();
         Outputs = args.OfType<FunctionOutput>().ToList().AsReadOnly();
-        Config = args.OfType<FunctionConfig>().ToList().AsReadOnly();
 
         if (IsProcedure) Behavior = FunctionBehavior.Proactive;
     }

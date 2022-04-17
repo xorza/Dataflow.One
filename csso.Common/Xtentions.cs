@@ -3,28 +3,34 @@
 namespace csso.Common;
 
 public static class Xtentions {
-    public static IEnumerable<T> Foreach<T>(this IEnumerable<T> e, Action<T> action) {
-        foreach (var item in e)
+    public static IEnumerable<T> ForEach<T>(this IEnumerable<T> e, Action<T> action) {
+        var forEach = e.ToList();
+
+        foreach (var item in forEach) {
             action(item);
-        return e;
+        }
+
+        return forEach;
     }
 
-    public static IEnumerable Foreach<T>(this IEnumerable e, Action<T> action) {
+    public static IEnumerable ForEach<T>(this IEnumerable e, Action<T> action) {
         var enumerable = e as object[] ?? e.Cast<object>().ToArray();
-        foreach (var item in enumerable)
-            if (item is T tItem)
+        foreach (var item in enumerable) {
+            if (item is T tItem) {
                 action(tItem);
-            else if (item == null)
+            } else if (item == null) {
                 throw new Exception("wvert23b46");
-            else
+            } else {
                 throw new Exception("sergtg2v45");
+            }
+        }
 
         return enumerable;
     }
 
     public static IEnumerable<T> SkipNulls<T>(this IEnumerable<T?> e) {
         List<T> result = new();
-        e.Foreach(_ => {
+        e.ForEach(_ => {
             if (_ != null)
                 result.Add(_);
         });
@@ -43,5 +49,14 @@ public static class Xtentions {
 
     public static bool IsEmpty(this String s) {
         return s.Trim().Length == 0;
+    }
+
+
+    public static object? GetDefault(this Type type) {
+        if (type.IsValueType) {
+            return Activator.CreateInstance(type);
+        }
+
+        return null;
     }
 }

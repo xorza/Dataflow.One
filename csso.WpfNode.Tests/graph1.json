@@ -6,7 +6,6 @@
         "Id": "bf77d02c-75fc-450a-9d23-e4719ffad25a",
         "FunctionName": "csso.NodeCore.Funcs.F::Add",
         "FunctionId": null,
-        "ConfigValues": [],
         "ValueConnections": [],
         "Behavior": 0
       },
@@ -15,7 +14,6 @@
         "Id": "51ec02c7-3ac3-48f0-8dbf-5accee179015",
         "FunctionName": "csso.WpfNode.Tests.Tests::Output",
         "FunctionId": null,
-        "ConfigValues": [],
         "ValueConnections": [],
         "Behavior": 1
       },
@@ -24,13 +22,13 @@
         "Id": "ae89a6eb-d8fa-401b-a27a-a450a33e8f99",
         "FunctionName": "csso.WpfNode.Tests.Tests::Value",
         "FunctionId": null,
-        "ConfigValues": [
+        "ValueConnections": [
           {
-            "Value": "12",
-            "ConfigIndex": 0
+            "InputIndex": 0,
+            "InputNodeId": "ae89a6eb-d8fa-401b-a27a-a450a33e8f99",
+            "Value": "12"
           }
         ],
-        "ValueConnections": [],
         "Behavior": 0
       },
       {
@@ -38,7 +36,6 @@
         "Id": "6c7a4e3b-d9b5-457b-aa67-1dbbe41178e2",
         "FunctionName": "csso.NodeCore.Funcs.FrameNoFunc::Frame number",
         "FunctionId": null,
-        "ConfigValues": [],
         "ValueConnections": [],
         "Behavior": 1
       }

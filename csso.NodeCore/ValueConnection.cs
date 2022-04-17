@@ -3,7 +3,9 @@ using csso.Common;
 namespace csso.NodeCore;
 
 public class ValueConnection : Connection {
-    public ValueConnection(Node node, FunctionInput input) : base(node, input) { }
+    public ValueConnection(Node node, FunctionInput input, Object? value) : base(node, input) {
+        Value = value;
+    }
 
     public ValueConnection(Node node, SerializedValueConnection serialized) {
         Node = node;
@@ -16,7 +18,18 @@ public class ValueConnection : Connection {
             Value = value;
     }
 
-    public Object? Value { get; set; }
+    private Object? _value = null;
+
+    public Object? Value {
+        get => _value;
+        set {
+            if (value != null) {
+                Check.True(value.GetType() == Input.Type);
+            }
+
+            _value = value;
+        }
+    }
 
     public SerializedValueConnection Serialize() {
         SerializedValueConnection result = new();

@@ -9,9 +9,10 @@ namespace csso.NodeCore.Tests;
 public class GraphModification {
     private readonly Function _addFunc = new("Add", F.Add);
 
-    private readonly ConfigValueFunc<Int32> _configConstFunc1 = new();
     private readonly FrameNoFunc _frameNoFunc = new();
     private readonly OutputFunc<Int32> _outputFunc = new();
+    private readonly ValueFunc<Int32> _constFunc1 = new();
+
     private Node? _addNode;
     private Node? _constNode1;
     private Node? _frameNoNode;
@@ -23,9 +24,10 @@ public class GraphModification {
     public void Setup() {
         _graph = new Graph();
 
-        _configConstFunc1.Config.Single().Value = 1253;
+        _constFunc1.Value = 1253;
 
-        _constNode1 = _graph.AddNode(_configConstFunc1);
+        _constNode1 = _graph.AddNode(_constFunc1);
+
         _outputNode = _graph.AddNode(_outputFunc);
         _frameNoNode = _graph.AddNode(_frameNoFunc);
         _addNode = _graph.AddNode(_addFunc);
@@ -39,11 +41,6 @@ public class GraphModification {
             _addNode!.Inputs[0],
             _frameNoNode!,
             _frameNoNode!.Outputs.Single());
-
-        // _addNode!.AddConnection(
-        //     _addNode!.Inputs[1],
-        //     _frameNoNode!,
-        //     _frameNoNode!.Outputs.Single());
     }
 
     [Test]
