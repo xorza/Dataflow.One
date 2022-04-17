@@ -116,7 +116,7 @@ public class EvaluationNode {
             ExecutionTime = sw.ElapsedMilliseconds * 1.0;
         }
 
-        if (!Node.IsProcedure) HasOutputValues = true;
+        HasOutputValues = true;
 
         State = EvaluationState.Invoked;
     }

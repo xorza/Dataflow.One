@@ -19,7 +19,6 @@ public class GraphModification {
     private Graph? _graph;
     private Node? _outputNode;
 
-
     [SetUp]
     public void Setup() {
         _graph = new Graph();
@@ -41,6 +40,12 @@ public class GraphModification {
             _addNode!.Inputs[0],
             _frameNoNode!,
             _frameNoNode!.Outputs.Single());
+        
+        var alwaysEvent = new AlwaysEvent();
+        _outputNode.Add(alwaysEvent);
+
+        var subscription = new Subscription(alwaysEvent, _outputNode);
+        _graph.Add(subscription);
     }
 
     [Test]

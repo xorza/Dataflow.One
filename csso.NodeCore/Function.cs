@@ -45,7 +45,6 @@ public class Function {
     public IReadOnlyList<FunctionArg> Args { get; private set; }
     public FunctionBehavior Behavior { get; private set; }
     public string Description { get; private set; }
-    public bool IsProcedure => Outputs.Count == 0;
     public string FullName => Namespace + "::" + Name;
 
     protected void Refresh(String name, Delegate func) {
@@ -111,8 +110,6 @@ public class Function {
 
         Inputs = args.OfType<FunctionInput>().ToList().AsReadOnly();
         Outputs = args.OfType<FunctionOutput>().ToList().AsReadOnly();
-
-        if (IsProcedure) Behavior = FunctionBehavior.Proactive;
     }
 
     public void Invoke(object?[]? args) {

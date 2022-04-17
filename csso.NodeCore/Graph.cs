@@ -4,6 +4,11 @@ namespace csso.NodeCore;
 
 public sealed class Graph {
     private readonly List<Node> _nodes = new();
+    private readonly Queue<Event> _eventsToProcess = new();
+
+    private readonly List<Subscription> _eventConnections = new();
+
+    public IReadOnlyList<Subscription> Subscriptions => _eventConnections.AsReadOnly();
 
     public Graph() {
         Nodes = _nodes.AsReadOnly();
@@ -15,11 +20,11 @@ public sealed class Graph {
         FunctionFactory = functionFactory;
 
         serialized.FunctionNodes
-            .Select(_ => new FunctionNode(this, _))
+            .Select(_ => new FunctionNode(functionFactory, _))
             .ForEach(_nodes.Add);
 
         serialized.GraphNodes?
-            .Select(_ => new GraphNode(this, _))
+            .Select(_ => new GraphNode(_))
             .ForEach(_nodes.Add);
 
         serialized.OutputConnections
@@ -32,12 +37,42 @@ public sealed class Graph {
     public FunctionFactory FunctionFactory { get; set; } = new();
 
     private void Add(Node node) {
-        Check.True(node.Graph == this);
+        node.Graph = this;
         _nodes.Add(node);
     }
 
+    public void Add(Subscription connection) {
+        Check.True(connection.Node.Graph == this);
+        Check.True(connection.Event.Owner.Graph == this);
+        _eventConnections.Add(connection);
+    }
+
+    public void Fire(Event @event) {
+        _eventsToProcess.Enqueue(@event);
+    }
+
+    public List<Event> GetFiredEvents() {
+        var list = new List<Event>();
+
+        Subscriptions
+            .Select(_ => _.Event)
+            .OfType<AlwaysEvent>()
+            .ForEach(list.Add);
+
+        list.AddRange(_eventsToProcess.ToList());
+
+        return list;
+    }
+
+    public List<Node> GetSubscribers(Event @event) {
+        return _eventConnections
+            .Where(_ => _.Event == @event)
+            .Select(_ => _.Node)
+            .ToList();
+    }
+
     public Node AddNode(Function function) {
-        Node node = new FunctionNode(this, function);
+        Node node = new FunctionNode(function);
         Add(node);
         return node;
     }

@@ -6,32 +6,35 @@ using csso.NodeCore.Annotations;
 namespace csso.NodeCore;
 
 public abstract class Node : WithId, INotifyPropertyChanged {
-    private readonly List<BindingConnection> _bindingConnections = new();
-    private readonly List<ValueConnection> _valueConnections = new();
+    private readonly List<BindingConnection> _bindingConnection = new();
+    private readonly List<ValueConnection> _valueConnection = new();
+    private readonly List<Event> _events = new();
 
-    protected Node(Graph graph, Guid id) : base(id) {
-        ValueConnections = _valueConnections.AsReadOnly();
-        BindingConnections = _bindingConnections.AsReadOnly();
-
-        Graph = graph;
+    protected Node(Guid id) : base(id) {
+        ValueConnections = _valueConnection.AsReadOnly();
+        BindingConnections = _bindingConnection.AsReadOnly();
+        Events = _events.AsReadOnly();
     }
 
     public string Name { get; set; }
 
-    public bool IsProcedure { get; protected set; } = false;
-
     public abstract FunctionBehavior Behavior { get; set; }
 
-
-    public Graph Graph { get; }
+    public Graph Graph { get; internal set; }
     public IReadOnlyList<ValueConnection> ValueConnections { get; }
 
     public IReadOnlyList<BindingConnection> BindingConnections { get; }
 
     public IReadOnlyList<FunctionInput> Inputs { get; protected set; }
     public IReadOnlyList<FunctionOutput> Outputs { get; protected set; }
+    public IReadOnlyList<Event> Events { get; protected set; }
     public IReadOnlyList<FunctionArg> Args { get; protected set; }
 
+    public void Add(Event @event) {
+        @event.Owner = this;
+        _events.Add(@event);
+        OnPropertyChanged(nameof(Events));
+    }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -43,15 +46,15 @@ public abstract class Node : WithId, INotifyPropertyChanged {
     internal void Add(ValueConnection connection) {
         Check.Argument(connection.Node == this, nameof(connection));
 
-        _valueConnections.RemoveAll(_ => _.Input == connection.Input);
-        _valueConnections.Add(connection);
+        _valueConnection.RemoveAll(_ => _.Input == connection.Input);
+        _valueConnection.Add(connection);
     }
 
     internal void Add(BindingConnection connection) {
         Check.Argument(connection.Node == this, nameof(connection));
 
-        _bindingConnections.RemoveAll(_ => _.Input == connection.Input);
-        _bindingConnections.Add(connection);
+        _bindingConnection.RemoveAll(_ => _.Input == connection.Input);
+        _bindingConnection.Add(connection);
     }
 
     public BindingConnection AddConnection(FunctionInput selfInput, Node outputNode, FunctionOutput nodeOutput) {
@@ -69,11 +72,11 @@ public abstract class Node : WithId, INotifyPropertyChanged {
     public void Remove(Connection connection) {
         Check.Argument(connection.Node == this, nameof(connection));
         if (connection is ValueConnection valueConnection) {
-            Check.True(_valueConnections.Remove(valueConnection));
+            Check.True(_valueConnection.Remove(valueConnection));
         }
 
         if (connection is BindingConnection bindingConnection) {
-            Check.True(_bindingConnections.Remove(bindingConnection));
+            Check.True(_bindingConnection.Remove(bindingConnection));
         }
     }
 }
@@ -85,23 +88,22 @@ public sealed class FunctionNode : Node {
             if (_function == value) {
                 return;
             }
+
             _function = value;
 
             Behavior = _function.Behavior;
             Name = _function.Name;
-            IsProcedure = _function.IsProcedure;
             Inputs = _function.Inputs;
             Outputs = _function.Outputs;
             Args = _function.Args;
-        
+
             _function.Inputs
-                .Where(_=>_.HasStaticValue)
-                .Select(_ => new ValueConnection(this, _, _.StaticValue))
-                .ForEach(Add);
+                .Where(_ => _.HasStaticValue)
+                .ForEach(_ => new ValueConnection(this, _, _.StaticValue));
         }
     }
 
-    public FunctionNode(Graph graph, Function function) : base(graph, Guid.NewGuid()) {
+    public FunctionNode(Function function) : base(Guid.NewGuid()) {
         Function = function;
     }
 
@@ -124,21 +126,21 @@ public sealed class FunctionNode : Node {
 
 
     internal FunctionNode(
-        Graph graph,
-        SerializedFunctionNode serialized) : base(graph, serialized.Id) {
+        FunctionFactory functionFactory,
+        SerializedFunctionNode serialized
+        ) : base(serialized.Id) {
         Name = serialized.Name;
 
         if (serialized.FunctionId != null) {
-            Function = graph.FunctionFactory.Get(serialized.FunctionId.Value);
+            Function = functionFactory.Get(serialized.FunctionId.Value);
         } else {
-            Function = graph.FunctionFactory.Get(serialized.FunctionName);
+            Function = functionFactory.Get(serialized.FunctionName);
         }
 
         Behavior = serialized.Behavior;
-        
+
         serialized.ValueConnections
-            .Select(_ => new ValueConnection(this, _))
-            .ForEach(Add);
+            .ForEach(_ => new ValueConnection(this, _));
     }
 
 
@@ -150,7 +152,7 @@ public sealed class FunctionNode : Node {
         result.FunctionName = Function.FullName;
         result.Behavior = Behavior;
         result.FunctionId = Function.Id;
-        
+
         result.ValueConnections = ValueConnections
             .Select(_ => _.Serialize())
             .ToArray();
@@ -161,11 +163,9 @@ public sealed class FunctionNode : Node {
 }
 
 public sealed class GraphNode : Node {
-    public GraphNode(Graph graph) : base(graph, Guid.NewGuid()) { }
+    public GraphNode() : base(Guid.NewGuid()) { }
 
-    internal GraphNode(
-        Graph graph,
-        SerializedGraphNode serialized) : base(graph, serialized.Id) {
+    internal GraphNode(SerializedGraphNode serialized) : base(serialized.Id) {
         Name = serialized.Name;
         SubGraph = new Graph(Graph.FunctionFactory, serialized.SubGraph);
     }

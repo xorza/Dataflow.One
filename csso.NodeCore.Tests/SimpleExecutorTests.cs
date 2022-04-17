@@ -31,9 +31,18 @@ public class Tests {
         _constNode1 = _graph.AddNode(_constFunc1);
         _constNode2 = _graph.AddNode(_constFunc2);
 
-        _outputNode = _graph.AddNode(_outputFunc);
         _frameNoNode = _graph.AddNode(_frameNoFunc);
         _addNode = _graph.AddNode(_addFunc);
+
+        _outputNode = _graph.AddNode(_outputFunc);
+
+        var once = new Event("Once");
+        _outputNode.Add(once);
+
+        var subscription = new Subscription(once, _outputNode);
+        _graph.Add(subscription);
+
+        _graph.Fire(once);
     }
 
     [Test]

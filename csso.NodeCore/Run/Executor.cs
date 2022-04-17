@@ -47,13 +47,25 @@ public class Executor {
     public void Run() {
         Recompile();
 
-        ProcessEvaluationNodes();
+        var activatedNodes = ProcessEvents();
 
-        var invocationList = BuildInvocationList();
+        ProcessEvaluationNodes(activatedNodes);
+
+        var invocationList = BuildInvocationList(activatedNodes);
         invocationList.ForEach(evaluationNode => evaluationNode.ProcessArguments());
         invocationList.ForEach(evaluationNode => evaluationNode.Invoke(this));
 
         ++FrameNo;
+    }
+
+    private List<Node> ProcessEvents() {
+        List<Node> result = new();
+
+        Graph.GetFiredEvents()
+            .SelectMany(_=> Graph.GetSubscribers(_))
+            .ForEach(result.Add);
+        
+        return result;
     }
 
     private void Recompile() {
@@ -78,13 +90,14 @@ public class Executor {
     private static void ValidateNodeOrder(Graph graph, IList<EvaluationNode> evaluationNodes) {
         Debug.Assert.True(evaluationNodes.Count == graph.Nodes.Count);
 
-        for (var i = 0; i < evaluationNodes.Count; i++) Debug.Assert.AreSame(evaluationNodes[i].Node, graph.Nodes[i]);
+        for (var i = 0; i < evaluationNodes.Count; i++) {
+            Debug.Assert.AreSame(evaluationNodes[i].Node, graph.Nodes[i]);
+        }
     }
 
-    private void ProcessEvaluationNodes() {
+    private void ProcessEvaluationNodes(List<Node> activatedNodes) {
         Queue<Node> yetToProcessNodes = new();
-        Graph.Nodes
-            .Where(_ => _.IsProcedure)
+        activatedNodes
             .ForEach(yetToProcessNodes.Enqueue);
 
         Stack<Node> paths = new();
@@ -101,8 +114,10 @@ public class Executor {
 
     private void UpdateEvaluationNode(Node node) {
         var evaluationNode = GetEvaluationNode(node);
-        if (evaluationNode.State >= EvaluationState.Processed) return;
-        
+        if (evaluationNode.State >= EvaluationState.Processed) {
+            return;
+        }
+
         foreach (var binding in evaluationNode.Node.BindingConnections) {
             if (binding.TargetNode.Behavior == FunctionBehavior.Proactive) {
                 evaluationNode.Process(true);
@@ -121,10 +136,10 @@ public class Executor {
         evaluationNode.Process(false);
     }
 
-    private Stack<EvaluationNode> BuildInvocationList() {
+    private Stack<EvaluationNode> BuildInvocationList(List<Node> activatedNodes) {
         Queue<EvaluationNode> yetToProcessENodes = new();
         EvaluationNodes
-            .Where(_ => _.Node.IsProcedure)
+            .Where(_ => activatedNodes.Contains(_.Node))
             .ForEach(yetToProcessENodes.Enqueue);
 
         Stack<EvaluationNode> invocationList = new();

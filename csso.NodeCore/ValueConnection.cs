@@ -5,6 +5,7 @@ namespace csso.NodeCore;
 public class ValueConnection : Connection {
     public ValueConnection(Node node, FunctionInput input, Object? value) : base(node, input) {
         Value = value;
+        node.Add(this);
     }
 
     public ValueConnection(Node node, SerializedValueConnection serialized) {
@@ -14,8 +15,10 @@ public class ValueConnection : Connection {
 
         if (
             serialized.Value != null
-            && StringParser.TryParse(serialized.Value, Input.Type, out var value))
+            && StringParser.TryParse(serialized.Value, Input.Type, out var value)) {
             Value = value;
+        }
+        node.Add(this);
     }
 
     private Object? _value = null;
