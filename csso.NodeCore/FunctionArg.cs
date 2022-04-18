@@ -26,30 +26,7 @@ public class FunctionInput : FunctionArg {
     public FunctionInput(string name, Type type, Int32 argumentIndex) : base(name, type, argumentIndex) { }
 
     public override ArgType ArgType => ArgType.In;
-
-
-    private Object? _staticStaticValue = null;
-
-    public Object? StaticValue {
-        get => _staticStaticValue;
-        set {
-            _staticStaticValue = Convert.ChangeType(value, Type);
-            _hasStaticValue = true;
-        }
-    }
-
-
-    private bool _hasStaticValue = false;
-
-    public bool HasStaticValue {
-        get => _hasStaticValue;
-        set {
-            _hasStaticValue = value; 
-            if(!_hasStaticValue) {
-                StaticValue = null;
-            }
-        }
-    }
+    
 }
 
 public class FunctionOutput : FunctionArg {

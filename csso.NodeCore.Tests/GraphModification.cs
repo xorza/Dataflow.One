@@ -31,20 +31,26 @@ public class GraphModification {
         _frameNoNode = _graph.AddNode(_frameNoFunc);
         _addNode = _graph.AddNode(_addFunc);
 
-        _outputNode!.AddConnection(
-            _outputNode!.Inputs.Single(),
-            _addNode!,
-            _addNode!.Outputs.Single());
+        _graph.Add(
+            new DataSubscription(
+                _outputNode!,
+                _outputNode!.Inputs.Single(),
+                _addNode!,
+                _addNode!.Outputs.Single())
+        );
 
-        _addNode!.AddConnection(
-            _addNode!.Inputs[0],
-            _frameNoNode!,
-            _frameNoNode!.Outputs.Single());
-        
+        _graph.Add(
+            new DataSubscription(
+                _addNode!,
+                _addNode!.Inputs[0],
+                _frameNoNode!,
+                _frameNoNode!.Outputs.Single())
+        );
+
         var alwaysEvent = new AlwaysEvent();
         _outputNode.Add(alwaysEvent);
 
-        var subscription = new Subscription(alwaysEvent, _outputNode);
+        var subscription = new EventSubscription(alwaysEvent, _outputNode);
         _graph.Add(subscription);
     }
 
@@ -57,10 +63,13 @@ public class GraphModification {
         Assert.Throws<ArgumentMissingException>(() => executor.Run());
         Assert.Throws<ArgumentMissingException>(() => executor.Run());
 
-        _addNode!.AddConnection(
-            _addNode!.Inputs[1],
-            _constNode1!,
-            _constNode1!.Outputs.Single());
+        _graph!.Add(
+            new DataSubscription(
+                _addNode!,
+                _addNode!.Inputs[1],
+                _constNode1!,
+                _constNode1!.Outputs.Single())
+        );
 
         executor.Run();
         Assert.AreEqual(1253, _outputFunc.Value);

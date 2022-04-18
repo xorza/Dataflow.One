@@ -6,9 +6,14 @@ public sealed class Graph {
     private readonly List<Node> _nodes = new();
     private readonly Queue<Event> _eventsToProcess = new();
 
-    private readonly List<Subscription> _eventConnections = new();
+    private readonly List<EventSubscription> _eventConnections = new();
 
-    public IReadOnlyList<Subscription> Subscriptions => _eventConnections.AsReadOnly();
+    public IReadOnlyList<EventSubscription> Subscriptions => _eventConnections.AsReadOnly();
+
+    private readonly List<DataSubscription> _dataSubscriptions = new();
+
+    public IReadOnlyList<DataSubscription> DataSubscriptions => _dataSubscriptions.AsReadOnly();
+
 
     public Graph() {
         Nodes = _nodes.AsReadOnly();
@@ -26,10 +31,6 @@ public sealed class Graph {
         serialized.GraphNodes?
             .Select(_ => new GraphNode(_))
             .ForEach(_nodes.Add);
-
-        serialized.OutputConnections
-            .Select(_ => new BindingConnection(this, _))
-            .ForEach(_ => { _.Node.Add(_); });
     }
 
     public IReadOnlyList<Node> Nodes { get; }
@@ -41,14 +42,35 @@ public sealed class Graph {
         _nodes.Add(node);
     }
 
-    public void Add(Subscription connection) {
-        Check.True(connection.Node.Graph == this);
-        Check.True(connection.Event.Owner.Graph == this);
-        _eventConnections.Add(connection);
+    public void Add(EventSubscription eventEventSubscription) {
+        Check.True(eventEventSubscription.Node.Graph == this);
+        Check.True(eventEventSubscription.Event.Owner.Graph == this);
+        _eventConnections.Add(eventEventSubscription);
+    }
+    
+    public void Add(DataSubscription dataSubscription) {
+        Check.True(dataSubscription.SubscriberNode.Graph == this);
+        Check.True(dataSubscription.TargetNode.Graph == this);
+        _dataSubscriptions.Add(dataSubscription);
     }
 
     public void Fire(Event @event) {
         _eventsToProcess.Enqueue(@event);
+    }
+
+    public List<DataSubscription> GetDataSubscriptions(Node node) {
+        return
+            _dataSubscriptions
+                .Where(_ => _.SubscriberNode == node)
+                .ToList();
+    }
+
+    public DataSubscription? GetDataSubscription(Node node, FunctionInput input) {
+        Debug.Assert.True(() => node.Inputs.Contains(input));
+
+        return
+            _dataSubscriptions
+                .SingleOrDefault(_ => _.SubscriberNode == node && _.Input == input);
     }
 
     public List<Event> GetFiredEvents() {
@@ -77,6 +99,7 @@ public sealed class Graph {
         return node;
     }
 
+
     public void Remove(Node node) {
         Check.True(node.Graph == this);
 
@@ -84,11 +107,14 @@ public sealed class Graph {
             throw new Exception("5h4gub677ge657");
         }
 
-        _nodes
-            .SelectMany(_ => _.BindingConnections)
-            .Where(_ => _.TargetNode == node)
-            .ToArray()
-            .ForEach(_ => _.Node.Remove(_));
+        _dataSubscriptions
+            .RemoveAll(_ => _.SubscriberNode == node);
+        _dataSubscriptions
+            .RemoveAll(_ => _.TargetNode == node);
+        _eventConnections
+            .RemoveAll(_ => _.Node == node);
+        _eventConnections
+            .RemoveAll(_ => _.Event.Owner == node);
     }
 
     public SerializedGraph Serialize() {
@@ -107,10 +133,9 @@ public sealed class Graph {
         }
 
 
-        result.OutputConnections = _nodes
-            .SelectMany(_ => _.BindingConnections)
-            .Select(_ => _.Serialize())
-            .ToArray();
+        // result.OutputConnections = _dataSubscriptions
+        //     .Select(_ => _.Serialize())
+        //     .ToList();
 
         return result;
     }
@@ -123,5 +148,5 @@ public sealed class Graph {
 public struct SerializedGraph {
     public List<SerializedFunctionNode> FunctionNodes { get; set; }
     public List<SerializedGraphNode> GraphNodes { get; set; }
-    public SerializedOutputConnection[] OutputConnections { get; set; }
+    public SerializedSubscription[] Subscriptions { get; set; }
 }

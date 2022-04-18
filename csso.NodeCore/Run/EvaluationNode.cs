@@ -61,25 +61,19 @@ public class EvaluationNode {
 
         foreach (var functionArg in Node.Args)
             if (functionArg is FunctionInput inputArg) {
-                var valueConnection = Node.ValueConnections.SingleOrDefault(_ => _.Input == inputArg);
-                var bindingConnection = Node.BindingConnections.SingleOrDefault(_ => _.Input == inputArg);
+                var dataSubscription = Node.Graph.GetDataSubscription(Node, inputArg);
 
-                if (valueConnection != null) {
-                    Check.True(bindingConnection == null);
-                    ArgValues[valueConnection.Input.ArgumentIndex] = valueConnection.Value;
-                }
-
-                if (bindingConnection != null) {
-                    Check.True(valueConnection == null);
+                if (dataSubscription != null) {
                     Check.True(
-                        bindingConnection.Input == Node.Args[bindingConnection.Input.ArgumentIndex]
+                        dataSubscription.Input == Node.Args[dataSubscription.Input.ArgumentIndex]
                     );
 
-                    _dependencyValues.Add(new DependencyValue {
-                        TargetNode = bindingConnection.TargetNode,
-                        Index = bindingConnection.Input.ArgumentIndex,
-                        Target = bindingConnection.Target
-                    });
+                    _dependencyValues.Add(
+                        new DependencyValue {
+                            TargetNode = dataSubscription.TargetNode,
+                            Index = dataSubscription.Input.ArgumentIndex,
+                            Target = dataSubscription.Target
+                        });
                 }
             } else if (functionArg is FunctionOutput) {
                 ArgValues[functionArg.ArgumentIndex] = null;

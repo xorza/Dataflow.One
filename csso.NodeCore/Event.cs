@@ -15,12 +15,12 @@ public class AlwaysEvent : Event {
     public AlwaysEvent() : base("Always") { }
 }
 
-public class Subscription {
+public class EventSubscription {
     public Event Event { get; private set; }
     public Node Node { get; private set; }
     
     
-    public Subscription(Event @event, Node node) {
+    public EventSubscription(Event @event, Node node) {
         Event = @event;
         Node = node;
     }

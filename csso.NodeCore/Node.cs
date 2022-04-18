@@ -6,14 +6,11 @@ using csso.NodeCore.Annotations;
 namespace csso.NodeCore;
 
 public abstract class Node : WithId, INotifyPropertyChanged {
-    private readonly List<BindingConnection> _bindingConnection = new();
-    private readonly List<ValueConnection> _valueConnection = new();
+
+    
     private readonly List<Event> _events = new();
 
     protected Node(Guid id) : base(id) {
-        ValueConnections = _valueConnection.AsReadOnly();
-        BindingConnections = _bindingConnection.AsReadOnly();
-        Events = _events.AsReadOnly();
     }
 
     public string Name { get; set; }
@@ -21,13 +18,10 @@ public abstract class Node : WithId, INotifyPropertyChanged {
     public abstract FunctionBehavior Behavior { get; set; }
 
     public Graph Graph { get; internal set; }
-    public IReadOnlyList<ValueConnection> ValueConnections { get; }
-
-    public IReadOnlyList<BindingConnection> BindingConnections { get; }
 
     public IReadOnlyList<FunctionInput> Inputs { get; protected set; }
     public IReadOnlyList<FunctionOutput> Outputs { get; protected set; }
-    public IReadOnlyList<Event> Events { get; protected set; }
+    public IReadOnlyList<Event> Events => _events.AsReadOnly();
     public IReadOnlyList<FunctionArg> Args { get; protected set; }
 
     public void Add(Event @event) {
@@ -42,43 +36,19 @@ public abstract class Node : WithId, INotifyPropertyChanged {
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-
-    internal void Add(ValueConnection connection) {
-        Check.Argument(connection.Node == this, nameof(connection));
-
-        _valueConnection.RemoveAll(_ => _.Input == connection.Input);
-        _valueConnection.Add(connection);
-    }
-
-    internal void Add(BindingConnection connection) {
-        Check.Argument(connection.Node == this, nameof(connection));
-
-        _bindingConnection.RemoveAll(_ => _.Input == connection.Input);
-        _bindingConnection.Add(connection);
-    }
-
-    public BindingConnection AddConnection(FunctionInput selfInput, Node outputNode, FunctionOutput nodeOutput) {
-        BindingConnection connection = new(
-            this,
-            selfInput,
-            outputNode,
-            nodeOutput);
-
-        Add(connection);
-
-        return connection;
-    }
-
-    public void Remove(Connection connection) {
-        Check.Argument(connection.Node == this, nameof(connection));
-        if (connection is ValueConnection valueConnection) {
-            Check.True(_valueConnection.Remove(valueConnection));
-        }
-
-        if (connection is BindingConnection bindingConnection) {
-            Check.True(_bindingConnection.Remove(bindingConnection));
-        }
-    }
+    
+    // public BindingDataSubscription AddConnection(FunctionInput selfInput, Node outputNode, FunctionOutput nodeOutput) {
+    //     BindingDataSubscription dataSubscription = new(
+    //         this,
+    //         selfInput,
+    //         outputNode,
+    //         nodeOutput);
+    //
+    //     Add(dataSubscription);
+    //
+    //     return dataSubscription;
+    // }
+    
 }
 
 public sealed class FunctionNode : Node {
@@ -96,10 +66,6 @@ public sealed class FunctionNode : Node {
             Inputs = _function.Inputs;
             Outputs = _function.Outputs;
             Args = _function.Args;
-
-            _function.Inputs
-                .Where(_ => _.HasStaticValue)
-                .ForEach(_ => new ValueConnection(this, _, _.StaticValue));
         }
     }
 
@@ -138,9 +104,6 @@ public sealed class FunctionNode : Node {
         }
 
         Behavior = serialized.Behavior;
-
-        serialized.ValueConnections
-            .ForEach(_ => new ValueConnection(this, _));
     }
 
 
@@ -152,11 +115,6 @@ public sealed class FunctionNode : Node {
         result.FunctionName = Function.FullName;
         result.Behavior = Behavior;
         result.FunctionId = Function.Id;
-
-        result.ValueConnections = ValueConnections
-            .Select(_ => _.Serialize())
-            .ToArray();
-
 
         return result;
     }
@@ -190,7 +148,6 @@ public class SerializedFunctionNode {
     public Guid Id { get; set; }
     public String FunctionName { get; set; }
     public Guid? FunctionId { get; set; }
-    public SerializedValueConnection[] ValueConnections { get; set; }
     public FunctionBehavior Behavior { get; set; }
 }
 

@@ -6,17 +6,6 @@ namespace csso.NodeCore;
 [AttributeUsage(AttributeTargets.Parameter)]
 public sealed class OutputAttribute : Attribute { }
 
-[AttributeUsage(AttributeTargets.Parameter)]
-public sealed class StaticValueAttribute : Attribute {
-    public StaticValueAttribute() { }
-
-    public StaticValueAttribute(Object defaultValue) {
-        DefaultValue = defaultValue;
-    }
-
-    public Object? DefaultValue { get; }
-}
-
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
 public sealed class ReactiveAttribute : Attribute { }
 
@@ -76,33 +65,23 @@ public class Function {
         for (var i = 0; i < parameters.Length; i++) {
             var parameter = parameters[i];
 
-            var outputAttribute =
-                Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) as OutputAttribute;
-            var configAttribute =
-                Attribute.GetCustomAttribute(parameter, typeof(StaticValueAttribute)) as StaticValueAttribute;
-
-            if (outputAttribute != null && configAttribute != null) {
-                throw new Exception("fghoji4r5");
-            }
 
             var argName = parameter.Name!;
             Type argType;
-            if (parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer)
+            if (parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer) {
                 argType = parameter.ParameterType.GetElementType()!;
-            else
+            } else {
                 argType = parameter.ParameterType;
+            }
 
             FunctionArg arg;
 
+            var outputAttribute =
+                Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) as OutputAttribute;
             if (outputAttribute != null) {
                 arg = new FunctionOutput(argName, argType, i);
             } else {
-                var input = new FunctionInput(argName, argType, i);
-                if (configAttribute != null) {
-                    input.StaticValue = configAttribute.DefaultValue;
-                }
-
-                arg = input;
+                arg = new FunctionInput(argName, argType, i);
             }
 
             args.Add(arg);

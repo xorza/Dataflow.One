@@ -20,9 +20,8 @@ public class Tests {
     }
 
     [Description("value")]
-    [Reactive]
-    private static bool Const([StaticValue(12)] Int32 c, [Output] ref Int32 i) {
-        i = c;
+    private static bool Const([Output] out Int32 i) {
+        i = 10;
         return true;
     }
 
@@ -64,7 +63,7 @@ public class Tests {
         Assert.AreEqual(13, _output);
 
         var serialized = JsonSerializer.Serialize(graphVm.Serialize(), opts);
-        Assert.AreEqual( _fileContent, serialized);
+        Assert.AreEqual(_fileContent, serialized);
 
         serializedGraphView = JsonSerializer.Deserialize<SerializedGraphView>(serialized);
         Assert.NotNull(serializedGraphView);

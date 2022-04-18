@@ -84,7 +84,7 @@ public partial class Graph : UserControl {
     }
 
     private void MouseWheel_EventHandler(object sender, MouseWheelEventArgs e) {
-        GraphView!.ViewScale*= (float) Math.Pow(1.1, e.Delta / 120.0f);
+        GraphView!.ViewScale *= (float) Math.Pow(1.1, e.Delta / 120.0f);
     }
 
     private void NodeDeselectButton_Handler(object sender, MouseButtonEventArgs e) {
@@ -184,10 +184,13 @@ public partial class Graph : UserControl {
 
         Debug.Assert.True(p1 != p2);
 
-        input.NodeView.Node.AddConnection(
-            (FunctionInput) input.FunctionArg,
-            output.NodeView.Node,
-            (FunctionOutput) output.FunctionArg);
+        input.NodeView.Node.Graph.Add(
+            new DataSubscription(
+                input.NodeView.Node,
+                (FunctionInput) input.FunctionArg,
+                output.NodeView.Node,
+                (FunctionOutput) output.FunctionArg)
+        );
 
         input.NodeView.GraphVm.Refresh();
     }

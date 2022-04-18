@@ -62,9 +62,9 @@ public class Executor {
         List<Node> result = new();
 
         Graph.GetFiredEvents()
-            .SelectMany(_=> Graph.GetSubscribers(_))
+            .SelectMany(_ => Graph.GetSubscribers(_))
             .ForEach(result.Add);
-        
+
         return result;
     }
 
@@ -102,7 +102,7 @@ public class Executor {
 
         Stack<Node> paths = new();
         while (yetToProcessNodes.TryDequeue(out var node)) {
-            node.BindingConnections
+            Graph.GetDataSubscriptions(node)
                 .Select(_ => _.TargetNode)
                 .ForEach(yetToProcessNodes.Enqueue);
 
@@ -118,7 +118,7 @@ public class Executor {
             return;
         }
 
-        foreach (var binding in evaluationNode.Node.BindingConnections) {
+        foreach (var binding in Graph.GetDataSubscriptions(evaluationNode.Node)) {
             if (binding.TargetNode.Behavior == FunctionBehavior.Proactive) {
                 evaluationNode.Process(true);
                 return;
@@ -147,7 +147,7 @@ public class Executor {
         while (yetToProcessENodes.TryDequeue(out var evaluationNode)) {
             invocationList.Push(evaluationNode);
 
-            foreach (var binding in evaluationNode.Node.BindingConnections) {
+            foreach (var binding in Graph.GetDataSubscriptions(evaluationNode.Node)) {
                 var targetEvaluationNode = GetEvaluationNode(binding.TargetNode);
 
                 if (!targetEvaluationNode.HasOutputValues) {
@@ -155,7 +155,7 @@ public class Executor {
                     continue;
                 }
 
-                if (binding.Behavior == ConnectionBehavior.Once) continue;
+                if (binding.Behavior == SubscriptionBehavior.Once) continue;
 
                 if (targetEvaluationNode.ArgumentsUpdatedThisFrame
                     || targetEvaluationNode.Behavior == FunctionBehavior.Proactive)

@@ -146,9 +146,8 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
 
         _edges.Clear();
-        foreach (var node in Nodes)
-        foreach (var binding in node.Node.BindingConnections) {
-            var inputNode = GetNodeView(binding.Node);
+        foreach (var binding in Graph.DataSubscriptions) {
+            var inputNode = GetNodeView(binding.SubscriberNode);
             var outputNode = GetNodeView(binding.TargetNode);
 
             var input = inputNode.Inputs.Single(_ => _.FunctionArg == binding.Input);
@@ -199,8 +198,8 @@ public sealed class GraphVM : INotifyPropertyChanged {
                 nodeView.ExecutionTime = en!.ExecutionTime;
 
                 nodeView.Values.Clear();
-                
-                
+
+
                 foreach (var output in nodeView.Inputs) {
                     var index = output.FunctionArg.ArgumentIndex;
                     var value = en.ArgValues?[index];

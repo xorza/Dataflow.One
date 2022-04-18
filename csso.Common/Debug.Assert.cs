@@ -24,6 +24,15 @@ public static class Debug {
             if (!condition)
                 throw new AssertionException();
         }
+        
+        [Conditional("DEBUG")]
+        [DebuggerStepThrough]
+        [DebuggerHidden]
+        public static void True(Func<bool> predicate) {
+            if (!predicate.Invoke()) {
+                throw new AssertionException();
+            }
+        }
 
         [Conditional("DEBUG")]
         [DebuggerStepThrough]
