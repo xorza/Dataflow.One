@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using csso.Common;
 
@@ -11,20 +12,25 @@ public enum EvaluationState {
 }
 
 public class EvaluationNode {
-    private static readonly Object Empty = new NotFound();
-
     private readonly List<DependencyValue> _dependencyValues = new();
 
-    public EvaluationNode(FunctionNode node) {
+    private IArgumentProvider ArgumentProvider { get; }
+
+    public EvaluationNode(IArgumentProvider argumentProvider, Node node) {
         Node = node;
         Behavior = node.Behavior;
-        ArgValues = Enumerable.Repeat(Empty, Node.Args.Count).ToArray();
         HasOutputValues = false;
+        ArgumentProvider = argumentProvider;
+
         Reset();
     }
 
-    public FunctionNode Node { get; }
-    public Object?[] ArgValues { get; }
+    public Node Node { get; }
+
+    public Object?[] ArgValues() {
+        return ArgumentProvider.GetArguments(this);
+    }
+
     public bool HasOutputValues { get; private set; }
     public FunctionBehavior Behavior { get; }
     public bool ArgumentsUpdatedThisFrame { get; private set; }
@@ -34,7 +40,7 @@ public class EvaluationNode {
     public object? GetOutputValue(FunctionArg output) {
         Check.True(HasOutputValues);
 
-        return ArgValues[output.ArgumentIndex];
+        return ArgValues()[output.ArgumentIndex];
     }
 
     public void Reset() {
@@ -49,11 +55,12 @@ public class EvaluationNode {
     }
 
     public void ProcessArguments() {
-        if (State == EvaluationState.ArgumentsSet) return;
+        if (State == EvaluationState.ArgumentsSet) {
+            return;
+        }
 
         Check.True(State == EvaluationState.Processed);
 
-        ArgValues.Populate(Empty);
         _dependencyValues.Clear();
 
         foreach (var nodeArg in Node.Args)
@@ -73,7 +80,7 @@ public class EvaluationNode {
                         });
                 }
             } else if (nodeArg.ArgType == ArgType.Out) {
-                ArgValues[nodeArg.FunctionArg.ArgumentIndex] = null;
+                ArgValues()[nodeArg.FunctionArg.ArgumentIndex] = null;
             } else {
                 Check.Fail();
             }
@@ -96,12 +103,12 @@ public class EvaluationNode {
             _dependencyValues.ForEach(_ => {
                 var targetEvaluationNode = executor.GetEvaluationNode(_.TargetNode);
                 Check.True(targetEvaluationNode.State >= EvaluationState.Processed);
-                ArgValues[_.Index] = targetEvaluationNode.GetOutputValue(_.Target);
+                ArgValues()[_.Index] = targetEvaluationNode.GetOutputValue(_.Target);
             });
 
             ValidateArguments();
 
-            Node.Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
+            ((FunctionNode) Node).Function.Invoke(ArgValues().Length == 0 ? null : ArgValues());
 
             sw.Stop();
             ExecutionTime = sw.ElapsedMilliseconds * 1.0;
@@ -113,8 +120,8 @@ public class EvaluationNode {
     }
 
     private void ValidateArguments() {
-        for (var i = 0; i < ArgValues.Length; i++) {
-            if (ArgValues[i] == Empty) {
+        for (var i = 0; i < ArgValues().Length; i++) {
+            if (ArgValues()[i] == Empty.One) {
                 throw new ArgumentMissingException(Node, Node.Args[i].FunctionArg);
             }
         }

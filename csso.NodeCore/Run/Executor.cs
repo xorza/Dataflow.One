@@ -4,11 +4,33 @@ using Debug = csso.Common.Debug;
 
 namespace csso.NodeCore.Run;
 
-public class Executor {
+public interface IArgumentProvider {
+    Object?[] GetArguments(EvaluationNode node);
+}
+
+public static class Empty {
+    static Empty() {
+        One = new Object();
+    }
+
+    public static object One { get; }
+}
+
+public class Executor : IArgumentProvider {
     public Executor(Graph graph) {
         Graph = graph;
         FrameNo = 0;
-        Recompile();
+    }
+
+    private readonly Dictionary<EvaluationNode, Object?[]> _args = new();
+
+    public object?[] GetArguments(EvaluationNode node) {
+        if (!_args.TryGetValue(node, out var result)) {
+            result = Enumerable.Repeat(Empty.One, node.Node.Args.Count).ToArray();
+            _args.Add(node, result);
+        }
+
+        return result;
     }
 
     public Int32 FrameNo { get; private set; }
@@ -18,7 +40,14 @@ public class Executor {
     public Graph Graph { get; }
 
     public EvaluationNode GetEvaluationNode(Node node) {
-        return EvaluationNodes.Single(_ => _.Node == node);
+        var result = EvaluationNodes.SingleOrDefault(_ => _.Node == node);
+
+        if (result == null) {
+            result = new EvaluationNode(this, node);
+            EvaluationNodes.Add(result);
+        }
+
+        return result;
     }
 
     public bool TryGetEvaluationNode(Node node, out EvaluationNode? evaluationNode) {
@@ -58,7 +87,7 @@ public class Executor {
         foreach (var node in Graph.Nodes) {
             if (node is FunctionNode functionNode) {
                 var existing = EvaluationNodes.SingleOrDefault(_ => _.Node == functionNode);
-                newEvaluationNodes.Add(existing ?? new EvaluationNode(functionNode));
+                newEvaluationNodes.Add(existing ?? new EvaluationNode(this, functionNode));
             } else {
                 throw new NotImplementedException("wv435ty5yt ");
             }

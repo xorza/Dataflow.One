@@ -202,7 +202,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
                 foreach (var output in nodeView.Inputs) {
                     var index = output.NodeArg.FunctionArg.ArgumentIndex;
-                    var value = en.ArgValues?[index];
+                    var value = en.ArgValues()[index];
                     nodeView.Values.Add(
                         ValueView.FromValue(output, value)
                     );
@@ -210,7 +210,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
                 foreach (var output in nodeView.Outputs) {
                     var index = output.NodeArg.FunctionArg.ArgumentIndex;
-                    var value = en.ArgValues?[index];
+                    var value = en.ArgValues()[index];
                     nodeView.Values.Add(
                         ValueView.FromValue(output, value)
                     );

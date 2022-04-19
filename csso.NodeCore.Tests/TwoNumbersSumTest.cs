@@ -36,11 +36,8 @@ public class TwoNumbersSumTest {
         _graph.FrameNoFunc.Executor = _executor;
     }
 
-    [Test] // sum of 1253 and 3 
-    public void Test1() {
-        _executor.Run();
-        Assert.AreEqual(1256, _graph.OutputFunc.Value);
-        
+    [Test] 
+    public void simple_run() {
         _executor.Run();
         Assert.AreEqual(1256, _graph.OutputFunc.Value);
 
@@ -54,8 +51,20 @@ public class TwoNumbersSumTest {
         Assert.Pass();
     }
     
-    [Test] // subscribe to frameno instead of 1253, then sum it with 3
-    public void Test3() {
+    [Test] 
+    public void not_invoked_before_run() {
+        var addEvaluationNode = _executor.GetEvaluationNode(_graph.AddNode);
+        var frameNoEvaluationNode = _executor.GetEvaluationNode(_graph.FrameNoNode);
+        var const1EvaluationNode = _executor.GetEvaluationNode(_graph.ConstNode1);
+        Assert.True(frameNoEvaluationNode.State == EvaluationState.Idle);
+        Assert.True(const1EvaluationNode.State == EvaluationState.Idle);
+        Assert.True(addEvaluationNode.State == EvaluationState.Idle);
+
+        Assert.Pass();
+    }
+    
+    [Test]
+    public void subscribe_to_a_different_node() {
         _graph.Graph.Add(
             new DataSubscription(
                 _graph.AddNode.Inputs[1],
@@ -75,12 +84,11 @@ public class TwoNumbersSumTest {
         Assert.True(const2EvaluationNode.State == EvaluationState.Idle);
         Assert.True(addEvaluationNode.State == EvaluationState.Invoked);
 
-
         Assert.Pass();
     }
 
-    [Test] //unsubscribe and expect exception
-    public void Test4() {
+    [Test] 
+    public void remove_datasubscription_and_expect_exception() {
         Assert.AreEqual(3, _graph.Graph.DataSubscriptions.Count);
         _graph.Graph.RemoveSubscription(_graph.AddNode.Inputs[1]);
         Assert.AreEqual(2, _graph.Graph.DataSubscriptions.Count);
