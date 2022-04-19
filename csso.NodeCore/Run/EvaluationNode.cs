@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using csso.Common;
 
@@ -31,9 +30,11 @@ public class EvaluationNode {
         return ArgumentProvider.GetArguments(this);
     }
 
+    private List<DataSubscription> _dataSubscriptions = new List<DataSubscription>();
+
     public bool HasOutputValues { get; private set; }
     public FunctionBehavior Behavior { get; }
-    public bool ArgumentsUpdatedThisFrame { get; private set; }
+    public bool ShouldInvokeThisFrame { get; private set; }
     public EvaluationState State { get; private set; } = EvaluationState.Idle;
     public double ExecutionTime { get; private set; } = double.NaN;
 
@@ -45,17 +46,22 @@ public class EvaluationNode {
 
     public void Reset() {
         State = EvaluationState.Idle;
+        ShouldInvokeThisFrame = false;
     }
 
-    public void Process(bool hasUpdatedArguments) {
+    public void Process(bool shouldInvokeThisFrame) {
         Check.True(State == EvaluationState.Idle);
 
-        ArgumentsUpdatedThisFrame = hasUpdatedArguments;
-        State = EvaluationState.Processed;
-    }
+        ShouldInvokeThisFrame = shouldInvokeThisFrame;
 
-    public class Arguments {
-        public Object?[] ArgValues { get; set; }
+        var newDataSubscriptions = Node.Graph.GetDataSubscriptions(Node);
+        
+        if (!newDataSubscriptions.SequenceEqual(_dataSubscriptions)) {
+            ShouldInvokeThisFrame = true;
+            _dataSubscriptions = newDataSubscriptions;
+        }
+
+        State = EvaluationState.Processed;
     }
 
     public void PrepareArguments() {

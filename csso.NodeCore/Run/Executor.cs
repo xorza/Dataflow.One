@@ -87,7 +87,8 @@ public class Executor : IArgumentProvider {
         foreach (var node in Graph.Nodes) {
             if (node is FunctionNode functionNode) {
                 var existing = EvaluationNodes.SingleOrDefault(_ => _.Node == functionNode);
-                newEvaluationNodes.Add(existing ?? new EvaluationNode(this, functionNode));
+                existing ??= new EvaluationNode(this, functionNode);
+                newEvaluationNodes.Add(existing);
             } else {
                 throw new NotImplementedException("wv435ty5yt ");
             }
@@ -96,7 +97,7 @@ public class Executor : IArgumentProvider {
         ValidateNodeOrder(Graph, newEvaluationNodes);
 
         EvaluationNodes = newEvaluationNodes;
-        EvaluationNodes.ForEach( _ => _.Reset());
+        EvaluationNodes.ForEach(_ => _.Reset());
     }
 
     [Conditional("DEBUG")]
@@ -127,9 +128,10 @@ public class Executor : IArgumentProvider {
 
     private void UpdateEvaluationNode(Node node) {
         var evaluationNode = GetEvaluationNode(node);
-        if (evaluationNode.State >= EvaluationState.Processed) {
+        if (evaluationNode.State == EvaluationState.Processed) {
             return;
         }
+        Check.True(evaluationNode.State < EvaluationState.ArgumentsSet);
 
         foreach (var binding in Graph.GetDataSubscriptions(evaluationNode.Node)) {
             if (binding.Source.Node.Behavior == FunctionBehavior.Proactive) {
@@ -138,9 +140,9 @@ public class Executor : IArgumentProvider {
             }
 
             var targetEvaluationNode = GetEvaluationNode(binding.Source.Node);
-            Check.True(targetEvaluationNode.State >= EvaluationState.Processed);
+            Check.True(targetEvaluationNode.State == EvaluationState.Processed);
 
-            if (targetEvaluationNode.ArgumentsUpdatedThisFrame) {
+            if (targetEvaluationNode.ShouldInvokeThisFrame) {
                 evaluationNode.Process(true);
                 return;
             }
@@ -170,7 +172,7 @@ public class Executor : IArgumentProvider {
 
                 if (binding.Behavior == SubscriptionBehavior.Once) continue;
 
-                if (targetEvaluationNode.ArgumentsUpdatedThisFrame
+                if (targetEvaluationNode.ShouldInvokeThisFrame
                     || targetEvaluationNode.Behavior == FunctionBehavior.Proactive)
                     yetToProcessENodes.Enqueue(targetEvaluationNode);
             }
