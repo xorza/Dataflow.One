@@ -26,7 +26,6 @@ public class GraphModification {
         _constFunc1.Value = 1253;
 
         _constNode1 = _graph.AddNode(_constFunc1);
-
         _outputNode = _graph.AddNode(_outputFunc);
         _frameNoNode = _graph.AddNode(_frameNoFunc);
         _addNode = _graph.AddNode(_addFunc);

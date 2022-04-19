@@ -5,12 +5,16 @@ using csso.NodeCore.Annotations;
 
 namespace csso.NodeCore;
 
-public abstract class Node : WithId, INotifyPropertyChanged {
+public abstract class Node : INotifyPropertyChanged {
 
     
     private readonly List<Event> _events = new();
+    
+    
+    public Guid Id { get; protected set; }
 
-    protected Node(Guid id) : base(id) {
+    protected Node(Guid id) {
+        Id = id;
     }
 
     public string Name { get; set; }

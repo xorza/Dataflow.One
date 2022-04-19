@@ -54,6 +54,12 @@ public sealed class Graph {
         _dataSubscriptions.Add(dataSubscription);
     }
 
+    public void Remove(DataSubscription dataSubscription) {
+        Check.True(dataSubscription.SubscriberNode.Graph == this);
+        Check.True(dataSubscription.TargetNode.Graph == this);
+        _dataSubscriptions.Remove(dataSubscription);
+    }
+
     public void Fire(Event @event) {
         _eventsToProcess.Enqueue(@event);
     }

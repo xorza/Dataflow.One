@@ -88,5 +88,5 @@ public struct SerializedSubscription {
     public Int32 InputIndex { get; set; }
 
     public Guid InputNodeId { get; set; }
-     public SubscriptionBehavior Behavior { get; set; }
+    public SubscriptionBehavior Behavior { get; set; }
 }
