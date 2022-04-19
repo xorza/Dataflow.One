@@ -65,7 +65,7 @@ public class Executor : IArgumentProvider {
         ProcessEvaluationNodes(activatedNodes);
 
         var invocationList = BuildInvocationList(activatedNodes);
-        invocationList.ForEach(evaluationNode => evaluationNode.ProcessArguments());
+        invocationList.ForEach(evaluationNode => evaluationNode.PrepareArguments());
         invocationList.ForEach(evaluationNode => evaluationNode.Invoke(this));
 
         ++FrameNo;
@@ -96,7 +96,7 @@ public class Executor : IArgumentProvider {
         ValidateNodeOrder(Graph, newEvaluationNodes);
 
         EvaluationNodes = newEvaluationNodes;
-        Xtentions.ForEach(EvaluationNodes, _ => _.Reset());
+        EvaluationNodes.ForEach( _ => _.Reset());
     }
 
     [Conditional("DEBUG")]

@@ -27,7 +27,7 @@ public class EvaluationNode {
 
     public Node Node { get; }
 
-    public Object?[] ArgValues() {
+    public Object?[] GetArgValues() {
         return ArgumentProvider.GetArguments(this);
     }
 
@@ -37,10 +37,10 @@ public class EvaluationNode {
     public EvaluationState State { get; private set; } = EvaluationState.Idle;
     public double ExecutionTime { get; private set; } = double.NaN;
 
-    public object? GetOutputValue(FunctionArg output) {
+    private object? GetOutputValue(FunctionArg output) {
         Check.True(HasOutputValues);
 
-        return ArgValues()[output.ArgumentIndex];
+        return GetArgValues()[output.ArgumentIndex];
     }
 
     public void Reset() {
@@ -54,7 +54,11 @@ public class EvaluationNode {
         State = EvaluationState.Processed;
     }
 
-    public void ProcessArguments() {
+    public class Arguments {
+        public Object?[] ArgValues { get; set; }
+    }
+
+    public void PrepareArguments() {
         if (State == EvaluationState.ArgumentsSet) {
             return;
         }
@@ -80,7 +84,7 @@ public class EvaluationNode {
                         });
                 }
             } else if (nodeArg.ArgType == ArgType.Out) {
-                ArgValues()[nodeArg.FunctionArg.ArgumentIndex] = null;
+                GetArgValues()[nodeArg.FunctionArg.ArgumentIndex] = null;
             } else {
                 Check.Fail();
             }
@@ -103,12 +107,12 @@ public class EvaluationNode {
             _dependencyValues.ForEach(_ => {
                 var targetEvaluationNode = executor.GetEvaluationNode(_.TargetNode);
                 Check.True(targetEvaluationNode.State >= EvaluationState.Processed);
-                ArgValues()[_.Index] = targetEvaluationNode.GetOutputValue(_.Target);
+                GetArgValues()[_.Index] = targetEvaluationNode.GetOutputValue(_.Target);
             });
 
             ValidateArguments();
 
-            ((FunctionNode) Node).Function.Invoke(ArgValues().Length == 0 ? null : ArgValues());
+            ((FunctionNode) Node).Function.Invoke(GetArgValues().Length == 0 ? null : GetArgValues());
 
             sw.Stop();
             ExecutionTime = sw.ElapsedMilliseconds * 1.0;
@@ -120,14 +124,12 @@ public class EvaluationNode {
     }
 
     private void ValidateArguments() {
-        for (var i = 0; i < ArgValues().Length; i++) {
-            if (ArgValues()[i] == Empty.One) {
+        for (var i = 0; i < GetArgValues().Length; i++) {
+            if (GetArgValues()[i] == Empty.One) {
                 throw new ArgumentMissingException(Node, Node.Args[i].FunctionArg);
             }
         }
     }
-
-    private class NotFound { }
 
     private struct DependencyValue {
         public int Index { get; set; }

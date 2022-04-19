@@ -46,6 +46,7 @@ public class OutputFunc<T> : Function {
 public class ValueFunc<T> : Function {
     public ValueFunc() {
         Refresh("Const", Func_);
+        _behavior = base.Behavior;
     }
 
     public T Value { get; set; }
@@ -53,6 +54,14 @@ public class ValueFunc<T> : Function {
     private bool Func_([Output] out T arg) {
         arg = Value;
         return true;
+    }
+
+    private FunctionBehavior _behavior;
+
+    public override FunctionBehavior Behavior => _behavior;
+
+    public void SetBehavior(FunctionBehavior behavior) {
+        _behavior = behavior;
     }
 }
 

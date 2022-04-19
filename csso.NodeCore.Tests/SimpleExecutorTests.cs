@@ -12,8 +12,8 @@ public class Tests {
     [SetUp]
     public void Setup() {
         _graph = new TestGraph();
-        _graph.ConstFunc1.Value = 3;
-        _graph.ConstFunc2.Value = 1253;
+        _graph.ReactiveConstFunc.Value = 3;
+        _graph.ProactiveConstFunc.Value = 1253;
     }
 
     [Test]
@@ -21,7 +21,7 @@ public class Tests {
         _graph.Graph.Add(
             new DataSubscription(
                 _graph.OutputNode.Inputs.Single(),
-                _graph.ConstNode1.Outputs.Single())
+                _graph.ProactiveConstNode.Outputs.Single())
         );
 
         var executor = new Executor(_graph.Graph);
@@ -29,18 +29,18 @@ public class Tests {
 
         executor.Run();
 
-        var constEvaluationNode = executor.GetEvaluationNode(_graph.ConstNode1);
+        var proactiveConstNode = executor.GetEvaluationNode(_graph.ProactiveConstNode);
 
-        Assert.AreEqual(3, _graph.OutputFunc.Value);
-        Assert.True(constEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.AreEqual(1253, _graph.OutputFunc.Value);
+        Assert.True(proactiveConstNode.State >= EvaluationState.Invoked);
 
-        _graph.ConstFunc1.Value = 33;
+        _graph.ProactiveConstFunc.Value = 33;
         executor = new Executor(_graph.Graph);
         _graph.FrameNoFunc.Executor = executor;
         executor.Run();
         Assert.AreEqual(33, _graph.OutputFunc.Value);
 
-        _graph.ConstFunc1.Value = 4;
+        _graph.ProactiveConstFunc.Value = 4;
         executor.Run();
         Assert.AreEqual(4, _graph.OutputFunc.Value);
 
@@ -78,13 +78,13 @@ public class Tests {
         _graph.Graph.Add(
             new DataSubscription(
                 _graph.AddNode.Inputs[0],
-                _graph.ConstNode1.Outputs.Single())
+                _graph.ReactiveConstNode.Outputs.Single())
         );
 
         _graph.Graph.Add(
             new DataSubscription(
                 _graph.AddNode.Inputs[1],
-                _graph.ConstNode2.Outputs.Single())
+                _graph.ProactiveConstNode.Outputs.Single())
         );
 
         var executor = new Executor(_graph.Graph!);
@@ -110,7 +110,7 @@ public class Tests {
         _graph.Graph.Add(
             new DataSubscription(
                 _graph.AddNode.Inputs[0],
-                _graph.ConstNode1.Outputs.Single())
+                _graph.ReactiveConstNode.Outputs.Single())
         );
 
         _graph.Graph.Add(
@@ -128,17 +128,17 @@ public class Tests {
 
         var addEvaluationNode = executor.GetEvaluationNode(_graph.AddNode);
         var frameNoEvaluationNode = executor.GetEvaluationNode(_graph.FrameNoNode);
-        var constEvaluationNode = executor.GetEvaluationNode(_graph.ConstNode1);
-        Assert.True(frameNoEvaluationNode.State >= EvaluationState.Invoked);
-        Assert.True(constEvaluationNode.State >= EvaluationState.Invoked);
-        Assert.True(addEvaluationNode.State >= EvaluationState.Invoked);
+        var reactiveConstNode = executor.GetEvaluationNode(_graph.ReactiveConstNode);
+        Assert.True(frameNoEvaluationNode.State == EvaluationState.Invoked);
+        Assert.True(reactiveConstNode.State == EvaluationState.Invoked);
+        Assert.True(addEvaluationNode.State == EvaluationState.Invoked);
 
         executor.Run();
 
         Assert.AreEqual(4, _graph.OutputFunc.Value);
-        Assert.True(frameNoEvaluationNode.State >= EvaluationState.Invoked);
-        Assert.True(constEvaluationNode.State >= EvaluationState.Invoked);
-        Assert.True(addEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.True(frameNoEvaluationNode.State == EvaluationState.Invoked);
+        Assert.True(reactiveConstNode.State == EvaluationState.Processed);
+        Assert.True(addEvaluationNode.State == EvaluationState.Invoked);
 
         Assert.Pass();
     }
@@ -154,7 +154,7 @@ public class Tests {
         _graph.Graph.Add(
             new DataSubscription(
                 _graph.AddNode.Inputs[0],
-                _graph.ConstNode1.Outputs.Single()));
+                _graph.ReactiveConstNode.Outputs.Single()));
 
         _graph.Graph.Add(
             new DataSubscription(
@@ -188,17 +188,17 @@ public class Tests {
         _graph.Graph.Add(
             new DataSubscription(
                 _graph.OutputNode.Inputs.Single(),
-                _graph.ConstNode2.Outputs.Single()));
+                _graph.ProactiveConstNode.Outputs.Single()));
 
         var executor = new Executor(_graph.Graph);
         _graph.FrameNoFunc.Executor = executor;
 
-        _graph.ConstFunc2.Value = 133;
+        _graph.ProactiveConstFunc.Value = 133;
 
         executor.Run();
         Assert.AreEqual(133, _graph.OutputFunc.Value);
 
-        _graph.ConstFunc2.Value = 132;
+        _graph.ProactiveConstFunc.Value = 132;
         executor.Run();
         Assert.AreEqual(132, _graph.OutputFunc.Value);
 

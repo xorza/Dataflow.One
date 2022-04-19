@@ -9,7 +9,7 @@ public abstract class Node : INotifyPropertyChanged {
     private readonly List<Event> _events = new();
 
     public Guid Id { get; }
-    public string Name { get; protected set; }
+    public string Name { get;  set; }
     public abstract FunctionBehavior Behavior { get; set; }
     public Graph Graph { get; internal set; }
 
