@@ -34,10 +34,7 @@ public class EvaluationNode {
     public object? GetOutputValue(FunctionArg output) {
         Check.True(HasOutputValues);
 
-        var index = Node.Args.FirstIndexOf(output);
-        Check.False(index == null);
-
-        return ArgValues[index!.Value];
+        return ArgValues[output.ArgumentIndex];
     }
 
     public void Reset() {
@@ -59,24 +56,24 @@ public class EvaluationNode {
         ArgValues.Populate(Empty);
         _dependencyValues.Clear();
 
-        foreach (var functionArg in Node.Args)
-            if (functionArg.ArgType == ArgType.In) {
-                var dataSubscription = Node.Graph.GetDataSubscription(Node, functionArg);
+        foreach (var nodeArg in Node.Args)
+            if (nodeArg.ArgType == ArgType.In) {
+                var dataSubscription = Node.Graph.GetDataSubscription(nodeArg);
 
                 if (dataSubscription != null) {
                     Check.True(
-                        dataSubscription.SubscriberInput == Node.Args[dataSubscription.SubscriberInput.ArgumentIndex]
+                        dataSubscription.Subscriber == Node.Args[dataSubscription.Subscriber.FunctionArg.ArgumentIndex]
                     );
 
                     _dependencyValues.Add(
                         new DependencyValue {
-                            TargetNode = dataSubscription.SourceNode,
-                            Index = dataSubscription.SubscriberInput.ArgumentIndex,
-                            Target = dataSubscription.SourceOutput
+                            TargetNode = dataSubscription.Source.Node,
+                            Index = dataSubscription.Subscriber.FunctionArg.ArgumentIndex,
+                            Target = dataSubscription.Source.FunctionArg
                         });
                 }
-            } else if (functionArg.ArgType == ArgType.Out) {
-                ArgValues[functionArg.ArgumentIndex] = null;
+            } else if (nodeArg.ArgType == ArgType.Out) {
+                ArgValues[nodeArg.FunctionArg.ArgumentIndex] = null;
             } else {
                 Check.Fail();
             }
@@ -118,7 +115,7 @@ public class EvaluationNode {
     private void ValidateArguments() {
         for (var i = 0; i < ArgValues.Length; i++) {
             if (ArgValues[i] == Empty) {
-                throw new ArgumentMissingException(Node, Node.Args[i]);
+                throw new ArgumentMissingException(Node, Node.Args[i].FunctionArg);
             }
         }
     }

@@ -49,20 +49,16 @@ public sealed class Graph {
     }
 
     public void Add(DataSubscription dataSubscription) {
-        Check.True(dataSubscription.SubscriberNode.Graph == this);
-        Check.True(dataSubscription.SourceNode.Graph == this);
+        Check.True(dataSubscription.Subscriber.Node.Graph == this);
+        Check.True(dataSubscription.Source.Node.Graph == this);
 
-        _dataSubscriptions.RemoveAll(_ =>
-            _.SubscriberNode == dataSubscription.SubscriberNode
-            && _.SubscriberInput == dataSubscription.SubscriberInput
-        );
-
+        _dataSubscriptions.RemoveAll(_ => _.Subscriber == dataSubscription.Subscriber);
         _dataSubscriptions.Add(dataSubscription);
     }
 
     public void Remove(DataSubscription dataSubscription) {
-        Check.True(dataSubscription.SubscriberNode.Graph == this);
-        Check.True(dataSubscription.SourceNode.Graph == this);
+        Check.True(dataSubscription.Subscriber.Node.Graph == this);
+        Check.True(dataSubscription.Source.Node.Graph == this);
         _dataSubscriptions.Remove(dataSubscription);
     }
 
@@ -73,16 +69,14 @@ public sealed class Graph {
     public List<DataSubscription> GetDataSubscriptions(Node node) {
         return
             _dataSubscriptions
-                .Where(_ => _.SubscriberNode == node)
+                .Where(_ => _.Subscriber.Node == node)
                 .ToList();
     }
 
-    public DataSubscription? GetDataSubscription(Node node, FunctionArg input) {
-        Debug.Assert.True(() => node.Inputs.Contains(input));
-
+    public DataSubscription? GetDataSubscription(NodeArg subscriber) {
         return
             _dataSubscriptions
-                .SingleOrDefault(_ => _.SubscriberNode == node && _.SubscriberInput == input);
+                .SingleOrDefault(_ => _.Subscriber == subscriber);
     }
 
     public List<Event> GetFiredEvents() {
@@ -120,9 +114,9 @@ public sealed class Graph {
         }
 
         _dataSubscriptions
-            .RemoveAll(_ => _.SubscriberNode == node);
+            .RemoveAll(_ => _.Subscriber.Node == node);
         _dataSubscriptions
-            .RemoveAll(_ => _.SourceNode == node);
+            .RemoveAll(_ => _.Source.Node == node);
         _eventConnections
             .RemoveAll(_ => _.Node == node);
         _eventConnections

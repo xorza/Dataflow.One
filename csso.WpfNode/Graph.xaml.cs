@@ -168,28 +168,26 @@ public partial class Graph : UserControl {
 
         graphView.SelectedPutView = null;
 
-        if (p1.FunctionArg.ArgType == p2.FunctionArg.ArgType)
+        if (p1.NodeArg.ArgType == p2.NodeArg.ArgType)
             return;
         if (p1.NodeView == p2.NodeView)
             return;
         if (p1 == p2)
             return;
-        if (p1.FunctionArg.Type != p2!.FunctionArg.Type &&
-            !p1.FunctionArg.Type.IsSubclassOf(p2.FunctionArg.Type) &&
-            !p2.FunctionArg.Type.IsSubclassOf(p1.FunctionArg.Type))
+        if (p1.NodeArg.Type != p2!.NodeArg.Type &&
+            !p1.NodeArg.Type.IsSubclassOf(p2.NodeArg.Type) &&
+            !p2.NodeArg.Type.IsSubclassOf(p1.NodeArg.Type))
             return;
 
-        var input = p1.FunctionArg.ArgType == ArgType.In ? p1 : p2;
-        var output = p1.FunctionArg.ArgType == ArgType.Out ? p1 : p2;
+        var input = p1.NodeArg.ArgType == ArgType.In ? p1 : p2;
+        var output = p1.NodeArg.ArgType == ArgType.Out ? p1 : p2;
 
         Debug.Assert.True(p1 != p2);
 
         input.NodeView.Node.Graph.Add(
             new DataSubscription(
-                input.NodeView.Node,
-                input.FunctionArg,
-                output.NodeView.Node,
-                output.FunctionArg)
+                input.NodeArg,
+                output.NodeArg)
         );
 
         input.NodeView.GraphVm.Refresh();

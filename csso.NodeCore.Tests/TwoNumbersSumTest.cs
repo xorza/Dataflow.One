@@ -18,24 +18,18 @@ public class TwoNumbersSumTest {
 
         graph.Graph.Add(
             new DataSubscription(
-                graph.OutputNode,
                 graph.OutputNode.Inputs.Single(),
-                graph.AddNode,
                 graph.AddNode.Outputs.Single())
         );
 
         graph.Graph.Add(
             new DataSubscription(
-                graph.AddNode,
                 graph.AddNode.Inputs[0],
-                graph.ConstNode1,
                 graph.ConstNode1.Outputs.Single())
         );
 
         var addToConst2Sub = new DataSubscription(
-            graph.AddNode,
             graph.AddNode.Inputs[1],
-            graph.ConstNode2,
             graph.ConstNode2.Outputs.Single());
         graph.Graph.Add(addToConst2Sub);
 
@@ -57,9 +51,7 @@ public class TwoNumbersSumTest {
         graph.Graph.Remove(addToConst2Sub);
         graph.Graph.Add(
             new DataSubscription(
-                graph.AddNode,
                 graph.AddNode.Inputs[1],
-                graph.FrameNoNode,
                 graph.FrameNoNode.Outputs.Single())
         );
         

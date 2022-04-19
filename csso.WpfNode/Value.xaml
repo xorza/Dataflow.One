@@ -19,12 +19,12 @@
         <StackPanel
             Orientation="Horizontal">
             <TextBlock
-                Text="{Binding ElementName=ThisUserControl, Path=ValueView.PutView.FunctionArg.Name}">
+                Text="{Binding ElementName=ThisUserControl, Path=ValueView.PutView.NodeArg.Name}">
             </TextBlock>
 
             <TextBlock Text=" : " Margin="0"></TextBlock>
             <TextBlock
-                Text="{Binding ElementName=ThisUserControl, Path=ValueView.PutView.FunctionArg.Type}">
+                Text="{Binding ElementName=ThisUserControl, Path=ValueView.PutView.NodeArg.Type}">
             </TextBlock>
         </StackPanel>
 

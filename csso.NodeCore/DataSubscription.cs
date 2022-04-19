@@ -13,11 +13,8 @@ public enum SubscriptionBehavior {
 public class DataSubscription : INotifyPropertyChanged {
     protected DataSubscription() { }
 
-    public FunctionArg SubscriberInput { get; }
-    public Node SubscriberNode { get;  }
-
-    public Node SourceNode { get; }
-    public FunctionArg SourceOutput { get; }
+    public NodeArg Subscriber { get; }
+    public NodeArg Source { get; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -29,32 +26,30 @@ public class DataSubscription : INotifyPropertyChanged {
     private SubscriptionBehavior _behavior = SubscriptionBehavior.Always;
 
 
-    public DataSubscription(
-        Node subscriberNode,
-        FunctionArg subscriberInput,
-        Node sourceNode,
-        FunctionArg sourceOutput) {
-        if (subscriberInput.Type != sourceOutput.Type && !sourceOutput.Type.IsSubclassOf(subscriberInput.Type)) {
+    public DataSubscription(NodeArg a, NodeArg b) {
+        Check.True(a.ArgType != b.ArgType);
+
+        NodeArg subscriber = a.ArgType == ArgType.In ? a : b;
+        NodeArg source = a.ArgType == ArgType.Out ? a : b;
+
+        if (subscriber.Type != source.Type && !source.Type.IsSubclassOf(subscriber.Type)) {
             throw new Exception("type mismatch 4fv56g2456g");
         }
 
-        Check.True(subscriberNode.Inputs.Contains(subscriberInput));
-        Check.True(sourceNode.Outputs.Contains(sourceOutput));
 
-        SubscriberInput = subscriberInput;
-        SubscriberNode = subscriberNode;
-        SourceNode = sourceNode;
-        SourceOutput = sourceOutput;
+        Subscriber = subscriber;
+        Source = source;
     }
+    
 
     internal DataSubscription(Graph graph, SerializedSubscription serialized) {
         Behavior = serialized.Behavior;
-        SubscriberNode = graph.GetNode(serialized.InputNodeId);
-        SubscriberInput = SubscriberNode.Inputs
-            .Single(input => input.ArgumentIndex == serialized.InputIndex);
-        SourceNode = graph.GetNode(serialized.TargetNodeId);
-        SourceOutput = SourceNode.Outputs
-            .Single(output => output.ArgumentIndex == serialized.TargetIndex);
+        // SubscriberNode = graph.GetNode(serialized.InputNodeId);
+        // SubscriberInput = SubscriberNode.Inputs
+        //     .Single(input => input.FunctionArg.ArgumentIndex == serialized.InputIndex);
+        // SourceNode = graph.GetNode(serialized.TargetNodeId);
+        // SourceOutput = SourceNode.Outputs
+        //     .Single(output => output.FunctionArg.ArgumentIndex == serialized.TargetIndex);
     }
 
 
@@ -71,11 +66,11 @@ public class DataSubscription : INotifyPropertyChanged {
     public SerializedSubscription Serialize() {
         SerializedSubscription result = new();
 
-        result.TargetIndex = SourceOutput.ArgumentIndex;
-        result.TargetNodeId = SourceNode.Id;
+        result.TargetIndex = Source.FunctionArg.ArgumentIndex;
+        result.TargetNodeId = Source.Node.Id;
 
-        result.InputIndex = SubscriberInput.ArgumentIndex;
-        result.InputNodeId = SubscriberNode.Id;
+        result.InputIndex = Subscriber.FunctionArg.ArgumentIndex;
+        result.InputNodeId = Subscriber.Node.Id;
 
         result.Behavior = Behavior;
 

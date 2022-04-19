@@ -13,7 +13,7 @@ public class NoLoopValidator {
     }
 
     private void Go(DataSubscription dataSubscription, List<Node> pathBack) {
-        var node = dataSubscription.SourceNode;
+        var node = dataSubscription.Source.Node;
 
         if (pathBack.Contains(node)) {
             throw new Exception("loop detected");

@@ -21,9 +21,7 @@ public class Tests {
     public void Test1() {
         _graph.Graph.Add(
             new DataSubscription(
-                _graph.OutputNode,
                 _graph.OutputNode.Inputs.Single(),
-                _graph.ConstNode1,
                 _graph.ConstNode1.Outputs.Single())
         );
 
@@ -54,10 +52,8 @@ public class Tests {
     public void Test2() {
         _graph.Graph!.Add(
             new DataSubscription(
-                _graph.OutputNode!,
-                _graph.OutputNode!.Inputs.Single(),
-                _graph.FrameNoNode!,
-                _graph.FrameNoNode!.Outputs.Single())
+                _graph.OutputNode.Inputs.Single(),
+                _graph.FrameNoNode.Outputs.Single())
         );
 
         var executor = new Executor(_graph.Graph!);
@@ -76,26 +72,20 @@ public class Tests {
     public void Test3() {
         _graph.Graph!.Add(
             new DataSubscription(
-                _graph.OutputNode!,
-                _graph.OutputNode!.Inputs.Single(),
-                _graph.AddNode!,
-                _graph.AddNode!.Outputs.Single())
+                _graph.OutputNode.Inputs.Single(),
+                _graph.AddNode.Outputs.Single())
         );
 
         _graph.Graph.Add(
             new DataSubscription(
-                _graph.AddNode,
                 _graph.AddNode.Inputs[0],
-                _graph.ConstNode1!,
-                _graph.ConstNode1!.Outputs.Single())
+                _graph.ConstNode1.Outputs.Single())
         );
 
         _graph.Graph.Add(
             new DataSubscription(
-                _graph.AddNode,
                 _graph.AddNode.Inputs[1],
-                _graph.ConstNode2!,
-                _graph.ConstNode2!.Outputs.Single())
+                _graph.ConstNode2.Outputs.Single())
         );
 
         var executor = new Executor(_graph.Graph!);
@@ -114,25 +104,19 @@ public class Tests {
     public void Test4() {
         _graph.Graph.Add(
             new DataSubscription(
-                _graph.OutputNode,
                 _graph.OutputNode.Inputs.Single(),
-                _graph.AddNode!,
-                _graph.AddNode!.Outputs.Single())
+                _graph.AddNode.Outputs.Single())
         );
 
         _graph.Graph.Add(
             new DataSubscription(
-                _graph.AddNode,
                 _graph.AddNode.Inputs[0],
-                _graph.ConstNode1,
                 _graph.ConstNode1.Outputs.Single())
         );
 
         _graph.Graph.Add(
             new DataSubscription(
-                _graph.AddNode,
                 _graph.AddNode.Inputs[1],
-                _graph.FrameNoNode!,
                 _graph.FrameNoNode!.Outputs.Single())
         );
 
@@ -163,26 +147,20 @@ public class Tests {
     [Test]
     public void Test5() {
         var connection = new DataSubscription(
-            _graph.OutputNode,
             _graph.OutputNode.Inputs.Single(),
-            _graph.AddNode!,
-            _graph.AddNode!.Outputs.Single());
+            _graph.AddNode.Outputs.Single());
         _graph.Graph.Add(connection);
         connection.Behavior = SubscriptionBehavior.Once;
 
         _graph.Graph.Add(
             new DataSubscription(
-                _graph.AddNode,
                 _graph.AddNode.Inputs[0],
-                _graph.ConstNode1,
                 _graph.ConstNode1.Outputs.Single()));
 
         _graph.Graph.Add(
             new DataSubscription(
-                _graph.AddNode,
                 _graph.AddNode.Inputs[1],
-                _graph.FrameNoNode!,
-                _graph.FrameNoNode!.Outputs.Single()));
+                _graph.FrameNoNode.Outputs.Single()));
 
         var executor = new Executor(_graph.Graph);
         _graph.FrameNoFunc.Executor = executor;
@@ -210,9 +188,7 @@ public class Tests {
     public void Test6() {
         _graph.Graph.Add(
             new DataSubscription(
-        _graph.OutputNode,
             _graph.OutputNode.Inputs.Single(),
-            _graph.ConstNode2,
             _graph.ConstNode2.Outputs.Single()));
 
         var executor = new Executor(_graph.Graph);
@@ -234,24 +210,18 @@ public class Tests {
     public void Test7() {
         _graph.Graph.Add(
             new DataSubscription(
-        _graph.OutputNode,
             _graph.OutputNode.Inputs.Single(),
-            _graph.AddNode!,
-            _graph.AddNode!.Outputs.Single()));
+            _graph.AddNode.Outputs.Single()));
         
         _graph.Graph.Add(
             new DataSubscription(
-        _graph.AddNode,
             _graph.AddNode.Inputs[0],
-            _graph.FrameNoNode!,
             _graph.FrameNoNode!.Outputs.Single()));
         
         _graph.Graph.Add(
             new DataSubscription(
-        _graph.AddNode,
             _graph.AddNode.Inputs[1],
-            _graph.FrameNoNode!,
-            _graph.FrameNoNode!.Outputs.Single()));
+            _graph.FrameNoNode.Outputs.Single()));
 
         var executor = new Executor(_graph.Graph);
         _graph.FrameNoFunc.Executor = executor;

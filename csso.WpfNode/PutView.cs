@@ -13,8 +13,8 @@ public sealed class PutView : INotifyPropertyChanged {
     private Point _pinPoint;
 
 
-    public PutView(FunctionArg functionArg, NodeView nodeView) {
-        FunctionArg = functionArg;
+    public PutView(NodeArg nodeArg, NodeView nodeView) {
+        NodeArg = nodeArg;
         NodeView = nodeView;
     }
 
@@ -28,11 +28,11 @@ public sealed class PutView : INotifyPropertyChanged {
         }
     }
 
-    public ArgType ArgType => FunctionArg.ArgType;
+    public ArgType ArgType => NodeArg.ArgType;
     public bool IsInput => ArgType == ArgType.In;
     public bool IsOutput => ArgType == ArgType.Out;
 
-    public FunctionArg FunctionArg { get; }
+    public NodeArg NodeArg { get; }
 
     public Point PinPoint {
         get => _pinPoint;

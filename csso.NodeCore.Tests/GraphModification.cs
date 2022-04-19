@@ -32,18 +32,14 @@ public class GraphModification {
 
         _graph.Add(
             new DataSubscription(
-                _outputNode!,
-                _outputNode!.Inputs.Single(),
-                _addNode!,
-                _addNode!.Outputs.Single())
+                _outputNode.Inputs.Single(),
+                _addNode.Outputs.Single())
         );
 
         _graph.Add(
             new DataSubscription(
-                _addNode!,
-                _addNode!.Inputs[0],
-                _frameNoNode!,
-                _frameNoNode!.Outputs.Single())
+                _addNode.Inputs[0],
+                _frameNoNode.Outputs.Single())
         );
 
         var alwaysEvent = new AlwaysEvent();
@@ -64,9 +60,7 @@ public class GraphModification {
 
         _graph!.Add(
             new DataSubscription(
-                _addNode!,
                 _addNode!.Inputs[1],
-                _constNode1!,
                 _constNode1!.Outputs.Single())
         );
 

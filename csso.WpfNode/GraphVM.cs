@@ -147,11 +147,11 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
         _edges.Clear();
         foreach (var binding in Graph.DataSubscriptions) {
-            var inputNode = GetNodeView(binding.SubscriberNode);
-            var outputNode = GetNodeView(binding.SourceNode);
+            var inputNode = GetNodeView(binding.Subscriber.Node);
+            var outputNode = GetNodeView(binding.Source.Node);
 
-            var input = inputNode.Inputs.Single(_ => _.FunctionArg == binding.SubscriberInput);
-            var output = outputNode.Outputs.Single(_ => _.FunctionArg == binding.SourceOutput);
+            var input = inputNode.Inputs.Single(_ => _.NodeArg == binding.Subscriber);
+            var output = outputNode.Outputs.Single(_ => _.NodeArg == binding.Source);
 
             _edges.Add(new EdgeView(binding, input, output));
         }
@@ -201,7 +201,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
 
                 foreach (var output in nodeView.Inputs) {
-                    var index = output.FunctionArg.ArgumentIndex;
+                    var index = output.NodeArg.FunctionArg.ArgumentIndex;
                     var value = en.ArgValues?[index];
                     nodeView.Values.Add(
                         ValueView.FromValue(output, value)
@@ -209,7 +209,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
                 }
 
                 foreach (var output in nodeView.Outputs) {
-                    var index = output.FunctionArg.ArgumentIndex;
+                    var index = output.NodeArg.FunctionArg.ArgumentIndex;
                     var value = en.ArgValues?[index];
                     nodeView.Values.Add(
                         ValueView.FromValue(output, value)

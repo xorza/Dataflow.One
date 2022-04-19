@@ -7,7 +7,7 @@ namespace csso.NodeCore;
 
 public abstract class Node : INotifyPropertyChanged {
     private readonly List<Event> _events = new();
-    
+
     public Guid Id { get; protected set; }
 
     protected Node(Guid id) {
@@ -20,10 +20,10 @@ public abstract class Node : INotifyPropertyChanged {
 
     public Graph Graph { get; internal set; }
 
-    public IReadOnlyList<FunctionArg> Inputs { get; protected set; }
-    public IReadOnlyList<FunctionArg> Outputs { get; protected set; }
+    public IReadOnlyList<NodeArg> Inputs => Args.Where(_ => _.ArgType == ArgType.In).ToList();
+    public IReadOnlyList<NodeArg> Outputs => Args.Where(_ => _.ArgType == ArgType.Out).ToList();
     public IReadOnlyList<Event> Events => _events.AsReadOnly();
-    public IReadOnlyList<FunctionArg> Args { get; protected set; }
+    public IReadOnlyList<NodeArg> Args { get; protected set; }
 
     public void Add(Event @event) {
         @event.Owner = this;
@@ -51,9 +51,12 @@ public sealed class FunctionNode : Node {
 
             Behavior = _function.Behavior;
             Name = _function.Name;
-            Inputs = _function.Inputs;
-            Outputs = _function.Outputs;
-            Args = _function.Args;
+            Args = _function.Args
+                .Select(_ => new NodeArg() {
+                    Node = this,
+                    FunctionArg = _
+                })
+                .ToList();
         }
     }
 
@@ -82,7 +85,7 @@ public sealed class FunctionNode : Node {
     internal FunctionNode(
         FunctionFactory functionFactory,
         SerializedFunctionNode serialized
-        ) : base(serialized.Id) {
+    ) : base(serialized.Id) {
         Name = serialized.Name;
 
         if (serialized.FunctionId != null) {
