@@ -8,22 +8,19 @@ namespace csso.NodeCore;
 public abstract class Node : INotifyPropertyChanged {
     private readonly List<Event> _events = new();
 
-    public Guid Id { get; protected set; }
+    public Guid Id { get; }
+    public string Name { get; protected set; }
+    public abstract FunctionBehavior Behavior { get; set; }
+    public Graph Graph { get; internal set; }
 
     protected Node(Guid id) {
         Id = id;
     }
 
-    public string Name { get; set; }
-
-    public abstract FunctionBehavior Behavior { get; set; }
-
-    public Graph Graph { get; internal set; }
-
     public IReadOnlyList<NodeArg> Inputs => Args.Where(_ => _.ArgType == ArgType.In).ToList();
     public IReadOnlyList<NodeArg> Outputs => Args.Where(_ => _.ArgType == ArgType.Out).ToList();
     public IReadOnlyList<Event> Events => _events.AsReadOnly();
-    public IReadOnlyList<NodeArg> Args { get; protected set; }
+    public IReadOnlyList<NodeArg> Args { get; protected set; } = new List<NodeArg>();
 
     public void Add(Event @event) {
         @event.Owner = this;
@@ -57,6 +54,9 @@ public sealed class FunctionNode : Node {
                     FunctionArg = _
                 })
                 .ToList();
+            
+            OnPropertyChanged(nameof(Args));
+            OnPropertyChanged(nameof(Name));
         }
     }
 
