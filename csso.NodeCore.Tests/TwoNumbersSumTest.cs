@@ -41,12 +41,88 @@ public class TwoNumbersSumTest {
         _executor.Run();
         Assert.AreEqual(1256, _graph.OutputFunc.Value);
 
-        var addEvaluationNode = _executor.GetEvaluationNode(_graph.AddNode);
-        var frameNoEvaluationNode = _executor.GetEvaluationNode(_graph.FrameNoNode);
-        var reactiveConstEvaluationNode = _executor.GetEvaluationNode(_graph.ReactiveConstNode);
-        Assert.True(frameNoEvaluationNode.State == EvaluationState.Idle);
-        Assert.True(reactiveConstEvaluationNode.State == EvaluationState.Invoked);
-        Assert.True(addEvaluationNode.State == EvaluationState.Invoked);
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.ProactiveConstNode).State,
+            EvaluationState.Invoked
+        );
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.ReactiveConstNode).State,
+            EvaluationState.Invoked
+        );
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.AddNode).State,
+            EvaluationState.Invoked
+        );
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.FrameNoNode).State,
+            EvaluationState.Idle
+        );
+
+        Assert.Pass();
+    }
+    
+    [Test]
+    public void fully_reactive_graph_first_run() {
+        _graph.Graph.Add(
+            new DataSubscription(
+                _graph.AddNode.Inputs[1],
+                _graph.ReactiveConstNode.Outputs.Single())
+        );
+        
+        
+        _executor.Run();
+        Assert.AreEqual(6, _graph.OutputFunc.Value);
+
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.ProactiveConstNode).State,
+            EvaluationState.Idle
+        );
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.ReactiveConstNode).State,
+            EvaluationState.Invoked
+        );
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.AddNode).State,
+            EvaluationState.Invoked
+        );
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.FrameNoNode).State,
+            EvaluationState.Idle
+        );
+
+        Assert.Pass();
+    }
+    
+    [Test]
+    public void fully_reactive_graph_second_run() {
+        _graph.Graph.Add(
+            new DataSubscription(
+                _graph.AddNode.Inputs[1],
+                _graph.ReactiveConstNode.Outputs.Single())
+        );
+        
+        
+        _executor.Run();
+        
+        _executor.Run();
+        Assert.AreEqual(6, _graph.OutputFunc.Value);
+
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.ProactiveConstNode).State,
+            EvaluationState.Idle
+        );
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.ReactiveConstNode).State,
+            EvaluationState.Processed
+        );
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.AddNode).State,
+            EvaluationState.Processed
+        );
+        Assert.AreEqual(
+            _executor.GetEvaluationNode(_graph.FrameNoNode).State,
+            EvaluationState.Idle
+        );
 
         Assert.Pass();
     }
@@ -59,13 +135,23 @@ public class TwoNumbersSumTest {
             _executor.Run();
             Assert.AreEqual(1256, _graph.OutputFunc.Value);
 
-            var addEvaluationNode = _executor.GetEvaluationNode(_graph.AddNode);
-            var frameNoEvaluationNode = _executor.GetEvaluationNode(_graph.FrameNoNode);
-            var reactiveConstEvaluationNode = _executor.GetEvaluationNode(_graph.ReactiveConstNode);
 
-            Assert.True(reactiveConstEvaluationNode.State == EvaluationState.Processed);
-            Assert.True(addEvaluationNode.State == EvaluationState.Invoked);
-            Assert.True(frameNoEvaluationNode.State == EvaluationState.Idle);
+            Assert.AreEqual(
+                _executor.GetEvaluationNode(_graph.ProactiveConstNode).State,
+                EvaluationState.Invoked
+            );
+            Assert.AreEqual(
+                _executor.GetEvaluationNode(_graph.ReactiveConstNode).State,
+                EvaluationState.Processed
+            );
+            Assert.AreEqual(
+                _executor.GetEvaluationNode(_graph.AddNode).State,
+                EvaluationState.Invoked
+            );
+            Assert.AreEqual(
+                _executor.GetEvaluationNode(_graph.FrameNoNode).State,
+                EvaluationState.Idle
+            );
         }
 
         Assert.Pass();

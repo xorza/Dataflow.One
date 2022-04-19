@@ -96,9 +96,6 @@ public class EvaluationNode {
         if (State == EvaluationState.Invoked) return;
 
         Check.True(State == EvaluationState.ArgumentsSet);
-        Check.False(HasOutputValues
-                    && !ArgumentsUpdatedThisFrame
-                    && Behavior != FunctionBehavior.Proactive);
 
         {
             Stopwatch sw = new();
