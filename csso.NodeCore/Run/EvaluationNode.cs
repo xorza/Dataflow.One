@@ -31,7 +31,7 @@ public class EvaluationNode {
     public EvaluationState State { get; private set; } = EvaluationState.Idle;
     public double ExecutionTime { get; private set; } = double.NaN;
 
-    public object? GetOutputValue(FunctionOutput output) {
+    public object? GetOutputValue(FunctionArg output) {
         Check.True(HasOutputValues);
 
         var index = Node.Args.FirstIndexOf(output);
@@ -60,22 +60,22 @@ public class EvaluationNode {
         _dependencyValues.Clear();
 
         foreach (var functionArg in Node.Args)
-            if (functionArg is FunctionInput inputArg) {
-                var dataSubscription = Node.Graph.GetDataSubscription(Node, inputArg);
+            if (functionArg.ArgType == ArgType.In) {
+                var dataSubscription = Node.Graph.GetDataSubscription(Node, functionArg);
 
                 if (dataSubscription != null) {
                     Check.True(
-                        dataSubscription.Input == Node.Args[dataSubscription.Input.ArgumentIndex]
+                        dataSubscription.SubscriberInput == Node.Args[dataSubscription.SubscriberInput.ArgumentIndex]
                     );
 
                     _dependencyValues.Add(
                         new DependencyValue {
-                            TargetNode = dataSubscription.TargetNode,
-                            Index = dataSubscription.Input.ArgumentIndex,
-                            Target = dataSubscription.Target
+                            TargetNode = dataSubscription.SourceNode,
+                            Index = dataSubscription.SubscriberInput.ArgumentIndex,
+                            Target = dataSubscription.SourceOutput
                         });
                 }
-            } else if (functionArg is FunctionOutput) {
+            } else if (functionArg.ArgType == ArgType.Out) {
                 ArgValues[functionArg.ArgumentIndex] = null;
             } else {
                 Check.Fail();
@@ -118,7 +118,7 @@ public class EvaluationNode {
     private void ValidateArguments() {
         for (var i = 0; i < ArgValues.Length; i++) {
             if (ArgValues[i] == Empty) {
-                throw new ArgumentMissingException(Node, (FunctionInput) Node.Args[i]);
+                throw new ArgumentMissingException(Node, Node.Args[i]);
             }
         }
     }
@@ -128,6 +128,6 @@ public class EvaluationNode {
     private struct DependencyValue {
         public int Index { get; set; }
         public Node TargetNode { get; set; }
-        public FunctionOutput Target { get; set; }
+        public FunctionArg Target { get; set; }
     }
 }

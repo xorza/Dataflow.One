@@ -103,7 +103,7 @@ public class Executor {
         Stack<Node> paths = new();
         while (yetToProcessNodes.TryDequeue(out var node)) {
             Graph.GetDataSubscriptions(node)
-                .Select(_ => _.TargetNode)
+                .Select(_ => _.SourceNode)
                 .ForEach(yetToProcessNodes.Enqueue);
 
             paths.Push(node);
@@ -119,12 +119,12 @@ public class Executor {
         }
 
         foreach (var binding in Graph.GetDataSubscriptions(evaluationNode.Node)) {
-            if (binding.TargetNode.Behavior == FunctionBehavior.Proactive) {
+            if (binding.SourceNode.Behavior == FunctionBehavior.Proactive) {
                 evaluationNode.Process(true);
                 return;
             }
 
-            var targetEvaluationNode = GetEvaluationNode(binding.TargetNode);
+            var targetEvaluationNode = GetEvaluationNode(binding.SourceNode);
             Check.True(targetEvaluationNode.State >= EvaluationState.Processed);
 
             if (targetEvaluationNode.ArgumentsUpdatedThisFrame) {
@@ -148,7 +148,7 @@ public class Executor {
             invocationList.Push(evaluationNode);
 
             foreach (var binding in Graph.GetDataSubscriptions(evaluationNode.Node)) {
-                var targetEvaluationNode = GetEvaluationNode(binding.TargetNode);
+                var targetEvaluationNode = GetEvaluationNode(binding.SourceNode);
 
                 if (!targetEvaluationNode.HasOutputValues) {
                     yetToProcessENodes.Enqueue(targetEvaluationNode);

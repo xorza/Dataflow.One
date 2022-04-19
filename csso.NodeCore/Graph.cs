@@ -47,16 +47,22 @@ public sealed class Graph {
         Check.True(eventEventSubscription.Event.Owner.Graph == this);
         _eventConnections.Add(eventEventSubscription);
     }
-    
+
     public void Add(DataSubscription dataSubscription) {
         Check.True(dataSubscription.SubscriberNode.Graph == this);
-        Check.True(dataSubscription.TargetNode.Graph == this);
+        Check.True(dataSubscription.SourceNode.Graph == this);
+
+        _dataSubscriptions.RemoveAll(_ =>
+            _.SubscriberNode == dataSubscription.SubscriberNode
+            && _.SubscriberInput == dataSubscription.SubscriberInput
+        );
+
         _dataSubscriptions.Add(dataSubscription);
     }
 
     public void Remove(DataSubscription dataSubscription) {
         Check.True(dataSubscription.SubscriberNode.Graph == this);
-        Check.True(dataSubscription.TargetNode.Graph == this);
+        Check.True(dataSubscription.SourceNode.Graph == this);
         _dataSubscriptions.Remove(dataSubscription);
     }
 
@@ -71,12 +77,12 @@ public sealed class Graph {
                 .ToList();
     }
 
-    public DataSubscription? GetDataSubscription(Node node, FunctionInput input) {
+    public DataSubscription? GetDataSubscription(Node node, FunctionArg input) {
         Debug.Assert.True(() => node.Inputs.Contains(input));
 
         return
             _dataSubscriptions
-                .SingleOrDefault(_ => _.SubscriberNode == node && _.Input == input);
+                .SingleOrDefault(_ => _.SubscriberNode == node && _.SubscriberInput == input);
     }
 
     public List<Event> GetFiredEvents() {
@@ -116,7 +122,7 @@ public sealed class Graph {
         _dataSubscriptions
             .RemoveAll(_ => _.SubscriberNode == node);
         _dataSubscriptions
-            .RemoveAll(_ => _.TargetNode == node);
+            .RemoveAll(_ => _.SourceNode == node);
         _eventConnections
             .RemoveAll(_ => _.Node == node);
         _eventConnections

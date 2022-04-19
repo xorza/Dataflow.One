@@ -29,8 +29,8 @@ public class Function {
     public string Name { get; private set; }
     public Guid? Id { get; private set; }
     public Delegate Delegate { get; private set; }
-    public IReadOnlyList<FunctionInput> Inputs { get; private set; }
-    public IReadOnlyList<FunctionOutput> Outputs { get; private set; }
+    public IReadOnlyList<FunctionArg> Inputs => Args.Where(_ => _.ArgType == ArgType.In).ToList();
+    public IReadOnlyList<FunctionArg> Outputs => Args.Where(_ => _.ArgType == ArgType.Out).ToList();
     public IReadOnlyList<FunctionArg> Args { get; private set; }
     public FunctionBehavior Behavior { get; private set; }
     public string Description { get; private set; }
@@ -76,19 +76,16 @@ public class Function {
 
             FunctionArg arg;
 
-            var outputAttribute =
-                Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) as OutputAttribute;
-            if (outputAttribute != null) {
-                arg = new FunctionOutput(argName, argType, i);
+            if (Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) is OutputAttribute outputAttribute) {
+                arg = new FunctionArg(argName, ArgType.Out, argType, i);
             } else {
-                arg = new FunctionInput(argName, argType, i);
+                arg = new FunctionArg(argName, ArgType.In, argType, i);
             }
+
+            arg.Function = this;
 
             args.Add(arg);
         }
-
-        Inputs = args.OfType<FunctionInput>().ToList().AsReadOnly();
-        Outputs = args.OfType<FunctionOutput>().ToList().AsReadOnly();
     }
 
     public void Invoke(object?[]? args) {

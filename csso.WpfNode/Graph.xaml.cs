@@ -187,9 +187,9 @@ public partial class Graph : UserControl {
         input.NodeView.Node.Graph.Add(
             new DataSubscription(
                 input.NodeView.Node,
-                (FunctionInput) input.FunctionArg,
+                input.FunctionArg,
                 output.NodeView.Node,
-                (FunctionOutput) output.FunctionArg)
+                output.FunctionArg)
         );
 
         input.NodeView.GraphVm.Refresh();

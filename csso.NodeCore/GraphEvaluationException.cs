@@ -5,12 +5,12 @@ public class GraphEvaluationException : Exception {
 }
 
 public class ArgumentMissingException : GraphEvaluationException {
-    public ArgumentMissingException(Node node, FunctionInput input)
+    public ArgumentMissingException(Node node, FunctionArg input)
         : base("Function input not provided.") {
         Node = node;
         Input = input;
     }
 
     public Node Node { get; }
-    public FunctionInput Input { get; }
+    public FunctionArg Input { get; }
 }

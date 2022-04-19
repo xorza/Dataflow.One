@@ -148,10 +148,10 @@ public sealed class GraphVM : INotifyPropertyChanged {
         _edges.Clear();
         foreach (var binding in Graph.DataSubscriptions) {
             var inputNode = GetNodeView(binding.SubscriberNode);
-            var outputNode = GetNodeView(binding.TargetNode);
+            var outputNode = GetNodeView(binding.SourceNode);
 
-            var input = inputNode.Inputs.Single(_ => _.FunctionArg == binding.Input);
-            var output = outputNode.Outputs.Single(_ => _.FunctionArg == binding.Target);
+            var input = inputNode.Inputs.Single(_ => _.FunctionArg == binding.SubscriberInput);
+            var output = outputNode.Outputs.Single(_ => _.FunctionArg == binding.SourceOutput);
 
             _edges.Add(new EdgeView(binding, input, output));
         }

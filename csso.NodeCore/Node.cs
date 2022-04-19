@@ -6,10 +6,7 @@ using csso.NodeCore.Annotations;
 namespace csso.NodeCore;
 
 public abstract class Node : INotifyPropertyChanged {
-
-    
     private readonly List<Event> _events = new();
-    
     
     public Guid Id { get; protected set; }
 
@@ -23,8 +20,8 @@ public abstract class Node : INotifyPropertyChanged {
 
     public Graph Graph { get; internal set; }
 
-    public IReadOnlyList<FunctionInput> Inputs { get; protected set; }
-    public IReadOnlyList<FunctionOutput> Outputs { get; protected set; }
+    public IReadOnlyList<FunctionArg> Inputs { get; protected set; }
+    public IReadOnlyList<FunctionArg> Outputs { get; protected set; }
     public IReadOnlyList<Event> Events => _events.AsReadOnly();
     public IReadOnlyList<FunctionArg> Args { get; protected set; }
 
@@ -40,19 +37,6 @@ public abstract class Node : INotifyPropertyChanged {
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-    
-    // public BindingDataSubscription AddConnection(FunctionInput selfInput, Node outputNode, FunctionOutput nodeOutput) {
-    //     BindingDataSubscription dataSubscription = new(
-    //         this,
-    //         selfInput,
-    //         outputNode,
-    //         nodeOutput);
-    //
-    //     Add(dataSubscription);
-    //
-    //     return dataSubscription;
-    // }
-    
 }
 
 public sealed class FunctionNode : Node {

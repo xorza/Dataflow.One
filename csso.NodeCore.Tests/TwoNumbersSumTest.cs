@@ -18,7 +18,7 @@ public class TwoNumbersSumTest {
 
         graph.Graph.Add(
             new DataSubscription(
-                graph.OutputNode!,
+                graph.OutputNode,
                 graph.OutputNode.Inputs.Single(),
                 graph.AddNode,
                 graph.AddNode.Outputs.Single())
@@ -39,7 +39,7 @@ public class TwoNumbersSumTest {
             graph.ConstNode2.Outputs.Single());
         graph.Graph.Add(addToConst2Sub);
 
-        var executor = new Executor(graph.Graph!);
+        var executor = new Executor(graph.Graph);
         graph.FrameNoFunc.Executor = executor;
 
 
@@ -58,13 +58,13 @@ public class TwoNumbersSumTest {
         graph.Graph.Add(
             new DataSubscription(
                 graph.AddNode,
-                graph.AddNode.Inputs[0],
+                graph.AddNode.Inputs[1],
                 graph.FrameNoNode,
                 graph.FrameNoNode.Outputs.Single())
         );
         
         executor.Run();
-        Assert.AreEqual(1256, graph.OutputFunc.Value);
+        Assert.AreEqual(4, graph.OutputFunc.Value);
 
 
         Assert.Pass();
