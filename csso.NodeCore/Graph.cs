@@ -6,12 +6,10 @@ public sealed class Graph {
     private readonly List<Node> _nodes = new();
     private readonly Queue<Event> _eventsToProcess = new();
 
-    private readonly List<EventSubscription> _eventConnections = new();
-
-    public IReadOnlyList<EventSubscription> Subscriptions => _eventConnections.AsReadOnly();
+    private readonly List<EventSubscription> _eventSubscriptions = new();
+    public IReadOnlyList<EventSubscription> EventSubscriptions => _eventSubscriptions.AsReadOnly();
 
     private readonly List<DataSubscription> _dataSubscriptions = new();
-
     public IReadOnlyList<DataSubscription> DataSubscriptions => _dataSubscriptions.AsReadOnly();
 
 
@@ -45,7 +43,7 @@ public sealed class Graph {
     public void Add(EventSubscription eventEventSubscription) {
         Check.True(eventEventSubscription.Node.Graph == this);
         Check.True(eventEventSubscription.Event.Owner.Graph == this);
-        _eventConnections.Add(eventEventSubscription);
+        _eventSubscriptions.Add(eventEventSubscription);
     }
 
     public void Add(DataSubscription dataSubscription) {
@@ -60,6 +58,11 @@ public sealed class Graph {
         Check.True(dataSubscription.Subscriber.Node.Graph == this);
         Check.True(dataSubscription.Source.Node.Graph == this);
         _dataSubscriptions.Remove(dataSubscription);
+    }
+
+    public void RemoveSubscription(NodeArg subscriber) {
+        Check.True(subscriber.ArgType == ArgType.In);
+        _dataSubscriptions.RemoveAll(_ => _.Subscriber == subscriber);
     }
 
     public void Fire(Event @event) {
@@ -82,7 +85,7 @@ public sealed class Graph {
     public List<Event> GetFiredEvents() {
         var list = new List<Event>();
 
-        Subscriptions
+        EventSubscriptions
             .Select(_ => _.Event)
             .OfType<AlwaysEvent>()
             .ForEach(list.Add);
@@ -93,7 +96,7 @@ public sealed class Graph {
     }
 
     public List<Node> GetSubscribers(Event @event) {
-        return _eventConnections
+        return _eventSubscriptions
             .Where(_ => _.Event == @event)
             .Select(_ => _.Node)
             .ToList();
@@ -117,9 +120,9 @@ public sealed class Graph {
             .RemoveAll(_ => _.Subscriber.Node == node);
         _dataSubscriptions
             .RemoveAll(_ => _.Source.Node == node);
-        _eventConnections
+        _eventSubscriptions
             .RemoveAll(_ => _.Node == node);
-        _eventConnections
+        _eventSubscriptions
             .RemoveAll(_ => _.Event.Owner == node);
     }
 

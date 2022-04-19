@@ -7,8 +7,7 @@ using NUnit.Framework;
 namespace csso.NodeCore.Tests;
 
 public class Tests {
-   private  TestGraph _graph = new TestGraph();
-
+    private TestGraph _graph = null!;
 
     [SetUp]
     public void Setup() {
@@ -188,8 +187,8 @@ public class Tests {
     public void Test6() {
         _graph.Graph.Add(
             new DataSubscription(
-            _graph.OutputNode.Inputs.Single(),
-            _graph.ConstNode2.Outputs.Single()));
+                _graph.OutputNode.Inputs.Single(),
+                _graph.ConstNode2.Outputs.Single()));
 
         var executor = new Executor(_graph.Graph);
         _graph.FrameNoFunc.Executor = executor;
@@ -210,18 +209,18 @@ public class Tests {
     public void Test7() {
         _graph.Graph.Add(
             new DataSubscription(
-            _graph.OutputNode.Inputs.Single(),
-            _graph.AddNode.Outputs.Single()));
-        
+                _graph.OutputNode.Inputs.Single(),
+                _graph.AddNode.Outputs.Single()));
+
         _graph.Graph.Add(
             new DataSubscription(
-            _graph.AddNode.Inputs[0],
-            _graph.FrameNoNode!.Outputs.Single()));
-        
+                _graph.AddNode.Inputs[0],
+                _graph.FrameNoNode!.Outputs.Single()));
+
         _graph.Graph.Add(
             new DataSubscription(
-            _graph.AddNode.Inputs[1],
-            _graph.FrameNoNode.Outputs.Single()));
+                _graph.AddNode.Inputs[1],
+                _graph.FrameNoNode.Outputs.Single()));
 
         var executor = new Executor(_graph.Graph);
         _graph.FrameNoFunc.Executor = executor;

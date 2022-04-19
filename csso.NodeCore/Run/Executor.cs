@@ -4,22 +4,6 @@ using Debug = csso.Common.Debug;
 
 namespace csso.NodeCore.Run;
 
-internal static class Xtensions {
-    public static Int32? FirstIndexOf<T>(this IEnumerable<T> enumerable, T element) {
-        var i = 0;
-
-        foreach (var item in enumerable) {
-            if (item == null && element == null)
-                return i;
-            if (element?.Equals(item) ?? item?.Equals(element) ?? false)
-                return i;
-            ++i;
-        }
-
-        return null;
-    }
-}
-
 public class Executor {
     public Executor(Graph graph) {
         Graph = graph;
