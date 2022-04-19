@@ -3,8 +3,7 @@ namespace csso.NodeCore;
 public class FunctionFactory {
     private readonly Dictionary<Guid, Function> _functionsById = new();
     private readonly Dictionary<String, Function> _functionsByName = new();
-
-
+    
     public Function Get(String functionName) {
         if (_functionsByName.TryGetValue(functionName, out var func)) return func;
 
