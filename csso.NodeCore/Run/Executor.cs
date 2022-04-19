@@ -165,11 +165,14 @@ public class Executor : IArgumentProvider {
                     continue;
                 }
 
-                if (binding.Behavior == SubscriptionBehavior.Once) continue;
+                if (binding.Behavior == SubscriptionBehavior.Once) {
+                    continue;
+                }
 
                 if (targetEvaluationNode.ShouldInvokeThisFrame
-                    || targetEvaluationNode.Behavior == FunctionBehavior.Proactive)
+                    || targetEvaluationNode.Behavior == FunctionBehavior.Proactive) {
                     yetToProcessENodes.Enqueue(targetEvaluationNode);
+                }
             }
         }
 
