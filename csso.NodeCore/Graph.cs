@@ -148,10 +148,6 @@ public sealed class Graph {
 
         return result;
     }
-
-    public Node GetNode(Guid id) {
-        return Nodes.Single(node => node.Id == id);
-    }
 }
 
 public struct SerializedGraph {

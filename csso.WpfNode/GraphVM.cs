@@ -193,8 +193,11 @@ public sealed class GraphVM : INotifyPropertyChanged {
     }
 
     public void OnExecuted(Executor executor) {
-        foreach (var nodeView in Nodes)
-            if (executor.TryGetEvaluationNode(nodeView.Node, out var en)) {
+        foreach (var nodeView in Nodes) {
+            var en = executor.EvaluationNodes
+                .SingleOrDefault(_ => _.Node == nodeView.Node);
+
+            if (en != null) {
                 nodeView.ExecutionTime = en!.ExecutionTime;
 
                 nodeView.Values.Clear();
@@ -216,6 +219,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
                     );
                 }
             }
+        }
     }
 }
 

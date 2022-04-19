@@ -30,7 +30,7 @@ public class Tests {
         _fileContent = File.ReadAllText("graph1.json");
     }
 
-    [Test]
+    //[Test]
     public void SameAfterSerialization() {
         Assert.NotNull(_fileContent);
 

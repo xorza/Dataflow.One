@@ -35,7 +35,8 @@ public class Executor : IArgumentProvider {
 
     public Int32 FrameNo { get; private set; }
 
-    public List<EvaluationNode> EvaluationNodes { get; private set; } = new();
+    private List<EvaluationNode> _evaluationNodes = new();
+    public IReadOnlyList<EvaluationNode> EvaluationNodes => _evaluationNodes.AsReadOnly();
 
     public Graph Graph { get; }
 
@@ -44,17 +45,10 @@ public class Executor : IArgumentProvider {
 
         if (result == null) {
             result = new EvaluationNode(this, node);
-            EvaluationNodes.Add(result);
+            _evaluationNodes.Add(result);
         }
 
         return result;
-    }
-
-    public bool TryGetEvaluationNode(Node node, out EvaluationNode? evaluationNode) {
-        var result = EvaluationNodes.SingleOrDefault(_ => _.Node == node);
-
-        evaluationNode = result;
-        return result != null;
     }
 
     public void Run() {
@@ -96,7 +90,7 @@ public class Executor : IArgumentProvider {
 
         ValidateNodeOrder(Graph, newEvaluationNodes);
 
-        EvaluationNodes = newEvaluationNodes;
+        _evaluationNodes = newEvaluationNodes;
         EvaluationNodes.ForEach(_ => _.Reset());
     }
 
@@ -131,6 +125,7 @@ public class Executor : IArgumentProvider {
         if (evaluationNode.State == EvaluationState.Processed) {
             return;
         }
+
         Check.True(evaluationNode.State < EvaluationState.ArgumentsSet);
 
         foreach (var binding in Graph.GetDataSubscriptions(evaluationNode.Node)) {
