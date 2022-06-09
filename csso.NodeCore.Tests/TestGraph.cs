@@ -5,8 +5,8 @@ namespace csso.NodeCore.Tests;
 
 public class TestGraph {
     public Function AddFunc { get; } = new("Add", F.Add);
-    public ValueFunc<Int32> ReactiveConstFunc { get; } = new();
-    public ValueFunc<Int32> ProactiveConstFunc { get; } = new();
+    public ConstantFunc<Int32> ReactiveConstFunc { get; } = new();
+    public ConstantFunc<Int32> ProactiveConstFunc { get; } = new();
     public OutputFunc<Int32> OutputFunc { get; } = new();
 
     public FrameNoFunc FrameNoFunc { get; } = new();

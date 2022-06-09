@@ -32,6 +32,7 @@ public abstract class EditableValueView : INotifyPropertyChanged {
         }
     }
 
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
@@ -43,26 +44,26 @@ public abstract class EditableValueView : INotifyPropertyChanged {
 }
 
 public class EditableValueView<T> : EditableValueView {
-    private readonly ValueFunc<T> _valueFunc;
+    private readonly ConstantFunc<T> _constantFunc;
 
-    public EditableValueView(ValueFunc<T> valueFunc) : base(typeof(T)) {
-        _valueFunc = valueFunc;
+    public EditableValueView(ConstantFunc<T> constantFunc) : base(typeof(T)) {
+        _constantFunc = constantFunc;
     }
 
     public T? Value {
-        get => _valueFunc.TypedValue;
+        get => _constantFunc.TypedValue;
         set {
-            if (EqualityComparer<T>.Default.Equals(value, _valueFunc.TypedValue)) {
+            if (EqualityComparer<T>.Default.Equals(value, _constantFunc.TypedValue)) {
                 return;
             }
 
-            _valueFunc.TypedValue = value;
+            _constantFunc.TypedValue = value;
             OnPropertyChanged();
         }
     }
 
     protected override void ResetValue() {
-        _valueFunc.TypedValue = DataCompatibility.DefaultValue<T>();
+        _constantFunc.TypedValue = DataCompatibility.DefaultValue<T>();
     }
 }
 

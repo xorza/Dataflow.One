@@ -21,18 +21,11 @@
 
             <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.EditableValues}">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="local:EditableValueView">
-                        <Grid>
-                            <StackPanel Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Type }"></TextBlock>
+                    <DataTemplate DataType="{x:Type local:EditableValueView}">
+                        <StackPanel>
+                            <local:EditableValue Value="{Binding }"></local:EditableValue>
 
-                                </StackPanel>
-
-                                <TextBox Text="{Binding Value }"/>
-                            </StackPanel>
-
-                        </Grid>
+                        </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -40,16 +33,19 @@
             <!-- <TextBlock Text="{Binding Path=NodeView.Node.Function.Description, ElementName=NodeEditUserControl}" -->
             <!--            d:Text="Description"/> -->
 
-            <TextBlock Text="Debug arguments:" />
-            <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.Values}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="local:ValueView">
-                        <Grid>
-                            <local:Value ValueView="{Binding }" Editable="False" />
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <Expander Header="Debug arguments">
+                <StackPanel>
+                    <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.Values}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="local:ValueView">
+                                <Grid>
+                                    <local:Value ValueView="{Binding }" Editable="False" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Expander>
         </StackPanel>
     </Border>
 </UserControl>

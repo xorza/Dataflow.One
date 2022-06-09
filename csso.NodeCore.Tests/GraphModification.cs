@@ -11,7 +11,7 @@ public class GraphModification {
 
     private readonly FrameNoFunc _frameNoFunc = new();
     private readonly OutputFunc<Int32> _outputFunc = new();
-    private readonly ValueFunc<Int32> _constFunc1 = new();
+    private readonly ConstantFunc<Int32> _constFunc1 = new();
 
     private Node? _addNode;
     private Node? _constNode1;

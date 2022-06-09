@@ -47,18 +47,14 @@ public class OutputFunc<T> : Function {
 public abstract class ValueFunc : Function {
     public Type Type { get; }
 
-    
-    public  abstract PropertyInfo ValueProperty { get; }
-
     protected ValueFunc(Type type) {
         Type = type;
     }
 }
 
-public class ValueFunc<T> : ValueFunc {
-    public ValueFunc() : base(typeof(T)) {
+public class ConstantFunc<T> : ValueFunc {
+    public ConstantFunc() : base(typeof(T)) {
         Refresh("Constant", Func_);
-        ValueProperty = GetType().GetProperty(nameof(TypedValue))!;
         _behavior = base.Behavior;
     }
 
@@ -76,8 +72,7 @@ public class ValueFunc<T> : ValueFunc {
     public void SetBehavior(FunctionBehavior behavior) {
         _behavior = behavior;
     }
-    
-    public override PropertyInfo ValueProperty { get; }
+
 }
 
 public class FrameNoFunc : Function {

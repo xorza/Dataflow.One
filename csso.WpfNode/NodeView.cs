@@ -30,16 +30,14 @@ public class NodeView : INotifyPropertyChanged {
 
         if (Node is FunctionNode functionNode) {
             if (functionNode.Function is ValueFunc valueFunc) {
-                EditableValueView editableValueView = 
-                    (EditableValueView)
+                var editableValueView = 
                     typeof(EditableValueView<>)
-                    .MakeGenericType(valueFunc.Type)
-                    .GetConstructors()
-                    .First()
-                    .Invoke(new object[] { valueFunc });
-                
-                 // new EditableValueView(valueFunc, valueFunc.ValueProperty);
-                EditableValues.Add(editableValueView);
+                        .MakeGenericType(valueFunc.Type)
+                        .GetConstructors()
+                        .First()
+                        .Invoke(new object[] {valueFunc});
+
+                EditableValues.Add((EditableValueView)editableValueView);
             }
         }
     }
