@@ -15,10 +15,11 @@ public abstract class Node : INotifyPropertyChanged {
         Id = id;
     }
 
-    public IReadOnlyList<NodeArg> Inputs => Args.Where(_ => _.ArgType == ArgType.In).ToList();
-    public IReadOnlyList<NodeArg> Outputs => Args.Where(_ => _.ArgType == ArgType.Out).ToList();
+    public IReadOnlyList<NodeArg> Inputs => Args.Where(_ => _.ArgDirection == ArgDirection.In).ToList();
+    public IReadOnlyList<NodeArg> Outputs => Args.Where(_ => _.ArgDirection == ArgDirection.Out).ToList();
     public IReadOnlyList<NodeArg> Args { get; protected set; } = new List<NodeArg>();
-
+    
+    
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]

@@ -4,29 +4,24 @@ public class FunctionFactory {
     private readonly List<Function> _functions = new();
 
     public IReadOnlyList<Function> Functions => _functions.AsReadOnly();
-    
+
     public Function Get(String functionName) {
-       var result = _functions.SingleOrDefault(_ => _.Name == functionName);
-       if (result != null) {
-           return result;
-       } else {
-           throw new Exception("seruiyotg345");
-       }
+        return _functions.Single(_ => _.Name == functionName);
     }
 
     public Function Get(Guid functionId) {
-    
-        var result = _functions.SingleOrDefault(_ => _.Id == functionId);
-
-        if (result != null) {
-            return result;
-        } else {
-          
-            throw new Exception("e5ycv24");
-        }
+        return _functions.Single(_ => _.Id == functionId);
     }
 
     public void Register(Function f) {
+        if (_functions.Any(_ => _.Name == f.Name)) {
+            throw new ArgumentException($"Function with name '{f.Name}' already registered");
+        }
+
+        if (_functions.Any(_ => _.Id != null && _.Id == f.Id)) {
+            throw new ArgumentException($"Function with id '{f.Id}' already registered");
+        }
+
         _functions.Add(f);
     }
 }

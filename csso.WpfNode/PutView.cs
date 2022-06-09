@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using csso.NodeCore;
@@ -16,6 +18,8 @@ public sealed class PutView : INotifyPropertyChanged {
     public PutView(NodeArg nodeArg, NodeView nodeView) {
         NodeArg = nodeArg;
         NodeView = nodeView;
+        
+        ((INotifyCollectionChanged)nodeView.GraphVm.Edges).CollectionChanged += Edges_CollectionChanged;
     }
 
     public UIElement? Control {
@@ -28,9 +32,9 @@ public sealed class PutView : INotifyPropertyChanged {
         }
     }
 
-    public ArgType ArgType => NodeArg.ArgType;
-    public bool IsInput => ArgType == ArgType.In;
-    public bool IsOutput => ArgType == ArgType.Out;
+    public ArgDirection ArgDirection => NodeArg.ArgDirection;
+    public bool IsInput => ArgDirection == ArgDirection.In;
+    public bool IsOutput => ArgDirection == ArgDirection.Out;
 
     public NodeArg NodeArg { get; }
 
@@ -59,11 +63,17 @@ public sealed class PutView : INotifyPropertyChanged {
             OnPropertyChanged();
         }
     }
+    
+    public Object DataSourceView { get;  }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    
+    private void Edges_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+        // NodeView.GraphVm.Graph.ValueSubscriptions
     }
 }

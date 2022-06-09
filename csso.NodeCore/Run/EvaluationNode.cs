@@ -74,7 +74,7 @@ public class EvaluationNode {
         _dependencyValues.Clear();
 
         foreach (var nodeArg in Node.Args)
-            if (nodeArg.ArgType == ArgType.In) {
+            if (nodeArg.ArgDirection == ArgDirection.In) {
                 var dataSubscription = Node.Graph.GetDataSubscription(nodeArg);
 
                 if (dataSubscription != null) {
@@ -89,7 +89,7 @@ public class EvaluationNode {
                             Target = dataSubscription.Source.FunctionArg
                         });
                 }
-            } else if (nodeArg.ArgType == ArgType.Out) {
+            } else if (nodeArg.ArgDirection == ArgDirection.Out) {
                 GetArgValues()[nodeArg.FunctionArg.ArgumentIndex] = null;
             } else {
                 Check.Fail();

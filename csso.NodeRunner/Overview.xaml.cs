@@ -25,8 +25,8 @@ public partial class Overview : INotifyPropertyChanged {
         _clContext = new Context();
     }
 
-    public GraphVM GraphView {
-        get => _graphView ??= new GraphVM();
+    public GraphVM? GraphView {
+        get => _graphView;
         set {
             _graphView = value;
             Graph.GraphView = _graphView;

@@ -14,26 +14,15 @@ namespace csso.WpfNode;
 
 public sealed class GraphVM : INotifyPropertyChanged {
     private readonly ObservableCollection<EdgeView> _edges = new();
-
     private readonly ObservableCollection<NodeView> _nodes = new();
 
     private FunctionFactoryView _functionFactory;
     private NodeView? _selectedNode;
-
     private PutView? _selectedPutView;
-
-    public GraphVM(NodeCore.Graph graph) : this() {
-        Graph = graph;
-        Refresh();
-    }
-
-    public GraphVM() {
-        Nodes = new ReadOnlyObservableCollection<NodeView>(_nodes);
-        Edges = new ReadOnlyObservableCollection<EdgeView>(_edges);
-    }
 
     public NodeCore.Graph Graph { get; }
     public ReadOnlyObservableCollection<EdgeView> Edges { get; }
+    public ReadOnlyObservableCollection<NodeView> Nodes { get; }
 
     private Vector _viewOffset;
 
@@ -73,8 +62,6 @@ public sealed class GraphVM : INotifyPropertyChanged {
         }
     }
 
-    public ReadOnlyObservableCollection<NodeView> Nodes { get; }
-
     public NodeView? SelectedNode {
         get => _selectedNode;
         set {
@@ -108,6 +95,15 @@ public sealed class GraphVM : INotifyPropertyChanged {
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
+    
+    
+    public GraphVM(NodeCore.Graph graph)  {
+        Nodes = new ReadOnlyObservableCollection<NodeView>(_nodes);
+        Edges = new ReadOnlyObservableCollection<EdgeView>(_edges);
+        
+        Graph = graph;
+        Sync();
+    }
 
     private NodeView GetNodeView(NodeCore.Node node) {
         return Nodes.Single(_ => _.Node == node);
@@ -118,7 +114,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    public void Refresh() {
+    public void Sync() {
         var nodesToRemove = _nodes
             .Where(_ => !Graph.Nodes.Contains(_.Node))
             .ToArray();
@@ -129,9 +125,9 @@ public sealed class GraphVM : INotifyPropertyChanged {
             .Select(_ => new NodeView(this, _))
             .ForEach(_nodes.Add);
 
-        if (_selectedNode != null && !Nodes.Contains(_selectedNode))
+        if (_selectedNode != null && !Nodes.Contains(_selectedNode)) {
             SelectedNode = null;
-
+        }
 
         _edges.Clear();
         foreach (var binding in Graph.DataSubscriptions) {
@@ -152,7 +148,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
         Graph.Remove(nodeView.Node);
 
-        Refresh();
+        Sync();
     }
 
     public NodeView CreateNode(Function func) {

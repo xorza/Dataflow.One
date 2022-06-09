@@ -18,9 +18,6 @@
 
     <ItemGroup>
         <None Remove="graph1.json" />
-        <Content Include="graph1.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
     </ItemGroup>
 
     <ItemGroup>

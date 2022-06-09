@@ -168,7 +168,7 @@ public partial class Graph : UserControl {
 
         graphView.SelectedPutView = null;
 
-        if (p1.NodeArg.ArgType == p2.NodeArg.ArgType)
+        if (p1.NodeArg.ArgDirection == p2.NodeArg.ArgDirection)
             return;
         if (p1.NodeView == p2.NodeView)
             return;
@@ -179,8 +179,8 @@ public partial class Graph : UserControl {
             !p2.NodeArg.Type.IsSubclassOf(p1.NodeArg.Type))
             return;
 
-        var input = p1.NodeArg.ArgType == ArgType.In ? p1 : p2;
-        var output = p1.NodeArg.ArgType == ArgType.Out ? p1 : p2;
+        var input = p1.NodeArg.ArgDirection == ArgDirection.In ? p1 : p2;
+        var output = p1.NodeArg.ArgDirection == ArgDirection.Out ? p1 : p2;
 
         Debug.Assert.True(p1 != p2);
 
@@ -190,7 +190,7 @@ public partial class Graph : UserControl {
                 output.NodeArg)
         );
 
-        input.NodeView.GraphVm.Refresh();
+        input.NodeView.GraphVm.Sync();
     }
 
     private void NodesCanvas_OnLoaded(object sender, RoutedEventArgs e) {

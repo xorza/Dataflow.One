@@ -2,23 +2,23 @@
 
 namespace csso.NodeCore;
 
-public enum ArgType {
+public enum ArgDirection {
     In,
     Out
 }
 
 public  class FunctionArg {
-    internal FunctionArg(string name,  ArgType argType, Type type, Int32 argumentIndex) {
+    internal FunctionArg(string name,  ArgDirection argDirection, Type type, Int32 argumentIndex) {
         Name = name;
         Type = type;
         ArgumentIndex = argumentIndex;
-        ArgType = argType;
+        ArgDirection = argDirection;
     }
 
     public Type Type { get; }
     public string Name { get; }
     public string FullName => Name + ":" + Type.Name;
-    public  ArgType ArgType { get; }
+    public  ArgDirection ArgDirection { get; }
     public Int32 ArgumentIndex { get; }
     public Function Function { get; internal set; }
 }

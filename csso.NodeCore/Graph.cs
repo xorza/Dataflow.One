@@ -12,7 +12,6 @@ public sealed class Graph {
     private readonly List<DataSubscription> _dataSubscriptions = new();
     public IReadOnlyList<DataSubscription> DataSubscriptions => _dataSubscriptions.AsReadOnly();
     
-
     public Graph() {
         Nodes = _nodes.AsReadOnly();
     }
@@ -46,7 +45,7 @@ public sealed class Graph {
     }
 
     public void RemoveSubscription(NodeArg subscriber) {
-        Check.True(subscriber.ArgType == ArgType.In);
+        Check.True(subscriber.ArgDirection == ArgDirection.In);
         _dataSubscriptions.RemoveAll(_ => _.Subscriber == subscriber);
     }
 

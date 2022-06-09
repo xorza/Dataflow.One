@@ -29,8 +29,8 @@ public class Function {
     public string Name { get; private set; }
     public Guid? Id { get; private set; }
     public Delegate Delegate { get; private set; }
-    public IReadOnlyList<FunctionArg> Inputs => Args.Where(_ => _.ArgType == ArgType.In).ToList();
-    public IReadOnlyList<FunctionArg> Outputs => Args.Where(_ => _.ArgType == ArgType.Out).ToList();
+    public IReadOnlyList<FunctionArg> Inputs => Args.Where(_ => _.ArgDirection == ArgDirection.In).ToList();
+    public IReadOnlyList<FunctionArg> Outputs => Args.Where(_ => _.ArgDirection == ArgDirection.Out).ToList();
     public IReadOnlyList<FunctionArg> Args { get; private set; }
     public virtual FunctionBehavior Behavior { get; private set; }
     public string Description { get; private set; }
@@ -77,9 +77,9 @@ public class Function {
             FunctionArg arg;
 
             if (Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) is OutputAttribute outputAttribute) {
-                arg = new FunctionArg(argName, ArgType.Out, argType, i);
+                arg = new FunctionArg(argName, ArgDirection.Out, argType, i);
             } else {
-                arg = new FunctionArg(argName, ArgType.In, argType, i);
+                arg = new FunctionArg(argName, ArgDirection.In, argType, i);
             }
 
             arg.Function = this;
