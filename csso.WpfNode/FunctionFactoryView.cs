@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using csso.Common;
 using csso.NodeCore;
+using DynamicData;
 
 namespace csso.WpfNode;
 
@@ -11,8 +12,7 @@ public class FunctionFactoryView {
         FunctionFactory = functionFactory;
         Functions = new ReadOnlyObservableCollection<Function>(_functions);
 
-        FunctionFactory.BuildFunctionsArray()
-            .ForEach(_functions.Add);
+        _functions.AddRange(FunctionFactory.Functions);
     }
 
     public FunctionFactory FunctionFactory { get; }

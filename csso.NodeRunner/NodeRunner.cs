@@ -15,7 +15,7 @@ public class NodeRunner {
 
         var addFunc = new Function("Add", F.Add);
         var divideWholeFunc = new Function("Divide whole", F.DivideWhole);
-        var messageBoxFunc = new Function("Output", Output);
+        var messageBoxFunc = new Function("Messagebox", Output);
         var valueFunc = new Function("Value", Const);
         FrameNoFunc = new FrameNoFunc();
 

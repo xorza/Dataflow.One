@@ -1,29 +1,32 @@
 namespace csso.NodeCore;
 
 public class FunctionFactory {
-    private readonly Dictionary<Guid, Function> _functionsById = new();
-    private readonly Dictionary<String, Function> _functionsByName = new();
+    private readonly List<Function> _functions = new();
+
+    public IReadOnlyList<Function> Functions => _functions.AsReadOnly();
     
     public Function Get(String functionName) {
-        if (_functionsByName.TryGetValue(functionName, out var func)) return func;
-
-        throw new Exception("seruiyotg345");
+       var result = _functions.SingleOrDefault(_ => _.Name == functionName);
+       if (result != null) {
+           return result;
+       } else {
+           throw new Exception("seruiyotg345");
+       }
     }
 
     public Function Get(Guid functionId) {
-        if (_functionsById.TryGetValue(functionId, out var func)) return func;
+    
+        var result = _functions.SingleOrDefault(_ => _.Id == functionId);
 
-        throw new Exception("e5ycv24");
+        if (result != null) {
+            return result;
+        } else {
+          
+            throw new Exception("e5ycv24");
+        }
     }
 
     public void Register(Function f) {
-        _functionsByName.Add(f.FullName, f);
-        if (f.Id != null) _functionsById.Add(f.Id.Value, f);
-    }
-
-    public Function[] BuildFunctionsArray() {
-        return _functionsByName.Values
-            .Concat(_functionsById.Values)
-            .ToArray();
+        _functions.Add(f);
     }
 }
