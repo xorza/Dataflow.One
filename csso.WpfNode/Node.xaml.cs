@@ -38,7 +38,8 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         new PropertyMetadata(default(Canvas), DragCanvas_PropertyChangedCallback));
 
     public static readonly DependencyProperty DeletionEnabledProperty = DependencyProperty.Register(
-        nameof(DeletionEnabled), typeof(bool), typeof(Node), new PropertyMetadata(default(bool)));
+        nameof(DeletionEnabled), typeof(bool), typeof(Node),
+        new PropertyMetadata(default(bool)));
 
     public Node() {
         InitializeComponent();
@@ -98,10 +99,16 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     private static void NodeView_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
         var node = (Node) d;
-        if (e.OldValue is NodeView nv1)
+        if (e.OldValue is NodeView nv1) {
             nv1.PropertyChanged -= node.NodeView_PropertyChanged;
-        if (e.OldValue is NodeView nv2)
+        }
+
+        node.EditableValueControl.Visibility = Visibility.Collapsed;
+        if (e.NewValue is NodeView nv2) {
             nv2.PropertyChanged += node.NodeView_PropertyChanged;
+            node.EditableValueControl.Visibility =
+                nv2.EditableValue != null ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
 
     private void NodeView_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
@@ -109,9 +116,10 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void RefreshExecutionTime() {
-        if (NodeView != null)
+        if (NodeView != null) {
             ExecutionTimePanel.Visibility =
                 NodeView.ExecutionTime.HasValue ? Visibility.Visible : Visibility.Hidden;
+        }
     }
 
     private void PinButton_Click(object sender, RoutedEventArgs e) {

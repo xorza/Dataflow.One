@@ -30,14 +30,14 @@ public class NodeView : INotifyPropertyChanged {
 
         if (Node is FunctionNode functionNode) {
             if (functionNode.Function is ValueFunc valueFunc) {
-                var editableValueView = 
+                var editableValueView =
                     typeof(EditableValueView<>)
                         .MakeGenericType(valueFunc.Type)
                         .GetConstructors()
                         .First()
                         .Invoke(new object[] {valueFunc});
 
-                EditableValues.Add((EditableValueView)editableValueView);
+                EditableValue = (EditableValueView) editableValueView;
             }
         }
     }
@@ -61,7 +61,7 @@ public class NodeView : INotifyPropertyChanged {
     public List<PutView> Outputs { get; } = new();
     public ObservableCollection<ValueView> Values { get; } = new();
 
-    public ObservableCollection<EditableValueView> EditableValues { get; } = new();
+    public EditableValueView? EditableValue { get; }
 
     public bool IsSelected {
         get => _isSelected;

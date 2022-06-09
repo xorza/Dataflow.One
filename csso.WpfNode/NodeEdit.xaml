@@ -15,23 +15,15 @@
     <Border BorderThickness="0"
             BorderBrush="{x:Null}"
             Background="{StaticResource InactiveContentBackgroundBrush}">
-        <StackPanel Orientation="Vertical" Margin="{Binding Path=Padding, ElementName=NodeEditUserControl}">
+        <StackPanel 
+            Orientation="Vertical" 
+            Margin="{Binding Path=Padding, ElementName=NodeEditUserControl}">
+            
             <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeEditUserControl}"
                        d:Text="Node name" />
 
-            <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.EditableValues}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type local:EditableValueView}">
-                        <StackPanel>
-                            <local:EditableValue Value="{Binding }"></local:EditableValue>
-
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <!-- <TextBlock Text="{Binding Path=NodeView.Node.Function.Description, ElementName=NodeEditUserControl}" -->
-            <!--            d:Text="Description"/> -->
+            <local:EditableValue 
+                Value="{Binding ElementName=NodeEditUserControl, Path=NodeView.EditableValue}" />
 
             <Expander Header="Debug arguments">
                 <StackPanel>
@@ -39,7 +31,9 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="local:ValueView">
                                 <Grid>
-                                    <local:Value ValueView="{Binding }" Editable="False" />
+                                    <local:Value 
+                                        ValueView="{Binding }" 
+                                        Editable="False" />
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
