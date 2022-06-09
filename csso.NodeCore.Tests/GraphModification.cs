@@ -43,7 +43,6 @@ public class GraphModification {
         );
 
         var alwaysEvent = new AlwaysEvent();
-        _outputNode.Add(alwaysEvent);
 
         var subscription = new EventSubscription(alwaysEvent, _outputNode);
         _graph.Add(subscription);

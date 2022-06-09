@@ -31,7 +31,6 @@ public class TestGraph {
         OutputNode = Graph.AddNode(OutputFunc);
 
         var always = new AlwaysEvent();
-        OutputNode.Add(always);
 
         var subscription = new EventSubscription(always, OutputNode);
         Graph.Add(subscription);

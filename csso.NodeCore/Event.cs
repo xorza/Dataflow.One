@@ -4,7 +4,6 @@ public class Event {
     public string Name { get; private set; }
     public bool IsActive { get; private set; } = false;
 
-    public Node Owner { get; internal set; }
 
     public Event(string name) {
         Name = name;

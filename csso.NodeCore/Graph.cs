@@ -5,12 +5,15 @@ namespace csso.NodeCore;
 public sealed class Graph {
     private readonly List<Node> _nodes = new();
     private readonly Queue<Event> _eventsToProcess = new();
+    private readonly List<Event> _events = new();
 
     private readonly List<EventSubscription> _eventSubscriptions = new();
     public IReadOnlyList<EventSubscription> EventSubscriptions => _eventSubscriptions.AsReadOnly();
 
     private readonly List<DataSubscription> _dataSubscriptions = new();
     public IReadOnlyList<DataSubscription> DataSubscriptions => _dataSubscriptions.AsReadOnly();
+    
+    public IReadOnlyList<Event> Events => _events.AsReadOnly();
 
 
     public Graph() {
@@ -42,7 +45,6 @@ public sealed class Graph {
 
     public void Add(EventSubscription eventEventSubscription) {
         Check.True(eventEventSubscription.Node.Graph == this);
-        Check.True(eventEventSubscription.Event.Owner.Graph == this);
         _eventSubscriptions.Add(eventEventSubscription);
     }
 
@@ -122,8 +124,6 @@ public sealed class Graph {
             .RemoveAll(_ => _.Source.Node == node);
         _eventSubscriptions
             .RemoveAll(_ => _.Node == node);
-        _eventSubscriptions
-            .RemoveAll(_ => _.Event.Owner == node);
     }
 
     public SerializedGraph Serialize() {
