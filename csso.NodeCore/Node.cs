@@ -105,24 +105,9 @@ public sealed class FunctionNode : Node {
 public sealed class GraphNode : Node {
     public GraphNode() : base(Guid.NewGuid()) { }
 
-    internal GraphNode(SerializedGraphNode serialized) : base(serialized.Id) {
-        Name = serialized.Name;
-        SubGraph = new Graph(Graph.FunctionFactory, serialized.SubGraph);
-    }
-
     public override FunctionBehavior Behavior { get; set; }
     public Graph SubGraph { get; set; }
 
-    internal SerializedGraphNode Serialize() {
-        SerializedGraphNode result = new();
-
-        result.Name = Name;
-        result.Id = Id;
-        result.Behavior = Behavior;
-        result.SubGraph = SubGraph.Serialize();
-
-        return result;
-    }
 }
 
 public class SerializedFunctionNode {
@@ -131,11 +116,4 @@ public class SerializedFunctionNode {
     public String FunctionName { get; set; }
     public Guid? FunctionId { get; set; }
     public FunctionBehavior Behavior { get; set; }
-}
-
-public class SerializedGraphNode {
-    public string Name { get; set; }
-    public Guid Id { get; set; }
-    public FunctionBehavior Behavior { get; set; }
-    public SerializedGraph SubGraph { get; set; }
 }

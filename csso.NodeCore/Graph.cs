@@ -5,7 +5,6 @@ namespace csso.NodeCore;
 public sealed class Graph {
     private readonly List<Node> _nodes = new();
     private readonly Queue<Event> _eventsToProcess = new();
-    private readonly List<Event> _events = new();
 
     private readonly List<EventSubscription> _eventSubscriptions = new();
     public IReadOnlyList<EventSubscription> EventSubscriptions => _eventSubscriptions.AsReadOnly();
@@ -13,25 +12,9 @@ public sealed class Graph {
     private readonly List<DataSubscription> _dataSubscriptions = new();
     public IReadOnlyList<DataSubscription> DataSubscriptions => _dataSubscriptions.AsReadOnly();
     
-    public IReadOnlyList<Event> Events => _events.AsReadOnly();
-
 
     public Graph() {
         Nodes = _nodes.AsReadOnly();
-    }
-
-    public Graph(
-        FunctionFactory functionFactory,
-        SerializedGraph serialized) : this() {
-        FunctionFactory = functionFactory;
-
-        serialized.FunctionNodes
-            .Select(_ => new FunctionNode(functionFactory, _))
-            .ForEach(_nodes.Add);
-
-        serialized.GraphNodes?
-            .Select(_ => new GraphNode(_))
-            .ForEach(_nodes.Add);
     }
 
     public IReadOnlyList<Node> Nodes { get; }
@@ -125,33 +108,5 @@ public sealed class Graph {
         _eventSubscriptions
             .RemoveAll(_ => _.Node == node);
     }
-
-    public SerializedGraph Serialize() {
-        SerializedGraph result = new();
-        result.FunctionNodes = new List<SerializedFunctionNode>();
-        result.GraphNodes = new List<SerializedGraphNode>();
-
-        foreach (var node in _nodes) {
-            if (node is FunctionNode functionNode) {
-                result.FunctionNodes.Add(functionNode.Serialize());
-            } else if (node is GraphNode graphNode) {
-                result.GraphNodes.Add(graphNode.Serialize());
-            } else {
-                throw new NotImplementedException("ervthhb35e65");
-            }
-        }
-
-
-        // result.OutputConnections = _dataSubscriptions
-        //     .Select(_ => _.Serialize())
-        //     .ToList();
-
-        return result;
-    }
-}
-
-public struct SerializedGraph {
-    public List<SerializedFunctionNode> FunctionNodes { get; set; }
-    public List<SerializedGraphNode> GraphNodes { get; set; }
-    public SerializedSubscription[] Subscriptions { get; set; }
+    
 }

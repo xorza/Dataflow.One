@@ -17,8 +17,6 @@
         <Menu>
             <MenuItem Header="_File">
                 <MenuItem Header="_New" Click="New_MenuItem_OnClick" />
-                <MenuItem Header="_Open" Click="Open_MenuItem_OnClick" />
-                <MenuItem Header="_Save" Click="Save_MenuItem_OnClick" />
                 <Separator />
                 <MenuItem Header="_Exit" Click="Exit_MenuItem_OnClick" />
             </MenuItem>

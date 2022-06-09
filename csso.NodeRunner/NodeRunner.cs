@@ -37,17 +37,6 @@ public class NodeRunner {
     public Executor Executor { get; private set; }
     public GraphVM GraphVM { get; set; }
 
-    public void Deserialize(SerializedGraphView serialized) {
-        GraphVM = new GraphVM(Factory, serialized);
-        Executor = new Executor(GraphVM.Graph);
-        FrameNoFunc.Executor = Executor;
-    }
-
-    public SerializedGraphView Serialize() {
-        return GraphVM.Serialize();
-    }
-
-
     [Description("messagebox")]
     [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]
     private static bool Output(object i) {
