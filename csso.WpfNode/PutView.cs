@@ -64,8 +64,6 @@ public sealed class PutView : INotifyPropertyChanged {
         }
     }
     
-    public Object DataSourceView { get;  }
-
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]

@@ -44,12 +44,12 @@ public class ValueView : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
 
-    private static readonly Dictionary<Type, Func<ValueView>> _factory = new();
+    private static readonly Dictionary<Type, Func<ValueView>> Factory = new();
 
     static ValueView() { }
 
@@ -58,7 +58,7 @@ public class ValueView : INotifyPropertyChanged {
             return new NullValueView(putView);
         }
 
-        if (_factory.TryGetValue(value.GetType(), out var factory)) {
+        if (Factory.TryGetValue(value.GetType(), out var factory)) {
             return factory!.Invoke();
         }
 

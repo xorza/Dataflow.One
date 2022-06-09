@@ -16,7 +16,7 @@ public class NodeRunner {
         var addFunc = new Function("Add", F.Add);
         var divideWholeFunc = new Function("Divide whole", F.DivideWhole);
         var messageBoxFunc = new Function("Messagebox", Output);
-        var valueFunc = new Function("Value", Const);
+        var valueFunc = ConstFunc;
         FrameNoFunc = new FrameNoFunc();
 
         Factory.Register(addFunc);
@@ -33,6 +33,7 @@ public class NodeRunner {
     }
 
     public FunctionFactory Factory { get; } = new();
+    public ValueFunc<Int32> ConstFunc { get; } = new();
     public FrameNoFunc FrameNoFunc { get; }
     public Executor Executor { get; private set; }
     public GraphVM GraphVM { get; set; }
@@ -41,13 +42,6 @@ public class NodeRunner {
     [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]
     private static bool Output(object i) {
         MessageBox.Show(i.ToString());
-        return true;
-    }
-
-    [Description("value")]
-    [FunctionId("28005F51-BD05-4871-BD0B-AA23C2ADCB9C")]
-    private static bool Const(Int32 c, [Output] out Int32 i) {
-        i = c;
         return true;
     }
 }

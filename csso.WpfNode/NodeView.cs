@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using csso.NodeCore;
+using csso.NodeCore.Funcs;
 
 namespace csso.WpfNode;
 
@@ -24,14 +27,22 @@ public class NodeView : INotifyPropertyChanged {
             PutView pv = new(output, this);
             Outputs.Add(pv);
         }
+
+        if (Node is FunctionNode functionNode) {
+            if (functionNode.Function is ValueFunc valueFunc) {
+                var editableValueView = new EditableValueView(valueFunc, valueFunc.ValueProperty);
+                EditableValues.Add(editableValueView);
+            }
+        }
     }
 
     public GraphVM GraphVm { get; }
 
     public NodeCore.Node Node { get; }
 
-    
+
     private double? _executionTime;
+
     public Double? ExecutionTime {
         get => _executionTime;
         set {
@@ -43,6 +54,8 @@ public class NodeView : INotifyPropertyChanged {
     public List<PutView> Inputs { get; } = new();
     public List<PutView> Outputs { get; } = new();
     public ObservableCollection<ValueView> Values { get; } = new();
+
+    public ObservableCollection<EditableValueView> EditableValues { get; } = new();
 
     public bool IsSelected {
         get => _isSelected;

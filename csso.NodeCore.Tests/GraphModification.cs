@@ -23,7 +23,7 @@ public class GraphModification {
     public void Setup() {
         _graph = new Graph();
 
-        _constFunc1.Value = 1253;
+        _constFunc1.TypedValue = 1253;
 
         _constNode1 = _graph.AddNode(_constFunc1);
         _outputNode = _graph.AddNode(_outputFunc);

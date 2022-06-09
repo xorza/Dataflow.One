@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Reflection;
 using csso.NodeCore.Run;
 
 namespace csso.NodeCore.Funcs;
@@ -43,16 +44,28 @@ public class OutputFunc<T> : Function {
     }
 }
 
-public class ValueFunc<T> : Function {
-    public ValueFunc() {
-        Refresh("Const", Func_);
+public abstract class ValueFunc : Function {
+    public Type Type { get; }
+
+    
+    public  abstract PropertyInfo ValueProperty { get; }
+
+    protected ValueFunc(Type type) {
+        Type = type;
+    }
+}
+
+public class ValueFunc<T> : ValueFunc {
+    public ValueFunc() : base(typeof(T)) {
+        Refresh("Constant", Func_);
+        ValueProperty = GetType().GetProperty(nameof(TypedValue))!;
         _behavior = base.Behavior;
     }
 
-    public T Value { get; set; }
+    public T TypedValue { get; set; }
 
-    private bool Func_([Output] out T arg) {
-        arg = Value;
+    private bool Func_([Output] out T value) {
+        value = TypedValue;
         return true;
     }
 
@@ -63,6 +76,8 @@ public class ValueFunc<T> : Function {
     public void SetBehavior(FunctionBehavior behavior) {
         _behavior = behavior;
     }
+    
+    public override PropertyInfo ValueProperty { get; }
 }
 
 public class FrameNoFunc : Function {

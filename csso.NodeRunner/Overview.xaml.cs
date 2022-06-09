@@ -30,7 +30,9 @@ public partial class Overview : INotifyPropertyChanged {
         set {
             _graphView = value;
             Graph.GraphView = _graphView;
-            if (_functionFactoryBrowser != null) _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;
+            if (_functionFactoryBrowser != null) {
+                _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;
+            }
             OnPropertyChanged();
         }
     }

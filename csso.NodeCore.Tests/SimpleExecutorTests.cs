@@ -12,8 +12,8 @@ public class Tests {
     [SetUp]
     public void Setup() {
         _graph = new TestGraph();
-        _graph.ReactiveConstFunc.Value = 3;
-        _graph.ProactiveConstFunc.Value = 1253;
+        _graph.ReactiveConstFunc.TypedValue = 3;
+        _graph.ProactiveConstFunc.TypedValue = 1253;
     }
 
     [Test]
@@ -34,13 +34,13 @@ public class Tests {
         Assert.AreEqual(1253, _graph.OutputFunc.Value);
         Assert.True(proactiveConstNode.State >= EvaluationState.Invoked);
 
-        _graph.ProactiveConstFunc.Value = 33;
+        _graph.ProactiveConstFunc.TypedValue = 33;
         executor = new Executor(_graph.Graph);
         _graph.FrameNoFunc.Executor = executor;
         executor.Run();
         Assert.AreEqual(33, _graph.OutputFunc.Value);
 
-        _graph.ProactiveConstFunc.Value = 4;
+        _graph.ProactiveConstFunc.TypedValue = 4;
         executor.Run();
         Assert.AreEqual(4, _graph.OutputFunc.Value);
 
@@ -193,12 +193,12 @@ public class Tests {
         var executor = new Executor(_graph.Graph);
         _graph.FrameNoFunc.Executor = executor;
 
-        _graph.ProactiveConstFunc.Value = 133;
+        _graph.ProactiveConstFunc.TypedValue = 133;
 
         executor.Run();
         Assert.AreEqual(133, _graph.OutputFunc.Value);
 
-        _graph.ProactiveConstFunc.Value = 132;
+        _graph.ProactiveConstFunc.TypedValue = 132;
         executor.Run();
         Assert.AreEqual(132, _graph.OutputFunc.Value);
 

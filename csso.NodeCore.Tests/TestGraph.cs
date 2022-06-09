@@ -10,22 +10,23 @@ public class TestGraph {
     public OutputFunc<Int32> OutputFunc { get; } = new();
 
     public FrameNoFunc FrameNoFunc { get; } = new();
-    public Graph Graph { get; private set; }
-    public Node AddNode { get; private set; }
-    public Node ReactiveConstNode { get; private set; }
-    public Node ProactiveConstNode { get; private set; }
-    public Node FrameNoNode { get; private set; }
-    public Node OutputNode { get; private set; }
+    public Graph Graph { get; }
+    public Node AddNode { get; }
+    public Node ReactiveConstNode { get; }
+    public Node ProactiveConstNode { get; }
+    public Node FrameNoNode { get; }
+    public Node OutputNode { get; }
 
     public TestGraph() {
-        ReactiveConstFunc.SetBehavior(FunctionBehavior.Reactive);
-
         Graph = new Graph();
 
         ReactiveConstNode = Graph.AddNode(ReactiveConstFunc);
         ReactiveConstNode.Name = "ReactiveConstNode";
+        ReactiveConstFunc.SetBehavior(FunctionBehavior.Reactive);
+
         ProactiveConstNode = Graph.AddNode(ProactiveConstFunc);
         ProactiveConstNode.Name = "ProactiveConstNode";
+
         FrameNoNode = Graph.AddNode(FrameNoFunc);
         AddNode = Graph.AddNode(AddFunc);
         OutputNode = Graph.AddNode(OutputFunc);

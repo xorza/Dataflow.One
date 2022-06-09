@@ -19,18 +19,17 @@
             <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeEditUserControl}"
                        d:Text="Node name" />
 
-            <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.Inputs}">
+            <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.EditableValues}">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="local:PutView">
+                    <DataTemplate DataType="local:EditableValueView">
                         <Grid>
                             <StackPanel Orientation="Vertical">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding NodeArg.FunctionArg.Name }"></TextBlock>
-                                    <TextBlock Text="{Binding NodeArg.FunctionArg.Type }"></TextBlock>
+                                    <TextBlock Text="{Binding Type }"></TextBlock>
 
                                 </StackPanel>
 
-                                <TextBlock Text="{Binding DataSourceView }"></TextBlock>
+                                <TextBox Text="{Binding Value }"/>
                             </StackPanel>
 
                         </Grid>
