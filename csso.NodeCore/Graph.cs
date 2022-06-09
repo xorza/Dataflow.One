@@ -67,7 +67,7 @@ public sealed class Graph {
                 .SingleOrDefault(_ => _.Subscriber == subscriber);
     }
 
-    public List<Event> GetFiredEvents() {
+    public List<Event> ProcessFiredEvents() {
         var list = new List<Event>();
 
         EventSubscriptions
@@ -76,6 +76,8 @@ public sealed class Graph {
             .ForEach(list.Add);
 
         list.AddRange(_eventsToProcess.ToList());
+        
+        _eventsToProcess.Clear();
 
         return list;
     }

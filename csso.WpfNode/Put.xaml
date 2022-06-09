@@ -82,7 +82,7 @@
 
             <TextBlock Margin="0"
                        Padding="0"
-                       Text="{Binding ElementName=PutUserControl,Path=PutView.NodeArg.FullName }"
+                       Text="{Binding ElementName=PutUserControl,Path=PutView.NodeArg.FunctionArg.Name }"
                        VerticalAlignment="Center" />
         </Button>
     </Grid>

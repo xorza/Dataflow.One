@@ -121,7 +121,7 @@
 
                             <Style.Triggers>
                                 <DataTrigger
-                                    Binding="{Binding Path=NodeView.Node.FinalBehavior, ElementName=NodeUserControl}"
+                                    Binding="{Binding Path=NodeView.Node.Behavior, ElementName=NodeUserControl}"
                                     Value="{x:Static core:FunctionBehavior.Proactive}">
                                     <Setter
                                         Property="Background"
@@ -130,18 +130,6 @@
                                         Property="TextBlock.Foreground"
                                         Value="Black" />
                                 </DataTrigger>
-                                <DataTrigger
-                                    Binding="{Binding Path=NodeView.Node.Function.IsProcedure, ElementName=NodeUserControl}"
-                                    Value="True">
-                                    <Setter
-                                        Property="Background"
-                                        Value="{StaticResource HighlightBackgroundBrush}" />
-                                    <Setter
-                                        Property="TextBlock.Foreground"
-                                        Value="Black" />
-                                </DataTrigger>
-
-
                             </Style.Triggers>
                         </Style>
                     </Border.Style>

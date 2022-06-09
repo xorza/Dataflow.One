@@ -66,10 +66,11 @@ public class Executor : IArgumentProvider {
     }
 
     private List<Node> ProcessEvents() {
-        List<Node> result = new();
-
-        Graph.GetFiredEvents()
+        var result = Graph.ProcessFiredEvents()
             .SelectMany(_ => Graph.GetSubscribers(_))
+            .ToList();
+
+        Graph.Nodes.Where(_ => _.Outputs.Count == 0)
             .ForEach(result.Add);
 
         return result;
