@@ -88,7 +88,9 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e) {
-        if (NodeView != null) NodeView.PropertyChanged += NodeView_PropertyChanged;
+        // if (NodeView != null) {
+        //     NodeView.PropertyChanged += NodeView_PropertyChanged;
+        // }
 
         RefreshExecutionTime();
     }
@@ -119,6 +121,8 @@ public partial class Node : UserControl, INotifyPropertyChanged {
         if (NodeView != null) {
             ExecutionTimePanel.Visibility =
                 NodeView.ExecutionTime.HasValue ? Visibility.Visible : Visibility.Hidden;
+        } else {
+            ExecutionTimePanel.Visibility = Visibility.Hidden;
         }
     }
 

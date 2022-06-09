@@ -19,7 +19,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid MinHeight="250">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -50,6 +50,7 @@
             Grid.Column="1"
             PreviewMouseMove="UIElement_OnPreviewMouse_Skip"
             PreviewMouseDown="UIElement_OnPreviewMouse_Skip"
+            IsHitTestVisible="False"
 
             VerticalAlignment="Center"
             HorizontalAlignment="Center"

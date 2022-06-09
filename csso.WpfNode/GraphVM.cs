@@ -95,12 +95,12 @@ public sealed class GraphVM : INotifyPropertyChanged {
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
-    
-    
-    public GraphVM(NodeCore.Graph graph)  {
+
+
+    public GraphVM(NodeCore.Graph graph) {
         Nodes = new ReadOnlyObservableCollection<NodeView>(_nodes);
         Edges = new ReadOnlyObservableCollection<EdgeView>(_edges);
-        
+
         Graph = graph;
         Sync();
     }
@@ -163,15 +163,13 @@ public sealed class GraphVM : INotifyPropertyChanged {
 
     public void OnExecuted(Executor executor) {
         foreach (var nodeView in Nodes) {
+            nodeView.ExecutionTime = null;
+            nodeView.Values.Clear();
+
             var en = executor.EvaluationNodes
                 .SingleOrDefault(_ => _.Node == nodeView.Node);
 
             if (en != null) {
-                nodeView.ExecutionTime = en!.ExecutionTime;
-
-                nodeView.Values.Clear();
-
-
                 foreach (var output in nodeView.Inputs) {
                     var index = output.NodeArg.FunctionArg.ArgumentIndex;
                     var value = en.GetArgValues()[index];
@@ -180,12 +178,16 @@ public sealed class GraphVM : INotifyPropertyChanged {
                     );
                 }
 
-                foreach (var output in nodeView.Outputs) {
-                    var index = output.NodeArg.FunctionArg.ArgumentIndex;
-                    var value = en.GetArgValues()[index];
-                    nodeView.Values.Add(
-                        ValueView.FromValue(output, value)
-                    );
+                if (en.State >= EvaluationState.Invoked) {
+                    nodeView.ExecutionTime = en.ExecutionTime;
+                    
+                    foreach (var output in nodeView.Outputs) {
+                        var index = output.NodeArg.FunctionArg.ArgumentIndex;
+                        var value = en.GetArgValues()[index];
+                        nodeView.Values.Add(
+                            ValueView.FromValue(output, value)
+                        );
+                    }
                 }
             }
         }
