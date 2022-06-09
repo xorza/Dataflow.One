@@ -62,10 +62,10 @@ public class ValueFunc<T> : ValueFunc {
         _behavior = base.Behavior;
     }
 
-    public T TypedValue { get; set; }
+    public T? TypedValue { get; set; }
 
     private bool Func_([Output] out T value) {
-        value = TypedValue;
+        value = TypedValue!;
         return true;
     }
 
