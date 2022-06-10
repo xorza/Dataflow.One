@@ -68,12 +68,15 @@ public partial class FunctionFactoryBrowser : UserControl {
         DependencyPropertyChangedEventArgs e) {
         var functionFactoryBrowser = (FunctionFactoryBrowser) d;
 
-        if (e.OldValue is FunctionFactoryView ffViewOld)
+        if (e.OldValue is FunctionFactoryView ffViewOld) {
             ((INotifyCollectionChanged) ffViewOld.Functions).CollectionChanged -=
                 functionFactoryBrowser.FunctionFactory_Functions_OnCollectionChanged;
-        if (e.NewValue is FunctionFactoryView ffViewNew)
+        }
+
+        if (e.NewValue is FunctionFactoryView ffViewNew) {
             ((INotifyCollectionChanged) ffViewNew.Functions).CollectionChanged +=
                 functionFactoryBrowser.FunctionFactory_Functions_OnCollectionChanged;
+        }
 
         functionFactoryBrowser.SelectedFunction = null;
         functionFactoryBrowser.NodePreview = null;
@@ -82,17 +85,22 @@ public partial class FunctionFactoryBrowser : UserControl {
     private void FunctionFactory_Functions_OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) { }
 
     private void SubscribeToMouseDoubleClicks() {
-        for (var i = 0; i < FunctionsListView.Items.Count; i++)
+        for (var i = 0; i < FunctionsListView.Items.Count; i++) {
             if (FunctionsListView.ItemContainerGenerator.ContainerFromIndex(i)
                 is ListViewItem listViewItem) {
                 listViewItem.MouseDoubleClick -= ListViewItemOnMouseDoubleClick;
                 listViewItem.MouseDoubleClick += ListViewItemOnMouseDoubleClick;
             }
+        }
     }
 
     private void ListViewItemOnMouseDoubleClick(object sender, MouseButtonEventArgs e) {
         var lvi = (ListViewItem) sender;
         var func = (Function) lvi.Content;
+        if (func is StatefulFunction factory) {
+            func = factory.CreateInstance();
+        }
+
         FunctionChosen?.Invoke(this, func);
     }
 
@@ -118,11 +126,8 @@ public partial class FunctionFactoryBrowser : UserControl {
     private static void
         NodePreview_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) { }
 
-    private void UIElement_OnPreviewMouse_Skip(object sender, MouseEventArgs e) {
-        e.Handled = true;
-    }
 
-    private void UIElement_OnPreviewKeyDown(object sender, KeyEventArgs e) {
+    private void UIElement_OnPreviewKeyDown(object sender, RoutedEventArgs e) {
         e.Handled = true;
     }
 }

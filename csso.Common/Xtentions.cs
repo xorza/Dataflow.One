@@ -12,6 +12,15 @@ public static class Xtentions {
 
         return forEach;
     }
+    
+    public static void AddTo<T>(this IEnumerable<T> e, ICollection<T> collection) {
+        foreach (var item in e) {
+            collection.Add(item);
+        }
+    }
+    public static void AddTo<T>(this IEnumerable<T> e, List<T> collection) {
+        collection.AddRange(e);
+    }
 
     public static IEnumerable ForEach<T>(this IEnumerable e, Action<T> action) {
         var enumerable = e as object[] ?? e.Cast<object>().ToArray();
@@ -50,7 +59,6 @@ public static class Xtentions {
     public static bool IsEmpty(this String s) {
         return s.Trim().Length == 0;
     }
-
 
     public static object? GetDefault(this Type type) {
         if (type.IsValueType) {

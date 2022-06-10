@@ -44,15 +44,15 @@ public class OutputFunc<T> : Function {
     }
 }
 
-public abstract class ValueFunc : Function {
+public abstract class ConstantFunc : StatefulFunction {
     public Type Type { get; }
 
-    protected ValueFunc(Type type) {
+    protected ConstantFunc(Type type) {
         Type = type;
     }
 }
 
-public class ConstantFunc<T> : ValueFunc {
+public class ConstantFunc<T> : ConstantFunc  {
     public ConstantFunc() : base(typeof(T)) {
         Refresh("Constant", Func_);
         _behavior = base.Behavior;
@@ -73,6 +73,9 @@ public class ConstantFunc<T> : ValueFunc {
         _behavior = behavior;
     }
 
+    // public override Function CreateInstance() {
+    //     return new ConstantFunc<T>();
+    // }
 }
 
 public class FrameNoFunc : Function {

@@ -108,3 +108,9 @@ public class Function {
         }
     }
 }
+
+public abstract class StatefulFunction : Function {
+    public virtual Function CreateInstance() {
+        return (Function)Activator.CreateInstance(GetType())!;
+    }
+}

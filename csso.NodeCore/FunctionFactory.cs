@@ -6,7 +6,16 @@ public class FunctionFactory {
     public IReadOnlyList<Function> Functions => _functions.AsReadOnly();
 
     public Function Get(String functionName) {
-        return _functions.Single(_ => _.Name == functionName);
+        var result = _functions.SingleOrDefault(_ => _.Name == functionName);
+        if (result == null) {
+            throw new Exception("asfrt q34et43");
+        }
+
+        if (result is StatefulFunction factory) {
+            return factory.CreateInstance();
+        } else {
+            return result;
+        }
     }
 
     public Function Get(Guid functionId) {

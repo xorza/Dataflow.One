@@ -16,13 +16,12 @@ public class NodeRunner {
         var addFunc = new Function("Add", F.Add);
         var divideWholeFunc = new Function("Divide whole", F.DivideWhole);
         var messageBoxFunc = new Function("Messagebox", Output);
-        var valueFunc = ConstFunc;
         FrameNoFunc = new FrameNoFunc();
 
         Factory.Register(addFunc);
         Factory.Register(divideWholeFunc);
         Factory.Register(messageBoxFunc);
-        Factory.Register(valueFunc);
+        Factory.Register(ConstFunc);
         Factory.Register(FrameNoFunc);
 
         graph.FunctionFactory = Factory;
@@ -40,8 +39,8 @@ public class NodeRunner {
 
     [Description("messagebox")]
     [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]
-    private static bool Output(object i) {
-        MessageBox.Show(i.ToString());
+    private static bool Output(object message) {
+        MessageBox.Show(message.ToString());
         return true;
     }
 }
