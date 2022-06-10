@@ -6,9 +6,8 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using csso.Common;
 using csso.NodeCore;
+using csso.NodeCore.Annotations;
 using csso.NodeCore.Run;
-using csso.WpfNode.Annotations;
-using DynamicData;
 
 namespace csso.NodeRunner.UI;
 
@@ -107,10 +106,9 @@ public sealed class GraphView : INotifyPropertyChanged {
     }
 
     public void Sync() {
-        var nodesToRemove = _nodes
+        _nodes
             .Where(_ => !Graph.Nodes.Contains(_.Node))
-            .ToArray();
-        _nodes.RemoveMany(nodesToRemove);
+            .ForEach(_=>_nodes.Remove(_));
 
         Graph.Nodes
             .Where(n => _nodes.All(nv => nv.Node != n))

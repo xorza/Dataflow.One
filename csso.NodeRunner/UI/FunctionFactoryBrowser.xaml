@@ -3,9 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:csso.WpfNode"
              xmlns:core="clr-namespace:csso.NodeCore;assembly=csso.NodeCore"
-             xmlns:ui="clr-namespace:csso.NodeRunner.UI"
+             xmlns:local="clr-namespace:csso.NodeRunner.UI"
              mc:Ignorable="d"
              Background="{DynamicResource InactiveContentBackgroundBrush}"
              x:Name="FunctionFactoryBrowserUserControl">
@@ -14,7 +13,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <ui:NullVisibilityConverter x:Key="NullVisibilityConverter1" />
+            <local:NullVisibilityConverter x:Key="NullVisibilityConverter1" />
 
 
         </ResourceDictionary>
@@ -56,7 +55,7 @@
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
             Margin="8">
-            <ui:Node
+            <local:Node
                 IsEnabled="False"
                 DeletionEnabled="False"
                 NodeView="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview}"

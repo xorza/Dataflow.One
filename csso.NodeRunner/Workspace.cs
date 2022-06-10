@@ -2,7 +2,6 @@
 using csso.NodeCore.Funcs;
 using csso.NodeCore.Run;
 using csso.NodeRunner.Shared;
-using ReactiveUI;
 
 namespace csso.NodeRunner;
 
@@ -13,8 +12,6 @@ public class Workspace {
 
     public IComputationContext ComputationContext { get; }
 
-
-    internal Workspace() : this(new DummyComputationContext()) { }
 
     public Workspace(IComputationContext computationContext) {
         Graph.FunctionFactory.Register(FrameNoFunc);

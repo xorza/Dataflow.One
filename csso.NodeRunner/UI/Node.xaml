@@ -4,10 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 
-             xmlns:view="clr-namespace:csso.WpfNode"
              xmlns:core="clr-namespace:csso.NodeCore;assembly=csso.NodeCore"
-             xmlns:local="clr-namespace:csso.WpfNode"
-             xmlns:ui="clr-namespace:csso.NodeRunner.UI"
+             xmlns:local="clr-namespace:csso.NodeRunner.UI"
 
              Style="{DynamicResource DefaultNodeStyle}"
              mc:Ignorable="d"
@@ -23,7 +21,7 @@
                     Source="Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <Style TargetType="{x:Type ui:Node}" x:Key="DefaultNodeStyle">
+            <Style TargetType="{x:Type local:Node}" x:Key="DefaultNodeStyle">
                 <Setter Property="Margin" Value="2" />
                 <Setter Property="Padding" Value="10 6" />
                 <Setter Property="HighlightBrush" Value="Coral" />
@@ -40,12 +38,12 @@
 
             <DataTemplate
                 x:Key="PinViewTemplate"
-                DataType="{x:Type ui:PutView}">
+                DataType="{x:Type local:PutView}">
 
-                <ui:Put PutView="{Binding}"
-                          x:Name="PinButton"
-                          Loaded="PinButton_OnLoaded"
-                          DragCanvas="{Binding ElementName=NodeUserControl, Path=DragCanvas}" />
+                <local:Put PutView="{Binding}"
+                           x:Name="PinButton"
+                           Loaded="PinButton_OnLoaded"
+                           DragCanvas="{Binding ElementName=NodeUserControl, Path=DragCanvas}" />
 
                 <DataTemplate.Triggers>
                     <DataTrigger Binding="{Binding IsInput}" Value="True">
@@ -201,7 +199,7 @@
                 </Border>
 
                 <StackPanel Grid.Row="1">
-                    <ui:EditableValue
+                    <local:EditableValue
                         x:Name="EditableValueControl"
                         Value="{Binding EditableValue  }" Margin="{StaticResource DefaultPadding}" />
                 </StackPanel>

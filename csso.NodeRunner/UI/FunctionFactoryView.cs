@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
+using csso.Common;
 using csso.NodeCore;
-using DynamicData;
 
 namespace csso.NodeRunner.UI;
 
@@ -15,6 +15,7 @@ public class FunctionFactoryView {
     
     public  void Sync(FunctionFactory functionFactory) {
         _functions.Clear();
-        _functions.AddRange(functionFactory.Functions);
+        functionFactory.Functions
+            .AddTo(_functions);
     }
 }

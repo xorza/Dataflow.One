@@ -14,8 +14,7 @@
         <ProjectReference Include="..\csso.ImageProcessing\csso.ImageProcessing.csproj" />
         <ProjectReference Include="..\csso.NodeCore\csso.NodeCore.csproj" />
         <ProjectReference Include="..\csso.NodeRunner.Shared\csso.NodeRunner.Shared.csproj" />
-        <ProjectReference Include="..\csso.OpenCL\csso.OpenCL.csproj" />
-        <ProjectReference Include="..\csso.WpfNode\csso.WpfNode.csproj" />
+        <ProjectReference Include="..\csso.WpfCommon\csso.WpfCommon.csproj" />
     </ItemGroup>
 
 </Project>
