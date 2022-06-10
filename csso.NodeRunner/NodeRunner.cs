@@ -36,7 +36,7 @@ public class NodeRunner {
     public FunctionFactory Factory { get; } = new();
     public ConstantFunc<Int32> ConstIntFunc { get; } = new("Integer");
     public ConstantFunc<Double> ConstDoubleFunc { get; } = new("Float");
-    public ConstantFunc<String> ConstStringFunc { get; } = new("String");
+    public ConstantFunc<String> ConstStringFunc { get; } = new("String", "message");
     public FrameNoFunc FrameNoFunc { get; }
     public Executor Executor { get; private set; }
     public GraphVM GraphVM { get; set; }

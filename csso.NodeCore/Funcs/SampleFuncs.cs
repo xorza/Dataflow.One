@@ -51,15 +51,15 @@ public abstract class ConstantFunc : StatefulFunction {
         Type = type;
         Behavior = FunctionBehavior.Reactive;
     }
-
-
 }
 
 public class ConstantFunc<T> : ConstantFunc {
-    public ConstantFunc(String name) : base(typeof(T)) {
+    public ConstantFunc(String name) : this(name, new DataCompatibility().DefaultValue<T>()) { }
+
+    public ConstantFunc(String name, T? defaultValue) : base(typeof(T)) {
         Refresh(name, Func_);
 
-        TypedValue = new DataCompatibility().DefaultValue<T>();
+        TypedValue = defaultValue;
     }
 
     public T? TypedValue { get; set; }
@@ -71,7 +71,7 @@ public class ConstantFunc<T> : ConstantFunc {
 
 
     public override Function CreateInstance() {
-        return new ConstantFunc<T>(Name);
+        return new ConstantFunc<T>(Name, TypedValue);
     }
 }
 
