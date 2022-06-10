@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <UseWPF>false</UseWPF>
         <LangVersion>default</LangVersion>
-        <ImplicitUsings>enable</ImplicitUsings>
+        
     </PropertyGroup>
         
     <ItemGroup>

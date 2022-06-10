@@ -1,4 +1,6 @@
-﻿namespace csso.NodeCore; 
+﻿using System;
+
+namespace csso.NodeCore; 
 
 public class NodeArg {
     public FunctionArg FunctionArg { get; internal set; }

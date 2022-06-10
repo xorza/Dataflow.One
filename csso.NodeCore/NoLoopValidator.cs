@@ -1,4 +1,7 @@
-﻿namespace csso.NodeCore;
+﻿using System;
+using System.Collections.Generic;
+
+namespace csso.NodeCore;
 
 public class NoLoopValidator {
     public void Go(Graph graph) {

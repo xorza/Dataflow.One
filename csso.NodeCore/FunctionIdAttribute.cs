@@ -1,4 +1,6 @@
-﻿namespace csso.NodeCore;
+﻿using System;
+
+namespace csso.NodeCore;
 
 public class FunctionIdAttribute : Attribute {
     public FunctionIdAttribute(Guid id) {

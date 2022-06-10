@@ -1,4 +1,6 @@
-﻿using OpenTK.Compute.OpenCL;
+﻿using System;
+using System.Collections.Generic;
+using OpenTK.Compute.OpenCL;
 
 namespace csso.OpenCL;
 

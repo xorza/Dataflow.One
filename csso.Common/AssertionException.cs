@@ -1,3 +1,5 @@
-﻿namespace csso.Common;
+﻿using System;
+
+namespace csso.Common;
 
 public class AssertionException : Exception { }

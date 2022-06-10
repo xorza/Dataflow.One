@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using csso.Common;
 
 namespace csso.NodeCore;
@@ -111,6 +114,6 @@ public class Function {
 
 public abstract class StatefulFunction : Function {
     public virtual Function CreateInstance() {
-        return (Function)Activator.CreateInstance(GetType())!;
+        return (Function) Activator.CreateInstance(GetType())!;
     }
 }

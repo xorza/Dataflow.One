@@ -1,4 +1,6 @@
-﻿namespace csso.NodeCore;
+﻿using System;
+
+namespace csso.NodeCore;
 
 public class GraphEvaluationException : Exception {
     public GraphEvaluationException(string message) : base(message) { }

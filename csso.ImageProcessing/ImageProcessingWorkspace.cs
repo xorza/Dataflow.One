@@ -1,4 +1,6 @@
-﻿using csso.NodeCore;
+﻿using System;
+using System.Linq;
+using csso.NodeCore;
 using csso.NodeRunner.Shared;
 using csso.OpenCL;
 using OpenTK.Compute.OpenCL;
@@ -6,15 +8,15 @@ using Buffer = csso.OpenCL.Buffer;
 
 namespace csso.ImageProcessing;
 
-public class ImageProcessingWorkspace : IComputationContext {
-    private csso.OpenCL.Context _clContext;
+public class ImageProcessingWorkspace : IComputationContext, IDisposable {
+    private readonly csso.OpenCL.Context _clContext;
 
     public ImageProcessingWorkspace() {
         _clContext = new();
     }
 
     public void RegisterFunctions(FunctionFactory graphFunctionFactory) {
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
     }
 
     private void OpenCLTest2_Button_OnClick() {
@@ -75,5 +77,9 @@ public class ImageProcessingWorkspace : IComputationContext {
             program.Dispose();
             kernel.Dispose();
         }
+    }
+
+    public void Dispose() {
+        _clContext.Dispose();
     }
 }

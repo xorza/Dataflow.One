@@ -1,4 +1,6 @@
-﻿namespace csso.NodeCore;
+﻿using System;
+
+namespace csso.NodeCore;
 
 public class DataCompatibility {
     public bool IsValueConvertable(Type funcArgument, Type value) {

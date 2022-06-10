@@ -1,3 +1,5 @@
+using System;
+
 namespace csso.Common;
 
 public static class StringParser {
