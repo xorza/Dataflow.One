@@ -54,21 +54,22 @@ public abstract class ConstantFunc : StatefulFunction {
 }
 
 public class ConstantFunc<T> : ConstantFunc {
-    public ConstantFunc(String name) : this(name, new DataCompatibility().DefaultValue<T>()) { }
+    public ConstantFunc(String name)
+        : this(name, new DataCompatibility().DefaultValue<T>()) {
+        
+    }
 
     public ConstantFunc(String name, T? defaultValue) : base(typeof(T)) {
         Refresh(name, Func_);
-
         TypedValue = defaultValue;
     }
 
     public T? TypedValue { get; set; }
 
-    private bool Func_([Output] out T value) {
-        value = TypedValue!;
+    private bool Func_([Output] out T? value) {
+        value = TypedValue;
         return true;
     }
-
 
     public override Function CreateInstance() {
         return new ConstantFunc<T>(Name, TypedValue);

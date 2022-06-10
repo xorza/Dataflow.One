@@ -43,7 +43,7 @@ public class NodeRunner {
 
     [Description("messagebox")]
     [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]
-    private static bool Output(String message) {
+    private static bool Output(Object message) {
         MessageBox.Show(message.ToString());
         return true;
     }
