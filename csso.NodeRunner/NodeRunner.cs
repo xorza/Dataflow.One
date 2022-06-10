@@ -36,10 +36,10 @@ public class NodeRunner {
     public FunctionFactory Factory { get; } = new();
     public ConstantFunc<Int32> ConstIntFunc { get; } = new("Integer");
     public ConstantFunc<Double> ConstDoubleFunc { get; } = new("Float");
-    public ConstantFunc<String> ConstStringFunc { get; } = new("String", "message");
+    public ConstantFunc<String> ConstStringFunc { get; } = new("String", "");
     public FrameNoFunc FrameNoFunc { get; }
-    public Executor Executor { get; private set; }
-    public GraphVM GraphVM { get; set; }
+    public Executor Executor { get; }
+    public GraphVM GraphVM { get; }
 
     [Description("messagebox")]
     [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]
