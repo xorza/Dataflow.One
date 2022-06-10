@@ -18,7 +18,7 @@ public sealed class Graph {
 
     public IReadOnlyList<Node> Nodes { get; }
 
-    public FunctionFactory FunctionFactory { get; set; } = new();
+    public FunctionFactory FunctionFactory { get; } = new();
 
     private void Add(Node node) {
         node.Graph = this;

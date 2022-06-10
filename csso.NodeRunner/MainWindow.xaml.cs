@@ -7,13 +7,13 @@ using Microsoft.Win32;
 namespace csso.NodeRunner;
 
 public partial class MainWindow : Window {
-    private ScalarNodeRunner _scalarNodeRunner;
+    private Workspace _workspace;
 
     public MainWindow() {
         InitializeComponent();
 
-        _scalarNodeRunner = new ScalarNodeRunner();
-        GraphOverview.Init(_scalarNodeRunner);
+        _workspace = new Workspace();
+        GraphOverview.Init(_workspace);
     }
 
     private void Exit_MenuItem_OnClick(object sender, RoutedEventArgs e) {
@@ -21,8 +21,8 @@ public partial class MainWindow : Window {
     }
 
     private void New_MenuItem_OnClick(object sender, RoutedEventArgs e) {
-        _scalarNodeRunner = new ScalarNodeRunner();
-        GraphOverview.Init(_scalarNodeRunner);
+        _workspace = new ScalarNodeRunner();
+        GraphOverview.Init(_workspace);
     }
 
  }

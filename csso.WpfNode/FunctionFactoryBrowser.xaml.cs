@@ -112,9 +112,7 @@ public partial class FunctionFactoryBrowser : UserControl {
             return;
         }
 
-        GraphView graphView = new(new NodeCore.Graph {
-            FunctionFactory = functionFactoryBrowser.FunctionFactory!.FunctionFactory
-        });
+        GraphView graphView = new(new NodeCore.Graph());
 
         var node
             = graphView.Graph.AddNode(functionFactoryBrowser.SelectedFunction);

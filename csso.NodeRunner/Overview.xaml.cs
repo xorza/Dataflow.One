@@ -39,7 +39,7 @@ public partial class Overview : INotifyPropertyChanged {
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public void Init(ScalarNodeRunner scalarNodeRunner) {
+    public void Init(Workspace scalarNodeRunner) {
         GraphView = scalarNodeRunner.GraphView;
         _executor = scalarNodeRunner.Executor;
     }

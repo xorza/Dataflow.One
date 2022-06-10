@@ -9,20 +9,19 @@ using Graph = csso.NodeCore.Graph;
 
 namespace csso.NodeRunner;
 
-public class ScalarNodeRunner: Workspace {
-    public ScalarNodeRunner()  {
-
+public class ScalarNodeRunner : Workspace {
+    public ScalarNodeRunner() {
         var addFunc = new Function("Add", F.Add);
         var divideWholeFunc = new Function("Divide whole", F.DivideWhole);
         var messageBoxFunc = new Function("Messagebox", Output);
 
-        Factory.Register(addFunc);
-        Factory.Register(divideWholeFunc);
-        Factory.Register(messageBoxFunc);
-        Factory.Register(ConstIntFunc);
-        Factory.Register(ConstDoubleFunc);
-        Factory.Register(ConstStringFunc);
-        
+        Graph.FunctionFactory.Register(addFunc);
+        Graph.FunctionFactory.Register(divideWholeFunc);
+        Graph.FunctionFactory.Register(messageBoxFunc);
+        Graph.FunctionFactory.Register(ConstIntFunc);
+        Graph.FunctionFactory.Register(ConstDoubleFunc);
+        Graph.FunctionFactory.Register(ConstStringFunc);
+
         GraphView.Sync();
     }
 
