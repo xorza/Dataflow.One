@@ -48,7 +48,7 @@
 
         <Grid
             Grid.Column="1"
-            PreviewKeyDown="UIElement_OnPreviewKeyDown"
+            PreviewKeyDown="OnPreviewInput"
             IsHitTestVisible="False"
             Focusable="False"
             

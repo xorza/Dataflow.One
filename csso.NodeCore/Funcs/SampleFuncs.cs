@@ -53,8 +53,8 @@ public abstract class ConstantFunc : StatefulFunction {
 }
 
 public class ConstantFunc<T> : ConstantFunc  {
-    public ConstantFunc() : base(typeof(T)) {
-        Refresh("Constant", Func_);
+    public ConstantFunc(String name) : base(typeof(T)) {
+        Refresh(name, Func_);
         _behavior = base.Behavior;
     }
 
@@ -73,9 +73,9 @@ public class ConstantFunc<T> : ConstantFunc  {
         _behavior = behavior;
     }
 
-    // public override Function CreateInstance() {
-    //     return new ConstantFunc<T>();
-    // }
+    public override Function CreateInstance() {
+        return new ConstantFunc<T>(Name);
+    }
 }
 
 public class FrameNoFunc : Function {

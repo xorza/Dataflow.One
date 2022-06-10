@@ -127,7 +127,7 @@ public partial class FunctionFactoryBrowser : UserControl {
         NodePreview_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) { }
 
 
-    private void UIElement_OnPreviewKeyDown(object sender, RoutedEventArgs e) {
+    private void OnPreviewInput(object sender, RoutedEventArgs e) {
         e.Handled = true;
     }
 }

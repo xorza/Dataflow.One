@@ -14,14 +14,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Menu>
-            <MenuItem Header="_File">
-                <MenuItem Header="_New" Click="New_MenuItem_OnClick" />
-                <Separator />
-                <MenuItem Header="_Exit" Click="Exit_MenuItem_OnClick" />
-            </MenuItem>
-        </Menu>
-
         <nodeRunner:Overview
             x:Name="GraphOverview"
             Grid.Row="1"
