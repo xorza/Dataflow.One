@@ -10,6 +10,15 @@ namespace csso.ImageProcessing;
 public class Image : IDisposable {
     private IntPtr _ptr;
 
+    public int Height { get; }
+    public int Width { get; }
+    public int Stride { get; }
+    public int ChannelCount { get; private set; }
+    public int BytesPerChannel { get; private set; }
+    public int SizeInBytes { get; }
+    public int TotalPixels => Height * Width;
+
+    
     public Image(string filename) : this(new FileInfo(filename)) { }
 
     public Image(FileInfo fileInfo) {
@@ -45,14 +54,6 @@ public class Image : IDisposable {
         }
     }
 
-    public int Height { get; }
-    public int Width { get; }
-    public int Stride { get; }
-    public int ChannelCount { get; private set; }
-    public int BytesPerChannel { get; private set; }
-    public int SizeInBytes { get; }
-    public int TotalPixels => Height * Width;
-
     private void SetPixelFormat(PixelFormat pixelFormat) {
         switch (pixelFormat) {
             case PixelFormat.Format24bppRgb:
@@ -86,8 +87,6 @@ public class Image : IDisposable {
         var pixels16U = new RGB16U[pixelCount];
         for (var i = 0; i < pixelCount; i++)
             pixels16U[i] = new RGB16U(pixels8U[i]);
-
-        var resultPixels = new RGB16U[pixelCount];
 
         var a = ClBuffer.Create(clContext, pixels16U);
         return a;
