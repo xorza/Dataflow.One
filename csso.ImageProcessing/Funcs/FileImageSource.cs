@@ -6,7 +6,7 @@ using csso.OpenCL;
 
 namespace csso.ImageProcessing.Funcs;
 
-public class FileImageSource : StatefulFunction {
+public class FileImageSource : StatefulFunction , IDisposable{
     public FileInfo? FileInfo { get; set; }
     public ClBuffer? Buffer { get; set; }
 
@@ -15,6 +15,9 @@ public class FileImageSource : StatefulFunction {
     public FileImageSource(ImageProcessingContext ctx) {
         Context = ctx;
         Name = "Image from File";
+        
+        FileInfo = new FileInfo("D:\\2.jpg");
+        
         Init(GetBuffer_Func);
     }
 
@@ -33,5 +36,9 @@ public class FileImageSource : StatefulFunction {
         buffer = Buffer;
 
         return true;
+    }
+
+    public void Dispose() {
+        Buffer?.Dispose();
     }
 }

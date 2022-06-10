@@ -89,10 +89,11 @@ public class Function {
         CheckArgTypes(args);
 
         var result = Delegate.DynamicInvoke(args);
-        if (result is bool boolResult)
+        if (result is bool boolResult) {
             Check.True(boolResult);
-        else
-            throw new InvalidOperationException();
+        } else {
+            throw new InvalidOperationException("349j-70v5t g");
+        }
     }
 
     private void CheckArgTypes(object?[]? args) {

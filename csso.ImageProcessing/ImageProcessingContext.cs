@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using csso.ImageProcessing.Funcs;
 using csso.NodeCore;
@@ -8,7 +10,7 @@ using csso.OpenCL;
 namespace csso.ImageProcessing;
 
 public class ImageProcessingContext : IComputationContext, IDisposable {
-    public ClContext ClContext { get; private set; }
+    public ClContext ClContext { get; }
     public UiApi? UiApi { get; private set; }
 
     public ImageProcessingContext() {
@@ -19,8 +21,9 @@ public class ImageProcessingContext : IComputationContext, IDisposable {
         UiApi = api;
     }
 
-    public void RegisterFunctions(FunctionFactory graphFunctionFactory) {
-        graphFunctionFactory.Register(new FileImageSource(this));
+    public void RegisterFunctions(FunctionFactory functionFactory) {
+        functionFactory.Register(new FileImageSource(this));
+        functionFactory.Register(new Function("Messagebox", Messagebox));
     }
 
     private void OpenCLTest2_Button_OnClick() {
@@ -85,5 +88,12 @@ public class ImageProcessingContext : IComputationContext, IDisposable {
 
     public void Dispose() {
         ClContext?.Dispose();
+    }
+
+    [Description("messagebox")]
+    [FunctionId("18D7EE8B-F4F6-4C72-932D-80A47AF12012")]
+    private bool Messagebox(Object message) {
+        Debug.WriteLine(message.ToString() + " we34v5y245");
+        return true;
     }
 }

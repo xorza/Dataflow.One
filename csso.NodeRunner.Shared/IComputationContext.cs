@@ -4,10 +4,10 @@ namespace csso.NodeRunner.Shared;
 
 public interface IComputationContext {
     void Init(UiApi api);
-    void RegisterFunctions(FunctionFactory graphFunctionFactory);
+    void RegisterFunctions(FunctionFactory functionFactory);
 }
 
 public class DummyComputationContext : IComputationContext {
     void IComputationContext.Init(UiApi api) { }
-    void IComputationContext.RegisterFunctions(FunctionFactory graphFunctionFactory) { }
+    void IComputationContext.RegisterFunctions(FunctionFactory functionFactory) { }
 }
