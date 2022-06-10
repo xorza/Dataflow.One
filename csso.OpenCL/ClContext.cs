@@ -5,8 +5,8 @@ using OpenTK.Compute.OpenCL;
 
 namespace csso.OpenCL;
 
-public class Context : IDisposable {
-    public Context() {
+public class ClContext : IDisposable {
+    public ClContext() {
         IsDisposed = false;
 
         CL.GetPlatformIds(out var platformIds)
@@ -25,7 +25,7 @@ public class Context : IDisposable {
             result.ValidateSuccess();
 
             if (devices.Length != 0) {
-                ClContext = context;
+                InternalCLContext = context;
                 ClDevices = devices;
                 SelectedClDevice = devices.First();
                 return;
@@ -35,7 +35,7 @@ public class Context : IDisposable {
         throw new InvalidOperationException("cannot create context");
     }
 
-    internal CLContext ClContext { get; }
+    internal CLContext InternalCLContext { get; }
     internal CLDevice[] ClDevices { get; }
     internal CLDevice SelectedClDevice { get; }
 
@@ -72,26 +72,26 @@ public class Context : IDisposable {
 
         Program program = new(this, code);
         var kernel = program.Kernels.Single(_ => _.Name == "add");
-        var bufferA = Buffer.Create(this, a);
-        var bufferB = Buffer.Create(this, b);
-        Buffer resultBuffer = new(this, arraySize * sizeof(float));
+        var bufferA = ClBuffer.Create(this, a);
+        var bufferB = ClBuffer.Create(this, b);
+        ClBuffer resultClBuffer = new(this, arraySize * sizeof(float));
         CommandQueue commandQueue = new(this);
 
         KernelArgValue[] argsValues = {
             new BufferKernelArgValue(bufferA),
             new BufferKernelArgValue(bufferB),
-            new BufferKernelArgValue(resultBuffer),
+            new BufferKernelArgValue(resultClBuffer),
             new ScalarKernelArgValue<float>(1f)
         };
 
         try {
             commandQueue.EnqueueNdRangeKernel(kernel, arraySize, argsValues);
-            commandQueue.EnqueueReadBuffer(resultBuffer, resultValues);
+            commandQueue.EnqueueReadBuffer(resultClBuffer, resultValues);
             commandQueue.Finish();
         } finally {
             bufferA.Dispose();
             bufferB.Dispose();
-            resultBuffer.Dispose();
+            resultClBuffer.Dispose();
             commandQueue.Dispose();
             program.Dispose();
             kernel.Dispose();
@@ -107,14 +107,14 @@ public class Context : IDisposable {
     }
 
     private void ReleaseUnmanagedResources() {
-        CL.ReleaseContext(ClContext);
+        CL.ReleaseContext(InternalCLContext);
     }
 
     internal void CheckIfDisposed() {
         if (IsDisposed) throw new InvalidOperationException("Already disposed.");
     }
 
-    ~Context() {
+    ~ClContext() {
         ReleaseUnmanagedResources();
     }
 }

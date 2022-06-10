@@ -12,8 +12,8 @@ public class TwoNumbersSumTest {
     [SetUp]
     public void Setup() {
         _graph = new TestGraph();
-        _graph.ReactiveConstFunc.TypedValue = 3;
-        _graph.ProactiveConstFunc.TypedValue = 1253;
+        _graph.ReactiveConstFuncBaseBase.TypedValue = 3;
+        _graph.ProactiveConstFuncBaseBase.TypedValue = 1253;
 
         _graph.Graph.Add(
             new DataSubscription(

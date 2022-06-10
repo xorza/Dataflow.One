@@ -10,7 +10,7 @@ public class Kernel : IDisposable {
     private readonly List<KernelArg> _args = new();
 
     internal Kernel(Program program, string name, CLKernel clKernel) {
-        program.Context.CheckIfDisposed();
+        program.ClContext.CheckIfDisposed();
 
         Args = _args.AsReadOnly();
 

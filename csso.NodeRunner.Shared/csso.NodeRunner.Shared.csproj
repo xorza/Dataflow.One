@@ -2,9 +2,9 @@
 
     <PropertyGroup>
 <!--        <TargetFramework>net6.0-windows</TargetFramework>-->
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net6.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
-        <UseWPF>false</UseWPF>
+        <UseWPF>true</UseWPF>
         <LangVersion>default</LangVersion>
         
     </PropertyGroup>

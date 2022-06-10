@@ -19,13 +19,13 @@ public class ScalarKernelArgValue<T> : KernelArgValue where T : unmanaged {
 }
 
 public class BufferKernelArgValue : KernelArgValue {
-    public BufferKernelArgValue(Buffer buffer) {
-        Buffer = buffer;
+    public BufferKernelArgValue(ClBuffer clBuffer) {
+        ClBuffer = clBuffer;
     }
 
-    public Buffer Buffer { get; }
+    public ClBuffer ClBuffer { get; }
 
     internal override void Set(Kernel kernel, int index) {
-        CL.SetKernelArg(kernel.ClKernel, (uint) index, Buffer.ClBuffer).ValidateSuccess();
+        CL.SetKernelArg(kernel.ClKernel, (uint) index, ClBuffer.InternalCLBuffer).ValidateSuccess();
     }
 }

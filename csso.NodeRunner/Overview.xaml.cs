@@ -20,11 +20,14 @@ public partial class Overview : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public Overview() : this(new DummyComputationContext()) { }
+    
     public Overview(IComputationContext computationContext) {
         Workspace = new Workspace(computationContext);
         GraphView = new GraphView(Workspace.Graph);
         
         InitializeComponent();
+        
+        computationContext.Init(new UiApi());
     }
 
     private void FunctionFactoryBrowser_OnFunctionChosen(object? sender, Function e) {

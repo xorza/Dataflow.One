@@ -21,31 +21,25 @@ public class Function {
     protected Function() { }
 
     public Function(String name, Delegate func) {
-        Refresh(name, func);
-    }
-
-    public Function(String name, Delegate func, FunctionBehavior functionBehavior) : this(name, func) {
-        Behavior = functionBehavior;
+        Name = name;
+        Init(func);
     }
 
     public String Namespace { get; private set; }
-    public string Name { get; private set; }
+    public string Name { get; protected set; }
     public Guid? Id { get; private set; }
     public Delegate Delegate { get; private set; }
-    public IReadOnlyList<FunctionArg> Inputs => Args.Where(_ => _.ArgDirection == ArgDirection.In).ToList();
-    public IReadOnlyList<FunctionArg> Outputs => Args.Where(_ => _.ArgDirection == ArgDirection.Out).ToList();
     public IReadOnlyList<FunctionArg> Args { get; private set; }
     public FunctionBehavior Behavior { get; set; }
     public string Description { get; private set; }
     public string FullName => Namespace + "::" + Name;
 
-    protected void Refresh(String name, Delegate func) {
+    protected void Init(Delegate func) {
         Check.Argument(func.Method.ReturnType == typeof(bool), nameof(func));
 
         List<FunctionArg> args = new();
 
         Args = args.AsReadOnly();
-        Name = name;
         Delegate = func;
         Namespace = func.Method.DeclaringType?.FullName ?? "";
 

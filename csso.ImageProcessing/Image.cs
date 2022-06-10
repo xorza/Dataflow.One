@@ -1,15 +1,23 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
+using csso.OpenCL;
 
 namespace csso.ImageProcessing;
 
 public class Image : IDisposable {
     private IntPtr _ptr;
 
-    public Image(string filename) {
-        var img = new Bitmap(filename);
+    public Image(string filename) : this(new FileInfo(filename)) { }
+
+    public Image(FileInfo fileInfo) {
+        Bitmap img;
+        using (var fileStream = fileInfo.OpenRead()) {
+            img = new Bitmap(fileStream);
+        }
+
         BitmapData? imageData = null;
 
         try {
@@ -29,8 +37,9 @@ public class Image : IDisposable {
                 Buffer.MemoryCopy(imageData.Scan0.ToPointer(), _ptr.ToPointer(), SizeInBytes, SizeInBytes);
             }
         } finally {
-            if (imageData != null)
+            if (imageData != null) {
                 img.UnlockBits(imageData);
+            }
 
             img.Dispose();
         }
@@ -43,7 +52,7 @@ public class Image : IDisposable {
     public int BytesPerChannel { get; private set; }
     public int SizeInBytes { get; }
     public int TotalPixels => Height * Width;
-    
+
     private void SetPixelFormat(PixelFormat pixelFormat) {
         switch (pixelFormat) {
             case PixelFormat.Format24bppRgb:
@@ -70,7 +79,21 @@ public class Image : IDisposable {
         return result;
     }
 
-    
+    public ClBuffer CreateBuffer(csso.OpenCL.ClContext clContext) {
+        var pixelCount = TotalPixels;
+
+        var pixels8U = As<RGB8U>();
+        var pixels16U = new RGB16U[pixelCount];
+        for (var i = 0; i < pixelCount; i++)
+            pixels16U[i] = new RGB16U(pixels8U[i]);
+
+        var resultPixels = new RGB16U[pixelCount];
+
+        var a = ClBuffer.Create(clContext, pixels16U);
+        return a;
+    }
+
+
     private void ReleaseUnmanagedResources() {
         if (_ptr != IntPtr.Zero) {
             Marshal.FreeHGlobal(_ptr);
@@ -82,6 +105,7 @@ public class Image : IDisposable {
         ReleaseUnmanagedResources();
         GC.SuppressFinalize(this);
     }
+
     ~Image() {
         ReleaseUnmanagedResources();
     }

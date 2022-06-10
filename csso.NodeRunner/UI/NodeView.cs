@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using csso.ImageProcessing.Funcs;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
 
@@ -30,14 +31,7 @@ public class NodeView : INotifyPropertyChanged {
 
         if (Node is FunctionNode functionNode) {
             if (functionNode.Function is ConstantFunc constFunc) {
-                var editableValueView =
-                    typeof(EditableValueView<>)
-                        .MakeGenericType(constFunc.Type)
-                        .GetConstructors()
-                        .First()
-                        .Invoke(new object[] {constFunc});
-
-                EditableValue = (EditableValueView) editableValueView;
+                EditableValue = EditableValueView.Create(constFunc);
             }
         }
     }

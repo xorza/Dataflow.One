@@ -5,21 +5,21 @@ using OpenTK.Compute.OpenCL;
 namespace csso.OpenCL;
 
 public class CommandQueue : IDisposable {
-    public CommandQueue(Context context) {
-        context.CheckIfDisposed();
+    public CommandQueue(ClContext clContext) {
+        clContext.CheckIfDisposed();
 
-        Context = context;
+        ClContext = clContext;
 
         CLResultCode result;
         ClCommandQueue = CL.CreateCommandQueueWithProperties(
-            context.ClContext,
-            context.SelectedClDevice,
+            clContext.InternalCLContext,
+            clContext.SelectedClDevice,
             IntPtr.Zero,
             out result);
         result.ValidateSuccess();
     }
 
-    public Context Context { get; }
+    public ClContext ClContext { get; }
 
     internal CLCommandQueue ClCommandQueue { get; }
 
@@ -31,16 +31,16 @@ public class CommandQueue : IDisposable {
         GC.SuppressFinalize(this);
     }
 
-    public void EnqueueFillBuffer<T>(Buffer buffer, T[] arr) where T : unmanaged {
+    public void EnqueueFillBuffer<T>(ClBuffer clBuffer, T[] arr) where T : unmanaged {
         CheckIfDisposed();
-        buffer.CheckIfDisposed();
+        clBuffer.CheckIfDisposed();
 
         unsafe {
             CLResultCode result;
             CLEvent clEvent;
             result = CL.EnqueueFillBuffer(
                 ClCommandQueue,
-                buffer.ClBuffer,
+                clBuffer.InternalCLBuffer,
                 arr,
                 UIntPtr.Zero,
                 (UIntPtr) (arr.Length * sizeof(T)),
@@ -81,15 +81,15 @@ public class CommandQueue : IDisposable {
         releaseResult.ValidateSuccess();
     }
 
-    public void EnqueueReadBuffer<T>(Buffer buffer, T[] arr) where T : unmanaged {
+    public void EnqueueReadBuffer<T>(ClBuffer clBuffer, T[] arr) where T : unmanaged {
         CheckIfDisposed();
-        buffer.CheckIfDisposed();
+        clBuffer.CheckIfDisposed();
 
         CLResultCode result;
         CLEvent clEvent;
         result = CL.EnqueueReadBuffer(
             ClCommandQueue,
-            buffer.ClBuffer,
+            clBuffer.InternalCLBuffer,
             true,
             UIntPtr.Zero,
             arr,
@@ -112,7 +112,7 @@ public class CommandQueue : IDisposable {
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || Context.IsDisposed) throw new InvalidOperationException("Already disposed.");
+        if (IsDisposed || ClContext.IsDisposed) throw new InvalidOperationException("Already disposed.");
     }
 
     ~CommandQueue() {

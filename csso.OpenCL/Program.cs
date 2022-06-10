@@ -5,20 +5,20 @@ using OpenTK.Compute.OpenCL;
 namespace csso.OpenCL;
 
 public class Program : IDisposable {
-    public Program(Context context, string code) {
-        context.CheckIfDisposed();
+    public Program(ClContext clContext, string code) {
+        clContext.CheckIfDisposed();
 
-        Context = context;
+        ClContext = clContext;
         Code = code;
 
         CLResultCode result;
-        ClProgram = CL.CreateProgramWithSource(Context.ClContext, code, out result);
+        ClProgram = CL.CreateProgramWithSource(ClContext.InternalCLContext, code, out result);
         result.ValidateSuccess();
 
         result = CL.BuildProgram(
             ClProgram,
-            (uint) Context.ClDevices.Length,
-            Context.ClDevices,
+            (uint) ClContext.ClDevices.Length,
+            ClContext.ClDevices,
             "-cl-kernel-arg-info",
             IntPtr.Zero,
             IntPtr.Zero);
@@ -40,7 +40,7 @@ public class Program : IDisposable {
     }
 
     public string Code { get; }
-    public Context Context { get; }
+    public ClContext ClContext { get; }
 
     internal CLProgram ClProgram { get; }
 
@@ -59,7 +59,7 @@ public class Program : IDisposable {
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || Context.IsDisposed) throw new InvalidOperationException("Already disposed.");
+        if (IsDisposed || ClContext.IsDisposed) throw new InvalidOperationException("Already disposed.");
     }
 
     ~Program() {

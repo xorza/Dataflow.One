@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using csso.NodeCore;
 using csso.NodeCore.Annotations;
@@ -28,6 +29,16 @@ public abstract class EditableValueView : INotifyPropertyChanged {
             _hasValue = value;
             OnPropertyChanged();
         }
+    }
+
+    public static EditableValueView Create(ConstantFunc func) {
+        var editableValueView =
+            typeof(EditableValueView<>)
+                .MakeGenericType(func.Type)
+                .GetConstructors()
+                .First()
+                .Invoke(new object[] {func});
+        return (EditableValueView) editableValueView;
     }
 
 

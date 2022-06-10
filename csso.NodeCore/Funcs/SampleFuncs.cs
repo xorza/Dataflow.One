@@ -33,7 +33,8 @@ public static class F {
 
 public class OutputFunc<T> : Function {
     public OutputFunc() {
-        Refresh("Output", Func_);
+        Name = "Output";
+        Init(Func_);
     }
 
     public T Value { get; set; }
@@ -48,21 +49,24 @@ public class OutputFunc<T> : Function {
 public abstract class ConstantFunc : StatefulFunction {
     public Type Type { get; }
 
-    protected ConstantFunc(Type type) {
+    protected ConstantFunc(String name, Type type) {
+        Name = name;
         Type = type;
         Behavior = FunctionBehavior.Reactive;
     }
 }
 
-public class ConstantFunc<T> : ConstantFunc {
+public sealed class ConstantFunc<T> : ConstantFunc {
     public ConstantFunc(String name)
-        : this(name, new DataCompatibility().DefaultValue<T>()) {
-        
+        : this(name, new DataCompatibility().DefaultValue<T>()) { }
+
+    public ConstantFunc(String name, T? defaultValue) : base(name, typeof(T)) {
+        Init(Func_);
+        TypedValue = defaultValue;
     }
 
-    public ConstantFunc(String name, T? defaultValue) : base(typeof(T)) {
-        Refresh(name, Func_);
-        TypedValue = defaultValue;
+    public override Function CreateInstance() {
+        return new ConstantFunc<T>(Name);
     }
 
     public T? TypedValue { get; set; }
@@ -71,15 +75,12 @@ public class ConstantFunc<T> : ConstantFunc {
         value = TypedValue;
         return true;
     }
-
-    public override Function CreateInstance() {
-        return new ConstantFunc<T>(Name, TypedValue);
-    }
 }
 
 public class FrameNoFunc : Function {
     public FrameNoFunc() {
-        Refresh("Frame number", Func_);
+        Name = "Frame number";
+        Init(Func_);
     }
 
     public Executor? Executor { get; set; }

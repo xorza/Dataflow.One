@@ -4,15 +4,15 @@ using OpenTK.Compute.OpenCL;
 
 namespace csso.OpenCL;
 
-public class Buffer : IDisposable {
-    public Buffer(Context context, int sizeInBytes) {
-        context.CheckIfDisposed();
+public class ClBuffer : IDisposable {
+    public ClBuffer(ClContext clContext, int sizeInBytes) {
+        clContext.CheckIfDisposed();
 
-        Context = context;
+        ClContext = clContext;
 
         CLResultCode result;
-        ClBuffer = CL.CreateBuffer(
-            Context.ClContext,
+        InternalCLBuffer = CL.CreateBuffer(
+            ClContext.InternalCLContext,
             MemoryFlags.WriteOnly,
             new UIntPtr((uint) sizeInBytes),
             IntPtr.Zero,
@@ -22,19 +22,19 @@ public class Buffer : IDisposable {
         SizeInBytes = sizeInBytes;
     }
 
-    private Buffer(Context context, CLBuffer clBuffer, int sizeInBytes) {
-        context.CheckIfDisposed();
+    private ClBuffer(ClContext clContext, CLBuffer clInternalClBuffer, int sizeInBytes) {
+        clContext.CheckIfDisposed();
         Check.Argument(sizeInBytes > 0, nameof(sizeInBytes));
 
-        Context = context;
-        ClBuffer = clBuffer;
+        ClContext = clContext;
+        InternalCLBuffer = clInternalClBuffer;
         SizeInBytes = sizeInBytes;
     }
 
-    public Context Context { get; }
+    public ClContext ClContext { get; }
     public int SizeInBytes { get; }
 
-    internal CLBuffer ClBuffer { get; }
+    internal CLBuffer InternalCLBuffer { get; }
 
     public bool IsDisposed { get; private set; }
 
@@ -44,32 +44,34 @@ public class Buffer : IDisposable {
         GC.SuppressFinalize(this);
     }
 
-    public static Buffer Create<T>(Context context, T[] arr) where T : unmanaged {
-        context.CheckIfDisposed();
+    public static ClBuffer Create<T>(ClContext clContext, T[] arr) where T : unmanaged {
+        clContext.CheckIfDisposed();
         Check.Argument(arr.Length > 0, nameof(arr));
 
         CLResultCode result;
         var clBuffer = CL.CreateBuffer(
-            context.ClContext,
+            clContext.InternalCLContext,
             MemoryFlags.ReadOnly | MemoryFlags.CopyHostPtr,
             arr,
             out result);
         result.ValidateSuccess();
 
         unsafe {
-            return new Buffer(context, clBuffer, arr.Length * sizeof(T));
+            return new ClBuffer(clContext, clBuffer, arr.Length * sizeof(T));
         }
     }
 
     private void ReleaseUnmanagedResources() {
-        CL.ReleaseMemoryObject(ClBuffer);
+        CL.ReleaseMemoryObject(InternalCLBuffer);
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || Context.IsDisposed) throw new InvalidOperationException("Already disposed.");
+        if (IsDisposed || ClContext.IsDisposed) {
+            throw new InvalidOperationException("Already disposed.");
+        }
     }
 
-    ~Buffer() {
+    ~ClBuffer() {
         ReleaseUnmanagedResources();
     }
 }

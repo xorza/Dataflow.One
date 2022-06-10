@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Linq;
+using csso.ImageProcessing.Funcs;
 using csso.NodeCore;
 using csso.NodeRunner.Shared;
 using csso.OpenCL;
-using OpenTK.Compute.OpenCL;
-using Buffer = csso.OpenCL.Buffer;
 
 namespace csso.ImageProcessing;
 
-public class ImageProcessingWorkspace : IComputationContext, IDisposable {
-    private readonly csso.OpenCL.Context _clContext;
+public class ImageProcessingContext : IComputationContext, IDisposable {
+    public ClContext ClContext { get; private set; }
+    public UiApi? UiApi { get; private set; }
 
-    public ImageProcessingWorkspace() {
-        _clContext = new();
+    public ImageProcessingContext() {
+        ClContext = new();
+    }
+
+    public void Init(UiApi api) {
+        UiApi = api;
     }
 
     public void RegisterFunctions(FunctionFactory graphFunctionFactory) {
-        // throw new NotImplementedException();
+        graphFunctionFactory.Register(new FileImageSource(this));
     }
 
     private void OpenCLTest2_Button_OnClick() {
@@ -34,7 +38,7 @@ public class ImageProcessingWorkspace : IComputationContext, IDisposable {
                     result[i] = (A[i].x + B[i]) + C;
 					result[i] = (A[i].x + B[i]);
                 }";
-        Program p = new(_clContext, code);
+        Program p = new(ClContext!, code);
     }
 
     private void PngLoadTest_Button_OnClick() {
@@ -48,17 +52,17 @@ public class ImageProcessingWorkspace : IComputationContext, IDisposable {
 
         var resultPixels = new RGB16U[pixelCount];
 
-        var a = Buffer.Create(_clContext, pixels16U);
-        Buffer b = new(_clContext, sizeof(ushort) * 3 * pixelCount);
+        var a = ClBuffer.Create(ClContext!, pixels16U);
+        ClBuffer b = new(ClContext, sizeof(ushort) * 3 * pixelCount);
 
         var code = @"
                 __kernel void add(__global ushort3* A, __global ushort3* B, const float C) {
                     int i = get_global_id(0);
 					B[i] = A[i];
                 }";
-        Program program = new(_clContext, code);
+        Program program = new(ClContext, code);
         var kernel = program.Kernels.Single();
-        CommandQueue commandQueue = new(_clContext);
+        CommandQueue commandQueue = new(ClContext);
 
         KernelArgValue[] argsValues = {
             new BufferKernelArgValue(a),
@@ -80,6 +84,6 @@ public class ImageProcessingWorkspace : IComputationContext, IDisposable {
     }
 
     public void Dispose() {
-        _clContext.Dispose();
+        ClContext?.Dispose();
     }
 }
