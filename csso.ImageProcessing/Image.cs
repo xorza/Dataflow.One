@@ -42,12 +42,7 @@ public class Image : IDisposable {
     public int BytesPerChannel { get; private set; }
     public int SizeInBytes { get; }
     public int TotalPixels => Height * Width;
-
-    public void Dispose() {
-        ReleaseUnmanagedResources();
-        GC.SuppressFinalize(this);
-    }
-
+    
     private void SetPixelFormat(PixelFormat pixelFormat) {
         switch (pixelFormat) {
             case PixelFormat.Format24bppRgb:
@@ -74,7 +69,7 @@ public class Image : IDisposable {
         return result;
     }
 
-
+    
     private void ReleaseUnmanagedResources() {
         if (_ptr != IntPtr.Zero) {
             Marshal.FreeHGlobal(_ptr);
@@ -82,6 +77,10 @@ public class Image : IDisposable {
         }
     }
 
+    public void Dispose() {
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
     ~Image() {
         ReleaseUnmanagedResources();
     }

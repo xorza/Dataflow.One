@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:wpfNode="clr-namespace:csso.WpfNode;assembly=csso.WpfNode"
+             xmlns:local="clr-namespace:csso.NodeRunner.UI"
 
              mc:Ignorable="d"
              x:Name="OverviewUserControl"
@@ -12,7 +12,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml" />
+                <ResourceDictionary Source="UI/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -30,17 +30,17 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <wpfNode:Graph x:Name="Graph"
+        <local:Graph x:Name="Graph"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"
                        GraphView="{Binding Path=GraphView, ElementName=OverviewUserControl}">
-            <wpfNode:Graph.ContextMenu>
+            <local:Graph.ContextMenu>
                 <ContextMenu>
                     <ContextMenu.Template>
                         <ControlTemplate>
                             <Border>
 
-                                <wpfNode:FunctionFactoryBrowser
+                                <local:FunctionFactoryBrowser
                                     ListViewItemStyle="{StaticResource ListViewItemDefault}"
                                     FunctionChosen="FunctionFactoryBrowser_OnFunctionChosen"
                                     Loaded="FunctionFactoryBrowser_OnLoaded" />
@@ -49,8 +49,8 @@
                         </ControlTemplate>
                     </ContextMenu.Template>
                 </ContextMenu>
-            </wpfNode:Graph.ContextMenu>
-        </wpfNode:Graph>
+            </local:Graph.ContextMenu>
+        </local:Graph>
 
         <Button Grid.Row="0" Grid.Column="0" Content="Run"
                 VerticalAlignment="Bottom"
@@ -69,7 +69,7 @@
             Background="{StaticResource ActiveContentBackgroundBrush}" />
 
 
-        <wpfNode:NodeEdit
+        <local:NodeEdit
             Margin="0"
             Padding="0"
             x:Name="NodeEdit"

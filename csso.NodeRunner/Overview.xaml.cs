@@ -5,6 +5,8 @@ using System.Windows;
 using csso.ImageProcessing;
 using csso.NodeCore;
 using csso.NodeCore.Run;
+using csso.NodeRunner.Shared;
+using csso.NodeRunner.UI;
 using csso.OpenCL;
 using csso.WpfNode;
 
@@ -33,15 +35,16 @@ public partial class Overview : INotifyPropertyChanged {
             if (_functionFactoryBrowser != null) {
                 _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;
             }
+
             OnPropertyChanged();
         }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public void Init(Workspace scalarNodeRunner) {
-        GraphView = scalarNodeRunner.GraphView;
-        _executor = scalarNodeRunner.Executor;
+    public void Init(Workspace workspace) {
+        GraphView = new GraphView(workspace.Graph);
+        _executor = workspace.Executor;
     }
 
     private void OpenCLTest2_Button_OnClick(object sender, RoutedEventArgs e) {
