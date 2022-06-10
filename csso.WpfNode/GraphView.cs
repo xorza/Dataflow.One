@@ -12,7 +12,7 @@ using DynamicData;
 
 namespace csso.WpfNode;
 
-public sealed class GraphVM : INotifyPropertyChanged {
+public sealed class GraphView : INotifyPropertyChanged {
     private readonly ObservableCollection<EdgeView> _edges = new();
     private readonly ObservableCollection<NodeView> _nodes = new();
 
@@ -97,7 +97,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
 
 
-    public GraphVM(NodeCore.Graph graph) {
+    public GraphView(NodeCore.Graph graph) {
         Nodes = new ReadOnlyObservableCollection<NodeView>(_nodes);
         Edges = new ReadOnlyObservableCollection<EdgeView>(_edges);
 
@@ -144,7 +144,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
     }
 
     public void RemoveNode(NodeView nodeView) {
-        Check.True(nodeView.GraphVm == this);
+        Check.True(nodeView.GraphView == this);
 
         Graph.Remove(nodeView.Node);
 

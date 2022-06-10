@@ -16,7 +16,7 @@ public partial class Overview : INotifyPropertyChanged {
 
     private FunctionFactoryBrowser? _functionFactoryBrowser;
 
-    private GraphVM? _graphView;
+    private GraphView? _graphView;
 
 
     public Overview() {
@@ -25,7 +25,7 @@ public partial class Overview : INotifyPropertyChanged {
         _clContext = new Context();
     }
 
-    public GraphVM? GraphView {
+    public GraphView? GraphView {
         get => _graphView;
         set {
             _graphView = value;
@@ -39,9 +39,9 @@ public partial class Overview : INotifyPropertyChanged {
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public void Init(NodeRunner nodeRunner) {
-        GraphView = nodeRunner.GraphVM;
-        _executor = nodeRunner.Executor;
+    public void Init(ScalarNodeRunner scalarNodeRunner) {
+        GraphView = scalarNodeRunner.GraphView;
+        _executor = scalarNodeRunner.Executor;
     }
 
     private void OpenCLTest2_Button_OnClick(object sender, RoutedEventArgs e) {
@@ -116,7 +116,7 @@ public partial class Overview : INotifyPropertyChanged {
         _graphView!.OnExecuted(_executor!);
     }
 
-    private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e) {
+    private void FunctionFactoryBrowser_OnLoaded(object sender, RoutedEventArgs e) {
         _functionFactoryBrowser = (FunctionFactoryBrowser) sender;
 
         _functionFactoryBrowser.FunctionFactory = _graphView?.FunctionFactory;

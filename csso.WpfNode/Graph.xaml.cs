@@ -12,8 +12,8 @@ namespace csso.WpfNode;
 
 public partial class Graph : UserControl {
     public static readonly DependencyProperty GraphViewProperty = DependencyProperty.Register(
-        nameof(GraphView), typeof(GraphVM), typeof(Graph),
-        new PropertyMetadata(default(GraphVM), GraphViewPropertyChangedCallback));
+        nameof(GraphView), typeof(GraphView), typeof(Graph),
+        new PropertyMetadata(default(GraphView), GraphViewPropertyChangedCallback));
 
     private readonly List<Node> _nodes = new();
 
@@ -78,8 +78,8 @@ public partial class Graph : UserControl {
         MouseDown += Down;
     }
 
-    public GraphVM? GraphView {
-        get => (GraphVM) GetValue(GraphViewProperty);
+    public GraphView? GraphView {
+        get => (GraphView) GetValue(GraphViewProperty);
         set => SetValue(GraphViewProperty, value);
     }
 
@@ -100,10 +100,10 @@ public partial class Graph : UserControl {
         DependencyPropertyChangedEventArgs e) {
         var graph = (Graph) d;
 
-        if (e.OldValue is GraphVM oldGraphView)
+        if (e.OldValue is GraphView oldGraphView)
             ((INotifyCollectionChanged) oldGraphView.Edges).CollectionChanged -= graph.Edges_CollectionChanged;
 
-        if (e.NewValue is GraphVM graphView)
+        if (e.NewValue is GraphView graphView)
             ((INotifyCollectionChanged) graphView.Edges).CollectionChanged += graph.Edges_CollectionChanged;
 
         graph.RedrawEdges();
@@ -190,7 +190,7 @@ public partial class Graph : UserControl {
                 output.NodeArg)
         );
 
-        input.NodeView.GraphVm.Sync();
+        input.NodeView.GraphView.Sync();
     }
 
     private void NodesCanvas_OnLoaded(object sender, RoutedEventArgs e) {
@@ -201,7 +201,7 @@ public partial class Graph : UserControl {
     private void Node_OnLoaded(object sender, RoutedEventArgs e) {
         var node = (Node) sender;
         node.DragCanvas = _nodesCanvas;
-        Check.True(node.NodeView?.GraphVm == GraphView);
+        Check.True(node.NodeView?.GraphView == GraphView);
         AddNode(node);
     }
 

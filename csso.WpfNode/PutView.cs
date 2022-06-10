@@ -19,7 +19,7 @@ public sealed class PutView : INotifyPropertyChanged {
         NodeArg = nodeArg;
         NodeView = nodeView;
         
-        ((INotifyCollectionChanged)nodeView.GraphVm.Edges).CollectionChanged += Edges_CollectionChanged;
+        ((INotifyCollectionChanged)nodeView.GraphView.Edges).CollectionChanged += Edges_CollectionChanged;
     }
 
     public UIElement? Control {
@@ -58,7 +58,7 @@ public sealed class PutView : INotifyPropertyChanged {
                 return;
 
             _isSelected = value;
-            NodeView.GraphVm.SelectedPutView = value ? this : null;
+            NodeView.GraphView.SelectedPutView = value ? this : null;
 
             OnPropertyChanged();
         }

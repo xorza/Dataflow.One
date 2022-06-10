@@ -39,13 +39,12 @@
                     <ContextMenu.Template>
                         <ControlTemplate>
                             <Border>
-                                <Grid>
 
-                                    <wpfNode:FunctionFactoryBrowser
-                                        ListViewItemStyle="{StaticResource ListViewItemDefault}"
-                                        FunctionChosen="FunctionFactoryBrowser_OnFunctionChosen"
-                                        Loaded="FrameworkElement_OnLoaded" />
-                                </Grid>
+                                <wpfNode:FunctionFactoryBrowser
+                                    ListViewItemStyle="{StaticResource ListViewItemDefault}"
+                                    FunctionChosen="FunctionFactoryBrowser_OnFunctionChosen"
+                                    Loaded="FunctionFactoryBrowser_OnLoaded" />
+
                             </Border>
                         </ControlTemplate>
                     </ContextMenu.Template>
@@ -69,21 +68,18 @@
             ResizeBehavior="PreviousAndNext"
             Background="{StaticResource ActiveContentBackgroundBrush}" />
 
-   
 
-            <wpfNode:NodeEdit
-                Margin="0"
-                Padding="0"
-                x:Name="NodeEdit"
-                Grid.Row="0"
-                Grid.Column="2"
-                Grid.RowSpan="2"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                NodeView="{Binding Path=GraphView.SelectedNode, ElementName=OverviewUserControl}" />
+        <wpfNode:NodeEdit
+            Margin="0"
+            Padding="0"
+            x:Name="NodeEdit"
+            Grid.Row="0"
+            Grid.Column="2"
+            Grid.RowSpan="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            NodeView="{Binding Path=GraphView.SelectedNode, ElementName=OverviewUserControl}" />
 
-
-  
 
     </Grid>
 </UserControl>

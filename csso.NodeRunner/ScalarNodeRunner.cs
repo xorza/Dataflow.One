@@ -9,14 +9,12 @@ using Graph = csso.NodeCore.Graph;
 
 namespace csso.NodeRunner;
 
-public class NodeRunner {
-    public NodeRunner() {
-        Graph graph = new();
+public class ScalarNodeRunner: Workspace {
+    public ScalarNodeRunner()  {
 
         var addFunc = new Function("Add", F.Add);
         var divideWholeFunc = new Function("Divide whole", F.DivideWhole);
         var messageBoxFunc = new Function("Messagebox", Output);
-        FrameNoFunc = new FrameNoFunc();
 
         Factory.Register(addFunc);
         Factory.Register(divideWholeFunc);
@@ -24,22 +22,13 @@ public class NodeRunner {
         Factory.Register(ConstIntFunc);
         Factory.Register(ConstDoubleFunc);
         Factory.Register(ConstStringFunc);
-        Factory.Register(FrameNoFunc);
-
-        graph.FunctionFactory = Factory;
-
-        GraphVM = new GraphVM(graph);
-        Executor = new Executor(GraphVM.Graph);
-        FrameNoFunc.Executor = Executor;
+        
+        GraphView.Sync();
     }
 
-    public FunctionFactory Factory { get; } = new();
     public ConstantFunc<Int32> ConstIntFunc { get; } = new("Integer");
     public ConstantFunc<Double> ConstDoubleFunc { get; } = new("Float");
     public ConstantFunc<String> ConstStringFunc { get; } = new("String", "");
-    public FrameNoFunc FrameNoFunc { get; }
-    public Executor Executor { get; }
-    public GraphVM GraphVM { get; }
 
     [Description("messagebox")]
     [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]
