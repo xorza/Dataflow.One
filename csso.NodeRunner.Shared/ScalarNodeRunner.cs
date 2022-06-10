@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
 
@@ -25,7 +26,7 @@ public class ScalarNodeRunner : Workspace {
     [Description("messagebox")]
     [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]
     private static bool Messagebox(Object message) {
-        // System.Windows.MessageBox.Show(message.ToString());
+        System.Windows.MessageBox.Show(message.ToString());
         return true;
     }
 }
