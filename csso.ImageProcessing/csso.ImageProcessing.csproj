@@ -1,25 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net6.0-windows</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-        <NoWarn>1701;1702;CA1416</NoWarn>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <NoWarn>1701;1702;CA1416</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\csso.Common\csso.Common.csproj" />
+        <ProjectReference Include="..\csso.NodeRunner.Shared\csso.NodeRunner.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -2,8 +2,9 @@
 using System.ComponentModel;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
+using csso.NodeRunner.Shared;
 
-namespace csso.NodeRunner.Shared;
+namespace csso.NodeRunner.PlayRoom;
 
 public class ScalarNodeRunner : Workspace {
     public ScalarNodeRunner() {

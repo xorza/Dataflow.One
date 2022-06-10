@@ -1,5 +1,5 @@
-﻿namespace csso.ImageProcessing; 
+﻿using csso.NodeRunner.Shared;
 
-public class ImageProcessingWorkspace {
-    
-}
+namespace csso.ImageProcessing;
+
+public class ImageProcessingWorkspace : Workspace { }

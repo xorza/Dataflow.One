@@ -8,7 +8,7 @@ using csso.NodeCore.Run;
 using csso.NodeRunner.Shared;
 using csso.NodeRunner.UI;
 using csso.OpenCL;
-using csso.WpfNode;
+using Buffer = csso.OpenCL.Buffer;
 
 namespace csso.NodeRunner;
 

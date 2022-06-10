@@ -4,9 +4,6 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageId>$(AssemblyName)</PackageId>
-        <Authors>csso</Authors>
-        <Product>$(AssemblyName)</Product>
         <LangVersion>default</LangVersion>
     </PropertyGroup>
 
