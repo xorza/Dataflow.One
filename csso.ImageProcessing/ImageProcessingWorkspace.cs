@@ -1,5 +1,10 @@
-﻿using csso.NodeRunner.Shared;
+﻿using csso.NodeCore;
+using csso.NodeRunner.Shared;
 
 namespace csso.ImageProcessing;
 
-public class ImageProcessingWorkspace : Workspace { }
+public class ImageProcessingWorkspace : IComputationContext {
+    public void RegisterFunctions(FunctionFactory graphFunctionFactory) {
+        throw new NotImplementedException();
+    }
+}

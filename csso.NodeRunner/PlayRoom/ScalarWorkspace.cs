@@ -6,19 +6,8 @@ using csso.NodeRunner.Shared;
 
 namespace csso.NodeRunner.PlayRoom;
 
-public class ScalarNodeRunner : Workspace {
-    public ScalarNodeRunner() {
-        var addFunc = new Function("Add", F.Add);
-        var divideWholeFunc = new Function("Divide whole", F.DivideWhole);
-        var messageBoxFunc = new Function("Messagebox", Messagebox);
-
-        Graph.FunctionFactory.Register(addFunc);
-        Graph.FunctionFactory.Register(divideWholeFunc);
-        Graph.FunctionFactory.Register(messageBoxFunc);
-        Graph.FunctionFactory.Register(ConstIntFunc);
-        Graph.FunctionFactory.Register(ConstDoubleFunc);
-        Graph.FunctionFactory.Register(ConstStringFunc);
-    }
+public class ScalarNodeRunner : IComputationContext {
+    public ScalarNodeRunner() { }
 
     public ConstantFunc<Int32> ConstIntFunc { get; } = new("Integer");
     public ConstantFunc<Double> ConstDoubleFunc { get; } = new("Float");
@@ -29,5 +18,18 @@ public class ScalarNodeRunner : Workspace {
     private static bool Messagebox(Object message) {
         System.Windows.MessageBox.Show(message.ToString());
         return true;
+    }
+
+    public void RegisterFunctions(FunctionFactory functionFactory) {
+        var addFunc = new Function("Add", F.Add);
+        var divideWholeFunc = new Function("Divide whole", F.DivideWhole);
+        var messageBoxFunc = new Function("Messagebox", Messagebox);
+
+        functionFactory.Register(addFunc);
+        functionFactory.Register(divideWholeFunc);
+        functionFactory.Register(messageBoxFunc);
+        functionFactory.Register(ConstIntFunc);
+        functionFactory.Register(ConstDoubleFunc);
+        functionFactory.Register(ConstStringFunc);
     }
 }

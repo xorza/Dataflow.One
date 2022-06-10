@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text.Json;
 using System.Windows;
-using csso.NodeRunner.Shared;
+using csso.NodeRunner.PlayRoom;
 using csso.WpfNode;
 using Microsoft.Win32;
 
@@ -11,6 +11,6 @@ public partial class MainWindow : Window {
     public MainWindow() {
         InitializeComponent();
 
-        GraphOverview.Init(new Workspace());
+         OverviewContentControl.Content = new Overview(new ScalarNodeRunner());
     }
 }

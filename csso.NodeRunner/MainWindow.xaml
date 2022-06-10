@@ -8,16 +8,10 @@
         VerticalContentAlignment="Stretch"
         HorizontalContentAlignment="Stretch">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
+    <ContentControl        x:Name="OverviewContentControl">
         <nodeRunner:Overview
             x:Name="GraphOverview"
-            Grid.Row="1"
             VerticalAlignment="Stretch"
             HorizontalAlignment="Stretch" />
-    </Grid>
+    </ContentControl>
 </Window>
