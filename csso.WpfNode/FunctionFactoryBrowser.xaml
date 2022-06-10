@@ -48,14 +48,15 @@
 
         <Grid
             Grid.Column="1"
-            PreviewMouseMove="UIElement_OnPreviewMouse_Skip"
-            PreviewMouseDown="UIElement_OnPreviewMouse_Skip"
+            PreviewKeyDown="UIElement_OnPreviewKeyDown"
             IsHitTestVisible="False"
-
+            Focusable="False"
+            
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
             Margin="8">
             <local:Node
+                IsEnabled="False"
                 DeletionEnabled="False"
                 NodeView="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview}"
                 Visibility="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview, Converter={StaticResource NullVisibilityConverter1}}" />

@@ -1,15 +1,26 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace csso.WpfNode;
 
 public partial class NodeEdit : UserControl {
-    public static readonly DependencyProperty NodeViewProperty = DependencyProperty.Register(
-        "NodeView", typeof(NodeView), typeof(NodeEdit), new PropertyMetadata(default(NodeView)));
-    
+    public static readonly DependencyProperty NodeViewProperty = DependencyProperty.Register
+    (
+        "NodeView", typeof(NodeView),
+        typeof(NodeEdit),
+        new PropertyMetadata(default(NodeView), PropertyChangedCallback)
+    );
+
+    private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        ((NodeEdit) d).Refresh();
+    }
+
 
     public NodeEdit() {
         InitializeComponent();
+
+        Refresh();
     }
 
     public NodeView? NodeView {
@@ -17,5 +28,17 @@ public partial class NodeEdit : UserControl {
         set => SetValue(NodeViewProperty, value);
     }
 
+    private void Refresh() {
+        MainPanel.Visibility =
+            NodeView == null
+                ? Visibility.Collapsed
+                : Visibility.Visible;
 
+        if (NodeView == null) return;
+
+
+        bool hasValues = NodeView.InputValues.Any() || NodeView.OutputValues.Any();
+
+        DebugValuesExpander.Visibility = hasValues ? Visibility.Visible : Visibility.Collapsed;
+    }
 }

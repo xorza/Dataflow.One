@@ -22,12 +22,13 @@ public partial class Typename : UserControl {
 
     public Typename() {
         InitializeComponent();
+        Refresh();
     }
 
 
     private void Refresh() {
         if(ValueType == null) {
-            TypenameTextBlock.Text = "null";
+            TypenameTextBlock.Text = "void";
             return;
         }
         TypenameTextBlock.Text = ValueType.Name;

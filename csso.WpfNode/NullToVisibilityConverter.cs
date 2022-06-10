@@ -5,9 +5,21 @@ using System.Windows.Data;
 
 namespace csso.WpfNode;
 
+public enum NullVisibilityConverterOptions {
+    NullToCollapsed,
+    NullToHidden,
+}
+
 public class NullVisibilityConverter : IValueConverter {
     public object Convert(object? value, Type targetType, object parameter, CultureInfo culture) {
-        return value == null ? Visibility.Hidden : Visibility.Visible;
+        var nullVisibility = Visibility.Collapsed;
+        if (parameter is NullVisibilityConverterOptions option) {
+            if (NullVisibilityConverterOptions.NullToHidden == option) {
+                nullVisibility = Visibility.Hidden;
+            }
+        }
+
+        return value == null ? nullVisibility : Visibility.Visible;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

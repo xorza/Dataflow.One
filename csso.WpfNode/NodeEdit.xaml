@@ -10,34 +10,60 @@
              d:DesignWidth="300"
              x:Name="NodeEditUserControl">
     <UserControl.Resources>
-        <ResourceDictionary Source="Styles.xaml"></ResourceDictionary>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+                <ResourceDictionary>
+                    <local:NullVisibilityConverter x:Key="NullVisibilityConverter1" />
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Border BorderThickness="0"
             BorderBrush="{x:Null}"
-            Background="{StaticResource InactiveContentBackgroundBrush}">
-        <StackPanel 
-            Orientation="Vertical" 
+            Background="{StaticResource InactiveContentBackgroundBrush}"
+
+            DataContext="{Binding ElementName=NodeEditUserControl, Path=NodeView}">
+        <StackPanel
+            x:Name="MainPanel"
+            Orientation="Vertical"
             Margin="{Binding Path=Padding, ElementName=NodeEditUserControl}">
-            
-            <TextBlock Text="{Binding Path=NodeView.Node.Name, ElementName=NodeEditUserControl}"
+
+            <TextBlock Text="{Binding Path=Node.Name}"
                        d:Text="Node name" />
 
-            <local:EditableValue 
-                Value="{Binding ElementName=NodeEditUserControl, Path=NodeView.EditableValue}" />
+            <local:EditableValue
+                Visibility="{Binding EditableValue,    
+                             Converter={StaticResource NullVisibilityConverter1},   
+                             ConverterParameter=local:NullVisibilityConverterOptions.NullToCollapsed}"
+                Value="{Binding Path=EditableValue}" />
 
-            <Expander Header="Debug arguments">
-                <StackPanel>
-                    <ItemsControl ItemsSource="{Binding ElementName=NodeEditUserControl,Path=NodeView.Values}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="local:ValueView">
-                                <Grid>
-                                    <local:Value 
-                                        ValueView="{Binding }" 
-                                        Editable="False" />
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+            <Expander
+                IsExpanded="True"
+                Header="Debug arguments"
+                x:Name="DebugValuesExpander">
+                <Expander.Resources>
+                    <ResourceDictionary>
+                        <DataTemplate
+                            DataType="{x:Type local:ValueView}">
+                            <local:Value
+                                ValueView="{Binding }"
+                                Editable="False" />
+                        </DataTemplate>
+                    </ResourceDictionary>
+                </Expander.Resources>
+                <StackPanel
+                    Orientation="Vertical">
+
+                    <TextBlock
+                        Text="Inputs:" />
+                    <ItemsControl
+                        ItemsSource="{Binding InputValues}" />
+                    <TextBlock
+                        Text="Outputs:" />
+                    <ItemsControl
+                        ItemsSource="{Binding OutputValues}" />
+
                 </StackPanel>
             </Expander>
         </StackPanel>

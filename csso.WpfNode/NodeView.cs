@@ -59,7 +59,8 @@ public class NodeView : INotifyPropertyChanged {
 
     public List<PutView> Inputs { get; } = new();
     public List<PutView> Outputs { get; } = new();
-    public ObservableCollection<ValueView> Values { get; } = new();
+    public ObservableCollection<ValueView> InputValues { get; } = new();
+    public ObservableCollection<ValueView> OutputValues { get; } = new();
 
     public EditableValueView? EditableValue { get; }
 

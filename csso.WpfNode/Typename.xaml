@@ -6,5 +6,5 @@
              xmlns:local="clr-namespace:csso.WpfNode"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <TextBlock x:Name="TypenameTextBlock"  Text="null"/>
+    <TextBlock x:Name="TypenameTextBlock" />
 </UserControl>

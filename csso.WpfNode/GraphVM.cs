@@ -164,7 +164,8 @@ public sealed class GraphVM : INotifyPropertyChanged {
     public void OnExecuted(Executor executor) {
         foreach (var nodeView in Nodes) {
             nodeView.ExecutionTime = null;
-            nodeView.Values.Clear();
+            nodeView.InputValues.Clear();
+            nodeView.OutputValues.Clear();
 
             var en = executor.EvaluationNodes
                 .SingleOrDefault(_ => _.Node == nodeView.Node);
@@ -173,7 +174,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
                 foreach (var output in nodeView.Inputs) {
                     var index = output.NodeArg.FunctionArg.ArgumentIndex;
                     var value = en.GetArgValues()[index];
-                    nodeView.Values.Add(
+                    nodeView.InputValues.Add(
                         ValueView.FromValue(output, value)
                     );
                 }
@@ -184,7 +185,7 @@ public sealed class GraphVM : INotifyPropertyChanged {
                     foreach (var output in nodeView.Outputs) {
                         var index = output.NodeArg.FunctionArg.ArgumentIndex;
                         var value = en.GetArgValues()[index];
-                        nodeView.Values.Add(
+                        nodeView.OutputValues.Add(
                             ValueView.FromValue(output, value)
                         );
                     }

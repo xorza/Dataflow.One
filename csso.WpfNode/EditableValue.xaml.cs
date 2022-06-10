@@ -13,9 +13,10 @@ public partial class EditableValue : UserControl {
 
     private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
         var control = (EditableValue) d;
+        control.ValueTextBox.IsEnabled = e.NewValue != null;
     }
 
-    public EditableValueView Value {
+    public EditableValueView? Value {
         get => (EditableValueView) GetValue(ValueProperty);
         set => SetValue(ValueProperty, value);
     }

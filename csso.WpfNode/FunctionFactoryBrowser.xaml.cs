@@ -121,4 +121,8 @@ public partial class FunctionFactoryBrowser : UserControl {
     private void UIElement_OnPreviewMouse_Skip(object sender, MouseEventArgs e) {
         e.Handled = true;
     }
+
+    private void UIElement_OnPreviewKeyDown(object sender, KeyEventArgs e) {
+        e.Handled = true;
+    }
 }
