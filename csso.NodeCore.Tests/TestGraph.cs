@@ -5,8 +5,8 @@ namespace csso.NodeCore.Tests;
 
 public class TestGraph {
     public Function AddFunc { get; } = new("Add", F.Add);
-    public ConstantFunc<Int32> ReactiveConstFunc { get; } = new();
-    public ConstantFunc<Int32> ProactiveConstFunc { get; } = new();
+    public ConstantFunc<Int32> ReactiveConstFunc { get; } = new("Int32 reactive");
+    public ConstantFunc<Int32> ProactiveConstFunc { get; } = new("Int32 proactive");
     public OutputFunc<Int32> OutputFunc { get; } = new();
 
     public FrameNoFunc FrameNoFunc { get; } = new();
@@ -22,10 +22,11 @@ public class TestGraph {
 
         ReactiveConstNode = Graph.AddNode(ReactiveConstFunc);
         ReactiveConstNode.Name = "ReactiveConstNode";
-        ReactiveConstFunc.SetBehavior(FunctionBehavior.Reactive);
+        ReactiveConstNode.Behavior = FunctionBehavior.Reactive;
 
         ProactiveConstNode = Graph.AddNode(ProactiveConstFunc);
         ProactiveConstNode.Name = "ProactiveConstNode";
+        ProactiveConstNode.Behavior = FunctionBehavior.Proactive;
 
         FrameNoNode = Graph.AddNode(FrameNoFunc);
         AddNode = Graph.AddNode(AddFunc);

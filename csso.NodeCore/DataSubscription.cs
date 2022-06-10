@@ -30,7 +30,7 @@ public class DataSubscription : INotifyPropertyChanged {
         NodeArg subscriber = a.ArgDirection == ArgDirection.In ? a : b;
         NodeArg source = a.ArgDirection == ArgDirection.Out ? a : b;
 
-        if (!DataCompatibility.IsValueConvertable(subscriber.Type, source.Type)) {
+        if (!new DataCompatibility().IsValueConvertable(subscriber.Type, source.Type)) {
             throw new Exception("type mismatch 4fv56g2456g");
         }
 

@@ -32,7 +32,7 @@ public class Function {
     public IReadOnlyList<FunctionArg> Inputs => Args.Where(_ => _.ArgDirection == ArgDirection.In).ToList();
     public IReadOnlyList<FunctionArg> Outputs => Args.Where(_ => _.ArgDirection == ArgDirection.Out).ToList();
     public IReadOnlyList<FunctionArg> Args { get; private set; }
-    public virtual FunctionBehavior Behavior { get; private set; }
+    public FunctionBehavior Behavior { get; set; }
     public string Description { get; private set; }
     public string FullName => Namespace + "::" + Name;
 

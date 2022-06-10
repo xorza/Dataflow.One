@@ -63,7 +63,7 @@ public class EditableValueView<T> : EditableValueView {
     }
 
     protected override void ResetValue() {
-        _constantFunc.TypedValue = DataCompatibility.DefaultValue<T>();
+        _constantFunc.TypedValue = new DataCompatibility().DefaultValue<T>();
     }
 }
 

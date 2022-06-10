@@ -1,11 +1,11 @@
 ﻿namespace csso.NodeCore;
 
 public class DataCompatibility {
-    public static bool IsValueConvertable(Type funcArgument, Type value) {
+    public bool IsValueConvertable(Type funcArgument, Type value) {
         return funcArgument == value || value.IsSubclassOf(funcArgument);
     }
 
-    public static Object? ConvertValue(Object? value, Type targetType) {
+    public Object? ConvertValue(Object? value, Type targetType) {
         if (targetType.IsValueType && value == null) {
             return DefaultValue(targetType);
         } else {
@@ -13,15 +13,16 @@ public class DataCompatibility {
         }
     }
 
-    public static Object? DefaultValue(Type type) {
+    public Object? DefaultValue(Type type) {
         if (type.IsValueType) {
             return Activator.CreateInstance(type);
         }
 
         return null;
     }
+    
 
-    public static T? DefaultValue<T>() {
+    public T? DefaultValue<T>() {
         return default(T);
     }
 }

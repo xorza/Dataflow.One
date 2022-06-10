@@ -147,20 +147,20 @@ public class TwoNumbersSumTest {
         Assert.AreEqual(6, _graph.OutputFunc.Value);
 
         Assert.AreEqual(
-            _executor.GetEvaluationNode(_graph.ProactiveConstNode).State,
-            EvaluationState.Idle
+            EvaluationState.Idle,
+            _executor.GetEvaluationNode(_graph.ProactiveConstNode).State
         );
         Assert.AreEqual(
-            _executor.GetEvaluationNode(_graph.ReactiveConstNode).State,
-            EvaluationState.Processed
+            EvaluationState.Processed,
+            _executor.GetEvaluationNode(_graph.ReactiveConstNode).State
         );
         Assert.AreEqual(
-            _executor.GetEvaluationNode(_graph.AddNode).State,
-            EvaluationState.Processed
+            EvaluationState.Processed,
+            _executor.GetEvaluationNode(_graph.AddNode).State
         );
         Assert.AreEqual(
-            _executor.GetEvaluationNode(_graph.FrameNoNode).State,
-            EvaluationState.Idle
+            EvaluationState.Idle,
+            _executor.GetEvaluationNode(_graph.FrameNoNode).State
         );
 
         Assert.Pass();

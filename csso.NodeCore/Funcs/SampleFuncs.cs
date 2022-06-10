@@ -49,13 +49,17 @@ public abstract class ConstantFunc : StatefulFunction {
 
     protected ConstantFunc(Type type) {
         Type = type;
+        Behavior = FunctionBehavior.Reactive;
     }
+
+
 }
 
-public class ConstantFunc<T> : ConstantFunc  {
+public class ConstantFunc<T> : ConstantFunc {
     public ConstantFunc(String name) : base(typeof(T)) {
         Refresh(name, Func_);
-        _behavior = base.Behavior;
+
+        TypedValue = new DataCompatibility().DefaultValue<T>();
     }
 
     public T? TypedValue { get; set; }
@@ -65,13 +69,6 @@ public class ConstantFunc<T> : ConstantFunc  {
         return true;
     }
 
-    private FunctionBehavior _behavior;
-
-    public override FunctionBehavior Behavior => _behavior;
-
-    public void SetBehavior(FunctionBehavior behavior) {
-        _behavior = behavior;
-    }
 
     public override Function CreateInstance() {
         return new ConstantFunc<T>(Name);

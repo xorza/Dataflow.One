@@ -136,9 +136,9 @@ public class Tests {
         executor.Run();
 
         Assert.AreEqual(4, _graph.OutputFunc.Value);
-        Assert.True(frameNoEvaluationNode.State == EvaluationState.Invoked);
-        Assert.True(reactiveConstNode.State == EvaluationState.Processed);
-        Assert.True(addEvaluationNode.State == EvaluationState.Invoked);
+        Assert.AreEqual(EvaluationState.Invoked,   frameNoEvaluationNode.State);
+        Assert.AreEqual(EvaluationState.Processed, reactiveConstNode.State);
+        Assert.AreEqual(EvaluationState.Invoked,   addEvaluationNode.State);
 
         Assert.Pass();
     }
