@@ -62,7 +62,7 @@ public class Image : IDisposable {
         Write
     }
 
-    private const int StrideAlignment = 64;
+    private const int StrideAlignment = 8;
 
     private readonly Context _context;
     private MemoryBuffer? _cpuBuffer;

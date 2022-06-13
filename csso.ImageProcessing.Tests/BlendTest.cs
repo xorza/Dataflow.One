@@ -21,8 +21,8 @@ public class BlendTest {
 
     [Test]
     public void Test1() {
-        const Int32 w = 2000;
-        const Int32 h = 2000;
+        const Int32 w = 10;
+        const Int32 h = 20;
         Vec4b[] pixels =
             Enumerable.Repeat(new Vec4b(1, 2, 3, 4), w * h)
                 .ToArray();
@@ -33,10 +33,15 @@ public class BlendTest {
 
         Blend blend = new Blend(_context);
         blend.Do(a, b, out c);
+        
+        Assert.NotNull(c);
 
         var result = c.TakeCpuBuffer(Image.Operation.Read);
-        var resultBytes = result.As<Vec4b>();
-
+        var resultPixels = result.As<Vec4b>();
+        
+        for (int i = 0; i < resultPixels.Length; i++) {
+            Assert.That(resultPixels[i], Is.EqualTo(new Vec4b(1, 2, 3, 4)));
+        }
 
         Assert.Pass();
     }
