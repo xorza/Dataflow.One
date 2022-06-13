@@ -6,7 +6,7 @@ using csso.OpenCL;
 
 namespace csso.ImageProcessing.Funcs;
 
-public class FileImageSource : StatefulFunction , IDisposable{
+public class FileImageSource : StatefulFunction, IDisposable {
     public FileInfo? FileInfo { get;  }
     public Image? Image { get; set; }
 
@@ -18,7 +18,7 @@ public class FileImageSource : StatefulFunction , IDisposable{
         
         FileInfo = new FileInfo("D:\\2.jpg");
         
-        Init(GetBuffer_Func);
+        SetFunction(GetBuffer_Func);
     }
 
     private Image Load() {

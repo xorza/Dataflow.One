@@ -35,12 +35,17 @@ public partial class Overview : INotifyPropertyChanged {
     }
     private void Run_ButtonBase_OnClick(object sender, RoutedEventArgs e) {
         try {
-            Workspace!.Executor.Run();
-        } catch (ArgumentMissingException ex) {
+            Workspace.ComputationContext.OnStartRun();
+            Workspace.Executor.Run();
+        }
+        catch (ArgumentMissingException ex) {
             Console.Error.WriteLine(ex.ToString());
         }
+        finally {
+            Workspace.ComputationContext.OnFinishRun();
+        }
 
-        GraphView.OnExecuted(Workspace!.Executor);
+        GraphView.OnFinishRun(Workspace.Executor);
     }
     private void FunctionFactoryBrowser_OnLoaded(object sender, RoutedEventArgs e) {
         _functionFactoryBrowser = (FunctionFactoryBrowser) sender;

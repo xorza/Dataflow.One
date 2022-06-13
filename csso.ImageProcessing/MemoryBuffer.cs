@@ -7,6 +7,10 @@ public class MemoryBuffer : IDisposable {
     public Int32 SizeInBytes { get; }
     public IntPtr Ptr { get; }
 
+    public MemoryBuffer(Int32 sizeInBytes) {
+        SizeInBytes = sizeInBytes;
+        Ptr = Marshal.AllocHGlobal(sizeInBytes);
+    }
     public unsafe MemoryBuffer(
         IntPtr ptr,
         Int32 sizeInBytes,
@@ -14,7 +18,7 @@ public class MemoryBuffer : IDisposable {
         SizeInBytes = sizeInBytes;
 
         if (copy) {
-            Ptr = Marshal.AllocHGlobal(SizeInBytes);
+            Ptr = Marshal.AllocHGlobal(sizeInBytes);
             Buffer.MemoryCopy(
                 (void*) ptr,
                 (void*) Ptr,

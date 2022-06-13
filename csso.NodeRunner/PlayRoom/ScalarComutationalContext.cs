@@ -38,4 +38,11 @@ public class ScalarComutationalContext : IComputationContext {
         functionFactory.Register(ConstDoubleFuncBaseBase);
         functionFactory.Register(ConstStringFuncBaseBase);
     }
+
+    public void OnStartRun() {
+        
+    }
+
+    public void OnFinishRun() {
+    }
 }

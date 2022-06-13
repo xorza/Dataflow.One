@@ -4,14 +4,14 @@ using OpenTK.Compute.OpenCL;
 
 namespace csso.OpenCL;
 
-public class CommandQueue : IDisposable {
-    public CommandQueue(ClContext clContext) {
+public class ClCommandQueue : IDisposable {
+    public ClCommandQueue(ClContext clContext) {
         clContext.CheckIfDisposed();
 
         ClContext = clContext;
 
         CLResultCode result;
-        ClCommandQueue = CL.CreateCommandQueueWithProperties(
+        InternalClCommandQueue = CL.CreateCommandQueueWithProperties(
             clContext.InternalCLContext,
             clContext.SelectedClDevice,
             IntPtr.Zero,
@@ -21,7 +21,7 @@ public class CommandQueue : IDisposable {
 
     public ClContext ClContext { get; }
 
-    internal CLCommandQueue ClCommandQueue { get; }
+    internal CLCommandQueue InternalClCommandQueue { get; }
 
     public bool IsDisposed { get; private set; }
 
@@ -39,7 +39,7 @@ public class CommandQueue : IDisposable {
             CLResultCode result;
             CLEvent clEvent;
             result = CL.EnqueueFillBuffer(
-                ClCommandQueue,
+                InternalClCommandQueue,
                 clBuffer.InternalCLBuffer,
                 arr,
                 UIntPtr.Zero,
@@ -60,7 +60,7 @@ public class CommandQueue : IDisposable {
         CLResultCode result;
         CLEvent clEvent;
         result = CL.EnqueueWriteBuffer(
-            ClCommandQueue,
+            InternalClCommandQueue,
             clBuffer.InternalCLBuffer,
             true,
             UIntPtr.Zero,
@@ -88,7 +88,7 @@ public class CommandQueue : IDisposable {
         CLResultCode result;
         CLEvent clEvent;
         result = CL.EnqueueNDRangeKernel(
-            ClCommandQueue,
+            InternalClCommandQueue,
             kernel.ClKernel,
             1,
             null,
@@ -110,7 +110,7 @@ public class CommandQueue : IDisposable {
         CLResultCode result;
         CLEvent clEvent;
         result = CL.EnqueueReadBuffer(
-            ClCommandQueue,
+            InternalClCommandQueue,
             clBuffer.InternalCLBuffer,
             true,
             UIntPtr.Zero,
@@ -123,14 +123,36 @@ public class CommandQueue : IDisposable {
         releaseResult.ValidateSuccess();
     }
 
+    public void EnqueueReadBuffer(ClBuffer clBuffer, IntPtr ptr) {
+        CheckIfDisposed();
+        clBuffer.CheckIfDisposed();
+
+        CLResultCode result;
+        CLEvent clEvent;
+        result = CL.EnqueueReadBuffer(
+            InternalClCommandQueue,
+            clBuffer.InternalCLBuffer,
+            true,
+            UIntPtr.Zero,
+            (UIntPtr) clBuffer.SizeInBytes,
+            ptr,
+            0,
+            null,
+            out clEvent);
+
+        var releaseResult = CL.ReleaseEvent(clEvent);
+        result.ValidateSuccess();
+        releaseResult.ValidateSuccess();
+    }
+
     public void Finish() {
         CheckIfDisposed();
 
-        CL.Finish(ClCommandQueue).ValidateSuccess();
+        CL.Finish(InternalClCommandQueue).ValidateSuccess();
     }
 
     private void ReleaseUnmanagedResources() {
-        CL.ReleaseCommandQueue(ClCommandQueue);
+        CL.ReleaseCommandQueue(InternalClCommandQueue);
     }
 
     internal void CheckIfDisposed() {
@@ -139,7 +161,7 @@ public class CommandQueue : IDisposable {
         }
     }
 
-    ~CommandQueue() {
+    ~ClCommandQueue() {
         ReleaseUnmanagedResources();
     }
 }

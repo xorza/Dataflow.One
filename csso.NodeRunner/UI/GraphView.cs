@@ -151,7 +151,7 @@ public sealed class GraphView : INotifyPropertyChanged {
         return result;
     }
 
-    public void OnExecuted(Executor executor) {
+    public void OnFinishRun(Executor executor) {
         foreach (var nodeView in Nodes) {
             nodeView.ExecutionTime = null;
             nodeView.InputValues.Clear();

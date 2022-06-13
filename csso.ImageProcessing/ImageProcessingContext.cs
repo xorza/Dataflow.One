@@ -10,11 +10,15 @@ using csso.OpenCL;
 namespace csso.ImageProcessing;
 
 public class ImageProcessingContext : IComputationContext, IDisposable {
-    private readonly Context _context = new Context();
+    private readonly Context _context = new();
+
+    private readonly ClContext _clContext = new();
+    private readonly ImagePool _imagePool;
+
     public UiApi? UiApi { get; private set; }
 
     public ImageProcessingContext() {
-        _context.Register(new ClContext());
+        _imagePool = new(_context);
     }
 
     public void Init(UiApi api) {
@@ -23,7 +27,20 @@ public class ImageProcessingContext : IComputationContext, IDisposable {
 
     public void RegisterFunctions(FunctionFactory functionFactory) {
         functionFactory.Register(new FileImageSource(_context));
+        functionFactory.Register(new Blend(_context));
+        
+
         functionFactory.Register(new Function("Messagebox", Messagebox));
+    }
+
+    public void OnStartRun() {
+        _context.Set(_clContext);
+        _context.Set(_imagePool);
+    }
+
+    public void OnFinishRun() {
+        _context.Remove(_clContext);
+        _context.Remove(_imagePool);
     }
 
     public void Dispose() {
@@ -32,8 +49,10 @@ public class ImageProcessingContext : IComputationContext, IDisposable {
 
     [Description("messagebox")]
     [FunctionId("18D7EE8B-F4F6-4C72-932D-80A47AF12012")]
-    private bool Messagebox(Object message) {
-        Debug.WriteLine(message.ToString() + " we34v5y245");
+    private bool Messagebox(Image img) {
+        var bmpSource = img.ConvertToBitmapSource();
+        UiApi!.ShowImage(bmpSource);
+
         return true;
     }
 }

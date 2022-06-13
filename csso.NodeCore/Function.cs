@@ -22,7 +22,7 @@ public class Function {
 
     public Function(String name, Delegate func) {
         Name = name;
-        Init(func);
+        SetFunction(func);
     }
 
     public String Namespace { get; private set; }
@@ -34,7 +34,7 @@ public class Function {
     public string Description { get; private set; }
     public string FullName => Namespace + "::" + Name;
 
-    protected void Init(Delegate func) {
+    protected void SetFunction(Delegate func) {
         Check.Argument(func.Method.ReturnType == typeof(bool), nameof(func));
 
         List<FunctionArg> args = new();

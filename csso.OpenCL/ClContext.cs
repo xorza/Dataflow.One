@@ -77,12 +77,12 @@ public class ClContext : IDisposable {
             b[i] = 1;
         }
 
-        Program program = new(this, code);
-        var kernel = program.Kernels.Single(_ => _.Name == "add");
+        ClProgram clProgram = new(this, code);
+        var kernel = clProgram.Kernels.Single(_ => _.Name == "add");
         var bufferA = ClBuffer.Create(this, a);
         var bufferB = ClBuffer.Create(this, b);
         ClBuffer resultClBuffer = new(this, arraySize * sizeof(float));
-        CommandQueue commandQueue = new(this);
+        ClCommandQueue clCommandQueue = new(this);
 
         KernelArgValue[] argsValues = {
             new BufferKernelArgValue(bufferA),
@@ -92,16 +92,16 @@ public class ClContext : IDisposable {
         };
 
         try {
-            commandQueue.EnqueueNdRangeKernel(kernel, arraySize, argsValues);
-            commandQueue.EnqueueReadBuffer(resultClBuffer, resultValues);
-            commandQueue.Finish();
+            clCommandQueue.EnqueueNdRangeKernel(kernel, arraySize, argsValues);
+            clCommandQueue.EnqueueReadBuffer(resultClBuffer, resultValues);
+            clCommandQueue.Finish();
         }
         finally {
             bufferA.Dispose();
             bufferB.Dispose();
             resultClBuffer.Dispose();
-            commandQueue.Dispose();
-            program.Dispose();
+            clCommandQueue.Dispose();
+            clProgram.Dispose();
             kernel.Dispose();
         }
 

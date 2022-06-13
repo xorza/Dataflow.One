@@ -34,7 +34,7 @@ public static class F {
 public class OutputFunc<T> : Function {
     public OutputFunc() {
         Name = "Output";
-        Init(Func_);
+        SetFunction(Func_);
     }
 
     public T Value { get; set; }
@@ -61,7 +61,7 @@ public sealed class ConstantFunc<T> : ConstantFunc {
         : this(name, new DataCompatibility().DefaultValue<T>()) { }
 
     public ConstantFunc(String name, T? defaultValue) : base(name, typeof(T)) {
-        Init(Func_);
+        SetFunction(Func_);
         TypedValue = defaultValue;
     }
 
@@ -80,7 +80,7 @@ public sealed class ConstantFunc<T> : ConstantFunc {
 public class FrameNoFunc : Function {
     public FrameNoFunc() {
         Name = "Frame number";
-        Init(Func_);
+        SetFunction(Func_);
     }
 
     public Executor? Executor { get; set; }

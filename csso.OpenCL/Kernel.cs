@@ -9,13 +9,13 @@ namespace csso.OpenCL;
 public class Kernel : IDisposable {
     private readonly List<KernelArg> _args = new();
 
-    internal Kernel(Program program, string name, CLKernel clKernel) {
-        program.ClContext.CheckIfDisposed();
+    internal Kernel(ClProgram clProgram, string name, CLKernel clKernel) {
+        clProgram.ClContext.CheckIfDisposed();
 
         Args = _args.AsReadOnly();
 
         ClKernel = clKernel;
-        Program = program;
+        ClProgram = clProgram;
         Name = name;
 
         ValidateName();
@@ -24,7 +24,7 @@ public class Kernel : IDisposable {
 
     internal CLKernel ClKernel { get; }
 
-    public Program Program { get; }
+    public ClProgram ClProgram { get; }
     public string Name { get; }
     public IReadOnlyList<KernelArg> Args { get; }
 
@@ -76,7 +76,7 @@ public class Kernel : IDisposable {
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || Program.IsDisposed) throw new InvalidOperationException("Already disposed.");
+        if (IsDisposed || ClProgram.IsDisposed) throw new InvalidOperationException("Already disposed.");
     }
 
     ~Kernel() {
