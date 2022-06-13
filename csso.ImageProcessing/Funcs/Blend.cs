@@ -17,12 +17,12 @@ public class Blend : Function, IDisposable {
         _context = ctx;
         Name = "Blend";
 
-        SetFunction(Blend_Func);
+        SetFunction(Do);
     }
 
     public void Dispose() { }
 
-    private bool Blend_Func(Image a, Image b, [Output] out Image? image) {
+    public bool Do(Image a, Image b, [Output] out Image? image) {
         var width = a.Width;
         var height = a.Height;
         var stride = a.Stride;
@@ -47,7 +47,7 @@ public class Blend : Function, IDisposable {
             new BufferKernelArgValue(resultBuff),
             new ScalarKernelArgValue<Vector4i>(whs)
         };
-        var workSize = new Int32[2] {resultImage.Width/3, resultImage.Height/3};
+        var workSize = new Int32[2] {resultImage.Width, resultImage.Height};
 
 
         var clContext = _context.Get<ClContext>();
@@ -79,7 +79,7 @@ public class Blend : Function, IDisposable {
                 {
                     int x = get_global_id(0);
                     int y = get_global_id(1);
-                    int i = y * whs.z + x;
+                    int i = y * whs.x + x;
 
                     result[i] = A[i] + B[i];
                 }";

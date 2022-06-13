@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using csso.OpenCL;
@@ -67,11 +68,11 @@ public class Image : IDisposable {
     private MemoryBuffer? _cpuBuffer;
     private ClBuffer? _gpuBuffer;
     private bool _isCpuBufferDirty = true;
-
     private bool _isGpuBufferDirty = true;
 
     public Image(Context ctx,
-        int width, int height, PixelFormat pixelFormat) {
+        int width, int height,
+        PixelFormat pixelFormat) {
         _context = ctx;
         Width = width;
         Height = height;
@@ -82,9 +83,29 @@ public class Image : IDisposable {
         Stride = (bytesPerRow + (StrideAlignment - 1)) & ~(StrideAlignment - 1);
         SizeInBytes = height * Stride;
 
-
         _isCpuBufferDirty = true;
         _isGpuBufferDirty = true;
+    }
+
+    public unsafe Image(Context ctx,
+        int width, int height,
+        Vec4b[] pixels,
+        PixelFormat pixelFormat)
+        : this(ctx,
+            width,
+            height,
+            pixelFormat) {
+        if (pixels.Length != width * height) {
+            throw new ArgumentException(nameof(pixels));
+        }
+
+        _cpuBuffer = new MemoryBuffer(SizeInBytes);
+
+        for (int i = 0; i < pixels.Length; i++) {
+            _cpuBuffer.Set(i, pixels[i]);
+        }
+
+        _isCpuBufferDirty = false;
     }
 
     public Image(Context ctx, FileInfo fileInfo) {
@@ -126,9 +147,6 @@ public class Image : IDisposable {
 
     public int Height { get; }
     public int Width { get; }
-
-    public int TotalPixels => Height * Width;
-
     public int Stride { get; }
     public int SizeInBytes { get; }
     public PixelFormatInfo PixelFormatInfo { get; }

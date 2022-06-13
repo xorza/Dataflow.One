@@ -45,16 +45,31 @@ public class MemoryBuffer : IDisposable {
         ReleaseUnmanagedResources();
     }
 
-    // public unsafe T Get<T>(int x, int y) where T : unmanaged {
-    //     var data = (T*) (_ptr + y * Stride).ToPointer();
-    //     return data[x];
-    // }
-    // public T[] As<T>() where T : unmanaged {
-    //     var result = new T[TotalPixels];
-    //     for (var y = 0; y < Height; y++)
-    //     for (var x = 0; x < Width; x++)
-    //         result[y * Width + x] = Get<T>(x, y);
-    //
-    //     return result;
-    // }
+    public unsafe T Get<T>(int i) where T : unmanaged {
+        int offset = i * sizeof(T);
+        if (offset < 0 || offset + sizeof(T) > SizeInBytes) {
+            throw new ArgumentException(nameof(i));
+        }
+
+        var data = (T*) (Ptr + offset).ToPointer();
+        return *data;
+    }
+
+    public unsafe void Set<T>(int i, T value) where T : unmanaged {
+        int offset = i * sizeof(T);
+        if (offset < 0 || offset + sizeof(T) > SizeInBytes) {
+            throw new ArgumentException(nameof(i));
+        }
+
+        var data = (T*) (Ptr + offset).ToPointer();
+        *data = value;
+    }
+
+
+    public unsafe T[] As<T>() where T : unmanaged {
+        var result = new T[SizeInBytes / sizeof(T)];
+        for (var i = 0; i < result.Length; i++)
+            result[i] = Get<T>(i);
+        return result;
+    }
 }

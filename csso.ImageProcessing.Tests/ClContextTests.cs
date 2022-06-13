@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace csso.ImageProcessing.Tests;
 
-public class Tests {
+public class ClContextTests {
     private readonly ClContext _clContext = new ClContext();
     
     [SetUp]
