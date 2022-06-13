@@ -3,25 +3,47 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
+using csso.Common;
 using csso.OpenCL;
 
 namespace csso.ImageProcessing;
 
+public struct PixelFormatInfo {
+    public PixelFormat PixelFormat { get; } = PixelFormat.Format32bppArgb;
+    public int ChannelCount { get; } = 4;
+    public int BytesPerChannel { get; } = 1;
+
+    public PixelFormatInfo(PixelFormat pixelFormat) {
+        PixelFormat = pixelFormat;
+
+        switch (pixelFormat) {
+            case PixelFormat.Format24bppRgb:
+                ChannelCount = 3;
+                BytesPerChannel = 1;
+                break;
+
+            default:
+                throw new Exception(nameof(PixelFormat));
+        }
+    }
+}
+
 public class Image : IDisposable {
-    private IntPtr _ptr;
+    private MemoryBuffer _cpuBuffer;
+    private ClBuffer? _gpuBuffer;
+
+    private readonly Context _context;
 
     public int Height { get; }
     public int Width { get; }
     public int Stride { get; }
-    public int ChannelCount { get; private set; }
-    public int BytesPerChannel { get; private set; }
     public int SizeInBytes { get; }
     public int TotalPixels => Height * Width;
-
+    public PixelFormatInfo PixelFormatInfo { get; }
     
-    public Image(string filename) : this(new FileInfo(filename)) { }
-
-    public Image(FileInfo fileInfo) {
+    public Image(Context ctx, FileInfo fileInfo) {
+        _context = ctx;
+        
         Bitmap img;
         using (var fileStream = fileInfo.OpenRead()) {
             img = new Bitmap(fileStream);
@@ -35,77 +57,41 @@ public class Image : IDisposable {
                 ImageLockMode.ReadOnly,
                 img.PixelFormat);
 
-            SetPixelFormat(imageData.PixelFormat);
+            PixelFormatInfo = new PixelFormatInfo(imageData.PixelFormat);
             SizeInBytes = imageData.Height * imageData.Stride;
             Height = imageData.Height;
             Width = imageData.Width;
             Stride = imageData.Stride;
 
-            _ptr = Marshal.AllocHGlobal(SizeInBytes);
             unsafe {
-                Buffer.MemoryCopy(imageData.Scan0.ToPointer(), _ptr.ToPointer(), SizeInBytes, SizeInBytes);
+                _cpuBuffer = new MemoryBuffer((IntPtr) imageData.Scan0.ToPointer(), SizeInBytes, true);
             }
-        } finally {
+        }
+        finally {
             if (imageData != null) {
                 img.UnlockBits(imageData);
             }
 
             img.Dispose();
         }
-    }
 
-    private void SetPixelFormat(PixelFormat pixelFormat) {
-        switch (pixelFormat) {
-            case PixelFormat.Format24bppRgb:
-                ChannelCount = 3;
-                BytesPerChannel = 1;
-                break;
-
-            default:
-                throw new Exception(nameof(PixelFormat));
-        }
-    }
-
-    public unsafe T Get<T>(int x, int y) where T : unmanaged {
-        var data = (T*) (_ptr + y * Stride).ToPointer();
-        return data[x];
-    }
-
-    public T[] As<T>() where T : unmanaged {
-        var result = new T[TotalPixels];
-        for (var y = 0; y < Height; y++)
-        for (var x = 0; x < Width; x++)
-            result[y * Width + x] = Get<T>(x, y);
-
-        return result;
-    }
-
-    public ClBuffer CreateBuffer(csso.OpenCL.ClContext clContext) {
-        var pixelCount = TotalPixels;
-
-        var pixels8U = As<RGB8U>();
-        var pixels16U = new RGB16U[pixelCount];
-        for (var i = 0; i < pixelCount; i++)
-            pixels16U[i] = new RGB16U(pixels8U[i]);
-
-        var a = ClBuffer.Create(clContext, pixels16U);
-        return a;
-    }
-
-
-    private void ReleaseUnmanagedResources() {
-        if (_ptr != IntPtr.Zero) {
-            Marshal.FreeHGlobal(_ptr);
-            _ptr = IntPtr.Zero;
-        }
+        MoveToGpu(_context.Resolve<ClContext>());
     }
 
     public void Dispose() {
-        ReleaseUnmanagedResources();
-        GC.SuppressFinalize(this);
+        _gpuBuffer?.Dispose();
+        _cpuBuffer?.Dispose();
     }
 
-    ~Image() {
-        ReleaseUnmanagedResources();
+    private void MoveToGpu(ClContext context) {
+        if (_gpuBuffer == null
+            || _gpuBuffer.SizeInBytes != _cpuBuffer.SizeInBytes) {
+            _gpuBuffer?.Dispose();
+            _gpuBuffer = new ClBuffer(context, _cpuBuffer.SizeInBytes);
+        }
+
+        var commandQueue = new CommandQueue(context);
+        commandQueue.EnqueueWriteBuffer(_gpuBuffer, _cpuBuffer.Ptr);
+        commandQueue.Finish();
     }
 }

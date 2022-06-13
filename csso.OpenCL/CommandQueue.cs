@@ -53,6 +53,28 @@ public class CommandQueue : IDisposable {
         }
     }
 
+    public void EnqueueWriteBuffer(ClBuffer clBuffer, IntPtr bytes) {
+        CheckIfDisposed();
+        clBuffer.CheckIfDisposed();
+
+        CLResultCode result;
+        CLEvent clEvent;
+        result = CL.EnqueueWriteBuffer(
+            ClCommandQueue,
+            clBuffer.InternalCLBuffer,
+            true,
+            UIntPtr.Zero,
+            (UIntPtr) (clBuffer.SizeInBytes),
+            bytes,
+            0,
+            null,
+            out clEvent);
+
+        var releaseResult = CL.ReleaseEvent(clEvent);
+        result.ValidateSuccess();
+        releaseResult.ValidateSuccess();
+    }
+
     public void EnqueueNdRangeKernel(Kernel kernel, int size, IEnumerable<KernelArgValue> argValues) {
         CheckIfDisposed();
         kernel.CheckIfDisposed();
@@ -112,7 +134,9 @@ public class CommandQueue : IDisposable {
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || ClContext.IsDisposed) throw new InvalidOperationException("Already disposed.");
+        if (IsDisposed || ClContext.IsDisposed) {
+            throw new InvalidOperationException("Already disposed.");
+        }
     }
 
     ~CommandQueue() {

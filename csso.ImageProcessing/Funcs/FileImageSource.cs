@@ -7,13 +7,13 @@ using csso.OpenCL;
 namespace csso.ImageProcessing.Funcs;
 
 public class FileImageSource : StatefulFunction , IDisposable{
-    public FileInfo? FileInfo { get; set; }
-    public ClBuffer? Buffer { get; set; }
+    public FileInfo? FileInfo { get;  }
+    public Image? Image { get; set; }
 
-    public ImageProcessingContext Context { get; }
+    private readonly Context _context;
 
-    public FileImageSource(ImageProcessingContext ctx) {
-        Context = ctx;
+    public FileImageSource(Context ctx) {
+        _context = ctx;
         Name = "Image from File";
         
         FileInfo = new FileInfo("D:\\2.jpg");
@@ -21,24 +21,23 @@ public class FileImageSource : StatefulFunction , IDisposable{
         Init(GetBuffer_Func);
     }
 
-    private ClBuffer Load() {
-        Image image = new Image(FileInfo!);
-        var result = image.CreateBuffer(Context.ClContext);
-        return result;
+    private Image Load() {
+        Image image = new Image(_context, FileInfo!);
+        return image;
     }
 
     public override Function CreateInstance() {
-        return new FileImageSource(Context);
+        return new FileImageSource(_context);
     }
 
-    private bool GetBuffer_Func([Output] out ClBuffer? buffer) {
-        Buffer ??= Load();
-        buffer = Buffer;
+    private bool GetBuffer_Func([Output] out Image? image) {
+        Image ??= Load();
+        image = Image;
 
         return true;
     }
 
     public void Dispose() {
-        Buffer?.Dispose();
+        Image?.Dispose();
     }
 }
