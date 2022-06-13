@@ -37,22 +37,7 @@ public sealed class FunctionNode : Node {
     public FunctionNode(Function function) : base(Guid.NewGuid()) {
         Function = function;
     }
-
-
-    internal FunctionNode(
-        FunctionFactory functionFactory,
-        SerializedFunctionNode serialized
-    ) : base(serialized.Id) {
-        Name = serialized.Name;
-
-        if (serialized.FunctionId != null)
-            Function = functionFactory.Get(serialized.FunctionId.Value);
-        else
-            Function = functionFactory.Get(serialized.FunctionName);
-
-        Behavior = serialized.Behavior;
-    }
-
+    
     public Function Function {
         get => _function;
         private set {
@@ -85,19 +70,6 @@ public sealed class FunctionNode : Node {
             }
         }
     }
-
-
-    internal SerializedFunctionNode Serialize() {
-        SerializedFunctionNode result = new();
-
-        result.Name = Name;
-        result.Id = Id;
-        result.FunctionName = Function.FullName;
-        result.Behavior = Behavior;
-        result.FunctionId = Function.Id;
-
-        return result;
-    }
 }
 
 public sealed class GraphNode : Node {
@@ -105,12 +77,4 @@ public sealed class GraphNode : Node {
 
     public override FunctionBehavior Behavior { get; set; }
     public Graph SubGraph { get; set; }
-}
-
-public class SerializedFunctionNode {
-    public string Name { get; set; }
-    public Guid Id { get; set; }
-    public string FunctionName { get; set; }
-    public Guid? FunctionId { get; set; }
-    public FunctionBehavior Behavior { get; set; }
 }
