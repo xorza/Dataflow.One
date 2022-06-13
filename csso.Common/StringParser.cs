@@ -3,9 +3,9 @@ using System;
 namespace csso.Common;
 
 public static class StringParser {
-    public static bool TryParse(String s, Type type, out Object? result) {
+    public static bool TryParse(string s, Type type, out object? result) {
         result = null;
-        var parser = type.GetMethod("Parse", new Type[] {typeof(string)});
+        var parser = type.GetMethod("Parse", new[] {typeof(string)});
         if (parser == null)
             return false;
         if (!parser.IsStatic)

@@ -7,24 +7,20 @@ public class DataCompatibility {
         return funcArgument == value || value.IsSubclassOf(funcArgument);
     }
 
-    public Object? ConvertValue(Object? value, Type targetType) {
-        if (targetType.IsValueType && value == null) {
+    public object? ConvertValue(object? value, Type targetType) {
+        if (targetType.IsValueType && value == null)
             return DefaultValue(targetType);
-        } else {
-            return Convert.ChangeType(value, targetType);
-        }
+        return Convert.ChangeType(value, targetType);
     }
 
-    public Object? DefaultValue(Type type) {
-        if (type.IsValueType) {
-            return Activator.CreateInstance(type);
-        }
+    public object? DefaultValue(Type type) {
+        if (type.IsValueType) return Activator.CreateInstance(type);
 
         return null;
     }
-    
+
 
     public T? DefaultValue<T>() {
-        return default(T);
+        return default;
     }
 }

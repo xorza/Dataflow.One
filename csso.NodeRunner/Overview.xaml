@@ -31,9 +31,9 @@
         </Grid.RowDefinitions>
 
         <local:Graph x:Name="Graph"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
-                       GraphView="{Binding Path=GraphView, ElementName=OverviewUserControl}">
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Stretch"
+                     GraphView="{Binding Path=GraphView, ElementName=OverviewUserControl}">
             <local:Graph.ContextMenu>
                 <ContextMenu>
                     <ContextMenu.Template>

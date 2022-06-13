@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using csso.OpenCL;
 using DrawingImagingPixelFormat = System.Drawing.Imaging.PixelFormat;
@@ -15,18 +16,18 @@ public enum PixelFormat {
     Rgba8
 }
 
-public struct PixelFormatInfo {
+public class PixelFormatInfo {
     public static readonly PixelFormatInfo[] All = {
         new() {
             Dipf = DrawingImagingPixelFormat.Format32bppArgb,
-            Wmpf = System.Windows.Media.PixelFormats.Bgra32,
+            Wmpf = PixelFormats.Bgra32,
             Pf = PixelFormat.Rgba8,
             ChannelCount = 4,
             BytesPerChannel = 1
         },
         new() {
             Dipf = DrawingImagingPixelFormat.Format24bppRgb,
-            Wmpf = System.Windows.Media.PixelFormats.Bgr24,
+            Wmpf = PixelFormats.Bgr24,
             Pf = PixelFormat.Rgb8,
             ChannelCount = 3,
             BytesPerChannel = 1
@@ -50,37 +51,40 @@ public struct PixelFormatInfo {
     public WindowsMediaPixelFormat Wmpf { get; private set; }
     public int ChannelCount { get; private set; }
     public int BytesPerChannel { get; private set; }
+
+    private PixelFormatInfo() { }
 }
 
 public class Image : IDisposable {
-    internal MemoryBuffer? CpuBuffer { get; private set; }
-    internal ClBuffer? GpuBuffer { get; private set; }
-
-    private readonly Context _context;
-
-    private const Int32 StrideAlignment = 64;
-
-    public int Height { get; }
-    public int Width { get; }
-    public Int32 TotalPixels {
-        get => Height * Width;
+    public enum Operation {
+        Read,
+        Write
     }
 
-    public int Stride { get; }
-    public int SizeInBytes { get; }
-    public PixelFormatInfo PixelFormatInfo { get; }
+    private const int StrideAlignment = 64;
+
+    private readonly Context _context;
+    private MemoryBuffer? _cpuBuffer;
+    private ClBuffer? _gpuBuffer;
+    private bool _isCpuBufferDirty = true;
+
+    private bool _isGpuBufferDirty = true;
 
     public Image(Context ctx,
-        Int32 width, Int32 height, PixelFormat pixelFormat) {
+        int width, int height, PixelFormat pixelFormat) {
         _context = ctx;
         Width = width;
         Height = height;
         var pixelFormatInfo = PixelFormatInfo.Get(pixelFormat);
         PixelFormatInfo = pixelFormatInfo;
         var bytesPerRow = width * pixelFormatInfo.BytesPerChannel * pixelFormatInfo.ChannelCount;
-        Stride = (bytesPerRow / StrideAlignment) * StrideAlignment;
 
         Stride = (bytesPerRow + (StrideAlignment - 1)) & ~(StrideAlignment - 1);
+        SizeInBytes = height * Stride;
+
+
+        _isCpuBufferDirty = true;
+        _isGpuBufferDirty = true;
     }
 
     public Image(Context ctx, FileInfo fileInfo) {
@@ -106,56 +110,68 @@ public class Image : IDisposable {
             Stride = imageData.Stride;
 
             unsafe {
-                CpuBuffer = new MemoryBuffer((IntPtr) imageData.Scan0.ToPointer(), SizeInBytes, true);
+                _cpuBuffer = new MemoryBuffer((IntPtr) imageData.Scan0.ToPointer(), SizeInBytes, true);
             }
         }
         finally {
-            if (imageData != null) {
-                img.UnlockBits(imageData);
-            }
+            if (imageData != null) img.UnlockBits(imageData);
 
             img.Dispose();
         }
 
-        CopyToGpu();
+        _isCpuBufferDirty = false;
+        _isGpuBufferDirty = true;
     }
 
+
+    public int Height { get; }
+    public int Width { get; }
+
+    public int TotalPixels => Height * Width;
+
+    public int Stride { get; }
+    public int SizeInBytes { get; }
+    public PixelFormatInfo PixelFormatInfo { get; }
+
     public void Dispose() {
-        GpuBuffer?.Dispose();
-        CpuBuffer?.Dispose();
+        _gpuBuffer?.Dispose();
+        _cpuBuffer?.Dispose();
     }
 
     private void CopyToGpu() {
-        if (CpuBuffer == null) {
-            throw new Exception("8q3y4tog");
-        }
+        if (_cpuBuffer == null) throw new Exception("w4w4vywrts");
 
-        ClContext context = _context.Get<ClContext>();
+        if (_isCpuBufferDirty) throw new Exception("wy455w4h5rh");
 
-        GpuBuffer ??= new ClBuffer(context, CpuBuffer.SizeInBytes);
+
+        var context = _context.Get<ClContext>();
+
+        _gpuBuffer ??= new ClBuffer(context, SizeInBytes);
 
         var commandQueue = new ClCommandQueue(context);
-        commandQueue.EnqueueWriteBuffer(GpuBuffer, CpuBuffer.Ptr);
+        commandQueue.EnqueueWriteBuffer(_gpuBuffer, _cpuBuffer.Ptr);
         commandQueue.Finish();
+
+        _isGpuBufferDirty = false;
     }
 
     private void CopyToCpu() {
-        if (GpuBuffer == null) {
-            throw new Exception("8q3343y4tog");
-        }
+        if (_gpuBuffer == null) throw new Exception("8q3343y4tog");
 
-        ClContext context = _context.Get<ClContext>();
+        if (_isGpuBufferDirty) throw new Exception("w4vy545y");
 
-        CpuBuffer ??= new MemoryBuffer(SizeInBytes);
+        var context = _context.Get<ClContext>();
+
+        _cpuBuffer ??= new MemoryBuffer(SizeInBytes);
         var commandQueue = new ClCommandQueue(context);
-        commandQueue.EnqueueReadBuffer(GpuBuffer, CpuBuffer.Ptr);
+        commandQueue.EnqueueReadBuffer(_gpuBuffer, _cpuBuffer.Ptr);
         commandQueue.Finish();
+
+        _isCpuBufferDirty = false;
     }
 
     public BitmapSource ConvertToBitmapSource() {
-        if (CpuBuffer == null) {
-            throw new Exception("8e7ug8rfurl");
-        }
+        var buffer = TakeCpuBuffer(Operation.Read);
 
         return BitmapSource.Create(
             Width,
@@ -164,9 +180,38 @@ public class Image : IDisposable {
             1.0,
             PixelFormatInfo.Wmpf,
             BitmapPalettes.Gray256,
-            CpuBuffer.Ptr,
+            buffer.Ptr,
             SizeInBytes,
             Stride
         );
+    }
+
+    public ClBuffer TakeGpuBuffer(Operation op) {
+        var clContext = _context.Get<ClContext>();
+
+        _gpuBuffer ??= new ClBuffer(clContext, SizeInBytes);
+
+        if (_isGpuBufferDirty && op == Operation.Read) CopyToGpu();
+
+        if (op == Operation.Write) {
+            _isCpuBufferDirty = true;
+            _isGpuBufferDirty = false;
+        }
+
+        return _gpuBuffer!;
+    }
+
+    public MemoryBuffer TakeCpuBuffer(Operation op) {
+        _cpuBuffer ??= new MemoryBuffer(SizeInBytes);
+
+        if (_isCpuBufferDirty && op == Operation.Read)
+            CopyToCpu();
+
+        if (op == Operation.Write) {
+            _isGpuBufferDirty = true;
+            _isCpuBufferDirty = false;
+        }
+
+        return _cpuBuffer!;
     }
 }

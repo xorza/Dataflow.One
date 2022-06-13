@@ -7,11 +7,11 @@
              xmlns:ui="clr-namespace:csso.NodeRunner.UI"
 
              Margin="{StaticResource DefaultPadding}"
-             
+
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <ResourceDictionary Source="Styles.xaml"/>
+        <ResourceDictionary Source="Styles.xaml" />
     </UserControl.Resources>
     <Grid
         DataContext="{Binding ElementName=EditableValueUserControl, Path=Value}">
@@ -25,7 +25,7 @@
             <ui:Typename
                 Grid.Column="0"
                 ValueType="{Binding Type}"
-                VerticalAlignment="Center"/>
+                VerticalAlignment="Center" />
             <TextBox
                 x:Name="ValueTextBox"
                 Grid.Column="1"

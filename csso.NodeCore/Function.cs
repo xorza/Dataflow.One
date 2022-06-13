@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using csso.Common;
 
 namespace csso.NodeCore;
@@ -20,12 +19,12 @@ public enum FunctionBehavior {
 public class Function {
     protected Function() { }
 
-    public Function(String name, Delegate func) {
+    public Function(string name, Delegate func) {
         Name = name;
         SetFunction(func);
     }
 
-    public String Namespace { get; private set; }
+    public string Namespace { get; private set; }
     public string Name { get; protected set; }
     public Guid? Id { get; private set; }
     public Delegate Delegate { get; private set; }
@@ -65,19 +64,17 @@ public class Function {
 
             var argName = parameter.Name!;
             Type argType;
-            if (parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer) {
+            if (parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer)
                 argType = parameter.ParameterType.GetElementType()!;
-            } else {
+            else
                 argType = parameter.ParameterType;
-            }
 
             FunctionArg arg;
 
-            if (Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) is OutputAttribute outputAttribute) {
+            if (Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) is OutputAttribute outputAttribute)
                 arg = new FunctionArg(argName, ArgDirection.Out, argType, i);
-            } else {
+            else
                 arg = new FunctionArg(argName, ArgDirection.In, argType, i);
-            }
 
             arg.Function = this;
 
@@ -89,11 +86,10 @@ public class Function {
         CheckArgTypes(args);
 
         var result = Delegate.DynamicInvoke(args);
-        if (result is bool boolResult) {
+        if (result is bool boolResult)
             Check.True(boolResult);
-        } else {
+        else
             throw new InvalidOperationException("349j-70v5t g");
-        }
     }
 
     private void CheckArgTypes(object?[]? args) {

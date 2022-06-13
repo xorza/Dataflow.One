@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OpenTK.Compute.OpenCL;
 
 namespace csso.OpenCL;
@@ -64,7 +65,7 @@ public class ClCommandQueue : IDisposable {
             clBuffer.InternalCLBuffer,
             true,
             UIntPtr.Zero,
-            (UIntPtr) (clBuffer.SizeInBytes),
+            (UIntPtr) clBuffer.SizeInBytes,
             bytes,
             0,
             null,
@@ -75,7 +76,7 @@ public class ClCommandQueue : IDisposable {
         releaseResult.ValidateSuccess();
     }
 
-    public void EnqueueNdRangeKernel(Kernel kernel, int size, IEnumerable<KernelArgValue> argValues) {
+    public void EnqueueNdRangeKernel(Kernel kernel, Int32[] size, IEnumerable<KernelArgValue> argValues) {
         CheckIfDisposed();
         kernel.CheckIfDisposed();
 
@@ -85,14 +86,18 @@ public class ClCommandQueue : IDisposable {
             ++i;
         }
 
+        UIntPtr[] globalWorkSize = size
+            .Select(_=>(UIntPtr)_)
+            .ToArray();
+
         CLResultCode result;
         CLEvent clEvent;
         result = CL.EnqueueNDRangeKernel(
             InternalClCommandQueue,
             kernel.ClKernel,
-            1,
+            (UInt32) globalWorkSize.Length,
             null,
-            new UIntPtr[] {new UIntPtr((uint) size)},
+            globalWorkSize,
             null,
             0,
             null,
@@ -156,9 +161,7 @@ public class ClCommandQueue : IDisposable {
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || ClContext.IsDisposed) {
-            throw new InvalidOperationException("Already disposed.");
-        }
+        if (IsDisposed || ClContext.IsDisposed) throw new InvalidOperationException("Already disposed.");
     }
 
     ~ClCommandQueue() {

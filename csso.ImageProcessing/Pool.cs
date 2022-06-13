@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace csso.ImageProcessing;
+﻿namespace csso.ImageProcessing;
 
 public class ImagePool {
     private readonly Context _context;
@@ -10,7 +7,7 @@ public class ImagePool {
         _context = ctx;
     }
 
-    public Image Acquire(Int32 width, Int32 height, PixelFormat pixelFormat) {
+    public Image Acquire(int width, int height, PixelFormat pixelFormat) {
         return new Image(_context, width, height, pixelFormat);
     }
 }

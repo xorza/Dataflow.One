@@ -7,9 +7,12 @@ using csso.NodeCore.Annotations;
 namespace csso.NodeRunner.UI;
 
 public class ValueView : INotifyPropertyChanged {
+    private static readonly Dictionary<Type, Func<ValueView>> Factory = new();
     private bool _isLoading;
 
     private object? _value;
+
+    static ValueView() { }
 
     public ValueView(PutView putView, object? value) {
         IsLoading = false;
@@ -23,7 +26,7 @@ public class ValueView : INotifyPropertyChanged {
         get => _value;
         set {
             if (value == _value) return;
-            
+
             _value = value;
             OnPropertyChanged();
         }
@@ -48,19 +51,10 @@ public class ValueView : INotifyPropertyChanged {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-
-    private static readonly Dictionary<Type, Func<ValueView>> Factory = new();
-
-    static ValueView() { }
-
     public static ValueView FromValue(PutView putView, object? value) {
-        if (value == null) {
-            return new NullValueView(putView);
-        }
+        if (value == null) return new NullValueView(putView);
 
-        if (Factory.TryGetValue(value.GetType(), out var factory)) {
-            return factory!.Invoke();
-        }
+        if (Factory.TryGetValue(value.GetType(), out var factory)) return factory!.Invoke();
 
         return new ValueView(putView, value);
     }

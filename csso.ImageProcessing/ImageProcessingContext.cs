@@ -1,7 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
 using csso.ImageProcessing.Funcs;
 using csso.NodeCore;
 using csso.NodeRunner.Shared;
@@ -10,16 +8,18 @@ using csso.OpenCL;
 namespace csso.ImageProcessing;
 
 public class ImageProcessingContext : IComputationContext, IDisposable {
-    private readonly Context _context = new();
-
     private readonly ClContext _clContext = new();
+    private readonly Context _context = new();
     private readonly ImagePool _imagePool;
 
-    public UiApi? UiApi { get; private set; }
-
     public ImageProcessingContext() {
-        _imagePool = new(_context);
+        _imagePool = new ImagePool(_context);
+
+        _context.Set(_clContext);
+        _context.Set(_imagePool);
     }
+
+    public UiApi? UiApi { get; private set; }
 
     public void Init(UiApi api) {
         UiApi = api;
@@ -28,20 +28,14 @@ public class ImageProcessingContext : IComputationContext, IDisposable {
     public void RegisterFunctions(FunctionFactory functionFactory) {
         functionFactory.Register(new FileImageSource(_context));
         functionFactory.Register(new Blend(_context));
-        
+
 
         functionFactory.Register(new Function("Messagebox", Messagebox));
     }
 
-    public void OnStartRun() {
-        _context.Set(_clContext);
-        _context.Set(_imagePool);
-    }
+    public void OnStartRun() { }
 
-    public void OnFinishRun() {
-        _context.Remove(_clContext);
-        _context.Remove(_imagePool);
-    }
+    public void OnFinishRun() { }
 
     public void Dispose() {
         _context.Dispose();

@@ -35,7 +35,8 @@ public class DragBehavior {
             element.MouseLeftButtonDown += dragBehavior.ElementOnMouseLeftButtonDown;
             element.MouseLeftButtonUp += dragBehavior.ElementOnMouseLeftButtonUp;
             element.MouseMove += dragBehavior.ElementOnMouseMove;
-        } else {
+        }
+        else {
             element.MouseLeftButtonDown -= dragBehavior.ElementOnMouseLeftButtonDown;
             element.MouseLeftButtonUp -= dragBehavior.ElementOnMouseLeftButtonUp;
             element.MouseMove -= dragBehavior.ElementOnMouseMove;

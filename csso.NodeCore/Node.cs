@@ -3,26 +3,25 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using csso.Common;
 using csso.NodeCore.Annotations;
 
 namespace csso.NodeCore;
 
 public abstract class Node : INotifyPropertyChanged {
-    public Guid Id { get; }
-    public string Name { get;  set; }
-    public abstract FunctionBehavior Behavior { get; set; }
-    public Graph Graph { get; internal set; }
-
     protected Node(Guid id) {
         Id = id;
     }
 
+    public Guid Id { get; }
+    public string Name { get; set; }
+    public abstract FunctionBehavior Behavior { get; set; }
+    public Graph Graph { get; internal set; }
+
     public IReadOnlyList<NodeArg> Inputs => Args.Where(_ => _.ArgDirection == ArgDirection.In).ToList();
     public IReadOnlyList<NodeArg> Outputs => Args.Where(_ => _.ArgDirection == ArgDirection.Out).ToList();
     public IReadOnlyList<NodeArg> Args { get; protected set; } = new List<NodeArg>();
-    
-    
+
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
@@ -32,48 +31,11 @@ public abstract class Node : INotifyPropertyChanged {
 }
 
 public sealed class FunctionNode : Node {
-    public Function Function {
-        get => _function;
-        private set {
-            if (_function == value) {
-                return;
-            }
-
-            _function = value;
-
-            Behavior = _function.Behavior;
-            Name = _function.Name;
-            Args = _function.Args
-                .Select(_ => new NodeArg() {
-                    Node = this,
-                    FunctionArg = _
-                })
-                .ToList();
-            
-            OnPropertyChanged(nameof(Args));
-            OnPropertyChanged(nameof(Name));
-        }
-    }
-
-    public FunctionNode(Function function) : base(Guid.NewGuid()) {
-        Function = function;
-    }
-
     private FunctionBehavior _behavior = FunctionBehavior.Reactive;
     private Function _function;
 
-    public override FunctionBehavior Behavior {
-        get => _behavior;
-        set {
-            if (value > Function.Behavior) {
-                return;
-            }
-
-            if (_behavior != value) {
-                _behavior = value;
-                OnPropertyChanged();
-            }
-        }
+    public FunctionNode(Function function) : base(Guid.NewGuid()) {
+        Function = function;
     }
 
 
@@ -83,13 +45,45 @@ public sealed class FunctionNode : Node {
     ) : base(serialized.Id) {
         Name = serialized.Name;
 
-        if (serialized.FunctionId != null) {
+        if (serialized.FunctionId != null)
             Function = functionFactory.Get(serialized.FunctionId.Value);
-        } else {
+        else
             Function = functionFactory.Get(serialized.FunctionName);
-        }
 
         Behavior = serialized.Behavior;
+    }
+
+    public Function Function {
+        get => _function;
+        private set {
+            if (_function == value) return;
+
+            _function = value;
+
+            Behavior = _function.Behavior;
+            Name = _function.Name;
+            Args = _function.Args
+                .Select(_ => new NodeArg {
+                    Node = this,
+                    FunctionArg = _
+                })
+                .ToList();
+
+            OnPropertyChanged(nameof(Args));
+            OnPropertyChanged(nameof(Name));
+        }
+    }
+
+    public override FunctionBehavior Behavior {
+        get => _behavior;
+        set {
+            if (value > Function.Behavior) return;
+
+            if (_behavior != value) {
+                _behavior = value;
+                OnPropertyChanged();
+            }
+        }
     }
 
 
@@ -111,13 +105,12 @@ public sealed class GraphNode : Node {
 
     public override FunctionBehavior Behavior { get; set; }
     public Graph SubGraph { get; set; }
-
 }
 
 public class SerializedFunctionNode {
     public string Name { get; set; }
     public Guid Id { get; set; }
-    public String FunctionName { get; set; }
+    public string FunctionName { get; set; }
     public Guid? FunctionId { get; set; }
     public FunctionBehavior Behavior { get; set; }
 }

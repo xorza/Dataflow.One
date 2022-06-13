@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
-             
+
              xmlns:local="clr-namespace:csso.NodeRunner.UI"
 
              mc:Ignorable="d"
@@ -23,23 +23,19 @@
         <StackPanel
             Orientation="Horizontal">
             <TextBlock
-                Text="{Binding ElementName=ThisUserControl, Path=ValueView.PutView.NodeArg.FunctionArg.Name}">
-            </TextBlock>
+                Text="{Binding ElementName=ThisUserControl, Path=ValueView.PutView.NodeArg.FunctionArg.Name}" />
 
-            <TextBlock Text=" : " Margin="0"></TextBlock>
+            <TextBlock Text=" : " Margin="0" />
             <local:Typename
-                Grid.Column="0"
                 ValueType="{Binding ElementName=ThisUserControl, Path=ValueView.PutView.NodeArg.Type}"
-                VerticalAlignment="Center"/>
+                VerticalAlignment="Center" />
         </StackPanel>
 
 
         <Grid
             x:Name="LoaderGrid"
             Grid.Row="1"
-            Visibility="{Binding ElementName=ThisUserControl, Path=ValueView.IsLoading, Converter={StaticResource BoolToVis}}">
-
-        </Grid>
+            Visibility="{Binding ElementName=ThisUserControl, Path=ValueView.IsLoading, Converter={StaticResource BoolToVis}}" />
 
         <Grid
             x:Name="ValueGrid"
@@ -52,13 +48,13 @@
 
             <Grid
                 x:Name="ValueEditGrid">
-                <TextBlock Text="test"></TextBlock>
+                <TextBlock Text="test" />
                 <ContentPresenter
                     Content="{Binding ElementName=ThisUserControl, Path=ValueView.Value}">
                     <ContentPresenter.Resources>
                         <ResourceDictionary>
                             <DataTemplate DataType="{x:Type System:Int32}">
-                                <TextBox Text="{Binding }"></TextBox>
+                                <TextBox Text="{Binding }" />
                             </DataTemplate>
                         </ResourceDictionary>
                     </ContentPresenter.Resources>

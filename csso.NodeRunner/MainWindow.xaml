@@ -8,7 +8,7 @@
         VerticalContentAlignment="Stretch"
         HorizontalContentAlignment="Stretch">
 
-    <ContentControl        x:Name="OverviewContentControl">
+    <ContentControl x:Name="OverviewContentControl">
         <nodeRunner:Overview
             x:Name="GraphOverview"
             VerticalAlignment="Stretch"

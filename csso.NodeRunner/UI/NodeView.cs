@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using csso.ImageProcessing.Funcs;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
 
 namespace csso.NodeRunner.UI;
 
 public class NodeView : INotifyPropertyChanged {
+    private double? _executionTime;
     private bool _isSelected;
     private Point _position;
 
@@ -29,21 +27,16 @@ public class NodeView : INotifyPropertyChanged {
             Outputs.Add(pv);
         }
 
-        if (Node is FunctionNode functionNode) {
-            if (functionNode.Function is ConstantFunc constFunc) {
+        if (Node is FunctionNode functionNode)
+            if (functionNode.Function is ConstantFunc constFunc)
                 EditableValue = EditableValueView.Create(constFunc);
-            }
-        }
     }
 
     public GraphView GraphView { get; }
 
     public NodeCore.Node Node { get; }
 
-
-    private double? _executionTime;
-
-    public Double? ExecutionTime {
+    public double? ExecutionTime {
         get => _executionTime;
         set {
             _executionTime = value;

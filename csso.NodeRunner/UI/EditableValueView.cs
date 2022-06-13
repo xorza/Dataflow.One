@@ -10,26 +10,27 @@ using csso.NodeCore.Funcs;
 namespace csso.NodeRunner.UI;
 
 public abstract class EditableValueView : INotifyPropertyChanged {
-    private bool _hasValue = false;
-
-    public Type Type { get; }
+    private bool _hasValue;
 
     protected EditableValueView(Type type) {
         Type = type;
     }
 
+    public Type Type { get; }
+
     public bool HasValue {
         get => _hasValue;
         set {
             if (_hasValue == value) return;
-            if (!value) {
-                ResetValue();
-            }
+            if (!value) ResetValue();
 
             _hasValue = value;
             OnPropertyChanged();
         }
     }
+
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public static EditableValueView Create(ConstantFunc func) {
         var editableValueView =
@@ -40,9 +41,6 @@ public abstract class EditableValueView : INotifyPropertyChanged {
                 .Invoke(new object[] {func});
         return (EditableValueView) editableValueView;
     }
-
-
-    public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
@@ -62,9 +60,7 @@ public class EditableValueView<T> : EditableValueView {
     public T? Value {
         get => _constantFunc.TypedValue;
         set {
-            if (EqualityComparer<T>.Default.Equals(value, _constantFunc.TypedValue)) {
-                return;
-            }
+            if (EqualityComparer<T>.Default.Equals(value, _constantFunc.TypedValue)) return;
 
             _constantFunc.TypedValue = value;
             OnPropertyChanged();

@@ -1,5 +1,3 @@
-﻿namespace csso.NodeRunner.UI; 
+﻿namespace csso.NodeRunner.UI;
 
-public static class Helper {
-
-}
+public static class Helper { }

@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Reflection;
 using csso.NodeCore.Run;
 
 namespace csso.NodeCore.Funcs;
@@ -8,9 +7,9 @@ namespace csso.NodeCore.Funcs;
 public static class F {
     [Reactive]
     public static bool Add(
-        Int32 a,
-        Int32 b,
-        [Output] ref Int32 result) {
+        int a,
+        int b,
+        [Output] ref int result) {
         result = a + b;
         return true;
     }
@@ -19,11 +18,11 @@ public static class F {
     [Reactive]
     [Description("testestsetsetset")]
     public static bool DivideWhole(
-        Int32 a,
-        Int32 b,
+        int a,
+        int b,
         [Description("testestsetsetset1")] [Output]
-        ref Int32 result,
-        [Output] ref Int32 remainder
+        ref int result,
+        [Output] ref int remainder
     ) {
         result = a / b;
         remainder = a % b;
@@ -47,29 +46,29 @@ public class OutputFunc<T> : Function {
 }
 
 public abstract class ConstantFunc : StatefulFunction {
-    public Type Type { get; }
-
-    protected ConstantFunc(String name, Type type) {
+    protected ConstantFunc(string name, Type type) {
         Name = name;
         Type = type;
         Behavior = FunctionBehavior.Reactive;
     }
+
+    public Type Type { get; }
 }
 
 public sealed class ConstantFunc<T> : ConstantFunc {
-    public ConstantFunc(String name)
+    public ConstantFunc(string name)
         : this(name, new DataCompatibility().DefaultValue<T>()) { }
 
-    public ConstantFunc(String name, T? defaultValue) : base(name, typeof(T)) {
+    public ConstantFunc(string name, T? defaultValue) : base(name, typeof(T)) {
         SetFunction(Func_);
         TypedValue = defaultValue;
     }
 
+    public T? TypedValue { get; set; }
+
     public override Function CreateInstance() {
         return new ConstantFunc<T>(Name);
     }
-
-    public T? TypedValue { get; set; }
 
     private bool Func_([Output] out T? value) {
         value = TypedValue;
@@ -85,7 +84,7 @@ public class FrameNoFunc : Function {
 
     public Executor? Executor { get; set; }
 
-    private bool Func_([Output] out Int32 frameNo) {
+    private bool Func_([Output] out int frameNo) {
         frameNo = Executor?.FrameNo ?? 0;
         return true;
     }

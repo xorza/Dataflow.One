@@ -6,18 +6,18 @@ using csso.Common;
 namespace csso.NodeCore;
 
 public sealed class Graph {
-    private readonly List<Node> _nodes = new();
+    private readonly List<DataSubscription> _dataSubscriptions = new();
     private readonly Queue<Event> _eventsToProcess = new();
 
     private readonly List<EventSubscription> _eventSubscriptions = new();
-    public IReadOnlyList<EventSubscription> EventSubscriptions => _eventSubscriptions.AsReadOnly();
+    private readonly List<Node> _nodes = new();
 
-    private readonly List<DataSubscription> _dataSubscriptions = new();
-    public IReadOnlyList<DataSubscription> DataSubscriptions => _dataSubscriptions.AsReadOnly();
-    
     public Graph() {
         Nodes = _nodes.AsReadOnly();
     }
+
+    public IReadOnlyList<EventSubscription> EventSubscriptions => _eventSubscriptions.AsReadOnly();
+    public IReadOnlyList<DataSubscription> DataSubscriptions => _dataSubscriptions.AsReadOnly();
 
     public IReadOnlyList<Node> Nodes { get; }
 
@@ -78,7 +78,7 @@ public sealed class Graph {
             .ForEach(list.Add);
 
         list.AddRange(_eventsToProcess.ToList());
-        
+
         _eventsToProcess.Clear();
 
         return list;
@@ -101,9 +101,7 @@ public sealed class Graph {
     public void Remove(Node node) {
         Check.True(node.Graph == this);
 
-        if (!_nodes.Remove(node)) {
-            throw new Exception("5h4gub677ge657");
-        }
+        if (!_nodes.Remove(node)) throw new Exception("5h4gub677ge657");
 
         _dataSubscriptions
             .RemoveAll(_ => _.Subscriber.Node == node);
@@ -112,5 +110,4 @@ public sealed class Graph {
         _eventSubscriptions
             .RemoveAll(_ => _.Node == node);
     }
-    
 }

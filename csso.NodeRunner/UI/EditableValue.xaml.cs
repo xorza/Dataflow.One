@@ -10,9 +10,8 @@ public partial class EditableValue : UserControl {
         new PropertyMetadata(null, PropertyChangedCallback)
     );
 
-    private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        var control = (EditableValue) d;
-        control.ValueTextBox.IsEnabled = e.NewValue != null;
+    public EditableValue() {
+        InitializeComponent();
     }
 
     public EditableValueView? Value {
@@ -20,7 +19,8 @@ public partial class EditableValue : UserControl {
         set => SetValue(ValueProperty, value);
     }
 
-    public EditableValue() {
-        InitializeComponent();
+    private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        var control = (EditableValue) d;
+        control.ValueTextBox.IsEnabled = e.NewValue != null;
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using csso.NodeCore.Funcs;
 using csso.NodeCore.Run;
@@ -8,10 +7,10 @@ namespace csso.NodeCore.Tests;
 
 public class GraphModification {
     private readonly Function _addFunc = new("Add", F.Add);
+    private readonly ConstantFunc<int> _constFunc1 = new("Integer");
 
     private readonly FrameNoFunc _frameNoFunc = new();
-    private readonly OutputFunc<Int32> _outputFunc = new();
-    private readonly ConstantFunc<Int32> _constFunc1 = new("Integer");
+    private readonly OutputFunc<int> _outputFunc = new();
 
     private Node? _addNode;
     private Node? _constNode1;

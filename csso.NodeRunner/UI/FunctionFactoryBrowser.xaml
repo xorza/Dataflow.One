@@ -51,7 +51,7 @@
             PreviewKeyDown="OnPreviewInput"
             IsHitTestVisible="False"
             Focusable="False"
-            
+
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
             Margin="8">

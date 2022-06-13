@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
 using csso.NodeRunner.Shared;
@@ -7,20 +6,11 @@ using csso.NodeRunner.Shared;
 namespace csso.NodeRunner.PlayRoom;
 
 public class ScalarComutationalContext : IComputationContext {
-    public ScalarComutationalContext() { }
-
-    public ConstantFunc<Int32> ConstIntFuncBaseBase { get; } = new("Integer");
-    public ConstantFunc<Double> ConstDoubleFuncBaseBase { get; } = new("Float");
-    public ConstantFunc<String> ConstStringFuncBaseBase { get; } = new("String", "");
+    public ConstantFunc<int> ConstIntFuncBaseBase { get; } = new("Integer");
+    public ConstantFunc<double> ConstDoubleFuncBaseBase { get; } = new("Float");
+    public ConstantFunc<string> ConstStringFuncBaseBase { get; } = new("String", "");
 
     public UiApi? UiApi { get; private set; }
-
-    [Description("messagebox")]
-    [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]
-    private bool Messagebox(Object message) {
-        UiApi!.ShowMessage(message?.ToString() ?? "null");
-        return true;
-    }
 
     public void Init(UiApi api) {
         UiApi = api;
@@ -39,10 +29,14 @@ public class ScalarComutationalContext : IComputationContext {
         functionFactory.Register(ConstStringFuncBaseBase);
     }
 
-    public void OnStartRun() {
-        
-    }
+    public void OnStartRun() { }
 
-    public void OnFinishRun() {
+    public void OnFinishRun() { }
+
+    [Description("messagebox")]
+    [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]
+    private bool Messagebox(object message) {
+        UiApi!.ShowMessage(message?.ToString() ?? "null");
+        return true;
     }
 }

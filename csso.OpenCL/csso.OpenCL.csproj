@@ -2,14 +2,24 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        
+
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="OpenTK" Version="5.0.0-pre.6" />
+        <PackageReference Include="OpenTK" Version="4.7.2" />
+        <PackageReference Include="OpenTK.Compute" Version="4.7.2" />
+        <PackageReference Include="OpenTK.Core" Version="4.7.2" />
+        <PackageReference Include="OpenTK.Graphics" Version="4.7.2" />
+        <PackageReference Include="OpenTK.Input" Version="4.7.2" />
+        <PackageReference Include="OpenTK.Mathematics" Version="4.7.2" />
+        <PackageReference Include="OpenTK.OpenAL" Version="4.7.2" />
+        <PackageReference Include="OpenTK.redist.glfw" Version="3.3.7.27" />
+        <PackageReference Include="OpenTK.Windowing.Common" Version="4.7.2" />
+        <PackageReference Include="OpenTK.Windowing.Desktop" Version="4.7.2" />
+        <PackageReference Include="OpenTK.Windowing.GraphicsLibraryFramework" Version="4.7.2" />
     </ItemGroup>
 
     <ItemGroup>

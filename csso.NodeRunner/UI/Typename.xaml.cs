@@ -11,8 +11,9 @@ public partial class Typename : UserControl {
         new PropertyMetadata(default(Type), PropertyChangedCallback)
     );
 
-    private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        ((Typename) d).Refresh();
+    public Typename() {
+        InitializeComponent();
+        Refresh();
     }
 
     public Type? ValueType {
@@ -20,17 +21,17 @@ public partial class Typename : UserControl {
         set => SetValue(ValueTypeProperty, value);
     }
 
-    public Typename() {
-        InitializeComponent();
-        Refresh();
+    private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        ((Typename) d).Refresh();
     }
 
 
     private void Refresh() {
-        if(ValueType == null) {
+        if (ValueType == null) {
             TypenameTextBlock.Text = "void";
             return;
         }
+
         TypenameTextBlock.Text = ValueType.Name;
     }
 }

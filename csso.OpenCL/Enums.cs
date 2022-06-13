@@ -16,7 +16,11 @@ public enum DataType {
     UShort,
     UShort2,
     UShort3,
-    UShort4
+    UShort4,
+    Int,
+    Int2,
+    Int3,
+    Int4,
 }
 
 internal static partial class Xtensions {
@@ -26,7 +30,8 @@ internal static partial class Xtensions {
     public static T ToEnum<T>(this string s) where T : struct, Enum {
         try {
             return (T) Enum.Parse(typeof(T), s);
-        } catch { }
+        }
+        catch { }
 
         try {
             var names = Enum.GetNames<T>();
@@ -34,7 +39,8 @@ internal static partial class Xtensions {
             var index = Array.FindIndex(names, name => name.Equals(s, StringComparison.InvariantCultureIgnoreCase));
             Check.True(index >= 0);
             return Enum.GetValues<T>()[index];
-        } catch { }
+        }
+        catch { }
 
         throw new ArgumentOutOfRangeException(nameof(s));
     }

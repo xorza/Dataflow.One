@@ -1,6 +1,4 @@
-using System;
 using System.Linq;
-using csso.NodeCore.Funcs;
 using csso.NodeCore.Run;
 using NUnit.Framework;
 
@@ -136,9 +134,9 @@ public class Tests {
         executor.Run();
 
         Assert.AreEqual(4, _graph.OutputFunc.Value);
-        Assert.AreEqual(EvaluationState.Invoked,   frameNoEvaluationNode.State);
+        Assert.AreEqual(EvaluationState.Invoked, frameNoEvaluationNode.State);
         Assert.AreEqual(EvaluationState.Processed, reactiveConstNode.State);
-        Assert.AreEqual(EvaluationState.Invoked,   addEvaluationNode.State);
+        Assert.AreEqual(EvaluationState.Invoked, addEvaluationNode.State);
 
         Assert.Pass();
     }

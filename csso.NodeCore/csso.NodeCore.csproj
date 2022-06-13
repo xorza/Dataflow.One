@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        
+
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
     </PropertyGroup>
@@ -12,7 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\csso.Common\csso.Common.csproj" />
+        <ProjectReference Include="..\csso.Common\csso.Common.csproj"/>
     </ItemGroup>
 
 </Project>

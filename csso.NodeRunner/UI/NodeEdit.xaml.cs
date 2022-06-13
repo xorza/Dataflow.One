@@ -12,10 +12,6 @@ public partial class NodeEdit : UserControl {
         new PropertyMetadata(default(NodeView), PropertyChangedCallback)
     );
 
-    private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        ((NodeEdit) d).Refresh();
-    }
-
 
     public NodeEdit() {
         InitializeComponent();
@@ -28,6 +24,10 @@ public partial class NodeEdit : UserControl {
         set => SetValue(NodeViewProperty, value);
     }
 
+    private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        ((NodeEdit) d).Refresh();
+    }
+
     private void Refresh() {
         MainPanel.Visibility =
             NodeView == null
@@ -37,7 +37,7 @@ public partial class NodeEdit : UserControl {
         if (NodeView == null) return;
 
 
-        bool hasValues = NodeView.InputValues.Any() || NodeView.OutputValues.Any();
+        var hasValues = NodeView.InputValues.Any() || NodeView.OutputValues.Any();
 
         DebugValuesExpander.Visibility = hasValues ? Visibility.Visible : Visibility.Collapsed;
     }

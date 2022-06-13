@@ -17,8 +17,8 @@ public sealed class PutView : INotifyPropertyChanged {
     public PutView(NodeArg nodeArg, NodeView nodeView) {
         NodeArg = nodeArg;
         NodeView = nodeView;
-        
-        ((INotifyCollectionChanged)nodeView.GraphView.Edges).CollectionChanged += Edges_CollectionChanged;
+
+        ((INotifyCollectionChanged) nodeView.GraphView.Edges).CollectionChanged += Edges_CollectionChanged;
     }
 
     public UIElement? Control {
@@ -62,14 +62,14 @@ public sealed class PutView : INotifyPropertyChanged {
             OnPropertyChanged();
         }
     }
-    
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-    
+
     private void Edges_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         // NodeView.GraphVm.Graph.ValueSubscriptions
     }

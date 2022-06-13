@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -16,7 +15,7 @@ public enum EvaluationState {
 public class EvaluationNode {
     private readonly List<DependencyValue> _dependencyValues = new();
 
-    private IArgumentProvider ArgumentProvider { get; }
+    private List<DataSubscription> _dataSubscriptions = new();
 
     public EvaluationNode(IArgumentProvider argumentProvider, Node node) {
         Node = node;
@@ -27,19 +26,19 @@ public class EvaluationNode {
         Reset();
     }
 
+    private IArgumentProvider ArgumentProvider { get; }
+
     public Node Node { get; }
-
-    public Object?[] GetArgValues() {
-        return ArgumentProvider.GetArguments(this);
-    }
-
-    private List<DataSubscription> _dataSubscriptions = new List<DataSubscription>();
 
     public bool HasOutputValues { get; private set; }
     public FunctionBehavior Behavior { get; }
     public bool ShouldInvokeThisFrame { get; private set; }
     public EvaluationState State { get; private set; } = EvaluationState.Idle;
     public double ExecutionTime { get; private set; } = double.NaN;
+
+    public object?[] GetArgValues() {
+        return ArgumentProvider.GetArguments(this);
+    }
 
     private object? GetOutputValue(FunctionArg output) {
         Check.True(HasOutputValues);
@@ -58,7 +57,7 @@ public class EvaluationNode {
         ShouldInvokeThisFrame = shouldInvokeThisFrame;
 
         var newDataSubscriptions = Node.Graph.GetDataSubscriptions(Node);
-        
+
         if (!newDataSubscriptions.SequenceEqual(_dataSubscriptions)) {
             ShouldInvokeThisFrame = true;
             _dataSubscriptions = newDataSubscriptions;
@@ -68,9 +67,7 @@ public class EvaluationNode {
     }
 
     public void PrepareArguments() {
-        if (State == EvaluationState.ArgumentsSet) {
-            return;
-        }
+        if (State == EvaluationState.ArgumentsSet) return;
 
         Check.True(State == EvaluationState.Processed);
 
@@ -92,9 +89,11 @@ public class EvaluationNode {
                             Target = dataSubscription.Source.FunctionArg
                         });
                 }
-            } else if (nodeArg.ArgDirection == ArgDirection.Out) {
+            }
+            else if (nodeArg.ArgDirection == ArgDirection.Out) {
                 GetArgValues()[nodeArg.FunctionArg.ArgumentIndex] = null;
-            } else {
+            }
+            else {
                 Check.Fail();
             }
 
@@ -130,11 +129,9 @@ public class EvaluationNode {
     }
 
     private void ValidateArguments() {
-        for (var i = 0; i < GetArgValues().Length; i++) {
-            if (GetArgValues()[i] == Empty.One) {
+        for (var i = 0; i < GetArgValues().Length; i++)
+            if (GetArgValues()[i] == Empty.One)
                 throw new ArgumentMissingException(Node, Node.Args[i].FunctionArg);
-            }
-        }
     }
 
     private struct DependencyValue {

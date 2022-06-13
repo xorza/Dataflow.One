@@ -10,8 +10,7 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Style>
-        <Style TargetType="{x:Type local:Graph}">
-        </Style>
+        <Style TargetType="{x:Type local:Graph}" />
     </UserControl.Style>
     <UserControl.Resources>
         <ResourceDictionary>
@@ -39,8 +38,7 @@
                 <VisualBrush.Transform>
                     <TranslateTransform
                         X="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.X}"
-                        Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}">
-                    </TranslateTransform>
+                        Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}" />
                 </VisualBrush.Transform>
             </VisualBrush>
         </Border.Background>
@@ -71,12 +69,10 @@
                                 <TransformGroup>
                                     <ScaleTransform
                                         ScaleX="{Binding ElementName=GraphUserControl, Path=GraphView.ViewScale}"
-                                        ScaleY="{Binding ElementName=GraphUserControl, Path=GraphView.ViewScale}"
-                                       />
+                                        ScaleY="{Binding ElementName=GraphUserControl, Path=GraphView.ViewScale}" />
                                     <TranslateTransform
                                         X="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.X}"
-                                        Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}"
-                                        />
+                                        Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}" />
                                 </TransformGroup>
                             </Canvas.RenderTransform>
                         </Canvas>
@@ -98,12 +94,10 @@
                     <TransformGroup>
                         <ScaleTransform
                             ScaleX="{Binding ElementName=GraphUserControl, Path=GraphView.ViewScale}"
-                            ScaleY="{Binding ElementName=GraphUserControl, Path=GraphView.ViewScale}">
-                        </ScaleTransform>
+                            ScaleY="{Binding ElementName=GraphUserControl, Path=GraphView.ViewScale}" />
                         <TranslateTransform
                             X="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.X}"
-                            Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}">
-                        </TranslateTransform>
+                            Y="{Binding ElementName=GraphUserControl, Path=GraphView.ViewOffset.Y}" />
                     </TransformGroup>
                 </Canvas.RenderTransform>
             </Canvas>

@@ -12,8 +12,8 @@ public class FunctionFactoryView {
     }
 
     public ReadOnlyObservableCollection<Function> Functions { get; }
-    
-    public  void Sync(FunctionFactory functionFactory) {
+
+    public void Sync(FunctionFactory functionFactory) {
         _functions.Clear();
         functionFactory.Functions
             .AddTo(_functions);

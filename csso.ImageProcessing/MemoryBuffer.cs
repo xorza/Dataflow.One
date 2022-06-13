@@ -4,16 +4,14 @@ using System.Runtime.InteropServices;
 namespace csso.ImageProcessing;
 
 public class MemoryBuffer : IDisposable {
-    public Int32 SizeInBytes { get; }
-    public IntPtr Ptr { get; }
-
-    public MemoryBuffer(Int32 sizeInBytes) {
+    public MemoryBuffer(int sizeInBytes) {
         SizeInBytes = sizeInBytes;
         Ptr = Marshal.AllocHGlobal(sizeInBytes);
     }
+
     public unsafe MemoryBuffer(
         IntPtr ptr,
-        Int32 sizeInBytes,
+        int sizeInBytes,
         bool copy) {
         SizeInBytes = sizeInBytes;
 
@@ -31,15 +29,16 @@ public class MemoryBuffer : IDisposable {
         }
     }
 
-    private void ReleaseUnmanagedResources() {
-        if (Ptr != IntPtr.Zero) {
-            Marshal.FreeHGlobal(Ptr);
-        }
-    }
+    public int SizeInBytes { get; }
+    public IntPtr Ptr { get; }
 
     public void Dispose() {
         ReleaseUnmanagedResources();
         GC.SuppressFinalize(this);
+    }
+
+    private void ReleaseUnmanagedResources() {
+        if (Ptr != IntPtr.Zero) Marshal.FreeHGlobal(Ptr);
     }
 
     ~MemoryBuffer() {

@@ -1,6 +1,3 @@
-﻿using System;
+﻿namespace csso.ImageProcessing;
 
-namespace csso.ImageProcessing; 
-
-public static class Xtensions {
-}
+public static class Xtensions { }

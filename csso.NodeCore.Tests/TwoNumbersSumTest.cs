@@ -1,13 +1,12 @@
 ﻿using System.Linq;
-using csso.Common;
 using csso.NodeCore.Run;
 using NUnit.Framework;
 
 namespace csso.NodeCore.Tests;
 
 public class TwoNumbersSumTest {
-    private TestGraph _graph = null!;
     private Executor _executor = null!;
+    private TestGraph _graph = null!;
 
     [SetUp]
     public void Setup() {
@@ -170,7 +169,7 @@ public class TwoNumbersSumTest {
     public void second_and_third_run() {
         _executor.Run();
 
-        for (int i = 0; i < 2; i++) {
+        for (var i = 0; i < 2; i++) {
             _executor.Run();
             Assert.AreEqual(1256, _graph.OutputFunc.Value);
 

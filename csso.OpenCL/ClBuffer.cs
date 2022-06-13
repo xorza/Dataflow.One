@@ -66,9 +66,7 @@ public class ClBuffer : IDisposable {
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || ClContext.IsDisposed) {
-            throw new InvalidOperationException("Already disposed.");
-        }
+        if (IsDisposed || ClContext.IsDisposed) throw new InvalidOperationException("Already disposed.");
     }
 
     ~ClBuffer() {

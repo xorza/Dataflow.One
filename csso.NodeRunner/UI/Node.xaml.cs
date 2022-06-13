@@ -100,9 +100,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     private static void NodeView_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
         var node = (Node) d;
-        if (e.OldValue is NodeView nv1) {
-            nv1.PropertyChanged -= node.NodeView_PropertyChanged;
-        }
+        if (e.OldValue is NodeView nv1) nv1.PropertyChanged -= node.NodeView_PropertyChanged;
 
         node.EditableValueControl.Visibility = Visibility.Collapsed;
         if (e.NewValue is NodeView nv2) {
@@ -117,12 +115,11 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void RefreshExecutionTime() {
-        if (NodeView != null) {
+        if (NodeView != null)
             ExecutionTimePanel.Visibility =
                 NodeView.ExecutionTime.HasValue ? Visibility.Visible : Visibility.Hidden;
-        } else {
+        else
             ExecutionTimePanel.Visibility = Visibility.Hidden;
-        }
     }
 
     private void PinButton_Click(object sender, RoutedEventArgs e) {

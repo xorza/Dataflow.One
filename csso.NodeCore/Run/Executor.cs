@@ -8,24 +8,31 @@ using Debug = csso.Common.Debug;
 namespace csso.NodeCore.Run;
 
 public interface IArgumentProvider {
-    Object?[] GetArguments(EvaluationNode node);
+    object?[] GetArguments(EvaluationNode node);
 }
 
 public static class Empty {
     static Empty() {
-        One = new Object();
+        One = new object();
     }
 
     public static object One { get; }
 }
 
 public class Executor : IArgumentProvider {
+    private readonly Dictionary<EvaluationNode, object?[]> _args = new();
+
+    private List<EvaluationNode> _evaluationNodes = new();
+
     public Executor(Graph graph) {
         Graph = graph;
         FrameNo = 0;
     }
 
-    private readonly Dictionary<EvaluationNode, Object?[]> _args = new();
+    public int FrameNo { get; private set; }
+    public IReadOnlyList<EvaluationNode> EvaluationNodes => _evaluationNodes.AsReadOnly();
+
+    public Graph Graph { get; }
 
     public object?[] GetArguments(EvaluationNode node) {
         if (!_args.TryGetValue(node, out var result)) {
@@ -35,13 +42,6 @@ public class Executor : IArgumentProvider {
 
         return result;
     }
-
-    public Int32 FrameNo { get; private set; }
-
-    private List<EvaluationNode> _evaluationNodes = new();
-    public IReadOnlyList<EvaluationNode> EvaluationNodes => _evaluationNodes.AsReadOnly();
-
-    public Graph Graph { get; }
 
     public EvaluationNode GetEvaluationNode(Node node) {
         var result = EvaluationNodes.SingleOrDefault(_ => _.Node == node);
@@ -82,15 +82,15 @@ public class Executor : IArgumentProvider {
     private void Recompile() {
         List<EvaluationNode> newEvaluationNodes = new(Graph.Nodes.Count);
 
-        foreach (var node in Graph.Nodes) {
+        foreach (var node in Graph.Nodes)
             if (node is FunctionNode functionNode) {
                 var existing = EvaluationNodes.SingleOrDefault(_ => _.Node == functionNode);
                 existing ??= new EvaluationNode(this, functionNode);
                 newEvaluationNodes.Add(existing);
-            } else {
+            }
+            else {
                 throw new NotImplementedException("wv435ty5yt ");
             }
-        }
 
         ValidateNodeOrder(Graph, newEvaluationNodes);
 
@@ -102,9 +102,7 @@ public class Executor : IArgumentProvider {
     private static void ValidateNodeOrder(Graph graph, IList<EvaluationNode> evaluationNodes) {
         Debug.Assert.True(evaluationNodes.Count == graph.Nodes.Count);
 
-        for (var i = 0; i < evaluationNodes.Count; i++) {
-            Debug.Assert.AreSame(evaluationNodes[i].Node, graph.Nodes[i]);
-        }
+        for (var i = 0; i < evaluationNodes.Count; i++) Debug.Assert.AreSame(evaluationNodes[i].Node, graph.Nodes[i]);
     }
 
     private void ProcessEvaluationNodes(List<Node> activatedNodes) {
@@ -126,9 +124,7 @@ public class Executor : IArgumentProvider {
 
     private void UpdateEvaluationNode(Node node) {
         var evaluationNode = GetEvaluationNode(node);
-        if (evaluationNode.State == EvaluationState.Processed) {
-            return;
-        }
+        if (evaluationNode.State == EvaluationState.Processed) return;
 
         Check.True(evaluationNode.State < EvaluationState.ArgumentsSet);
 
@@ -169,14 +165,11 @@ public class Executor : IArgumentProvider {
                     continue;
                 }
 
-                if (binding.Behavior == SubscriptionBehavior.Once) {
-                    continue;
-                }
+                if (binding.Behavior == SubscriptionBehavior.Once) continue;
 
                 if (targetEvaluationNode.ShouldInvokeThisFrame
-                    || targetEvaluationNode.Behavior == FunctionBehavior.Proactive) {
+                    || targetEvaluationNode.Behavior == FunctionBehavior.Proactive)
                     yetToProcessENodes.Enqueue(targetEvaluationNode);
-                }
             }
         }
 

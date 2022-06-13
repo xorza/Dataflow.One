@@ -18,32 +18,38 @@ public sealed class GraphView : INotifyPropertyChanged {
     private NodeView? _selectedNode;
     private PutView? _selectedPutView;
 
+    private Vector _viewOffset;
+
+    private float _viewScale = 1.0f;
+
+
+    public GraphView(NodeCore.Graph graph) {
+        Nodes = new ReadOnlyObservableCollection<NodeView>(_nodes);
+        Edges = new ReadOnlyObservableCollection<EdgeView>(_edges);
+
+
+        Graph = graph;
+        Sync();
+    }
+
     public NodeCore.Graph Graph { get; }
     public ReadOnlyObservableCollection<EdgeView> Edges { get; }
     public ReadOnlyObservableCollection<NodeView> Nodes { get; }
 
-    private Vector _viewOffset;
-
     public Vector ViewOffset {
         get => _viewOffset;
         set {
-            if (_viewOffset == value) {
-                return;
-            }
+            if (_viewOffset == value) return;
 
             _viewOffset = value;
             OnPropertyChanged();
         }
     }
 
-    private float _viewScale = 1.0f;
-
     public float ViewScale {
         get => _viewScale;
         set {
-            if (Math.Abs(_viewScale - value) < 1e-3) {
-                return;
-            }
+            if (Math.Abs(_viewScale - value) < 1e-3) return;
 
             _viewScale = value > 0.2f ? value : 1.0f;
             OnPropertyChanged();
@@ -86,16 +92,6 @@ public sealed class GraphView : INotifyPropertyChanged {
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-
-    public GraphView(NodeCore.Graph graph) {
-        Nodes = new ReadOnlyObservableCollection<NodeView>(_nodes);
-        Edges = new ReadOnlyObservableCollection<EdgeView>(_edges);
-        
-        
-        Graph = graph;
-        Sync();
-    }
-
     private NodeView GetNodeView(NodeCore.Node node) {
         return Nodes.Single(_ => _.Node == node);
     }
@@ -108,16 +104,14 @@ public sealed class GraphView : INotifyPropertyChanged {
     public void Sync() {
         _nodes
             .Where(_ => !Graph.Nodes.Contains(_.Node))
-            .ForEach(_=>_nodes.Remove(_));
+            .ForEach(_ => _nodes.Remove(_));
 
         Graph.Nodes
             .Where(n => _nodes.All(nv => nv.Node != n))
             .Select(_ => new NodeView(this, _))
             .ForEach(_nodes.Add);
 
-        if (_selectedNode != null && !Nodes.Contains(_selectedNode)) {
-            SelectedNode = null;
-        }
+        if (_selectedNode != null && !Nodes.Contains(_selectedNode)) SelectedNode = null;
 
         _edges.Clear();
         foreach (var binding in Graph.DataSubscriptions) {
@@ -129,7 +123,7 @@ public sealed class GraphView : INotifyPropertyChanged {
 
             _edges.Add(new EdgeView(binding, input, output));
         }
-        
+
         FunctionFactory.Sync(Graph.FunctionFactory);
     }
 
@@ -171,7 +165,7 @@ public sealed class GraphView : INotifyPropertyChanged {
 
                 if (en.State >= EvaluationState.Invoked) {
                     nodeView.ExecutionTime = en.ExecutionTime;
-                    
+
                     foreach (var output in nodeView.Outputs) {
                         var index = output.NodeArg.FunctionArg.ArgumentIndex;
                         var value = en.GetArgValues()[index];

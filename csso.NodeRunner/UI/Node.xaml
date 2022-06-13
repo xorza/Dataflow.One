@@ -88,7 +88,7 @@
             Grid.Row="1">
             <Border.Style>
                 <Style TargetType="Border">
-                    <Setter Property="BorderBrush" Value="Black"></Setter>
+                    <Setter Property="BorderBrush" Value="Black" />
                     <Style.Triggers>
                         <DataTrigger
                             Binding="{Binding IsSelected}"

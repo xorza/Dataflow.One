@@ -7,6 +7,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using csso.Common;
 using csso.NodeCore;
+using Debug = System.Diagnostics.Debug;
 
 namespace csso.NodeRunner.UI;
 
@@ -33,18 +34,21 @@ public partial class Graph : UserControl {
         Subscribe();
     }
 
+    public GraphView? GraphView {
+        get => (GraphView) GetValue(GraphViewProperty);
+        set => SetValue(GraphViewProperty, value);
+    }
+
     private void Subscribe() {
         Point startPoint;
         Vector offset;
-        bool isMoving = false;
+        var isMoving = false;
 
         void OnMove(object sender, MouseEventArgs ea) {
-            if (!isMoving) {
-                return;
-            }
+            if (!isMoving) return;
 
             var point = ea.GetPosition(this);
-            System.Diagnostics.Debug.WriteLine(offset.ToString());
+            Debug.WriteLine(offset.ToString());
 
             GraphView!.ViewOffset = point - startPoint + offset;
         }
@@ -63,9 +67,7 @@ public partial class Graph : UserControl {
                 return;
             }
 
-            if (ea.ChangedButton != MouseButton.Left) {
-                return;
-            }
+            if (ea.ChangedButton != MouseButton.Left) return;
 
             startPoint = ea.GetPosition(this);
             offset = GraphView!.ViewOffset;
@@ -76,11 +78,6 @@ public partial class Graph : UserControl {
         MouseLeave += OnLeave;
         MouseMove += OnMove;
         MouseDown += Down;
-    }
-
-    public GraphView? GraphView {
-        get => (GraphView) GetValue(GraphViewProperty);
-        set => SetValue(GraphViewProperty, value);
     }
 
     private void MouseWheel_EventHandler(object sender, MouseWheelEventArgs e) {
@@ -121,14 +118,15 @@ public partial class Graph : UserControl {
         while (GraphView!.Edges.Count != EdgesCanvas.Children.Count)
             if (GraphView!.Edges.Count < EdgesCanvas.Children.Count) {
                 EdgesCanvas.Children.RemoveAt(EdgesCanvas.Children.Count - 1);
-            } else {
+            }
+            else {
                 Edge line = new();
                 line.LeftButtonClick += LeftButtonClickHandler;
 
                 EdgesCanvas.Children.Add(line);
             }
 
-        Debug.Assert.True(EdgesCanvas.Children.Count == GraphView!.Edges.Count);
+        Common.Debug.Assert.True(EdgesCanvas.Children.Count == GraphView!.Edges.Count);
 
         for (var i = 0; i < EdgesCanvas.Children.Count; i++) {
             Binding inputPointBinding = new("Input.PinPoint");
@@ -154,7 +152,7 @@ public partial class Graph : UserControl {
     private void LeftButtonClickHandler(object sender, MouseButtonEventArgs ea) { }
 
     private void Node_OnPinClick(object sender, PinClickEventArgs e) {
-        Debug.Assert.True(GraphView != null);
+        Common.Debug.Assert.True(GraphView != null);
 
         var graphView = GraphView!;
         if (graphView.SelectedPutView == null ||
@@ -182,7 +180,7 @@ public partial class Graph : UserControl {
         var input = p1.NodeArg.ArgDirection == ArgDirection.In ? p1 : p2;
         var output = p1.NodeArg.ArgDirection == ArgDirection.Out ? p1 : p2;
 
-        Debug.Assert.True(p1 != p2);
+        Common.Debug.Assert.True(p1 != p2);
 
         input.NodeView.Node.Graph.Add(
             new DataSubscription(

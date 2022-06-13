@@ -3,12 +3,9 @@ using System.Diagnostics;
 
 namespace csso.Common;
 
-internal class CheckException : Exception
-{
+internal class CheckException : Exception {
     public CheckException(string message)
-        : base(message)
-    {
-    }
+        : base(message) { }
 }
 
 public static class Check {

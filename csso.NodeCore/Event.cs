@@ -1,13 +1,12 @@
 ﻿namespace csso.NodeCore;
 
 public class Event {
-    public string Name { get; private set; }
-    public bool IsActive { get; private set; } = false;
-
-
     public Event(string name) {
         Name = name;
     }
+
+    public string Name { get; }
+    public bool IsActive { get; } = false;
 }
 
 public class AlwaysEvent : Event {
@@ -15,13 +14,11 @@ public class AlwaysEvent : Event {
 }
 
 public class EventSubscription {
-    public Event Event { get; private set; }
-    public Node Node { get; private set; }
-    
-    
     public EventSubscription(Event @event, Node node) {
         Event = @event;
         Node = node;
     }
-    
+
+    public Event Event { get; }
+    public Node Node { get; }
 }

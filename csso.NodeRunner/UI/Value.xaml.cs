@@ -16,13 +16,13 @@ public partial class Value : UserControl {
         new PropertyMetadata(default(bool), PropertyChangedCallback)
     );
 
+    public Value() {
+        InitializeComponent();
+    }
+
     public bool Editable {
         get => (bool) GetValue(EditableProperty);
         set => SetValue(EditableProperty, value);
-    }
-
-    public Value() {
-        InitializeComponent();
     }
 
     public ValueView? ValueView {
@@ -39,7 +39,8 @@ public partial class Value : UserControl {
         if (Editable) {
             ValueViewContentPresenter.Visibility = Visibility.Collapsed;
             ValueEditGrid.Visibility = Visibility.Visible;
-        } else {
+        }
+        else {
             ValueViewContentPresenter.Visibility = Visibility.Visible;
             ValueEditGrid.Visibility = Visibility.Collapsed;
         }
