@@ -18,4 +18,19 @@
         <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="ClKernels.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>ClKernels.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="ClKernels.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ClKernels.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

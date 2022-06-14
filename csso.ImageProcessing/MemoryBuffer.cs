@@ -45,31 +45,29 @@ public class MemoryBuffer : IDisposable {
         ReleaseUnmanagedResources();
     }
 
-    public unsafe T Get<T>(int i) where T : unmanaged {
-        int offset = i * sizeof(T);
-        if (offset < 0 || offset + sizeof(T) > SizeInBytes) {
-            throw new ArgumentException(nameof(i));
+    public unsafe void Set<T>(int offsetInBytes, T value) where T : unmanaged {
+        if (offsetInBytes < 0 || offsetInBytes + sizeof(T) > SizeInBytes) {
+            throw new ArgumentException(nameof(offsetInBytes));
         }
 
-        var data = (T*) (Ptr + offset).ToPointer();
-        return *data;
-    }
-
-    public unsafe void Set<T>(int i, T value) where T : unmanaged {
-        int offset = i * sizeof(T);
-        if (offset < 0 || offset + sizeof(T) > SizeInBytes) {
-            throw new ArgumentException(nameof(i));
-        }
-
-        var data = (T*) (Ptr + offset).ToPointer();
+        var data = (T*) (Ptr + offsetInBytes).ToPointer();
         *data = value;
     }
 
 
-    public unsafe T[] As<T>() where T : unmanaged {
-        var result = new T[SizeInBytes / sizeof(T)];
-        for (var i = 0; i < result.Length; i++)
-            result[i] = Get<T>(i);
+    public unsafe T Get<T>(int offsetInBytes) where T : unmanaged {
+        if (offsetInBytes < 0 || offsetInBytes + sizeof(T) > SizeInBytes) {
+            throw new ArgumentException(nameof(offsetInBytes));
+        }
+
+        var data = (T*) (Ptr + offsetInBytes).ToPointer();
+        return *data;
+    }
+
+    public byte[] GetBytes() {
+        byte[] result = new byte[SizeInBytes];
+        Marshal.Copy(Ptr, result, 0, SizeInBytes);
+
         return result;
     }
 }

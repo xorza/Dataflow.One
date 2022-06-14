@@ -4,7 +4,6 @@ using csso.Common;
 using csso.NodeCore;
 using csso.OpenCL;
 using OpenTK.Mathematics;
-using Vector3 = System.Numerics.Vector3;
 
 namespace csso.ImageProcessing.Funcs;
 
@@ -22,38 +21,38 @@ public class Blend : Function, IDisposable {
 
     public void Dispose() { }
 
-    public bool Do(Image a, Image b, [Output] out Image? image) {
+    public bool Do(Image a, Image b, [Output] out Image image) {
+        var clContext = _context.Get<ClContext>();
+        Init(clContext);
+
         var width = a.Width;
         var height = a.Height;
-        var stride = a.Stride;
+        var sizeInBytes = a.SizeInBytes;
+        var pixelFormatInfo = a.PixelFormatInfo;
 
-        if (a.Width != b.Width
-            || a.Height != b.Height
-            || a.PixelFormatInfo != b.PixelFormatInfo) {
+        if (width != b.Width
+            || height != b.Height
+            || sizeInBytes != b.SizeInBytes
+            || pixelFormatInfo != b.PixelFormatInfo) {
             throw new Exception("3cn9ty88g94");
         }
 
         var imagePool = _context.Get<ImagePool>();
-        var resultImage = imagePool.Acquire(a.Width, a.Height, a.PixelFormatInfo.Pf);
+        var resultImage = imagePool.Acquire(width, height);
+
+        Debug.Assert.True(resultImage.SizeInBytes == sizeInBytes);
 
         var aBuff = a.TakeGpuBuffer(Image.Operation.Read);
         var bBuff = b.TakeGpuBuffer(Image.Operation.Read);
         var resultBuff = resultImage.TakeGpuBuffer(Image.Operation.Write);
-        var whs = new Vector4i(resultImage.Width, resultImage.Height, resultImage.Stride,0);
 
+        var kernel = _clProgram!.Kernels.Single(_ => _.Name == "add");
         KernelArgValue[] argsValues = {
             new BufferKernelArgValue(aBuff),
             new BufferKernelArgValue(bBuff),
-            new BufferKernelArgValue(resultBuff),
-            new ScalarKernelArgValue<Vector4i>(whs)
+            new BufferKernelArgValue(resultBuff)
         };
-        var workSize = new Int32[2] {resultImage.Width, resultImage.Height};
-
-
-        var clContext = _context.Get<ClContext>();
-        Init(clContext);
-        var kernel = _clProgram!.Kernels.Single(_ => _.Name == "add");
-
+        var workSize = new Int32[] {width, height};
 
         using (ClCommandQueue clCommandQueue = new(clContext)) {
             clCommandQueue.EnqueueNdRangeKernel(kernel, workSize, argsValues);
@@ -69,20 +68,22 @@ public class Blend : Function, IDisposable {
     private void Init(ClContext clContext) {
         if (_clProgram != null) return;
 
-        var code = @"
-                __kernel void add (
-                    __global uchar4* A, 
-                    __global uchar4* B,
-                    __global uchar4* result,
-                       const int3 whs
-                )
-                {
-                    int x = get_global_id(0);
-                    int y = get_global_id(1);
-                    int i = y * whs.x + x;
+        const String code = @"
+            kernel
+            void add(global const uchar4* A, 
+                      global const uchar4* B,
+                      global uchar4* result) {
+                int x = get_global_id(0);
+                int y = get_global_id(1);    
+                int i = y * get_global_size(0) + x;
 
-                    result[i] = A[i] + B[i];
-                }";
+                float4 fa = convert_float4(A[i]) / (float4)(255.0);
+                float4 fb = convert_float4(B[i]) / (float4)(255.0);
+                float4 fresult = (fa * fb) * (float4)(255.0);
+
+                result[i] = convert_uchar4(fresult);
+            }
+            ";
 
         _clProgram = new ClProgram(clContext, code);
     }

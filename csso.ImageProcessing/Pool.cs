@@ -7,7 +7,7 @@ public class ImagePool {
         _context = ctx;
     }
 
-    public Image Acquire(int width, int height, PixelFormat pixelFormat) {
-        return new Image(_context, width, height, pixelFormat);
+    public Image Acquire(int width, int height) {
+        return new Image(_context, width, height);
     }
 }
