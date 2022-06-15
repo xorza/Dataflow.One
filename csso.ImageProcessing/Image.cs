@@ -7,36 +7,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using csso.Common;
 using csso.OpenCL;
-using DrawingImagingPixelFormat = System.Drawing.Imaging.PixelFormat;
-using WindowsMediaPixelFormat = System.Windows.Media.PixelFormat;
+using PixelFormat = csso.Common.PixelFormat;
 
 namespace csso.ImageProcessing;
-
-public enum PixelFormat {
-    Rgb8,
-    Rgba8
-}
-
-public class PixelFormatInfo {
-    public static readonly PixelFormatInfo Rgba =
-        new() {
-            Dipf = DrawingImagingPixelFormat.Format32bppArgb,
-            Wmpf = PixelFormats.Bgra32,
-            Pf = PixelFormat.Rgba8,
-            ChannelCount = 4,
-            BytesPerChannel = 1
-        };
-
-    public PixelFormat Pf { get; private set; }
-    public DrawingImagingPixelFormat Dipf { get; private set; }
-    public WindowsMediaPixelFormat Wmpf { get; private set; }
-    public int ChannelCount { get; private set; }
-    public int BytesPerChannel { get; private set; }
-    public int BytesPerPixel => ChannelCount * BytesPerChannel;
-
-    private PixelFormatInfo() { }
-}
 
 public unsafe class Image : IDisposable {
     public enum Operation {
@@ -51,15 +26,21 @@ public unsafe class Image : IDisposable {
     private bool _isGpuBufferDirty = true;
 
 
-    public int Height { get; }
-    public int Width { get; }
-    public int SizeInBytes => Height * Width * PixelFormatInfo.BytesPerPixel;
-    public PixelFormatInfo PixelFormatInfo => PixelFormatInfo.Rgba;
+    public UInt32 Height { get; }
+    public UInt32 Width { get; }
+    public UInt32 Stride { get; }
+    public UInt32 SizeInBytes { get; }
+    public PixelFormatInfo PixelFormatInfo { get; }
 
-    public Image(Context ctx, int width, int height) {
+    public Image(Context ctx, PixelFormat pf, UInt32 width, UInt32 height) {
         _context = ctx;
+
+        PixelFormatInfo = PixelFormatInfo.Get(pf);
         Width = width;
         Height = height;
+
+        Stride = PixelFormatInfo.CalculateStride(Width);
+        SizeInBytes = Height * Stride;
 
         _isCpuBufferDirty = true;
         _isGpuBufferDirty = true;
@@ -68,62 +49,44 @@ public unsafe class Image : IDisposable {
     public Image(Context ctx, FileInfo fileInfo) {
         _context = ctx;
 
-        IntPtr rgba = IntPtr.Zero;
+        IntPtr data;
 
         using (var fileStream = fileInfo.OpenRead())
         using (var bitmap = new Bitmap(fileStream)) {
-            Height = bitmap.Height;
-            Width = bitmap.Width;
+            Height = (UInt32) bitmap.Height;
+            Width = (UInt32) bitmap.Width;
+            PixelFormatInfo = PixelFormatInfo.Get(bitmap.PixelFormat);
 
-            BitmapData? imageData = null;
-
+            BitmapData? bitmapData = null;
             try {
-                imageData = bitmap.LockBits(
+                bitmapData = bitmap.LockBits(
                     new Rectangle(0, 0, bitmap.Width, bitmap.Height),
                     ImageLockMode.ReadOnly,
                     bitmap.PixelFormat);
 
-                rgba = ToRgba(imageData);
+                Stride = (UInt32) bitmapData.Stride;
+                SizeInBytes = Stride * Height;
+
+                data = Memory.Alloc(SizeInBytes);
+
+                Buffer.MemoryCopy(
+                    bitmapData.Scan0.ToPointer(),
+                    data.ToPointer(),
+                    SizeInBytes,
+                    SizeInBytes);
             }
             finally {
-                if (imageData != null) bitmap.UnlockBits(imageData);
+                if (bitmapData != null) bitmap.UnlockBits(bitmapData);
             }
         }
 
 
-        _cpuBuffer = new MemoryBuffer(rgba, SizeInBytes, false);
+        _cpuBuffer = new MemoryBuffer(data, SizeInBytes, false);
 
         _isCpuBufferDirty = false;
         _isGpuBufferDirty = true;
     }
 
-    private IntPtr ToRgba(BitmapData bitmapData) {
-        IntPtr result = Marshal.AllocHGlobal(SizeInBytes);
-
-        if (bitmapData.PixelFormat == DrawingImagingPixelFormat.Format32bppArgb) {
-            Buffer.MemoryCopy(
-                bitmapData.Scan0.ToPointer(),
-                result.ToPointer(),
-                SizeInBytes,
-                SizeInBytes);
-            return result;
-        }
-
-        if (bitmapData.PixelFormat == DrawingImagingPixelFormat.Format24bppRgb) {
-            Vec4b* dest = (Vec4b*) result.ToPointer();
-            Vec3b* source = (Vec3b*) bitmapData.Scan0.ToPointer();
-
-            for (int i = 0; i < Width; i++) {
-                for (int j = 0; j < Height; j++) {
-                    dest[j * Width + i] = new Vec4b(source[j * Width + i], 255);
-                }
-            }
-
-            return result;
-        }
-
-        throw new Exception("ag8w9ey9qerhv");
-    }
 
     public void Dispose() {
         _gpuBuffer?.Dispose();
@@ -173,15 +136,15 @@ public unsafe class Image : IDisposable {
         var buffer = TakeCpuBuffer(Operation.Read);
 
         return BitmapSource.Create(
-            Width,
-            Height,
+            (Int32) Width,
+            (Int32) Height,
             1.0,
             1.0,
             PixelFormatInfo.Wmpf,
             BitmapPalettes.Gray256,
             buffer.Ptr,
-            SizeInBytes,
-            Width * PixelFormatInfo.BytesPerPixel
+            (Int32) SizeInBytes,
+            (Int32) (Width * PixelFormatInfo.BytesPerPixel)
         );
     }
 
@@ -217,9 +180,9 @@ public unsafe class Image : IDisposable {
     public void Set<T>(T[] pixels) where T : unmanaged {
         _cpuBuffer ??= new MemoryBuffer(SizeInBytes);
 
-        for (int row = 0; row < Height; row++) {
-            for (int column = 0; column < Width; column++) {
-                Int32 offset = row * Width * PixelFormatInfo.BytesPerPixel + column * sizeof(T);
+        for (UInt32 row = 0; row < Height; row++) {
+            for (UInt32 column = 0; column < Width; column++) {
+                UInt32 offset = (UInt32) (row * Stride + column * sizeof(T));
                 _cpuBuffer.Set(offset, pixels[column]);
             }
         }
@@ -228,12 +191,12 @@ public unsafe class Image : IDisposable {
         _isGpuBufferDirty = true;
     }
 
-    public T Get<T>(int w, int h) where T : unmanaged {
+    public T Get<T>(UInt32 w, UInt32 h) where T : unmanaged {
         if (_cpuBuffer == null) {
             throw new Exception("y983g4qhvead");
         }
 
-        Int32 offset = h * Width * PixelFormatInfo.BytesPerPixel + w * sizeof(T);
+        UInt32 offset = (UInt32) (h * Stride + w * sizeof(T));
         return _cpuBuffer.Get<T>(offset);
     }
 }

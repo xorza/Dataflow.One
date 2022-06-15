@@ -11,18 +11,18 @@ public class ClCommandQueue : IDisposable {
 
         ClContext = clContext;
 
-        CLResultCode result;
-        InternalClCommandQueue = CL.CreateCommandQueueWithProperties(
-            clContext.InternalCLContext,
-            clContext.SelectedClDevice,
-            IntPtr.Zero,
-            out result);
+        RawClCommandQueue =
+            CL.CreateCommandQueueWithProperties(
+                clContext.RawClContext,
+                clContext.SelectedClDevice,
+                IntPtr.Zero,
+                out var result);
         result.ValidateSuccess();
     }
 
     public ClContext ClContext { get; }
 
-    internal CLCommandQueue InternalClCommandQueue { get; }
+    internal CLCommandQueue RawClCommandQueue { get; }
 
     public bool IsDisposed { get; private set; }
 
@@ -32,28 +32,6 @@ public class ClCommandQueue : IDisposable {
         GC.SuppressFinalize(this);
     }
 
-    public void EnqueueFillBuffer<T>(ClBuffer clBuffer, T[] arr) where T : unmanaged {
-        CheckIfDisposed();
-        clBuffer.CheckIfDisposed();
-
-        unsafe {
-            CLResultCode result;
-            CLEvent clEvent;
-            result = CL.EnqueueFillBuffer(
-                InternalClCommandQueue,
-                clBuffer.InternalCLBuffer,
-                arr,
-                UIntPtr.Zero,
-                (UIntPtr) (arr.Length * sizeof(T)),
-                null,
-                out clEvent);
-
-            var releaseResult = CL.ReleaseEvent(clEvent);
-            result.ValidateSuccess();
-            releaseResult.ValidateSuccess();
-        }
-    }
-
     public void EnqueueWriteBuffer(ClBuffer clBuffer, IntPtr bytes) {
         CheckIfDisposed();
         clBuffer.CheckIfDisposed();
@@ -61,8 +39,8 @@ public class ClCommandQueue : IDisposable {
         CLResultCode result;
         CLEvent clEvent;
         result = CL.EnqueueWriteBuffer(
-            InternalClCommandQueue,
-            clBuffer.InternalCLBuffer,
+            RawClCommandQueue,
+            clBuffer.InternalClBuffer,
             true,
             UIntPtr.Zero,
             (UIntPtr) clBuffer.SizeInBytes,
@@ -76,25 +54,25 @@ public class ClCommandQueue : IDisposable {
         releaseResult.ValidateSuccess();
     }
 
-    public void EnqueueNdRangeKernel(Kernel kernel, Int32[] size, IEnumerable<KernelArgValue> argValues) {
+    public void EnqueueNdRangeKernel(ClKernel clKernel, Int32[] size, IEnumerable<ClKernelArgValue> argValues) {
         CheckIfDisposed();
-        kernel.CheckIfDisposed();
+        clKernel.CheckIfDisposed();
 
         var i = 0;
         foreach (var value in argValues) {
-            value.Set(kernel, i);
+            value.Set(clKernel, i);
             ++i;
         }
 
         UIntPtr[] globalWorkSize = size
-            .Select(_=>(UIntPtr)_)
+            .Select(_ => (UIntPtr) _)
             .ToArray();
 
         CLResultCode result;
         CLEvent clEvent;
         result = CL.EnqueueNDRangeKernel(
-            InternalClCommandQueue,
-            kernel.ClKernel,
+            RawClCommandQueue,
+            clKernel.InternalClKernel,
             (UInt32) globalWorkSize.Length,
             null,
             globalWorkSize,
@@ -115,8 +93,8 @@ public class ClCommandQueue : IDisposable {
         CLResultCode result;
         CLEvent clEvent;
         result = CL.EnqueueReadBuffer(
-            InternalClCommandQueue,
-            clBuffer.InternalCLBuffer,
+            RawClCommandQueue,
+            clBuffer.InternalClBuffer,
             true,
             UIntPtr.Zero,
             arr,
@@ -135,8 +113,8 @@ public class ClCommandQueue : IDisposable {
         CLResultCode result;
         CLEvent clEvent;
         result = CL.EnqueueReadBuffer(
-            InternalClCommandQueue,
-            clBuffer.InternalCLBuffer,
+            RawClCommandQueue,
+            clBuffer.InternalClBuffer,
             true,
             UIntPtr.Zero,
             (UIntPtr) clBuffer.SizeInBytes,
@@ -153,11 +131,11 @@ public class ClCommandQueue : IDisposable {
     public void Finish() {
         CheckIfDisposed();
 
-        CL.Finish(InternalClCommandQueue).ValidateSuccess();
+        CL.Finish(RawClCommandQueue).ValidateSuccess();
     }
 
     private void ReleaseUnmanagedResources() {
-        CL.ReleaseCommandQueue(InternalClCommandQueue);
+        CL.ReleaseCommandQueue(RawClCommandQueue);
     }
 
     internal void CheckIfDisposed() {

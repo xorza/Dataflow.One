@@ -12,7 +12,7 @@ public class ClProgram : IDisposable {
         Code = code;
 
         CLResultCode result;
-        InternalClProgram = CL.CreateProgramWithSource(ClContext.InternalCLContext, code, out result);
+        InternalClProgram = CL.CreateProgramWithSource(ClContext.RawClContext, code, out result);
         result.ValidateSuccess();
 
         result = CL.BuildProgram(
@@ -24,7 +24,7 @@ public class ClProgram : IDisposable {
             IntPtr.Zero);
         result.ValidateSuccess();
 
-        List<Kernel> kernels = new();
+        List<ClKernel> kernels = new();
         Kernels = kernels.AsReadOnly();
 
         result = CL.GetProgramInfo(InternalClProgram, ProgramInfo.KernelNames, out var clKernelNames);
@@ -35,7 +35,7 @@ public class ClProgram : IDisposable {
         foreach (var kernelName in kernelNames) {
             var clKernel = CL.CreateKernel(InternalClProgram, kernelName, out result);
             result.ValidateSuccess();
-            kernels.Add(new Kernel(this, kernelName, clKernel));
+            kernels.Add(new ClKernel(this, kernelName, clKernel));
         }
     }
 
@@ -44,7 +44,7 @@ public class ClProgram : IDisposable {
 
     internal CLProgram InternalClProgram { get; }
 
-    public IReadOnlyList<Kernel> Kernels { get; }
+    public IReadOnlyList<ClKernel> Kernels { get; }
 
     public bool IsDisposed { get; private set; }
 

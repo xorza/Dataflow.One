@@ -25,7 +25,7 @@ public class ClContextTests {
                     result[i] = (A[i] + B[i]) + C;
                 }";
 
-        Int32 arraySize = 20;
+        UInt32 arraySize = 20;
         var a = new float[arraySize];
         var b = new float[arraySize];
         var resultValues = new float[arraySize];
@@ -42,11 +42,11 @@ public class ClContextTests {
         ClBuffer resultClBuffer = new(_clContext, arraySize * sizeof(float));
         ClCommandQueue clCommandQueue = new(_clContext);
 
-        KernelArgValue[] argsValues = {
-            new BufferKernelArgValue(bufferA),
-            new BufferKernelArgValue(bufferB),
-            new BufferKernelArgValue(resultClBuffer),
-            new ScalarKernelArgValue<float>(1f)
+        ClKernelArgValue[] argsValues = {
+            new BufferClKernelArgValue(bufferA),
+            new BufferClKernelArgValue(bufferB),
+            new BufferClKernelArgValue(resultClBuffer),
+            new ScalarClKernelArgValue<float>(1f)
         };
 
         try {

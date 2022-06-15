@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using csso.Common;
 using csso.ImageProcessing.Funcs;
 using csso.OpenCL;
 using NUnit.Framework;
@@ -29,15 +30,16 @@ public class BlendTest {
     public void Test1() {
         const Int32 width = 3;
         const Int32 height = 2;
+        const PixelFormat pixelFormat = PixelFormat.Rgba8;
 
         Vec4b[] pixels =
             Enumerable
-                .Repeat(new Vec4b(1, 2, 3,4), width * height)
+                .Repeat(new Vec4b(1, 2, 3, 4), width * height)
                 .ToArray();
 
         Image a, b, c;
-        using (a = new Image(_context, width, height))
-        using (b = new Image(_context, width, height)) {
+        using (a = new Image(_context, pixelFormat, width, height))
+        using (b = new Image(_context, pixelFormat, width, height)) {
             a.Set(pixels);
             b.Set(pixels);
 

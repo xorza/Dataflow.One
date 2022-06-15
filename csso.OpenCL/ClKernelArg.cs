@@ -7,8 +7,8 @@ public enum Quantity {
     Vector
 }
 
-public class KernelArg {
-    public KernelArg(string name, string typeName) {
+public class ClKernelArg {
+    public ClKernelArg(string name, string typeName) {
         Check.True(name.Length > 0);
 
         Name = name;

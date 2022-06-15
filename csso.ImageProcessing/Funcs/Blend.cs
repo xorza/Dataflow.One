@@ -38,7 +38,7 @@ public class Blend : Function, IDisposable {
         }
 
         var imagePool = _context.Get<ImagePool>();
-        var resultImage = imagePool.Acquire(width, height);
+        var resultImage = imagePool.Acquire(pixelFormatInfo.Pf, width, height);
 
         Debug.Assert.True(resultImage.SizeInBytes == sizeInBytes);
 
@@ -47,12 +47,12 @@ public class Blend : Function, IDisposable {
         var resultBuff = resultImage.TakeGpuBuffer(Image.Operation.Write);
 
         var kernel = _clProgram!.Kernels.Single(_ => _.Name == "add");
-        KernelArgValue[] argsValues = {
-            new BufferKernelArgValue(aBuff),
-            new BufferKernelArgValue(bBuff),
-            new BufferKernelArgValue(resultBuff)
+        ClKernelArgValue[] argsValues = {
+            new BufferClKernelArgValue(aBuff),
+            new BufferClKernelArgValue(bBuff),
+            new BufferClKernelArgValue(resultBuff)
         };
-        var workSize = new Int32[] {width, height};
+        var workSize = new Int32[] {(Int32) width, (Int32) height};
 
         using (ClCommandQueue clCommandQueue = new(clContext)) {
             clCommandQueue.EnqueueNdRangeKernel(kernel, workSize, argsValues);

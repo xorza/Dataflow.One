@@ -5,6 +5,8 @@
 
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
+
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
 </Project>

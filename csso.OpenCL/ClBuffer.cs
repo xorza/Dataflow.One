@@ -5,15 +5,15 @@ using OpenTK.Compute.OpenCL;
 namespace csso.OpenCL;
 
 public class ClBuffer : IDisposable {
-    public ClBuffer(ClContext clContext, int sizeInBytes) {
+    public ClBuffer(ClContext clContext, UInt32 sizeInBytes) {
         clContext.CheckIfDisposed();
 
         ClContext = clContext;
 
         CLResultCode result;
-        InternalCLBuffer = CL.CreateBuffer(
-            ClContext.InternalCLContext,
-            MemoryFlags.WriteOnly,
+        InternalClBuffer = CL.CreateBuffer(
+            ClContext.RawClContext,
+            MemoryFlags.ReadWrite,
             new UIntPtr((uint) sizeInBytes),
             IntPtr.Zero,
             out result);
@@ -22,19 +22,22 @@ public class ClBuffer : IDisposable {
         SizeInBytes = sizeInBytes;
     }
 
-    private ClBuffer(ClContext clContext, CLBuffer clInternalClBuffer, int sizeInBytes) {
+    private ClBuffer(
+        ClContext clContext,
+        CLBuffer clInternalClBuffer,
+        UInt32 sizeInBytes) {
         clContext.CheckIfDisposed();
         Check.Argument(sizeInBytes > 0, nameof(sizeInBytes));
 
         ClContext = clContext;
-        InternalCLBuffer = clInternalClBuffer;
+        InternalClBuffer = clInternalClBuffer;
         SizeInBytes = sizeInBytes;
     }
 
     public ClContext ClContext { get; }
-    public int SizeInBytes { get; }
+    public UInt32 SizeInBytes { get; }
 
-    internal CLBuffer InternalCLBuffer { get; }
+    internal CLBuffer InternalClBuffer { get; }
 
     public bool IsDisposed { get; private set; }
 
@@ -50,19 +53,23 @@ public class ClBuffer : IDisposable {
 
         CLResultCode result;
         var clBuffer = CL.CreateBuffer(
-            clContext.InternalCLContext,
-            MemoryFlags.ReadOnly | MemoryFlags.CopyHostPtr,
+            clContext.RawClContext,
+            MemoryFlags.ReadWrite | MemoryFlags.CopyHostPtr,
             arr,
             out result);
         result.ValidateSuccess();
 
         unsafe {
-            return new ClBuffer(clContext, clBuffer, arr.Length * sizeof(T));
+            return new ClBuffer(
+                clContext,
+                clBuffer,
+                (UInt32) (arr.Length * sizeof(T))
+            );
         }
     }
 
     private void ReleaseUnmanagedResources() {
-        CL.ReleaseMemoryObject(InternalCLBuffer);
+        CL.ReleaseMemoryObject(InternalClBuffer);
     }
 
     internal void CheckIfDisposed() {

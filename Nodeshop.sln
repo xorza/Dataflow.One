@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csso.NodeRunner.Shared", "c
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csso.ImageProcessing.Tests", "csso.ImageProcessing.Tests\csso.ImageProcessing.Tests.csproj", "{67FFB8FD-30B8-4C93-8856-3A4111AF6129}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csso.OpenCL.Tests", "csso.OpenCL.Tests\csso.OpenCL.Tests.csproj", "{F76166B4-4526-4A55-8A1B-6B609C0151B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{67FFB8FD-30B8-4C93-8856-3A4111AF6129}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67FFB8FD-30B8-4C93-8856-3A4111AF6129}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67FFB8FD-30B8-4C93-8856-3A4111AF6129}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F76166B4-4526-4A55-8A1B-6B609C0151B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F76166B4-4526-4A55-8A1B-6B609C0151B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F76166B4-4526-4A55-8A1B-6B609C0151B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F76166B4-4526-4A55-8A1B-6B609C0151B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

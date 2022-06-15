@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using csso.Common;
 
 namespace csso.ImageProcessing;
 
 public class MemoryBuffer : IDisposable {
-    public MemoryBuffer(int sizeInBytes) {
+    public MemoryBuffer(UInt32 sizeInBytes) {
         SizeInBytes = sizeInBytes;
-        Ptr = Marshal.AllocHGlobal(sizeInBytes);
+        Ptr = Memory.Alloc(sizeInBytes);
     }
 
     public unsafe MemoryBuffer(
         IntPtr ptr,
-        int sizeInBytes,
+        UInt32 sizeInBytes,
         bool copy) {
         SizeInBytes = sizeInBytes;
 
         if (copy) {
-            Ptr = Marshal.AllocHGlobal(sizeInBytes);
+            Ptr = Memory.Alloc(sizeInBytes);
             Buffer.MemoryCopy(
                 (void*) ptr,
                 (void*) Ptr,
@@ -29,7 +30,7 @@ public class MemoryBuffer : IDisposable {
         }
     }
 
-    public int SizeInBytes { get; }
+    public UInt32 SizeInBytes { get; }
     public IntPtr Ptr { get; }
 
     public void Dispose() {
@@ -45,28 +46,28 @@ public class MemoryBuffer : IDisposable {
         ReleaseUnmanagedResources();
     }
 
-    public unsafe void Set<T>(int offsetInBytes, T value) where T : unmanaged {
-        if (offsetInBytes < 0 || offsetInBytes + sizeof(T) > SizeInBytes) {
+    public unsafe void Set<T>(UInt32 offsetInBytes, T value) where T : unmanaged {
+        if (offsetInBytes + sizeof(T) > SizeInBytes) {
             throw new ArgumentException(nameof(offsetInBytes));
         }
 
-        var data = (T*) (Ptr + offsetInBytes).ToPointer();
+        var data = (T*) (Ptr + (Int32) offsetInBytes).ToPointer();
         *data = value;
     }
 
 
-    public unsafe T Get<T>(int offsetInBytes) where T : unmanaged {
-        if (offsetInBytes < 0 || offsetInBytes + sizeof(T) > SizeInBytes) {
+    public unsafe T Get<T>(UInt32 offsetInBytes) where T : unmanaged {
+        if (offsetInBytes + sizeof(T) > SizeInBytes) {
             throw new ArgumentException(nameof(offsetInBytes));
         }
 
-        var data = (T*) (Ptr + offsetInBytes).ToPointer();
+        var data = (T*) (Ptr + (Int32) offsetInBytes).ToPointer();
         return *data;
     }
 
     public byte[] GetBytes() {
         byte[] result = new byte[SizeInBytes];
-        Marshal.Copy(Ptr, result, 0, SizeInBytes);
+        Marshal.Copy(Ptr, result, 0, (Int32) SizeInBytes);
 
         return result;
     }
