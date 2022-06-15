@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using csso.Common;
 using NUnit.Framework;
-using OpenTK.Compute.OpenCL;
 
 namespace csso.OpenCL.Tests;
 
