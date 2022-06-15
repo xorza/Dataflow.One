@@ -57,13 +57,13 @@ public unsafe class ClImage : IDisposable {
             memoryFlags |= MemoryFlags.CopyHostPtr;
         }
 
-        CL.CreateImage(
+        RawClImage = CL.CreateImage(
             ctx.RawClContext,
             memoryFlags,
             ref clImageFormat,
             ref imageDescription,
             data,
-            out CLResultCode result
+            out var result
         );
         result.ValidateSuccess();
     }
@@ -95,7 +95,7 @@ public unsafe class ClImage : IDisposable {
         fixed (T* srcDataPtr = data) {
             for (UInt32 row = 0; row < Height; row++) {
                 var srcDataRowPtr = srcDataPtr + row * Stride;
-
+        
                 Memory.Copy(
                     new IntPtr(srcDataRowPtr),
                     dataPtr + (Int32) (row * Stride),
@@ -109,6 +109,43 @@ public unsafe class ClImage : IDisposable {
 
     public void Upload(ClCommandQueue commandQueue, IntPtr data) {
         var result = CL.EnqueueWriteImage(
+            commandQueue.RawClCommandQueue,
+            RawClImage,
+            true,
+            new UIntPtr[3] {UIntPtr.Zero, UIntPtr.Zero, UIntPtr.Zero},
+            new UIntPtr[3] {new(Width), new(Height), new(1)},
+            new UIntPtr(Stride),
+            UIntPtr.Zero,
+            data,
+            0,
+            null,
+            out var clEvent
+        );
+
+        var releaseResult = CL.ReleaseEvent(clEvent);
+        result.ValidateSuccess();
+        releaseResult.ValidateSuccess();
+    }
+
+    public void Download<T>(ClCommandQueue commandQueue, T[] data) where T : unmanaged {
+        var dataPtr = Memory.Alloc(SizeInBytes);
+        Download(commandQueue,dataPtr);
+        
+        fixed (T* srcDataPtr = data) {
+            for (UInt32 row = 0; row < Height; row++) {
+                var srcDataRowPtr = srcDataPtr + row * Stride;
+        
+                Memory.Copy(
+                    dataPtr + (Int32) (row * Stride),
+                    new IntPtr(srcDataRowPtr),
+                    Stride
+                );
+            }
+        }
+        
+    }
+    public void Download(ClCommandQueue commandQueue, IntPtr data) {
+        var result = CL.EnqueueReadImage(
             commandQueue.RawClCommandQueue,
             RawClImage,
             true,

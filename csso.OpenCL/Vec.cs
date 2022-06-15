@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace csso.OpenCL;
 
+[StructLayout(LayoutKind.Sequential)] 
 public struct Vec2d {
     public double x;
     public double y;
 }
 
+[StructLayout(LayoutKind.Sequential)] 
 public struct Vec4b {
     public byte x;
     public byte y;
@@ -26,9 +29,13 @@ public struct Vec4b {
         this.z = v3.z;
         this.w = w;
     }
+
+    public override string ToString() {
+        return $"{{ {x}, {y}, {y}, {z} }}";
+    }
 }
 
-
+[StructLayout(LayoutKind.Sequential)] 
 public struct Vec3b {
     public byte x;
     public byte y;
@@ -41,6 +48,7 @@ public struct Vec3b {
     }
 }
 
+[StructLayout(LayoutKind.Sequential)] 
 public struct Vec2f {
     public float x;
     public float y;

@@ -14,8 +14,8 @@ public class ImageTests {
 
     [Test]
     public void Test1() {
-        UInt32 w = 32;
-        UInt32 h = 32;
+        UInt32 w = 7;
+        UInt32 h = 3;
 
         var image = new ClImage(_clContext, w, h, PixelFormat.Rgba8);
         var commandQueue = new ClCommandQueue(_clContext);
@@ -25,6 +25,11 @@ public class ImageTests {
             .ToArray();
 
         image.Upload(commandQueue, pixels);
+
+        pixels = Enumerable
+            .Repeat(new Vec4b(0, 0, 0, 0), (Int32) (w * h))
+            .ToArray();
+        image.Download(commandQueue, pixels);
 
         Assert.Pass();
     }
