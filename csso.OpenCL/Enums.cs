@@ -1,8 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using csso.Common;
 
 namespace csso.OpenCL;
+
+[AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = true)]
+public sealed class NameAttribute : Attribute {
+    public String Name { get; }
+
+    public NameAttribute(String name) {
+        Name = name;
+    }
+}
 
 public enum DataType {
     Float,
@@ -21,7 +32,7 @@ public enum DataType {
     Int2,
     Int3,
     Int4,
-    Image2D_t
+    [Name("image2d_t")] Image2D
 }
 
 internal static partial class Xtensions {
@@ -29,20 +40,37 @@ internal static partial class Xtensions {
     [DebuggerNonUserCode]
     [DebuggerHidden]
     public static T ToEnum<T>(this string s) where T : struct, Enum {
-        try {
-            return (T) Enum.Parse(typeof(T), s);
+        var enumType = typeof(T);
+
+        if (Enum.TryParse(enumType, s, out Object? result)) {
+            return (T) result!;
         }
-        catch { }
 
-        try {
-            var names = Enum.GetNames<T>();
+        var names = Enum.GetNames<T>();
+        var values = Enum.GetValues<T>();
 
-            var index = Array.FindIndex(names, name => name.Equals(s, StringComparison.InvariantCultureIgnoreCase));
-            Check.True(index >= 0);
-            return Enum.GetValues<T>()[index];
+        var index = Array.FindIndex(names, name => name.Equals(s, StringComparison.InvariantCultureIgnoreCase));
+        if (index >= 0) {
+            return values[index];
         }
-        catch { }
 
-        throw new ArgumentOutOfRangeException(nameof(s));
+        var valueName = enumType
+            .GetMembers()
+            .Where(_ => _.DeclaringType == enumType)
+            .SelectMany(member =>
+                member
+                    .GetCustomAttributes<NameAttribute>()
+                    .Select(nameAttr => new {member, name = nameAttr.Name}))
+            .SingleOrDefault(_ => _.name == s)
+            ?.member.Name;
+
+        if (valueName != null) {
+            index = Array.FindIndex(names, name => name.Equals(valueName, StringComparison.InvariantCultureIgnoreCase));
+            if (index >= 0) {
+                return values[index];
+            }
+        }
+
+        throw new ArgumentException(nameof(s));
     }
 }
