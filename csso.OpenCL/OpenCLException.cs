@@ -4,9 +4,14 @@ using OpenTK.Compute.OpenCL;
 namespace csso.OpenCL;
 
 internal class OpenCLException : Exception {
-    internal OpenCLException(CLResultCode clResultCode) {
+    internal OpenCLException(CLResultCode clResultCode)
+        : base(clResultCode.ToString()) {
         ClResultCode = clResultCode;
     }
 
-    internal CLResultCode ClResultCode { get; }
+    public CLResultCode ClResultCode { get; }
+
+    public override string ToString() {
+        return ClResultCode.ToString();
+    }
 }

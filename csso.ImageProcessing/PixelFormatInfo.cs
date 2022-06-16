@@ -22,7 +22,7 @@ public class PixelFormatInfo {
             },
             new PixelFormatInfo() {
                 Dipf = DrawingImagingPixelFormat.Format24bppRgb,
-                Wmpf = WindowsMediaPixelFormats.Bgr32,
+                Wmpf = WindowsMediaPixelFormats.Bgr24,
                 Pf = PixelFormat.Rgb8,
                 ChannelCount = PixelFormat.Rgb8.ChannelCount(),
                 BytesPerChannel = PixelFormat.Rgb8.BytesPerChannel(),

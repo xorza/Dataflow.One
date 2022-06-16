@@ -25,9 +25,9 @@ public class BlendTest {
         _clContext.Dispose();
         _context.Dispose();
     }
-
+    
     [Test]
-    public void Test1() {
+    public void RgbaTest() {
         const Int32 width = 3;
         const Int32 height = 2;
         const PixelFormat pixelFormat = PixelFormat.Rgba8;
@@ -55,6 +55,42 @@ public class BlendTest {
                     Vec4b v = c.Get<Vec4b>(w, h);
             
                     Assert.That(v, Is.EqualTo(new Vec4b(255, 64, 16, 4)));
+                }
+            }
+        }
+
+        Assert.Pass();
+    }
+
+    [Test]
+    public void RgbTest() {
+        const Int32 width = 3;
+        const Int32 height = 2;
+        const PixelFormat pixelFormat = PixelFormat.Rgb8;
+
+        Vec3b[] pixels =
+            Enumerable
+                .Repeat(new Vec3b(255, 128, 64), width * height)
+                .ToArray();
+
+        using var a = new Image(_context, pixelFormat, width, height);
+        using var b = new Image(_context, pixelFormat, width, height);
+        a.Set(pixels);
+        b.Set(pixels);
+
+        Blend blend = new Blend(_context);
+
+        blend.Do(a, b, out var c);
+        Assert.NotNull(c);
+
+        using (c) {
+            var buffer = c.TakeCpuBuffer(Image.Operation.Read);
+         
+            for (UInt32 w = 0; w < width; w++) {
+                for (UInt32 h = 0; h < height; h++) {
+                    var v = c.Get<Vec3b>(w, h);
+            
+                    Assert.That(v, Is.EqualTo(new Vec3b(255, 64, 16)));
                 }
             }
         }

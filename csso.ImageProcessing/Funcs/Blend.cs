@@ -32,7 +32,6 @@ public class Blend : Function, IDisposable {
 
         if (width != b.Width
             || height != b.Height
-            || sizeInBytes != b.SizeInBytes
             || pixelFormatInfo != b.PixelFormatInfo) {
             throw new Exception("3cn9ty88g94");
         }
@@ -83,7 +82,7 @@ public class Blend : Function, IDisposable {
                 float4 colorA = read_imagef(A, sampler, coord);
                 float4 colorB = read_imagef(B, sampler, coord);
 
-                write_imagef(result, coord, colorA * colorB);
+                write_imagef(result, coord, (float4)(colorA * colorB));
             }
             ";
 

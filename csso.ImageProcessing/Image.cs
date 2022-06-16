@@ -94,7 +94,8 @@ public unsafe class Image : IDisposable {
     }
 
     private ClImage CreateGpuBuffer(ClContext ctx) {
-        return new ClImage(ctx, Width, Height, Stride, PixelFormatInfo.Pf);
+        _isGpuBufferDirty = _isCpuBufferDirty;
+        return new ClImage(ctx, Width, Height, Stride, PixelFormatInfo.Pf, _cpuBuffer);
     }
 
     public void UpdateGpuBuffer() {
@@ -164,7 +165,7 @@ public unsafe class Image : IDisposable {
             _isGpuBufferDirty = false;
         }
 
-        return _gpuBuffer!;
+        return _gpuBuffer;
     }
 
     public MemoryBuffer TakeCpuBuffer(Operation op) {
@@ -178,7 +179,7 @@ public unsafe class Image : IDisposable {
             _isCpuBufferDirty = false;
         }
 
-        return _cpuBuffer!;
+        return _cpuBuffer;
     }
 
     public void Set<T>(T[] pixels) where T : unmanaged {
@@ -187,7 +188,7 @@ public unsafe class Image : IDisposable {
         for (UInt32 row = 0; row < Height; row++) {
             for (UInt32 column = 0; column < Width; column++) {
                 UInt32 offset = (UInt32) (row * Stride + column * sizeof(T));
-                _cpuBuffer.Set(offset, pixels[column]);
+                _cpuBuffer.Set(offset, pixels[row * Width + column]);
             }
         }
 
