@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using csso.Common;
 
-namespace csso.ImageProcessing;
+namespace csso.Common;
 
 public class MemoryBuffer : IDisposable {
     public MemoryBuffer(UInt32 sizeInBytes) {

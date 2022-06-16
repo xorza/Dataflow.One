@@ -91,23 +91,23 @@ public unsafe class ClImage : IDisposable {
             throw new Exception("qg4yo98hrvdf");
         }
 
-        IntPtr dataPtr = Memory.Alloc(SizeInBytes);
+        using var buffer = new MemoryBuffer(SizeInBytes);
         fixed (T* srcDataPtr = data) {
             for (UInt32 row = 0; row < Height; row++) {
                 var srcDataRowPtr = srcDataPtr + row * Stride;
-        
+
                 Memory.Copy(
                     new IntPtr(srcDataRowPtr),
-                    dataPtr + (Int32) (row * Stride),
+                    buffer.Ptr + (Int32) (row * Stride),
                     Stride
                 );
             }
         }
 
-        Upload(commandQueue, dataPtr);
+        Upload(commandQueue, buffer);
     }
 
-    public void Upload(ClCommandQueue commandQueue, IntPtr data) {
+    public void Upload(ClCommandQueue commandQueue, MemoryBuffer buffer) {
         var result = CL.EnqueueWriteImage(
             commandQueue.RawClCommandQueue,
             RawClImage,
@@ -116,7 +116,7 @@ public unsafe class ClImage : IDisposable {
             new UIntPtr[3] {new(Width), new(Height), new(1)},
             new UIntPtr(Stride),
             UIntPtr.Zero,
-            data,
+            buffer.Ptr,
             0,
             null,
             out var clEvent
@@ -128,23 +128,23 @@ public unsafe class ClImage : IDisposable {
     }
 
     public void Download<T>(ClCommandQueue commandQueue, T[] data) where T : unmanaged {
-        var dataPtr = Memory.Alloc(SizeInBytes);
-        Download(commandQueue,dataPtr);
-        
+        using var buffer = new MemoryBuffer(SizeInBytes);
+        Download(commandQueue, buffer);
+
         fixed (T* srcDataPtr = data) {
             for (UInt32 row = 0; row < Height; row++) {
                 var srcDataRowPtr = srcDataPtr + row * Stride;
-        
+
                 Memory.Copy(
-                    dataPtr + (Int32) (row * Stride),
+                    buffer.Ptr + (Int32) (row * Stride),
                     new IntPtr(srcDataRowPtr),
                     Stride
                 );
             }
         }
-        
     }
-    public void Download(ClCommandQueue commandQueue, IntPtr data) {
+
+    public void Download(ClCommandQueue commandQueue, MemoryBuffer buffer) {
         var result = CL.EnqueueReadImage(
             commandQueue.RawClCommandQueue,
             RawClImage,
@@ -153,7 +153,7 @@ public unsafe class ClImage : IDisposable {
             new UIntPtr[3] {new(Width), new(Height), new(1)},
             new UIntPtr(Stride),
             UIntPtr.Zero,
-            data,
+            buffer.Ptr,
             0,
             null,
             out var clEvent
