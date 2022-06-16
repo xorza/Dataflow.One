@@ -15,6 +15,13 @@ public struct Vec4b {
     public byte y;
     public byte z;
     public byte w;
+    
+    public Vec4b(byte v) {
+        this.x = v;
+        this.y = v;
+        this.z = v;
+        this.w = v;
+    }
 
     public Vec4b(byte x, byte y, byte z, byte w) {
         this.x = x;
@@ -31,7 +38,7 @@ public struct Vec4b {
     }
 
     public override string ToString() {
-        return $"{{ {x}, {y}, {y}, {z} }}";
+        return $"{{ {x}, {y}, {z}, {w} }}";
     }
 }
 

@@ -78,9 +78,7 @@ public class Blend : Function, IDisposable {
                       read_only  image2d_t B,
                       write_only image2d_t result
                     ) {
-                int x = get_global_id(0);
-                int y = get_global_id(1);
-                int2 coord = (int2)(x, y);
+                int2 coord = (int2)(get_global_id(0), get_global_id(1));
                 
                 float4 colorA = read_imagef(A, sampler, coord);
                 float4 colorB = read_imagef(B, sampler, coord);

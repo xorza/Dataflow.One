@@ -8,7 +8,7 @@ public enum PixelFormat {
 }
 
 public static class PixelFormatXtenstions {
-    private const UInt32 MemoryAlignment = 64;
+    private const UInt32 MemoryAlignment = 8;
     
     public static UInt32 CalculateStride(this PixelFormat pf, UInt32 width) {
         var bytesPerPixel = BytesPerPixel(pf);
