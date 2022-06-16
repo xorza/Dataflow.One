@@ -21,7 +21,7 @@ public unsafe class Image : IDisposable {
 
     private readonly Context _context;
     private MemoryBuffer? _cpuBuffer;
-    private ClBuffer? _gpuBuffer;
+    private ClImage? _gpuBuffer;
     private bool _isCpuBufferDirty = true;
     private bool _isGpuBufferDirty = true;
 
@@ -93,6 +93,10 @@ public unsafe class Image : IDisposable {
         _cpuBuffer?.Dispose();
     }
 
+    private ClImage CreateGpuBuffer(ClContext ctx) {
+        return new ClImage(ctx, Width, Height, Stride, PixelFormatInfo.Pf);
+    }
+
     public void UpdateGpuBuffer() {
         if (_cpuBuffer == null) throw new Exception("w4w4vywrts");
 
@@ -104,10 +108,10 @@ public unsafe class Image : IDisposable {
 
         var context = _context.Get<ClContext>();
 
-        _gpuBuffer ??= new ClBuffer(context, SizeInBytes);
+        _gpuBuffer ??= CreateGpuBuffer(context);
 
-        var commandQueue = new ClCommandQueue(context);
-        commandQueue.EnqueueWriteBuffer(_gpuBuffer, _cpuBuffer.Ptr);
+        using var commandQueue = new ClCommandQueue(context);
+        _gpuBuffer.Upload(commandQueue, _cpuBuffer);
         commandQueue.Finish();
 
         _isGpuBufferDirty = false;
@@ -125,8 +129,8 @@ public unsafe class Image : IDisposable {
         var context = _context.Get<ClContext>();
 
         _cpuBuffer ??= new MemoryBuffer(SizeInBytes);
-        var commandQueue = new ClCommandQueue(context);
-        commandQueue.EnqueueReadBuffer(_gpuBuffer, _cpuBuffer.Ptr);
+        using var commandQueue = new ClCommandQueue(context);
+        _gpuBuffer.Download(commandQueue, _cpuBuffer);
         commandQueue.Finish();
 
         _isCpuBufferDirty = false;
@@ -148,10 +152,10 @@ public unsafe class Image : IDisposable {
         );
     }
 
-    public ClBuffer TakeGpuBuffer(Operation op) {
+    public ClImage TakeGpuBuffer(Operation op) {
         var clContext = _context.Get<ClContext>();
 
-        _gpuBuffer ??= new ClBuffer(clContext, SizeInBytes);
+        _gpuBuffer ??= CreateGpuBuffer(clContext);
 
         if (_isGpuBufferDirty && op == Operation.Read) UpdateGpuBuffer();
 

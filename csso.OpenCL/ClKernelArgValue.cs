@@ -26,6 +26,18 @@ public class BufferClKernelArgValue : ClKernelArgValue {
     public ClBuffer ClBuffer { get; }
 
     internal override void Set(ClKernel clKernel, int index) {
-        CL.SetKernelArg(clKernel.InternalClKernel, (uint) index, ClBuffer.InternalClBuffer).ValidateSuccess();
+        CL.SetKernelArg(clKernel.InternalClKernel, (uint) index, ClBuffer.RawClBuffer).ValidateSuccess();
+    }
+}
+
+public class ImageClKernelArgValue : ClKernelArgValue {
+    public ImageClKernelArgValue(ClImage clImage) {
+        ClImage = clImage;
+    }
+
+    public ClImage ClImage { get; }
+
+    internal override void Set(ClKernel clKernel, int index) {
+        CL.SetKernelArg(clKernel.InternalClKernel, (uint) index, ClImage.RawClImage).ValidateSuccess();
     }
 }

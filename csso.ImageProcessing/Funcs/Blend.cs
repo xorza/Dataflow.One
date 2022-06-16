@@ -48,9 +48,9 @@ public class Blend : Function, IDisposable {
 
         var kernel = _clProgram!.Kernels.Single(_ => _.Name == "add");
         ClKernelArgValue[] argsValues = {
-            new BufferClKernelArgValue(aBuff),
-            new BufferClKernelArgValue(bBuff),
-            new BufferClKernelArgValue(resultBuff)
+            new ImageClKernelArgValue(aBuff),
+            new ImageClKernelArgValue(bBuff),
+            new ImageClKernelArgValue(resultBuff)
         };
         var workSize = new Int32[] {(Int32) width, (Int32) height};
 
@@ -69,19 +69,23 @@ public class Blend : Function, IDisposable {
         if (_clProgram != null) return;
 
         const String code = @"
+            __constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE
+                                           | CLK_ADDRESS_CLAMP_TO_EDGE   
+                                           | CLK_FILTER_NEAREST;
+
             kernel
-            void add(global const uchar4* A, 
-                      global const uchar4* B,
-                      global uchar4* result) {
+            void add( read_only  image2d_t A, 
+                      read_only  image2d_t B,
+                      write_only image2d_t result
+                    ) {
                 int x = get_global_id(0);
-                int y = get_global_id(1);    
-                int i = y * get_global_size(0) + x;
+                int y = get_global_id(1);
+                int2 coord = (int2)(x, y);
+                
+                float4 colorA = read_imagef(A, sampler, coord);
+                float4 colorB = read_imagef(B, sampler, coord);
 
-                float4 fa = convert_float4(A[i]) / (float4)(255.0);
-                float4 fb = convert_float4(B[i]) / (float4)(255.0);
-                float4 fresult = (fa * fb) * (float4)(255.0);
-
-                result[i] = convert_uchar4(fresult);
+                write_imagef(result, coord, colorA * colorB);
             }
             ";
 

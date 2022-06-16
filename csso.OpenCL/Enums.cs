@@ -21,6 +21,7 @@ public enum DataType {
     Int2,
     Int3,
     Int4,
+    Image2D_t
 }
 
 internal static partial class Xtensions {

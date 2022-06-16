@@ -40,7 +40,7 @@ public class ClCommandQueue : IDisposable {
         CLEvent clEvent;
         result = CL.EnqueueWriteBuffer(
             RawClCommandQueue,
-            clBuffer.InternalClBuffer,
+            clBuffer.RawClBuffer,
             true,
             UIntPtr.Zero,
             (UIntPtr) clBuffer.SizeInBytes,
@@ -94,7 +94,7 @@ public class ClCommandQueue : IDisposable {
         CLEvent clEvent;
         result = CL.EnqueueReadBuffer(
             RawClCommandQueue,
-            clBuffer.InternalClBuffer,
+            clBuffer.RawClBuffer,
             true,
             UIntPtr.Zero,
             arr,
@@ -114,7 +114,7 @@ public class ClCommandQueue : IDisposable {
         CLEvent clEvent;
         result = CL.EnqueueReadBuffer(
             RawClCommandQueue,
-            clBuffer.InternalClBuffer,
+            clBuffer.RawClBuffer,
             true,
             UIntPtr.Zero,
             (UIntPtr) clBuffer.SizeInBytes,

@@ -11,7 +11,7 @@ public class ClBuffer : IDisposable {
         ClContext = clContext;
 
         CLResultCode result;
-        InternalClBuffer = CL.CreateBuffer(
+        RawClBuffer = CL.CreateBuffer(
             ClContext.RawClContext,
             MemoryFlags.ReadWrite,
             new UIntPtr((uint) sizeInBytes),
@@ -24,20 +24,20 @@ public class ClBuffer : IDisposable {
 
     private ClBuffer(
         ClContext clContext,
-        CLBuffer clInternalClBuffer,
+        CLBuffer clRawClBuffer,
         UInt32 sizeInBytes) {
         clContext.CheckIfDisposed();
         Check.Argument(sizeInBytes > 0, nameof(sizeInBytes));
 
         ClContext = clContext;
-        InternalClBuffer = clInternalClBuffer;
+        RawClBuffer = clRawClBuffer;
         SizeInBytes = sizeInBytes;
     }
 
     public ClContext ClContext { get; }
     public UInt32 SizeInBytes { get; }
 
-    internal CLBuffer InternalClBuffer { get; }
+    internal CLBuffer RawClBuffer { get; }
 
     public bool IsDisposed { get; private set; }
 
@@ -69,7 +69,7 @@ public class ClBuffer : IDisposable {
     }
 
     private void ReleaseUnmanagedResources() {
-        CL.ReleaseMemoryObject(InternalClBuffer);
+        CL.ReleaseMemoryObject(RawClBuffer);
     }
 
     internal void CheckIfDisposed() {

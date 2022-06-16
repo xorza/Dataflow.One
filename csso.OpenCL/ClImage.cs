@@ -16,29 +16,17 @@ public unsafe class ClImage : IDisposable {
     public UInt32 SizeInBytes { get; }
     public PixelFormat PixelFormat { get; }
 
-
     public ClImage(
         ClContext ctx,
-        UInt32 width, UInt32 height,
-        PixelFormat pixelFormat)
-        : this(ctx, width, height, pixelFormat.CalculateStride(width), pixelFormat, null) { }
-
-    public ClImage(
-        ClContext ctx,
-        UInt32 width, UInt32 height, UInt32 stride,
-        PixelFormat pixelFormat)
-        : this(ctx, width, height, stride, pixelFormat, null) { }
-
-    public ClImage(ClContext ctx,
         UInt32 width, UInt32 height,
         PixelFormat pixelFormat,
-        MemoryBuffer? buffer)
+        MemoryBuffer? buffer = null)
         : this(ctx, width, height, pixelFormat.CalculateStride(width), pixelFormat, buffer) { }
 
     public ClImage(ClContext ctx,
         UInt32 width, UInt32 height, UInt32 stride,
         PixelFormat pixelFormat,
-        MemoryBuffer? buffer) {
+        MemoryBuffer? buffer = null) {
         ClContext = ctx;
 
         Width = width;
@@ -173,12 +161,12 @@ public unsafe class ClImage : IDisposable {
             case PixelFormat.Rgb8:
                 return new ImageFormat() {
                     ChannelOrder = ChannelOrder.Rgb,
-                    ChannelType = ChannelType.UnsignedInteger8
+                    ChannelType = ChannelType.NormalizedUnsignedInteger8
                 };
             case PixelFormat.Rgba8:
                 return new ImageFormat() {
                     ChannelOrder = ChannelOrder.Rgba,
-                    ChannelType = ChannelType.UnsignedInteger8
+                    ChannelType = ChannelType.NormalizedUnsignedInteger8
                 };
             default:
                 throw new Exception("q nc3y98 4849vg2785whg");
