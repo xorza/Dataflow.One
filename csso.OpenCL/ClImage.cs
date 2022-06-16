@@ -21,24 +21,24 @@ public unsafe class ClImage : IDisposable {
         ClContext ctx,
         UInt32 width, UInt32 height,
         PixelFormat pixelFormat)
-        : this(ctx, width, height, pixelFormat.CalculateStride(width), pixelFormat, IntPtr.Zero) { }
+        : this(ctx, width, height, pixelFormat.CalculateStride(width), pixelFormat, null) { }
 
     public ClImage(
         ClContext ctx,
         UInt32 width, UInt32 height, UInt32 stride,
         PixelFormat pixelFormat)
-        : this(ctx, width, height, stride, pixelFormat, IntPtr.Zero) { }
+        : this(ctx, width, height, stride, pixelFormat, null) { }
 
     public ClImage(ClContext ctx,
         UInt32 width, UInt32 height,
         PixelFormat pixelFormat,
-        IntPtr data)
-        : this(ctx, width, height, pixelFormat.CalculateStride(width), pixelFormat, data) { }
+        MemoryBuffer? buffer)
+        : this(ctx, width, height, pixelFormat.CalculateStride(width), pixelFormat, buffer) { }
 
     public ClImage(ClContext ctx,
         UInt32 width, UInt32 height, UInt32 stride,
         PixelFormat pixelFormat,
-        IntPtr data) {
+        MemoryBuffer? buffer) {
         ClContext = ctx;
 
         Width = width;
@@ -47,22 +47,26 @@ public unsafe class ClImage : IDisposable {
         PixelFormat = pixelFormat;
         SizeInBytes = stride * height;
 
+        var memoryFlags = MemoryFlags.ReadWrite;
+        if (buffer != null) {
+            if (SizeInBytes != buffer.SizeInBytes) {
+                throw new Exception("ewgurualvbd4");
+            }
+
+            memoryFlags |= MemoryFlags.CopyHostPtr;
+        }
+
         var imageDescription = ImageDescription.Create2D(
             width, height, stride
         );
         var clImageFormat = ToImageFormat(pixelFormat);
-
-        var memoryFlags = MemoryFlags.ReadWrite;
-        if (data != IntPtr.Zero) {
-            memoryFlags |= MemoryFlags.CopyHostPtr;
-        }
 
         RawClImage = CL.CreateImage(
             ctx.RawClContext,
             memoryFlags,
             ref clImageFormat,
             ref imageDescription,
-            data,
+            buffer?.Ptr ?? IntPtr.Zero,
             out var result
         );
         result.ValidateSuccess();
