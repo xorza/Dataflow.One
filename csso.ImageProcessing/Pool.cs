@@ -10,7 +10,7 @@ public class ImagePool {
         _context = ctx;
     }
 
-    public Image Acquire(PixelFormat pf, UInt32 width, UInt32 height) {
-        return new Image(_context, pf, width, height);
+    public Image Acquire(UInt32 width, UInt32 height) {
+        return new Image(_context, PixelFormat.Rgba8, width, height);
     }
 }

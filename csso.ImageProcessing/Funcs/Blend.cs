@@ -37,7 +37,7 @@ public class Blend : Function, IDisposable {
         }
 
         var imagePool = _context.Get<ImagePool>();
-        var resultImage = imagePool.Acquire(pixelFormatInfo.Pf, width, height);
+        var resultImage = imagePool.Acquire(width, height);
 
         Debug.Assert.True(resultImage.SizeInBytes == sizeInBytes);
 
@@ -51,7 +51,7 @@ public class Blend : Function, IDisposable {
             new ImageClKernelArgValue(bBuff),
             new ImageClKernelArgValue(resultBuff)
         };
-        var workSize = new Int32[] {(Int32) width, (Int32) height};
+        var workSize = new Int32[2] {(Int32) width, (Int32) height};
 
         using (ClCommandQueue clCommandQueue = new(clContext)) {
             clCommandQueue.EnqueueNdRangeKernel(kernel, workSize, argsValues);
@@ -82,7 +82,7 @@ public class Blend : Function, IDisposable {
                 float4 colorA = read_imagef(A, sampler, coord);
                 float4 colorB = read_imagef(B, sampler, coord);
 
-                write_imagef(result, coord, (float4)(colorA * colorB));
+                write_imagef(result, coord, colorA * colorB);
             }
             ";
 

@@ -38,7 +38,6 @@ public unsafe class Image : IDisposable {
         PixelFormatInfo = PixelFormatInfo.Get(pf);
         Width = width;
         Height = height;
-
         Stride = PixelFormatInfo.CalculateStride(Width);
         SizeInBytes = Height * Stride;
 
@@ -49,39 +48,53 @@ public unsafe class Image : IDisposable {
     public Image(Context ctx, FileInfo fileInfo) {
         _context = ctx;
 
-        IntPtr data;
+        using var fileStream = fileInfo.OpenRead();
+        using var bitmap = new Bitmap(fileStream);
 
-        using (var fileStream = fileInfo.OpenRead())
-        using (var bitmap = new Bitmap(fileStream)) {
-            Height = (UInt32) bitmap.Height;
-            Width = (UInt32) bitmap.Width;
-            PixelFormatInfo = PixelFormatInfo.Get(bitmap.PixelFormat);
-
-            BitmapData? bitmapData = null;
-            try {
-                bitmapData = bitmap.LockBits(
-                    new Rectangle(0, 0, bitmap.Width, bitmap.Height),
-                    ImageLockMode.ReadOnly,
-                    bitmap.PixelFormat);
-
-                Stride = (UInt32) bitmapData.Stride;
-                SizeInBytes = Stride * Height;
-
-                data = Memory.Alloc(SizeInBytes);
-
-                Buffer.MemoryCopy(
-                    bitmapData.Scan0.ToPointer(),
-                    data.ToPointer(),
-                    SizeInBytes,
-                    SizeInBytes);
-            }
-            finally {
-                if (bitmapData != null) bitmap.UnlockBits(bitmapData);
-            }
+        Height = (UInt32) bitmap.Height;
+        Width = (UInt32) bitmap.Width;
+        switch (bitmap.PixelFormat) {
+            case System.Drawing.Imaging.PixelFormat.Format24bppRgb:
+            case System.Drawing.Imaging.PixelFormat.Format32bppArgb:
+                PixelFormatInfo = PixelFormatInfo.Get(PixelFormat.Rgba8);
+                break;
+            default:
+                throw new Exception("aeoihrogpq98354");
         }
 
+        Stride = PixelFormatInfo.CalculateStride(Width);
+        SizeInBytes = Height * Stride;
 
-        _cpuBuffer = new MemoryBuffer(data, SizeInBytes, false);
+
+        BitmapData? bitmapData = null;
+        _cpuBuffer = new MemoryBuffer(SizeInBytes);
+
+        try {
+            bitmapData = bitmap.LockBits(
+                new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadOnly,
+                bitmap.PixelFormat);
+
+            IntPtr bmpData = bitmapData.Scan0;
+
+            if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb) {
+                for (UInt32 row = 0; row < Height; row++) {
+                    Vec3b* rgbRow = (Vec3b*) (bmpData + (Int32) (row * bitmapData.Stride)).ToPointer();
+                    Vec4b* rgbaRow = (Vec4b*) (_cpuBuffer.Ptr + (Int32) (row * Stride)).ToPointer();
+
+                    for (UInt32 column = 0; column < Width; column++) {
+                        rgbaRow[column] = new Vec4b(rgbRow[column], 255);
+                    }
+                }
+            }
+
+            if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppArgb) {
+                _cpuBuffer.Upload(bitmapData.Scan0, 0, (UInt32) (bitmapData.Stride * bitmapData.Height));
+            }
+        }
+        finally {
+            if (bitmapData != null) bitmap.UnlockBits(bitmapData);
+        }
 
         _isCpuBufferDirty = false;
         _isGpuBufferDirty = true;

@@ -10,7 +10,7 @@ using WindowsMediaPixelFormat = System.Windows.Media.PixelFormat;
 namespace csso.ImageProcessing;
 
 public class PixelFormatInfo {
-    private static readonly PixelFormatInfo[] pixelFormats =
+    private static readonly PixelFormatInfo[] PixelFormats =
         new PixelFormatInfo[] {
             new PixelFormatInfo() {
                 Dipf = DrawingImagingPixelFormat.Format32bppArgb,
@@ -19,22 +19,14 @@ public class PixelFormatInfo {
                 ChannelCount = PixelFormat.Rgba8.ChannelCount(),
                 BytesPerChannel = PixelFormat.Rgba8.BytesPerChannel(),
                 BytesPerPixel = PixelFormat.Rgba8.BytesPerPixel()
-            },
-            new PixelFormatInfo() {
-                Dipf = DrawingImagingPixelFormat.Format24bppRgb,
-                Wmpf = WindowsMediaPixelFormats.Bgr24,
-                Pf = PixelFormat.Rgb8,
-                ChannelCount = PixelFormat.Rgb8.ChannelCount(),
-                BytesPerChannel = PixelFormat.Rgb8.BytesPerChannel(),
-                BytesPerPixel = PixelFormat.Rgb8.BytesPerPixel()
             }
         };
 
     public static PixelFormatInfo Get(PixelFormat pf) {
-        return pixelFormats.Single(_ => _.Pf == pf);
+        return PixelFormats.Single(_ => _.Pf == pf);
     }
     public static PixelFormatInfo Get(DrawingImagingPixelFormat dipf) {
-        return pixelFormats.Single(_ => _.Dipf == dipf);
+        return PixelFormats.Single(_ => _.Dipf == dipf);
     }
 
     public PixelFormat Pf { get; private set; }

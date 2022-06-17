@@ -120,17 +120,17 @@ public unsafe class ClImage : IDisposable {
     }
 
     public void Download<T>(ClCommandQueue commandQueue, T[] data) where T : unmanaged {
-        using var buffer = new MemoryBuffer(SizeInBytes);
+        var buffer = new MemoryBuffer(SizeInBytes);
         Download(commandQueue, buffer);
 
         fixed (T* srcDataPtr = data) {
             for (UInt32 row = 0; row < Height; row++) {
-                var srcDataRowPtr = srcDataPtr + row * Stride;
+                var dstDataRowPtr = ((byte*)srcDataPtr) + row * Stride;
 
                 Memory.Copy(
                     buffer.Ptr + (Int32) (row * Stride),
-                    new IntPtr(srcDataRowPtr),
-                    Stride
+                    new IntPtr(dstDataRowPtr),
+                    (UInt32) (Width * sizeof(T))
                 );
             }
         }
@@ -158,11 +158,6 @@ public unsafe class ClImage : IDisposable {
 
     private static ImageFormat ToImageFormat(PixelFormat pf) {
         switch (pf) {
-            case PixelFormat.Rgb8:
-                return new ImageFormat() {
-                    ChannelOrder = ChannelOrder.Rgb,
-                    ChannelType = ChannelType.NormalizedUnsignedInteger8
-                };
             case PixelFormat.Rgba8:
                 return new ImageFormat() {
                     ChannelOrder = ChannelOrder.Rgba,

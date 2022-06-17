@@ -71,4 +71,12 @@ public class MemoryBuffer : IDisposable {
 
         return result;
     }
+
+    public void Upload(IntPtr data, UInt32 offsetInBytes, UInt32 sizeInBytes) {
+        if (offsetInBytes + sizeInBytes > SizeInBytes) {
+            throw new ArgumentOutOfRangeException(nameof(sizeInBytes));
+        }
+
+        Memory.Copy(data, Ptr + (Int32)offsetInBytes, sizeInBytes);
+    }
 }

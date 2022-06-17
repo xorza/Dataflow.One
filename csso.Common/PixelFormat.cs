@@ -3,7 +3,7 @@
 namespace csso.Common;
 
 public enum PixelFormat {
-    Rgb8,
+    // Rgb8, - not supported by GPU hardware
     Rgba8
 }
 
@@ -19,8 +19,6 @@ public static class PixelFormatXtenstions {
 
     public static UInt32 ChannelCount(this PixelFormat pf) {
         switch (pf) {
-            case PixelFormat.Rgb8:
-                return 3;
             case PixelFormat.Rgba8:
                 return 4;
         }
@@ -30,7 +28,6 @@ public static class PixelFormatXtenstions {
 
     public static UInt32 BytesPerChannel(this PixelFormat pf) {
         switch (pf) {
-            case PixelFormat.Rgb8:
             case PixelFormat.Rgba8:
                 return 1;
         }
