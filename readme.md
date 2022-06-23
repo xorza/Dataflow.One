@@ -1,6 +1,5 @@
 # Dataflow.One
 
----
 ## Background
 Photography is my hobby, especially - astrophotography.
 Developing an astrophoto image takes a lot of time and usually
