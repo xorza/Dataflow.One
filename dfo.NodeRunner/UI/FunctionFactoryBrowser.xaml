@@ -1,0 +1,66 @@
+<UserControl x:Class="dfo.NodeRunner.UI.FunctionFactoryBrowser"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:core="clr-namespace:dfo.NodeCore;assembly=dfo.NodeCore"
+             xmlns:local="clr-namespace:dfo.NodeRunner.UI"
+             mc:Ignorable="d"
+             Background="{DynamicResource InactiveContentBackgroundBrush}"
+             x:Name="FunctionFactoryBrowserUserControl">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/Main.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <local:NullVisibilityConverter x:Key="NullVisibilityConverter1" />
+
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid MinHeight="250">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="100" />
+            <ColumnDefinition Width="*" MinWidth="300" />
+        </Grid.ColumnDefinitions>
+
+        <ListView
+            Grid.Column="0"
+            x:Name="FunctionsListView"
+            ItemsSource="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=FunctionFactory.Functions}"
+            SelectedValue="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=SelectedFunction}">
+            <ItemsControl.Resources>
+            </ItemsControl.Resources>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate
+                    DataType="{x:Type core:Function}">
+
+                    <TextBlock Text="{Binding Name}" />
+
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+        </ListView>
+
+        <Grid
+            Grid.Column="1"
+            PreviewKeyDown="OnPreviewInput"
+            IsHitTestVisible="False"
+            Focusable="False"
+
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Margin="8">
+            <local:Node
+                IsEnabled="False"
+                DeletionEnabled="False"
+                NodeView="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview}"
+                Visibility="{Binding ElementName=FunctionFactoryBrowserUserControl, Path=NodePreview, Converter={StaticResource NullVisibilityConverter1}}" />
+        </Grid>
+
+    </Grid>
+</UserControl>

@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>default</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\dfo.Common\dfo.Common.csproj" />
+        <ProjectReference Include="..\dfo.NodeRunner.Shared\dfo.NodeRunner.Shared.csproj" />
+        <ProjectReference Include="..\dfo.OpenCL\dfo.OpenCL.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Win32.SystemEvents" Version="6.0.1" />
+        <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="ClKernels.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>ClKernels.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="ClKernels.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ClKernels.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>
