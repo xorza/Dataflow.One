@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\dfo.NodeCore\dfo.NodeCore.csproj" />
+        <ProjectReference Include="..\dfo.NodeCore\dfo.NodeCore.csproj"/>
     </ItemGroup>
 
 </Project>

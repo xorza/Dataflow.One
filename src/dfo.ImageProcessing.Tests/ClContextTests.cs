@@ -8,8 +8,8 @@ using NUnit.Framework;
 namespace dfo.ImageProcessing.Tests;
 
 public class ClContextTests {
-    private readonly ClContext _clContext = new ClContext();
-    
+    private readonly ClContext _clContext = new();
+
     [SetUp]
     public void Setup() { }
 
@@ -25,7 +25,7 @@ public class ClContextTests {
                     result[i] = (A[i] + B[i]) + C;
                 }";
 
-        UInt32 arraySize = 20;
+        uint arraySize = 20;
         var a = new float[arraySize];
         var b = new float[arraySize];
         var resultValues = new float[arraySize];
@@ -50,7 +50,7 @@ public class ClContextTests {
         };
 
         try {
-            clCommandQueue.EnqueueNdRangeKernel(kernel, new int[] {2,10}, argsValues);
+            clCommandQueue.EnqueueNdRangeKernel(kernel, new int[] {2, 10}, argsValues);
             clCommandQueue.EnqueueReadBuffer(resultClBuffer, resultValues);
             clCommandQueue.Finish();
         }

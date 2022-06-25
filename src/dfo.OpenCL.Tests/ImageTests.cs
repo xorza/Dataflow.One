@@ -13,20 +13,20 @@ public class ImageTests {
 
     [Test]
     public void Test1() {
-        UInt32 w = 7;
-        UInt32 h = 3;
+        uint w = 7;
+        uint h = 3;
 
         var image = new ClImage(_clContext, w, h, PixelFormat.Rgba8);
         var commandQueue = new ClCommandQueue(_clContext);
 
         var pixels = Enumerable
-            .Repeat(new Vec4b(1, 2, 3, 4), (Int32) (w * h))
+            .Repeat(new Vec4b(1, 2, 3, 4), (int) (w * h))
             .ToArray();
 
         image.Upload(commandQueue, pixels);
 
         pixels = Enumerable
-            .Repeat(new Vec4b(0, 0, 0, 0), (Int32) (w * h))
+            .Repeat(new Vec4b(0, 0, 0, 0), (int) (w * h))
             .ToArray();
         image.Download(commandQueue, pixels);
 

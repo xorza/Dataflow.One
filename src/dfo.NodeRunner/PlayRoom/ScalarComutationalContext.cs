@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using dfo.NodeCore;
 using dfo.NodeCore.Funcs;
 using dfo.NodeRunner.Shared;
@@ -16,17 +17,17 @@ public class ScalarComutationalContext : IComputationContext {
         UiApi = api;
     }
 
-    public void RegisterFunctions(FunctionFactory functionFactory) {
+    public IEnumerable<Function> RegisterFunctions() {
         var addFunc = new Function("Add", F.Add);
         var divideWholeFunc = new Function("Divide whole", F.DivideWhole);
         var messageBoxFunc = new Function("Messagebox", Messagebox);
 
-        functionFactory.Register(addFunc);
-        functionFactory.Register(divideWholeFunc);
-        functionFactory.Register(messageBoxFunc);
-        functionFactory.Register(ConstIntFuncBaseBase);
-        functionFactory.Register(ConstDoubleFuncBaseBase);
-        functionFactory.Register(ConstStringFuncBaseBase);
+        yield return addFunc;
+        yield return divideWholeFunc;
+        yield return messageBoxFunc;
+        yield return ConstIntFuncBaseBase;
+        yield return ConstDoubleFuncBaseBase;
+        yield return ConstStringFuncBaseBase;
     }
 
     public void OnStartRun() { }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using dfo.NodeCore;
 using dfo.NodeRunner.Shared;
@@ -25,12 +26,10 @@ public class ImageProcessingContext : IComputationContext, IDisposable {
         UiApi = api;
     }
 
-    public void RegisterFunctions(FunctionFactory functionFactory) {
-        functionFactory.Register(new FileImageSource(_context));
-        functionFactory.Register(new Blend(_context));
-
-
-        functionFactory.Register(new Function("Messagebox", Messagebox));
+    public IEnumerable<Function> RegisterFunctions() {
+        yield return new FileImageSource(_context);
+        yield return new Blend(_context);
+        yield return new Function("Messagebox", Messagebox);
     }
 
     public void OnStartRun() { }

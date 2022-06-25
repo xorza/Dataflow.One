@@ -12,7 +12,7 @@ namespace dfo.ImageProcessing;
 public class PixelFormatInfo {
     private static readonly PixelFormatInfo[] PixelFormats =
         new PixelFormatInfo[] {
-            new PixelFormatInfo() {
+            new() {
                 Dipf = DrawingImagingPixelFormat.Format32bppArgb,
                 Wmpf = WindowsMediaPixelFormats.Bgra32,
                 Pf = PixelFormat.Rgba8,
@@ -25,6 +25,7 @@ public class PixelFormatInfo {
     public static PixelFormatInfo Get(PixelFormat pf) {
         return PixelFormats.Single(_ => _.Pf == pf);
     }
+
     public static PixelFormatInfo Get(DrawingImagingPixelFormat dipf) {
         return PixelFormats.Single(_ => _.Dipf == dipf);
     }
@@ -32,13 +33,13 @@ public class PixelFormatInfo {
     public PixelFormat Pf { get; private set; }
     public DrawingImagingPixelFormat Dipf { get; private set; }
     public WindowsMediaPixelFormat Wmpf { get; private set; }
-    public UInt32 ChannelCount { get; private set; }
-    public UInt32 BytesPerChannel { get; private set; }
-    public UInt32 BytesPerPixel { get; private set; }
+    public uint ChannelCount { get; private set; }
+    public uint BytesPerChannel { get; private set; }
+    public uint BytesPerPixel { get; private set; }
 
     private PixelFormatInfo() { }
 
-    public UInt32 CalculateStride(UInt32 width) {
+    public uint CalculateStride(uint width) {
         return Pf.CalculateStride(width);
     }
 }

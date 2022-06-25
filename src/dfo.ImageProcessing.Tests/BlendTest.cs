@@ -9,7 +9,7 @@ namespace dfo.ImageProcessing.Tests;
 
 [TestFixture]
 public class BlendTest {
-    private readonly ClContext _clContext = new ClContext();
+    private readonly ClContext _clContext = new();
     private readonly Context _context = new();
 
     public BlendTest() {
@@ -25,14 +25,14 @@ public class BlendTest {
         _clContext.Dispose();
         _context.Dispose();
     }
-    
+
     [Test]
     public void RgbaTest() {
-        const Int32 width = 3;
-        const Int32 height = 2;
+        const int width = 3;
+        const int height = 2;
         const PixelFormat pixelFormat = PixelFormat.Rgba8;
 
-        Vec4b[] pixels =
+        var pixels =
             Enumerable
                 .Repeat(new Vec4b(255, 128, 64, 32), width * height)
                 .ToArray();
@@ -42,20 +42,19 @@ public class BlendTest {
         a.Set(pixels);
         b.Set(pixels);
 
-        Blend blend = new Blend(_context);
+        var blend = new Blend(_context);
 
         blend.Do(a, b, out var c);
         Assert.NotNull(c);
 
         using (c) {
             var buffer = c.TakeCpuBuffer(Image.Operation.Read);
-         
-            for (UInt32 w = 0; w < width; w++) {
-                for (UInt32 h = 0; h < height; h++) {
-                    Vec4b v = c.Get<Vec4b>(w, h);
-            
-                    Assert.That(v, Is.EqualTo(new Vec4b(255, 64, 16, 4)));
-                }
+
+            for (uint w = 0; w < width; w++)
+            for (uint h = 0; h < height; h++) {
+                var v = c.Get<Vec4b>(w, h);
+
+                Assert.That(v, Is.EqualTo(new Vec4b(255, 64, 16, 4)));
             }
         }
 

@@ -32,9 +32,8 @@ public class Blend : Function, IDisposable {
 
         if (width != b.Width
             || height != b.Height
-            || pixelFormatInfo != b.PixelFormatInfo) {
+            || pixelFormatInfo != b.PixelFormatInfo)
             throw new Exception("3cn9ty88g94");
-        }
 
         var imagePool = _context.Get<ImagePool>();
         var resultImage = imagePool.Acquire(width, height);
@@ -51,7 +50,7 @@ public class Blend : Function, IDisposable {
             new ImageClKernelArgValue(bBuff),
             new ImageClKernelArgValue(resultBuff)
         };
-        var workSize = new Int32[2] {(Int32) width, (Int32) height};
+        var workSize = new int[2] {(int) width, (int) height};
 
         using (ClCommandQueue clCommandQueue = new(clContext)) {
             clCommandQueue.EnqueueNdRangeKernel(kernel, workSize, argsValues);
@@ -67,7 +66,7 @@ public class Blend : Function, IDisposable {
     private void Init(ClContext clContext) {
         if (_clProgram != null) return;
 
-        const String code = @"
+        const string code = @"
             __constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE
                                            | CLK_ADDRESS_CLAMP_TO_EDGE   
                                            | CLK_FILTER_NEAREST;

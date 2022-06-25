@@ -56,7 +56,6 @@ public sealed class GraphView : INotifyPropertyChanged {
         }
     }
 
-    public FunctionFactoryView FunctionFactory { get; } = new();
 
     public NodeView? SelectedNode {
         get => _selectedNode;
@@ -123,8 +122,6 @@ public sealed class GraphView : INotifyPropertyChanged {
 
             _edges.Add(new EdgeView(binding, input, output));
         }
-
-        FunctionFactory.Sync(Graph.FunctionFactory);
     }
 
     public void RemoveNode(NodeView nodeView) {

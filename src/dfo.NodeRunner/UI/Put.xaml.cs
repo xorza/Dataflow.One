@@ -21,17 +21,17 @@ public partial class Put : UserControl {
     }
 
     public PutView? PutView {
-        get { return (PutView?) GetValue(PutViewProperty); }
-        set { SetValue(PutViewProperty, value); }
+        get => (PutView?) GetValue(PutViewProperty);
+        set => SetValue(PutViewProperty, value);
     }
 
     public Canvas? DragCanvas {
-        get { return (Canvas) GetValue(DragCanvasProperty); }
-        set { SetValue(DragCanvasProperty, value); }
+        get => (Canvas) GetValue(DragCanvasProperty);
+        set => SetValue(DragCanvasProperty, value);
     }
 
     private static void DragCanvas_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        Put put = (Put) d;
+        var put = (Put) d;
         put.UpdatePinPoint();
     }
 

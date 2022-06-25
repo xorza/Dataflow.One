@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using dfo.NodeCore;
 
-namespace dfo.NodeCore;
+namespace dfo.NodeRunner.Infrastructure;
 
 public class FunctionFactory {
     private readonly List<Function> _functions = new();

@@ -10,21 +10,21 @@ public unsafe class ClImage : IDisposable {
     public bool IsDisposed { get; private set; }
     public ClContext ClContext { get; }
 
-    public UInt32 Width { get; }
-    public UInt32 Height { get; }
-    public UInt32 Stride { get; }
-    public UInt32 SizeInBytes { get; }
+    public uint Width { get; }
+    public uint Height { get; }
+    public uint Stride { get; }
+    public uint SizeInBytes { get; }
     public PixelFormat PixelFormat { get; }
 
     public ClImage(
         ClContext ctx,
-        UInt32 width, UInt32 height,
+        uint width, uint height,
         PixelFormat pixelFormat,
         MemoryBuffer? buffer = null)
         : this(ctx, width, height, pixelFormat.CalculateStride(width), pixelFormat, buffer) { }
 
     public ClImage(ClContext ctx,
-        UInt32 width, UInt32 height, UInt32 stride,
+        uint width, uint height, uint stride,
         PixelFormat pixelFormat,
         MemoryBuffer? buffer = null) {
         ClContext = ctx;
@@ -37,9 +37,7 @@ public unsafe class ClImage : IDisposable {
 
         var memoryFlags = MemoryFlags.ReadWrite;
         if (buffer != null) {
-            if (SizeInBytes != buffer.SizeInBytes) {
-                throw new Exception("ewgurualvbd4");
-            }
+            if (SizeInBytes != buffer.SizeInBytes) throw new Exception("ewgurualvbd4");
 
             memoryFlags |= MemoryFlags.CopyHostPtr;
         }
@@ -79,18 +77,16 @@ public unsafe class ClImage : IDisposable {
     }
 
     public void Upload<T>(ClCommandQueue commandQueue, T[] data) where T : unmanaged {
-        if (data.Length != Width * Height) {
-            throw new Exception("qg4yo98hrvdf");
-        }
+        if (data.Length != Width * Height) throw new Exception("qg4yo98hrvdf");
 
         using var buffer = new MemoryBuffer(SizeInBytes);
         fixed (T* srcDataPtr = data) {
-            for (UInt32 row = 0; row < Height; row++) {
+            for (uint row = 0; row < Height; row++) {
                 var srcDataRowPtr = srcDataPtr + row * Stride;
 
                 Memory.Copy(
                     new IntPtr(srcDataRowPtr),
-                    buffer.Ptr + (Int32) (row * Stride),
+                    buffer.Ptr + (int) (row * Stride),
                     Stride
                 );
             }
@@ -124,13 +120,13 @@ public unsafe class ClImage : IDisposable {
         Download(commandQueue, buffer);
 
         fixed (T* srcDataPtr = data) {
-            for (UInt32 row = 0; row < Height; row++) {
-                var dstDataRowPtr = ((byte*)srcDataPtr) + row * Stride;
+            for (uint row = 0; row < Height; row++) {
+                var dstDataRowPtr = (byte*) srcDataPtr + row * Stride;
 
                 Memory.Copy(
-                    buffer.Ptr + (Int32) (row * Stride),
+                    buffer.Ptr + (int) (row * Stride),
                     new IntPtr(dstDataRowPtr),
-                    (UInt32) (Width * sizeof(T))
+                    (uint) (Width * sizeof(T))
                 );
             }
         }

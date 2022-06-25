@@ -9,8 +9,8 @@ using dfo.NodeCore;
 namespace dfo.NodeRunner.UI;
 
 public partial class FunctionFactoryBrowser : UserControl {
-    public static readonly DependencyProperty FunctionFactoryProperty = DependencyProperty.Register(
-        nameof(FunctionFactory), typeof(FunctionFactoryView), typeof(FunctionFactoryBrowser),
+    public static readonly DependencyProperty FunctionFactoryViewProperty = DependencyProperty.Register(
+        nameof(FunctionFactoryView), typeof(FunctionFactoryView), typeof(FunctionFactoryBrowser),
         new PropertyMetadata(default(FunctionFactoryView), FunctionFactoryView_PropertyChangedCallback));
 
     public static readonly DependencyProperty SelectedFunctionProperty = DependencyProperty.Register(
@@ -34,9 +34,9 @@ public partial class FunctionFactoryBrowser : UserControl {
         FunctionsListView.ItemContainerGenerator.StatusChanged += ItemContainerGeneratorOnStatusChanged;
     }
 
-    public FunctionFactoryView? FunctionFactory {
-        get => (FunctionFactoryView) GetValue(FunctionFactoryProperty);
-        set => SetValue(FunctionFactoryProperty, value);
+    public FunctionFactoryView? FunctionFactoryView {
+        get => (FunctionFactoryView) GetValue(FunctionFactoryViewProperty);
+        set => SetValue(FunctionFactoryViewProperty, value);
     }
 
     public Function? SelectedFunction {

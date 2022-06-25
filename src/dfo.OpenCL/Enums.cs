@@ -8,9 +8,9 @@ namespace dfo.OpenCL;
 
 [AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = true)]
 public sealed class NameAttribute : Attribute {
-    public String Name { get; }
+    public string Name { get; }
 
-    public NameAttribute(String name) {
+    public NameAttribute(string name) {
         Name = name;
     }
 }
@@ -42,17 +42,13 @@ internal static partial class Xtensions {
     public static T ToEnum<T>(this string s) where T : struct, Enum {
         var enumType = typeof(T);
 
-        if (Enum.TryParse(enumType, s, out Object? result)) {
-            return (T) result!;
-        }
+        if (Enum.TryParse(enumType, s, out var result)) return (T) result!;
 
         var names = Enum.GetNames<T>();
         var values = Enum.GetValues<T>();
 
         var index = Array.FindIndex(names, name => name.Equals(s, StringComparison.InvariantCultureIgnoreCase));
-        if (index >= 0) {
-            return values[index];
-        }
+        if (index >= 0) return values[index];
 
         var valueName = enumType
             .GetMembers()
@@ -66,9 +62,7 @@ internal static partial class Xtensions {
 
         if (valueName != null) {
             index = Array.FindIndex(names, name => name.Equals(valueName, StringComparison.InvariantCultureIgnoreCase));
-            if (index >= 0) {
-                return values[index];
-            }
+            if (index >= 0) return values[index];
         }
 
         throw new ArgumentException(nameof(s));

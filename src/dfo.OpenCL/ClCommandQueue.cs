@@ -54,7 +54,7 @@ public class ClCommandQueue : IDisposable {
         releaseResult.ValidateSuccess();
     }
 
-    public void EnqueueNdRangeKernel(ClKernel clKernel, Int32[] size, IEnumerable<ClKernelArgValue> argValues) {
+    public void EnqueueNdRangeKernel(ClKernel clKernel, int[] size, IEnumerable<ClKernelArgValue> argValues) {
         CheckIfDisposed();
         clKernel.CheckIfDisposed();
 
@@ -64,7 +64,7 @@ public class ClCommandQueue : IDisposable {
             ++i;
         }
 
-        UIntPtr[] globalWorkSize = size
+        var globalWorkSize = size
             .Select(_ => (UIntPtr) _)
             .ToArray();
 
@@ -73,7 +73,7 @@ public class ClCommandQueue : IDisposable {
         result = CL.EnqueueNDRangeKernel(
             RawClCommandQueue,
             clKernel.InternalClKernel,
-            (UInt32) globalWorkSize.Length,
+            (uint) globalWorkSize.Length,
             null,
             globalWorkSize,
             null,

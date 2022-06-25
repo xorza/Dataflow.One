@@ -12,7 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\dfo.Common\dfo.Common.csproj" />
+        <ProjectReference Include="..\dfo.Common\dfo.Common.csproj"/>
     </ItemGroup>
 
 </Project>

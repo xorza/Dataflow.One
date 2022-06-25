@@ -1,17 +1,23 @@
-﻿using dfo.NodeCore;
+﻿using System;
+using System.Collections.Generic;
+using dfo.NodeCore;
 
 namespace dfo.NodeRunner.Shared;
 
 public interface IComputationContext {
     void Init(UiApi api);
-    void RegisterFunctions(FunctionFactory functionFactory);
+    IEnumerable<Function> RegisterFunctions();
     void OnStartRun();
     void OnFinishRun();
 }
 
 public class DummyComputationContext : IComputationContext {
     void IComputationContext.Init(UiApi api) { }
-    void IComputationContext.RegisterFunctions(FunctionFactory functionFactory) { }
+
+    IEnumerable<Function> IComputationContext.RegisterFunctions() {
+        return Array.Empty<Function>();
+    }
+
     void IComputationContext.OnStartRun() { }
     void IComputationContext.OnFinishRun() { }
 }

@@ -5,14 +5,14 @@ using dfo.Common;
 namespace dfo.Common;
 
 public class MemoryBuffer : IDisposable {
-    public MemoryBuffer(UInt32 sizeInBytes) {
+    public MemoryBuffer(uint sizeInBytes) {
         SizeInBytes = sizeInBytes;
         Ptr = Memory.Alloc(sizeInBytes);
     }
 
     public unsafe MemoryBuffer(
         IntPtr ptr,
-        UInt32 sizeInBytes,
+        uint sizeInBytes,
         bool copy) {
         SizeInBytes = sizeInBytes;
 
@@ -30,7 +30,7 @@ public class MemoryBuffer : IDisposable {
         }
     }
 
-    public UInt32 SizeInBytes { get; }
+    public uint SizeInBytes { get; }
     public IntPtr Ptr { get; }
 
     public void Dispose() {
@@ -46,37 +46,31 @@ public class MemoryBuffer : IDisposable {
         ReleaseUnmanagedResources();
     }
 
-    public unsafe void Set<T>(UInt32 offsetInBytes, T value) where T : unmanaged {
-        if (offsetInBytes + sizeof(T) > SizeInBytes) {
-            throw new ArgumentException(nameof(offsetInBytes));
-        }
+    public unsafe void Set<T>(uint offsetInBytes, T value) where T : unmanaged {
+        if (offsetInBytes + sizeof(T) > SizeInBytes) throw new ArgumentException(nameof(offsetInBytes));
 
-        var data = (T*) (Ptr + (Int32) offsetInBytes).ToPointer();
+        var data = (T*) (Ptr + (int) offsetInBytes).ToPointer();
         *data = value;
     }
 
 
-    public unsafe T Get<T>(UInt32 offsetInBytes) where T : unmanaged {
-        if (offsetInBytes + sizeof(T) > SizeInBytes) {
-            throw new ArgumentException(nameof(offsetInBytes));
-        }
+    public unsafe T Get<T>(uint offsetInBytes) where T : unmanaged {
+        if (offsetInBytes + sizeof(T) > SizeInBytes) throw new ArgumentException(nameof(offsetInBytes));
 
-        var data = (T*) (Ptr + (Int32) offsetInBytes).ToPointer();
+        var data = (T*) (Ptr + (int) offsetInBytes).ToPointer();
         return *data;
     }
 
     public byte[] GetBytes() {
-        byte[] result = new byte[SizeInBytes];
-        Marshal.Copy(Ptr, result, 0, (Int32) SizeInBytes);
+        var result = new byte[SizeInBytes];
+        Marshal.Copy(Ptr, result, 0, (int) SizeInBytes);
 
         return result;
     }
 
-    public void Upload(IntPtr data, UInt32 offsetInBytes, UInt32 sizeInBytes) {
-        if (offsetInBytes + sizeInBytes > SizeInBytes) {
-            throw new ArgumentOutOfRangeException(nameof(sizeInBytes));
-        }
+    public void Upload(IntPtr data, uint offsetInBytes, uint sizeInBytes) {
+        if (offsetInBytes + sizeInBytes > SizeInBytes) throw new ArgumentOutOfRangeException(nameof(sizeInBytes));
 
-        Memory.Copy(data, Ptr + (Int32)offsetInBytes, sizeInBytes);
+        Memory.Copy(data, Ptr + (int) offsetInBytes, sizeInBytes);
     }
 }

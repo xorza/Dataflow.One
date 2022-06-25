@@ -5,7 +5,7 @@ using OpenTK.Compute.OpenCL;
 namespace dfo.OpenCL;
 
 public class ClBuffer : IDisposable {
-    public ClBuffer(ClContext clContext, UInt32 sizeInBytes) {
+    public ClBuffer(ClContext clContext, uint sizeInBytes) {
         clContext.CheckIfDisposed();
 
         ClContext = clContext;
@@ -25,7 +25,7 @@ public class ClBuffer : IDisposable {
     private ClBuffer(
         ClContext clContext,
         CLBuffer clRawClBuffer,
-        UInt32 sizeInBytes) {
+        uint sizeInBytes) {
         clContext.CheckIfDisposed();
         Check.Argument(sizeInBytes > 0, nameof(sizeInBytes));
 
@@ -35,7 +35,7 @@ public class ClBuffer : IDisposable {
     }
 
     public ClContext ClContext { get; }
-    public UInt32 SizeInBytes { get; }
+    public uint SizeInBytes { get; }
 
     internal CLBuffer RawClBuffer { get; }
 
@@ -63,7 +63,7 @@ public class ClBuffer : IDisposable {
             return new ClBuffer(
                 clContext,
                 clBuffer,
-                (UInt32) (arr.Length * sizeof(T))
+                (uint) (arr.Length * sizeof(T))
             );
         }
     }

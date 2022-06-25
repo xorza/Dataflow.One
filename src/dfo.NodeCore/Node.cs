@@ -37,7 +37,7 @@ public sealed class FunctionNode : Node {
     public FunctionNode(Function function) : base(Guid.NewGuid()) {
         Function = function;
     }
-    
+
     public Function Function {
         get => _function;
         private set {

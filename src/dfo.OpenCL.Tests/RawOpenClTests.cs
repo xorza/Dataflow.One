@@ -34,12 +34,12 @@ public class RawOpenClTests {
 
     [Test]
     public void Test1() {
-        const UInt32 memoryAlignment = 64;
+        const uint memoryAlignment = 64;
 
-        const UInt32 width = 32;
-        const UInt32 height = 32;
-        const UInt32 stride = (width * 4 + (memoryAlignment - 1)) & ~(memoryAlignment - 1);
-        const UInt32 sizeInBytes = stride * height;
+        const uint width = 32;
+        const uint height = 32;
+        const uint stride = (width * 4 + (memoryAlignment - 1)) & ~(memoryAlignment - 1);
+        const uint sizeInBytes = stride * height;
 
         var imageFormat = new ImageFormat() {
             ChannelOrder = ChannelOrder.Rgba,
