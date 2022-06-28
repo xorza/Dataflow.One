@@ -37,9 +37,7 @@ public class Edge : ClickControl {
         MouseDoubleClick += MouseButtonEventHandler;
 
 
-        Resources.Source =
-            new Uri("pack://application:,,,/dfo.WpfCommon;component//Styles/Main.xaml",
-                UriKind.RelativeOrAbsolute);
+        Resources.Source = new Uri("/Styles/Main.xaml", UriKind.Relative);
     }
 
     public bool IsProactive {
