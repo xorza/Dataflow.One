@@ -11,9 +11,11 @@ public class FileImageSource : StatefulFunction, IDisposable {
         _context = ctx;
         Name = "Image from File";
 
-        FileInfo = new FileInfo("D:\\2.jpg");
+        FileInfo = new FileInfo("D:\\2.png");
 
         SetFunction(GetBuffer_Func);
+
+        Behavior = FunctionBehavior.Reactive;
     }
 
     public FileInfo? FileInfo { get; }

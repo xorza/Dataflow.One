@@ -77,18 +77,21 @@ public unsafe class Image : IDisposable {
 
             var bmpData = bitmapData.Scan0;
 
-            if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb)
+            if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb) {
                 for (uint row = 0; row < Height; row++) {
                     var rgbRow = (Vec3b*) (bmpData + (int) (row * bitmapData.Stride)).ToPointer();
                     var rgbaRow = (Vec4b*) (_cpuBuffer.Ptr + (int) (row * Stride)).ToPointer();
 
-                    for (uint column = 0; column < Width; column++) rgbaRow[column] = new Vec4b(rgbRow[column], 255);
+                    for (uint column = 0; column < Width; column++) {
+                        rgbaRow[column] = new Vec4b(rgbRow[column], 255);
+                    }
                 }
+            }
 
-            if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+            if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppArgb) {
                 _cpuBuffer.Upload(bitmapData.Scan0, 0, (uint) (bitmapData.Stride * bitmapData.Height));
-        }
-        finally {
+            }
+        } finally {
             if (bitmapData != null) bitmap.UnlockBits(bitmapData);
         }
 
@@ -154,7 +157,7 @@ public unsafe class Image : IDisposable {
             BitmapPalettes.Gray256,
             buffer.Ptr,
             (int) SizeInBytes,
-            (int) (Width * PixelFormatInfo.BytesPerPixel)
+            (int) Stride
         );
     }
 
