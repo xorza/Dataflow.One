@@ -40,8 +40,8 @@ public unsafe class Image : IDisposable {
         using var fileStream = fileInfo.OpenRead();
         using var bitmap = new Bitmap(fileStream);
 
-        Height = (uint) bitmap.Height;
-        Width = (uint) bitmap.Width;
+        Height = (uint)bitmap.Height;
+        Width = (uint)bitmap.Width;
         switch (bitmap.PixelFormat) {
             case System.Drawing.Imaging.PixelFormat.Format24bppRgb:
             case System.Drawing.Imaging.PixelFormat.Format32bppArgb:
@@ -68,8 +68,8 @@ public unsafe class Image : IDisposable {
 
             if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb) {
                 for (uint row = 0; row < Height; row++) {
-                    var rgbRow = (Vec3b*) (bmpData + (int) (row * bitmapData.Stride)).ToPointer();
-                    var rgbaRow = (Vec4b*) (_cpuBuffer.Ptr + (int) (row * Stride)).ToPointer();
+                    var rgbRow = (Vec3b*)(bmpData + (int)(row * bitmapData.Stride)).ToPointer();
+                    var rgbaRow = (Vec4b*)(_cpuBuffer.Ptr + (int)(row * Stride)).ToPointer();
 
                     for (uint column = 0; column < Width; column++) {
                         rgbaRow[column] = new Vec4b(rgbRow[column], 255);
@@ -78,7 +78,7 @@ public unsafe class Image : IDisposable {
             }
 
             if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppArgb) {
-                _cpuBuffer.Upload(bitmapData.Scan0, 0, (uint) (bitmapData.Stride * bitmapData.Height));
+                _cpuBuffer.Upload(bitmapData.Scan0, 0, (uint)(bitmapData.Stride * bitmapData.Height));
             }
         } finally {
             if (bitmapData != null) {
@@ -159,15 +159,15 @@ public unsafe class Image : IDisposable {
         var buffer = TakeCpuBuffer(Operation.Read);
 
         return BitmapSource.Create(
-            (int) Width,
-            (int) Height,
+            (int)Width,
+            (int)Height,
             1.0,
             1.0,
             PixelFormatInfo.Wmpf,
             BitmapPalettes.Gray256,
             buffer.Ptr,
-            (int) SizeInBytes,
-            (int) Stride
+            (int)SizeInBytes,
+            (int)Stride
         );
     }
 
@@ -208,7 +208,7 @@ public unsafe class Image : IDisposable {
 
         for (uint row = 0; row < Height; row++)
         for (uint column = 0; column < Width; column++) {
-            var offset = (uint) (row * Stride + column * sizeof(T));
+            var offset = (uint)(row * Stride + column * sizeof(T));
             _cpuBuffer.Set(offset, pixels[row * Width + column]);
         }
 
@@ -221,7 +221,7 @@ public unsafe class Image : IDisposable {
             throw new Exception("y983g4qhvead");
         }
 
-        var offset = (uint) (h * Stride + w * sizeof(T));
+        var offset = (uint)(h * Stride + w * sizeof(T));
         return _cpuBuffer.Get<T>(offset);
     }
 }
