@@ -29,7 +29,9 @@ public class ClickControl : Control {
     }
 
     private void MouseLeftButtonUpHandler(object? sender, MouseButtonEventArgs ea) {
-        if (_leftBuffonDown) LeftButtonClick?.Invoke(sender, ea);
+        if (_leftBuffonDown) {
+            LeftButtonClick?.Invoke(sender, ea);
+        }
 
         _leftBuffonDown = false;
 

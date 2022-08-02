@@ -45,7 +45,9 @@ public partial class Graph : UserControl {
         var isMoving = false;
 
         void OnMove(object sender, MouseEventArgs ea) {
-            if (!isMoving) return;
+            if (!isMoving) {
+                return;
+            }
 
             var point = ea.GetPosition(this);
             Debug.WriteLine(offset.ToString());
@@ -67,7 +69,9 @@ public partial class Graph : UserControl {
                 return;
             }
 
-            if (ea.ChangedButton != MouseButton.Left) return;
+            if (ea.ChangedButton != MouseButton.Left) {
+                return;
+            }
 
             startPoint = ea.GetPosition(this);
             offset = GraphView!.ViewOffset;
@@ -85,8 +89,9 @@ public partial class Graph : UserControl {
     }
 
     private void NodeDeselectButton_Handler(object sender, MouseButtonEventArgs e) {
-        if (GraphView != null)
+        if (GraphView != null) {
             GraphView.SelectedNode = null;
+        }
     }
 
     private void Loaded_Handler(object? sender, EventArgs e) { }
@@ -97,11 +102,13 @@ public partial class Graph : UserControl {
         DependencyPropertyChangedEventArgs e) {
         var graph = (Graph) d;
 
-        if (e.OldValue is GraphView oldGraphView)
+        if (e.OldValue is GraphView oldGraphView) {
             ((INotifyCollectionChanged) oldGraphView.Edges).CollectionChanged -= graph.Edges_CollectionChanged;
+        }
 
-        if (e.NewValue is GraphView graphView)
+        if (e.NewValue is GraphView graphView) {
             ((INotifyCollectionChanged) graphView.Edges).CollectionChanged += graph.Edges_CollectionChanged;
+        }
 
         graph.RedrawEdges();
     }
@@ -113,18 +120,20 @@ public partial class Graph : UserControl {
     }
 
     private void RedrawEdges() {
-        if (GraphView == null) return;
+        if (GraphView == null) {
+            return;
+        }
 
-        while (GraphView!.Edges.Count != EdgesCanvas.Children.Count)
+        while (GraphView!.Edges.Count != EdgesCanvas.Children.Count) {
             if (GraphView!.Edges.Count < EdgesCanvas.Children.Count) {
                 EdgesCanvas.Children.RemoveAt(EdgesCanvas.Children.Count - 1);
-            }
-            else {
+            } else {
                 Edge line = new();
                 line.LeftButtonClick += LeftButtonClickHandler;
 
                 EdgesCanvas.Children.Add(line);
             }
+        }
 
         Common.Debug.Assert.True(EdgesCanvas.Children.Count == GraphView!.Edges.Count);
 
@@ -166,16 +175,23 @@ public partial class Graph : UserControl {
 
         graphView.SelectedPutView = null;
 
-        if (p1.NodeArg.ArgDirection == p2.NodeArg.ArgDirection)
+        if (p1.NodeArg.ArgDirection == p2.NodeArg.ArgDirection) {
             return;
-        if (p1.NodeView == p2.NodeView)
+        }
+
+        if (p1.NodeView == p2.NodeView) {
             return;
-        if (p1 == p2)
+        }
+
+        if (p1 == p2) {
             return;
+        }
+
         if (p1.NodeArg.Type != p2!.NodeArg.Type &&
             !p1.NodeArg.Type.IsSubclassOf(p2.NodeArg.Type) &&
-            !p2.NodeArg.Type.IsSubclassOf(p1.NodeArg.Type))
+            !p2.NodeArg.Type.IsSubclassOf(p1.NodeArg.Type)) {
             return;
+        }
 
         var input = p1.NodeArg.ArgDirection == ArgDirection.In ? p1 : p2;
         var output = p1.NodeArg.ArgDirection == ArgDirection.Out ? p1 : p2;
@@ -222,7 +238,9 @@ public partial class Graph : UserControl {
 
     private void EnableDrag(Node node) {
         void Down(object sender, MouseButtonEventArgs args) {
-            if (_dragStart == null) args.Handled = true;
+            if (_dragStart == null) {
+                args.Handled = true;
+            }
 
             var element = (UIElement) sender;
             _dragStart = args.GetPosition(element);

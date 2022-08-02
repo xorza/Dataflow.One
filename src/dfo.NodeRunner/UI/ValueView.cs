@@ -25,7 +25,9 @@ public class ValueView : INotifyPropertyChanged {
     public object? Value {
         get => _value;
         set {
-            if (value == _value) return;
+            if (value == _value) {
+                return;
+            }
 
             _value = value;
             OnPropertyChanged();
@@ -35,7 +37,9 @@ public class ValueView : INotifyPropertyChanged {
     public bool IsLoading {
         get => _isLoading;
         set {
-            if (_isLoading == value) return;
+            if (_isLoading == value) {
+                return;
+            }
 
             _isLoading = value;
             OnPropertyChanged();
@@ -52,9 +56,13 @@ public class ValueView : INotifyPropertyChanged {
     }
 
     public static ValueView FromValue(PutView putView, object? value) {
-        if (value == null) return new NullValueView(putView);
+        if (value == null) {
+            return new NullValueView(putView);
+        }
 
-        if (Factory.TryGetValue(value.GetType(), out var factory)) return factory!.Invoke();
+        if (Factory.TryGetValue(value.GetType(), out var factory)) {
+            return factory!.Invoke();
+        }
 
         return new ValueView(putView, value);
     }

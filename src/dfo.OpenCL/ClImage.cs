@@ -1,21 +1,10 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using dfo.Common;
 using OpenTK.Compute.OpenCL;
 
 namespace dfo.OpenCL;
 
 public unsafe class ClImage : IDisposable {
-    internal CLImage RawClImage { get; }
-    public bool IsDisposed { get; private set; }
-    public ClContext ClContext { get; }
-
-    public uint Width { get; }
-    public uint Height { get; }
-    public uint Stride { get; }
-    public uint SizeInBytes { get; }
-    public PixelFormat PixelFormat { get; }
-
     public ClImage(
         ClContext ctx,
         uint width, uint height,
@@ -37,7 +26,9 @@ public unsafe class ClImage : IDisposable {
 
         var memoryFlags = MemoryFlags.ReadWrite;
         if (buffer != null) {
-            if (SizeInBytes != buffer.SizeInBytes) throw new Exception("ewgurualvbd4");
+            if (SizeInBytes != buffer.SizeInBytes) {
+                throw new Exception("ewgurualvbd4");
+            }
 
             memoryFlags |= MemoryFlags.CopyHostPtr;
         }
@@ -58,9 +49,15 @@ public unsafe class ClImage : IDisposable {
         result.ValidateSuccess();
     }
 
-    private void ReleaseUnmanagedResources() {
-        CL.ReleaseMemoryObject(RawClImage);
-    }
+    internal CLImage RawClImage { get; }
+    public bool IsDisposed { get; private set; }
+    public ClContext ClContext { get; }
+
+    public uint Width { get; }
+    public uint Height { get; }
+    public uint Stride { get; }
+    public uint SizeInBytes { get; }
+    public PixelFormat PixelFormat { get; }
 
     public void Dispose() {
         IsDisposed = true;
@@ -68,16 +65,24 @@ public unsafe class ClImage : IDisposable {
         GC.SuppressFinalize(this);
     }
 
+    private void ReleaseUnmanagedResources() {
+        CL.ReleaseMemoryObject(RawClImage);
+    }
+
     ~ClImage() {
         ReleaseUnmanagedResources();
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || ClContext.IsDisposed) throw new InvalidOperationException("Already disposed.");
+        if (IsDisposed || ClContext.IsDisposed) {
+            throw new InvalidOperationException("Already disposed.");
+        }
     }
 
     public void Upload<T>(ClCommandQueue commandQueue, T[] data) where T : unmanaged {
-        if (data.Length != Width * Height) throw new Exception("qg4yo98hrvdf");
+        if (data.Length != Width * Height) {
+            throw new Exception("qg4yo98hrvdf");
+        }
 
         using var buffer = new MemoryBuffer(SizeInBytes);
         fixed (T* srcDataPtr = data) {
@@ -155,7 +160,7 @@ public unsafe class ClImage : IDisposable {
     private static ImageFormat ToImageFormat(PixelFormat pf) {
         switch (pf) {
             case PixelFormat.Rgba8:
-                return new ImageFormat() {
+                return new ImageFormat {
                     ChannelOrder = ChannelOrder.Rgba,
                     ChannelType = ChannelType.NormalizedUnsignedInteger8
                 };

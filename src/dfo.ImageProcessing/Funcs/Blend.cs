@@ -3,7 +3,6 @@ using System.Linq;
 using dfo.Common;
 using dfo.NodeCore;
 using dfo.OpenCL;
-using OpenTK.Mathematics;
 
 namespace dfo.ImageProcessing.Funcs;
 
@@ -32,8 +31,9 @@ public class Blend : Function, IDisposable {
 
         if (width != b.Width
             || height != b.Height
-            || pixelFormatInfo != b.PixelFormatInfo)
+            || pixelFormatInfo != b.PixelFormatInfo) {
             throw new Exception("3cn9ty88g94");
+        }
 
         var imagePool = _context.Get<ImagePool>();
         var resultImage = imagePool.Acquire(width, height);
@@ -64,7 +64,9 @@ public class Blend : Function, IDisposable {
 
 
     private void Init(ClContext clContext) {
-        if (_clProgram != null) return;
+        if (_clProgram != null) {
+            return;
+        }
 
         const string code = @"
             __constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE

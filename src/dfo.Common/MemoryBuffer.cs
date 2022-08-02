@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using dfo.Common;
 
 namespace dfo.Common;
 
@@ -24,8 +23,7 @@ public class MemoryBuffer : IDisposable {
                 sizeInBytes,
                 sizeInBytes
             );
-        }
-        else {
+        } else {
             Ptr = ptr;
         }
     }
@@ -39,7 +37,9 @@ public class MemoryBuffer : IDisposable {
     }
 
     private void ReleaseUnmanagedResources() {
-        if (Ptr != IntPtr.Zero) Marshal.FreeHGlobal(Ptr);
+        if (Ptr != IntPtr.Zero) {
+            Marshal.FreeHGlobal(Ptr);
+        }
     }
 
     ~MemoryBuffer() {
@@ -47,7 +47,9 @@ public class MemoryBuffer : IDisposable {
     }
 
     public unsafe void Set<T>(uint offsetInBytes, T value) where T : unmanaged {
-        if (offsetInBytes + sizeof(T) > SizeInBytes) throw new ArgumentException(nameof(offsetInBytes));
+        if (offsetInBytes + sizeof(T) > SizeInBytes) {
+            throw new ArgumentException(nameof(offsetInBytes));
+        }
 
         var data = (T*) (Ptr + (int) offsetInBytes).ToPointer();
         *data = value;
@@ -55,7 +57,9 @@ public class MemoryBuffer : IDisposable {
 
 
     public unsafe T Get<T>(uint offsetInBytes) where T : unmanaged {
-        if (offsetInBytes + sizeof(T) > SizeInBytes) throw new ArgumentException(nameof(offsetInBytes));
+        if (offsetInBytes + sizeof(T) > SizeInBytes) {
+            throw new ArgumentException(nameof(offsetInBytes));
+        }
 
         var data = (T*) (Ptr + (int) offsetInBytes).ToPointer();
         return *data;
@@ -69,7 +73,9 @@ public class MemoryBuffer : IDisposable {
     }
 
     public void Upload(IntPtr data, uint offsetInBytes, uint sizeInBytes) {
-        if (offsetInBytes + sizeInBytes > SizeInBytes) throw new ArgumentOutOfRangeException(nameof(sizeInBytes));
+        if (offsetInBytes + sizeInBytes > SizeInBytes) {
+            throw new ArgumentOutOfRangeException(nameof(sizeInBytes));
+        }
 
         Memory.Copy(data, Ptr + (int) offsetInBytes, sizeInBytes);
     }

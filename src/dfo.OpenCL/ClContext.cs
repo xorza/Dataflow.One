@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using OpenTK.Compute.OpenCL;
 
 namespace dfo.OpenCL;
@@ -23,8 +22,9 @@ public class ClContext : IDisposable {
                 .GetDeviceIds(platform, DeviceType.Gpu, out var devices)
                 .ValidateSuccess();
 
-            if (devices.Length == 0)
+            if (devices.Length == 0) {
                 throw new OpenCLException(CLResultCode.DeviceNotFound);
+            }
 
             var context = CL
                 .CreateContext(
@@ -62,7 +62,9 @@ public class ClContext : IDisposable {
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed) throw new InvalidOperationException("Already disposed.");
+        if (IsDisposed) {
+            throw new InvalidOperationException("Already disposed.");
+        }
     }
 
     ~ClContext() {

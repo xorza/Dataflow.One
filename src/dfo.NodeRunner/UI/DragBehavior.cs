@@ -35,8 +35,7 @@ public class DragBehavior {
             element.MouseLeftButtonDown += dragBehavior.ElementOnMouseLeftButtonDown;
             element.MouseLeftButtonUp += dragBehavior.ElementOnMouseLeftButtonUp;
             element.MouseMove += dragBehavior.ElementOnMouseMove;
-        }
-        else {
+        } else {
             element.MouseLeftButtonDown -= dragBehavior.ElementOnMouseLeftButtonDown;
             element.MouseLeftButtonUp -= dragBehavior.ElementOnMouseLeftButtonUp;
             element.MouseMove -= dragBehavior.ElementOnMouseMove;
@@ -60,7 +59,10 @@ public class DragBehavior {
         var element = (UIElement) sender;
         var mousePos = mouseEventArgs.GetPosition(element);
         var diff = mousePos - _mouseStartPosition2;
-        if (!((UIElement) sender).IsMouseCaptured) return;
+        if (!((UIElement) sender).IsMouseCaptured) {
+            return;
+        }
+
         Transform.X = _elementStartPosition2.X + diff.X;
         Transform.Y = _elementStartPosition2.Y + diff.Y;
     }

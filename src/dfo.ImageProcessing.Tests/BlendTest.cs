@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using dfo.Common;
 using dfo.ImageProcessing.Funcs;
 using dfo.OpenCL;
@@ -9,14 +8,6 @@ namespace dfo.ImageProcessing.Tests;
 
 [TestFixture]
 public class BlendTest {
-    private readonly ClContext _clContext = new();
-    private readonly Context _context = new();
-
-    public BlendTest() {
-        _context.Set(_clContext);
-        _context.Set(new ImagePool(_context));
-    }
-
     [SetUp]
     public void Setup() { }
 
@@ -24,6 +15,14 @@ public class BlendTest {
     public void OneTimeTearDown() {
         _clContext.Dispose();
         _context.Dispose();
+    }
+
+    private readonly ClContext _clContext = new();
+    private readonly Context _context = new();
+
+    public BlendTest() {
+        _context.Set(_clContext);
+        _context.Set(new ImagePool(_context));
     }
 
     [Test]

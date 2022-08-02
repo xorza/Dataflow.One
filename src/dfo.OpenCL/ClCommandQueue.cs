@@ -139,7 +139,9 @@ public class ClCommandQueue : IDisposable {
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || ClContext.IsDisposed) throw new InvalidOperationException("Already disposed.");
+        if (IsDisposed || ClContext.IsDisposed) {
+            throw new InvalidOperationException("Already disposed.");
+        }
     }
 
     ~ClCommandQueue() {

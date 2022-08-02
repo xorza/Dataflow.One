@@ -20,7 +20,9 @@ public class RawOpenClTests {
             CL
                 .GetDeviceIds(platform, DeviceType.Gpu, out var devices);
 
-            if (devices.Length == 0) continue;
+            if (devices.Length == 0) {
+                continue;
+            }
 
             var context = CL
                 .CreateContext(IntPtr.Zero, devices, IntPtr.Zero,
@@ -41,7 +43,7 @@ public class RawOpenClTests {
         const uint stride = (width * 4 + (memoryAlignment - 1)) & ~(memoryAlignment - 1);
         const uint sizeInBytes = stride * height;
 
-        var imageFormat = new ImageFormat() {
+        var imageFormat = new ImageFormat {
             ChannelOrder = ChannelOrder.Rgba,
             ChannelType = ChannelType.UnsignedInteger8
         };

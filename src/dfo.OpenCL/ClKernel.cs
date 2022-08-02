@@ -76,7 +76,9 @@ public class ClKernel : IDisposable {
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || ClProgram.IsDisposed) throw new InvalidOperationException("Already disposed.");
+        if (IsDisposed || ClProgram.IsDisposed) {
+            throw new InvalidOperationException("Already disposed.");
+        }
     }
 
     ~ClKernel() {

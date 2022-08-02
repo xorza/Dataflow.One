@@ -39,7 +39,9 @@ public sealed class GraphView : INotifyPropertyChanged {
     public Vector ViewOffset {
         get => _viewOffset;
         set {
-            if (_viewOffset == value) return;
+            if (_viewOffset == value) {
+                return;
+            }
 
             _viewOffset = value;
             OnPropertyChanged();
@@ -49,7 +51,9 @@ public sealed class GraphView : INotifyPropertyChanged {
     public float ViewScale {
         get => _viewScale;
         set {
-            if (Math.Abs(_viewScale - value) < 1e-3) return;
+            if (Math.Abs(_viewScale - value) < 1e-3) {
+                return;
+            }
 
             _viewScale = value > 0.2f ? value : 1.0f;
             OnPropertyChanged();
@@ -60,14 +64,18 @@ public sealed class GraphView : INotifyPropertyChanged {
     public NodeView? SelectedNode {
         get => _selectedNode;
         set {
-            if (_selectedNode == value)
+            if (_selectedNode == value) {
                 return;
+            }
 
-            if (_selectedNode != null)
+            if (_selectedNode != null) {
                 _selectedNode.IsSelected = false;
+            }
+
             _selectedNode = value;
-            if (_selectedNode != null)
+            if (_selectedNode != null) {
                 _selectedNode.IsSelected = true;
+            }
 
             OnPropertyChanged();
         }
@@ -76,14 +84,18 @@ public sealed class GraphView : INotifyPropertyChanged {
     public PutView? SelectedPutView {
         get => _selectedPutView;
         set {
-            if (_selectedPutView == value)
+            if (_selectedPutView == value) {
                 return;
+            }
 
-            if (_selectedPutView != null)
+            if (_selectedPutView != null) {
                 _selectedPutView.IsSelected = false;
+            }
+
             _selectedPutView = value;
-            if (_selectedPutView != null)
+            if (_selectedPutView != null) {
                 _selectedPutView.IsSelected = true;
+            }
 
             OnPropertyChanged();
         }
@@ -110,7 +122,9 @@ public sealed class GraphView : INotifyPropertyChanged {
             .Select(_ => new NodeView(this, _))
             .ForEach(_nodes.Add);
 
-        if (_selectedNode != null && !Nodes.Contains(_selectedNode)) SelectedNode = null;
+        if (_selectedNode != null && !Nodes.Contains(_selectedNode)) {
+            SelectedNode = null;
+        }
 
         _edges.Clear();
         foreach (var binding in Graph.DataSubscriptions) {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using dfo.ImageProcessing.Funcs;
 using dfo.NodeCore;
 using dfo.NodeRunner.Shared;
 using dfo.OpenCL;
-using dfo.ImageProcessing.Funcs;
 
 namespace dfo.ImageProcessing;
 

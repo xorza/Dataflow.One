@@ -67,13 +67,15 @@ public class EvaluationNode {
     }
 
     public void PrepareArguments() {
-        if (State == EvaluationState.ArgumentsSet) return;
+        if (State == EvaluationState.ArgumentsSet) {
+            return;
+        }
 
         Check.True(State == EvaluationState.Processed);
 
         _dependencyValues.Clear();
 
-        foreach (var nodeArg in Node.Args)
+        foreach (var nodeArg in Node.Args) {
             if (nodeArg.ArgDirection == ArgDirection.In) {
                 var dataSubscription = Node.Graph.GetDataSubscription(nodeArg);
 
@@ -89,19 +91,20 @@ public class EvaluationNode {
                             Target = dataSubscription.Source.FunctionArg
                         });
                 }
-            }
-            else if (nodeArg.ArgDirection == ArgDirection.Out) {
+            } else if (nodeArg.ArgDirection == ArgDirection.Out) {
                 GetArgValues()[nodeArg.FunctionArg.ArgumentIndex] = null;
-            }
-            else {
+            } else {
                 Check.Fail();
             }
+        }
 
         State = EvaluationState.ArgumentsSet;
     }
 
     public void Invoke(Executor executor) {
-        if (State == EvaluationState.Invoked) return;
+        if (State == EvaluationState.Invoked) {
+            return;
+        }
 
         Check.True(State == EvaluationState.ArgumentsSet);
 
@@ -129,9 +132,11 @@ public class EvaluationNode {
     }
 
     private void ValidateArguments() {
-        for (var i = 0; i < GetArgValues().Length; i++)
-            if (GetArgValues()[i] == Empty.One)
+        for (var i = 0; i < GetArgValues().Length; i++) {
+            if (GetArgValues()[i] == Empty.One) {
                 throw new ArgumentMissingException(Node, Node.Args[i].FunctionArg);
+            }
+        }
     }
 
     private struct DependencyValue {

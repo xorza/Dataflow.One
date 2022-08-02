@@ -21,8 +21,13 @@ public abstract class EditableValueView : INotifyPropertyChanged {
     public bool HasValue {
         get => _hasValue;
         set {
-            if (_hasValue == value) return;
-            if (!value) ResetValue();
+            if (_hasValue == value) {
+                return;
+            }
+
+            if (!value) {
+                ResetValue();
+            }
 
             _hasValue = value;
             OnPropertyChanged();
@@ -60,7 +65,9 @@ public class EditableValueView<T> : EditableValueView {
     public T? Value {
         get => _constantFunc.TypedValue;
         set {
-            if (EqualityComparer<T>.Default.Equals(value, _constantFunc.TypedValue)) return;
+            if (EqualityComparer<T>.Default.Equals(value, _constantFunc.TypedValue)) {
+                return;
+            }
 
             _constantFunc.TypedValue = value;
             OnPropertyChanged();

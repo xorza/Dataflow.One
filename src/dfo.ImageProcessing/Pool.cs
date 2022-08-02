@@ -1,5 +1,4 @@
-﻿using System;
-using dfo.Common;
+﻿using dfo.Common;
 
 namespace dfo.ImageProcessing;
 

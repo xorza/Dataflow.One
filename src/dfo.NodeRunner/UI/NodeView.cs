@@ -27,9 +27,11 @@ public class NodeView : INotifyPropertyChanged {
             Outputs.Add(pv);
         }
 
-        if (Node is FunctionNode functionNode)
-            if (functionNode.Function is ConstantFunc constFunc)
+        if (Node is FunctionNode functionNode) {
+            if (functionNode.Function is ConstantFunc constFunc) {
                 EditableValue = EditableValueView.Create(constFunc);
+            }
+        }
     }
 
     public GraphView GraphView { get; }
@@ -54,8 +56,9 @@ public class NodeView : INotifyPropertyChanged {
     public bool IsSelected {
         get => _isSelected;
         set {
-            if (_isSelected == value)
+            if (_isSelected == value) {
                 return;
+            }
 
             _isSelected = value;
             GraphView.SelectedNode = value ? this : null;

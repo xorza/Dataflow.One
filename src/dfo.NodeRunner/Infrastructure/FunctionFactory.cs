@@ -12,10 +12,14 @@ public class FunctionFactory {
 
     public Function Get(string functionName) {
         var result = _functions.SingleOrDefault(_ => _.Name == functionName);
-        if (result == null) throw new Exception("asfrt q34et43");
+        if (result == null) {
+            throw new Exception("asfrt q34et43");
+        }
 
-        if (result is StatefulFunction factory)
+        if (result is StatefulFunction factory) {
             return factory.CreateInstance();
+        }
+
         return result;
     }
 
@@ -24,11 +28,13 @@ public class FunctionFactory {
     }
 
     public void Register(Function f) {
-        if (_functions.Any(_ => _.Name == f.Name))
+        if (_functions.Any(_ => _.Name == f.Name)) {
             throw new ArgumentException($"Function with name '{f.Name}' already registered");
+        }
 
-        if (_functions.Any(_ => _.Id != null && _.Id == f.Id))
+        if (_functions.Any(_ => _.Id != null && _.Id == f.Id)) {
             throw new ArgumentException($"Function with id '{f.Id}' already registered");
+        }
 
         _functions.Add(f);
     }

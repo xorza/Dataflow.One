@@ -22,31 +22,36 @@ public static class Debug {
         [DebuggerStepThrough]
         [DebuggerHidden]
         public static void True(bool condition) {
-            if (!condition)
+            if (!condition) {
                 throw new AssertionException();
+            }
         }
 
         [Conditional("DEBUG")]
         [DebuggerStepThrough]
         [DebuggerHidden]
         public static void True(Func<bool> predicate) {
-            if (!predicate.Invoke()) throw new AssertionException();
+            if (!predicate.Invoke()) {
+                throw new AssertionException();
+            }
         }
 
         [Conditional("DEBUG")]
         [DebuggerStepThrough]
         [DebuggerHidden]
         public static void AreSame<T>(T a, T b) where T : class {
-            if (!ReferenceEquals(a, b))
+            if (!ReferenceEquals(a, b)) {
                 throw new AssertionException();
+            }
         }
 
         [Conditional("DEBUG")]
         [DebuggerStepThrough]
         [DebuggerHidden]
         public static void NotNull<T>(T? o) where T : class {
-            if (o == null)
+            if (o == null) {
                 throw new AssertionException();
+            }
         }
 
         [Conditional("DEBUG")]

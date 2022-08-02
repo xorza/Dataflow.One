@@ -41,7 +41,9 @@ public sealed class FunctionNode : Node {
     public Function Function {
         get => _function;
         private set {
-            if (_function == value) return;
+            if (_function == value) {
+                return;
+            }
 
             _function = value;
 
@@ -62,7 +64,9 @@ public sealed class FunctionNode : Node {
     public override FunctionBehavior Behavior {
         get => _behavior;
         set {
-            if (value > Function.Behavior) return;
+            if (value > Function.Behavior) {
+                return;
+            }
 
             if (_behavior != value) {
                 _behavior = value;

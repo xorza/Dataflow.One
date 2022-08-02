@@ -8,13 +8,17 @@ public class DataCompatibility {
     }
 
     public object? ConvertValue(object? value, Type targetType) {
-        if (targetType.IsValueType && value == null)
+        if (targetType.IsValueType && value == null) {
             return DefaultValue(targetType);
+        }
+
         return Convert.ChangeType(value, targetType);
     }
 
     public object? DefaultValue(Type type) {
-        if (type.IsValueType) return Activator.CreateInstance(type);
+        if (type.IsValueType) {
+            return Activator.CreateInstance(type);
+        }
 
         return null;
     }

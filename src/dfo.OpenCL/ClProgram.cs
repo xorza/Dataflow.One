@@ -59,7 +59,9 @@ public class ClProgram : IDisposable {
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || ClContext.IsDisposed) throw new InvalidOperationException("Already disposed.");
+        if (IsDisposed || ClContext.IsDisposed) {
+            throw new InvalidOperationException("Already disposed.");
+        }
     }
 
     ~ClProgram() {

@@ -34,7 +34,9 @@ public partial class NodeEdit : UserControl {
                 ? Visibility.Collapsed
                 : Visibility.Visible;
 
-        if (NodeView == null) return;
+        if (NodeView == null) {
+            return;
+        }
 
 
         var hasValues = NodeView.InputValues.Any() || NodeView.OutputValues.Any();

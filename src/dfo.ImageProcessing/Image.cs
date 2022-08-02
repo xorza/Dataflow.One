@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using dfo.Common;
 using dfo.OpenCL;
@@ -24,13 +20,6 @@ public unsafe class Image : IDisposable {
     private ClImage? _gpuBuffer;
     private bool _isCpuBufferDirty = true;
     private bool _isGpuBufferDirty = true;
-
-
-    public uint Height { get; }
-    public uint Width { get; }
-    public uint Stride { get; }
-    public uint SizeInBytes { get; }
-    public PixelFormatInfo PixelFormatInfo { get; }
 
     public Image(Context ctx, PixelFormat pf, uint width, uint height) {
         _context = ctx;
@@ -92,12 +81,21 @@ public unsafe class Image : IDisposable {
                 _cpuBuffer.Upload(bitmapData.Scan0, 0, (uint) (bitmapData.Stride * bitmapData.Height));
             }
         } finally {
-            if (bitmapData != null) bitmap.UnlockBits(bitmapData);
+            if (bitmapData != null) {
+                bitmap.UnlockBits(bitmapData);
+            }
         }
 
         _isCpuBufferDirty = false;
         _isGpuBufferDirty = true;
     }
+
+
+    public uint Height { get; }
+    public uint Width { get; }
+    public uint Stride { get; }
+    public uint SizeInBytes { get; }
+    public PixelFormatInfo PixelFormatInfo { get; }
 
 
     public void Dispose() {
@@ -111,11 +109,17 @@ public unsafe class Image : IDisposable {
     }
 
     public void UpdateGpuBuffer() {
-        if (_cpuBuffer == null) throw new Exception("w4w4vywrts");
+        if (_cpuBuffer == null) {
+            throw new Exception("w4w4vywrts");
+        }
 
-        if (_isCpuBufferDirty) throw new Exception("wy455w4h5rh");
+        if (_isCpuBufferDirty) {
+            throw new Exception("wy455w4h5rh");
+        }
 
-        if (!_isGpuBufferDirty) return;
+        if (!_isGpuBufferDirty) {
+            return;
+        }
 
         var context = _context.Get<ClContext>();
 
@@ -129,11 +133,17 @@ public unsafe class Image : IDisposable {
     }
 
     public void UpdateCpuBuffer() {
-        if (_gpuBuffer == null) throw new Exception("8q3343y4tog");
+        if (_gpuBuffer == null) {
+            throw new Exception("8q3343y4tog");
+        }
 
-        if (_isGpuBufferDirty) throw new Exception("w4vy545y");
+        if (_isGpuBufferDirty) {
+            throw new Exception("w4vy545y");
+        }
 
-        if (!_isCpuBufferDirty) return;
+        if (!_isCpuBufferDirty) {
+            return;
+        }
 
         var context = _context.Get<ClContext>();
 
@@ -166,7 +176,9 @@ public unsafe class Image : IDisposable {
 
         _gpuBuffer ??= CreateGpuBuffer(clContext);
 
-        if (_isGpuBufferDirty && op == Operation.Read) UpdateGpuBuffer();
+        if (_isGpuBufferDirty && op == Operation.Read) {
+            UpdateGpuBuffer();
+        }
 
         if (op == Operation.Write) {
             _isCpuBufferDirty = true;
@@ -179,8 +191,9 @@ public unsafe class Image : IDisposable {
     public MemoryBuffer TakeCpuBuffer(Operation op) {
         _cpuBuffer ??= new MemoryBuffer(SizeInBytes);
 
-        if (_isCpuBufferDirty && op == Operation.Read)
+        if (_isCpuBufferDirty && op == Operation.Read) {
             UpdateCpuBuffer();
+        }
 
         if (op == Operation.Write) {
             _isGpuBufferDirty = true;
@@ -204,7 +217,9 @@ public unsafe class Image : IDisposable {
     }
 
     public T Get<T>(uint w, uint h) where T : unmanaged {
-        if (_cpuBuffer == null) throw new Exception("y983g4qhvead");
+        if (_cpuBuffer == null) {
+            throw new Exception("y983g4qhvead");
+        }
 
         var offset = (uint) (h * Stride + w * sizeof(T));
         return _cpuBuffer.Get<T>(offset);

@@ -23,7 +23,10 @@ public sealed class EdgeView : INotifyPropertyChanged {
     public bool IsProactive {
         get => _isProactive;
         set {
-            if (_isProactive == value) return;
+            if (_isProactive == value) {
+                return;
+            }
+
             _isProactive = value;
             DataSubscription.Behavior = _isProactive ? SubscriptionBehavior.Always : SubscriptionBehavior.Once;
             OnPropertyChanged();

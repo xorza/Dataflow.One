@@ -18,6 +18,8 @@ internal static partial class Xtensions {
     [DebuggerStepThrough]
     [DebuggerHidden]
     internal static void ValidateSuccess(this CLResultCode code) {
-        if (code != CLResultCode.Success) throw new OpenCLException(code);
+        if (code != CLResultCode.Success) {
+            throw new OpenCLException(code);
+        }
     }
 }

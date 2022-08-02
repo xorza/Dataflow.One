@@ -11,12 +11,6 @@ namespace dfo.NodeRunner;
 public partial class Overview : INotifyPropertyChanged {
     private FunctionFactoryBrowser? _functionFactoryBrowser;
 
-    public Workspace Workspace { get; }
-    public GraphView GraphView { get; }
-    public FunctionFactoryView FunctionFactoryView { get; } = new();
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     public Overview() : this(new DummyComputationContext()) { }
 
     public Overview(IComputationContext computationContext) {
@@ -28,6 +22,12 @@ public partial class Overview : INotifyPropertyChanged {
         computationContext.Init(new UiApi());
     }
 
+    public Workspace Workspace { get; }
+    public GraphView GraphView { get; }
+    public FunctionFactoryView FunctionFactoryView { get; } = new();
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
     private void FunctionFactoryBrowser_OnFunctionChosen(object? sender, Function e) {
         GraphView.CreateNode(e);
     }
@@ -36,11 +36,9 @@ public partial class Overview : INotifyPropertyChanged {
         try {
             Workspace.ComputationContext.OnStartRun();
             Workspace.Executor.Run();
-        }
-        catch (ArgumentMissingException ex) {
+        } catch (ArgumentMissingException ex) {
             Console.Error.WriteLine(ex.ToString());
-        }
-        finally {
+        } finally {
             Workspace.ComputationContext.OnFinishRun();
         }
 

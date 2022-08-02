@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using dfo.Common;
 using NUnit.Framework;
@@ -6,7 +5,7 @@ using NUnit.Framework;
 namespace dfo.OpenCL.Tests;
 
 public class ImageTests {
-    private ClContext _clContext = new();
+    private readonly ClContext _clContext = new();
 
     [SetUp]
     public void Setup() { }

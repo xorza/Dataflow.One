@@ -82,15 +82,15 @@ public class Executor : IArgumentProvider {
     private void Recompile() {
         List<EvaluationNode> newEvaluationNodes = new(Graph.Nodes.Count);
 
-        foreach (var node in Graph.Nodes)
+        foreach (var node in Graph.Nodes) {
             if (node is FunctionNode functionNode) {
                 var existing = EvaluationNodes.SingleOrDefault(_ => _.Node == functionNode);
                 existing ??= new EvaluationNode(this, functionNode);
                 newEvaluationNodes.Add(existing);
-            }
-            else {
+            } else {
                 throw new NotImplementedException("wv435ty5yt ");
             }
+        }
 
         ValidateNodeOrder(Graph, newEvaluationNodes);
 
@@ -102,7 +102,9 @@ public class Executor : IArgumentProvider {
     private static void ValidateNodeOrder(Graph graph, IList<EvaluationNode> evaluationNodes) {
         Debug.Assert.True(evaluationNodes.Count == graph.Nodes.Count);
 
-        for (var i = 0; i < evaluationNodes.Count; i++) Debug.Assert.AreSame(evaluationNodes[i].Node, graph.Nodes[i]);
+        for (var i = 0; i < evaluationNodes.Count; i++) {
+            Debug.Assert.AreSame(evaluationNodes[i].Node, graph.Nodes[i]);
+        }
     }
 
     private void ProcessEvaluationNodes(List<Node> activatedNodes) {
@@ -124,7 +126,9 @@ public class Executor : IArgumentProvider {
 
     private void UpdateEvaluationNode(Node node) {
         var evaluationNode = GetEvaluationNode(node);
-        if (evaluationNode.State == EvaluationState.Processed) return;
+        if (evaluationNode.State == EvaluationState.Processed) {
+            return;
+        }
 
         Check.True(evaluationNode.State < EvaluationState.ArgumentsSet);
 
@@ -165,11 +169,14 @@ public class Executor : IArgumentProvider {
                     continue;
                 }
 
-                if (binding.Behavior == SubscriptionBehavior.Once) continue;
+                if (binding.Behavior == SubscriptionBehavior.Once) {
+                    continue;
+                }
 
                 if (targetEvaluationNode.ShouldInvokeThisFrame
-                    || targetEvaluationNode.Behavior == FunctionBehavior.Proactive)
+                    || targetEvaluationNode.Behavior == FunctionBehavior.Proactive) {
                     yetToProcessENodes.Enqueue(targetEvaluationNode);
+                }
             }
         }
 

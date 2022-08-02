@@ -6,12 +6,17 @@ public static class StringParser {
     public static bool TryParse(string s, Type type, out object? result) {
         result = null;
         var parser = type.GetMethod("Parse", new[] {typeof(string)});
-        if (parser == null)
+        if (parser == null) {
             return false;
-        if (!parser.IsStatic)
+        }
+
+        if (!parser.IsStatic) {
             return false;
-        if (parser.ReturnType != type)
+        }
+
+        if (parser.ReturnType != type) {
             return false;
+        }
 
         result = parser.Invoke(null, new object?[] {s});
         return true;

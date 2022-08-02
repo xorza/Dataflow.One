@@ -39,8 +39,7 @@ public partial class Value : UserControl {
         if (Editable) {
             ValueViewContentPresenter.Visibility = Visibility.Collapsed;
             ValueEditGrid.Visibility = Visibility.Visible;
-        }
-        else {
+        } else {
             ValueViewContentPresenter.Visibility = Visibility.Visible;
             ValueEditGrid.Visibility = Visibility.Collapsed;
         }

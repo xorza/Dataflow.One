@@ -72,12 +72,13 @@ public class Edge : ClickControl {
         base.OnRender(drawingContext);
 
         Pen pen;
-        if (IsMouseOver)
+        if (IsMouseOver) {
             pen = new Pen(Brushes.Coral, 2);
-        else if (IsProactive)
+        } else if (IsProactive) {
             pen = new Pen(Resources["HighlightBackgroundBrush"] as Brush, 1.5);
-        else
+        } else {
             pen = new Pen(Brushes.SlateGray, 1.5);
+        }
 
         Point[] points = {
             new(InputPosition.X - 5, InputPosition.Y),

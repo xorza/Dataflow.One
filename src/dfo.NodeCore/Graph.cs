@@ -99,7 +99,9 @@ public sealed class Graph {
     public void Remove(Node node) {
         Check.True(node.Graph == this);
 
-        if (!_nodes.Remove(node)) throw new Exception("5h4gub677ge657");
+        if (!_nodes.Remove(node)) {
+            throw new Exception("5h4gub677ge657");
+        }
 
         _dataSubscriptions
             .RemoveAll(_ => _.Subscriber.Node == node);

@@ -14,7 +14,7 @@ public class ClBuffer : IDisposable {
         RawClBuffer = CL.CreateBuffer(
             ClContext.RawClContext,
             MemoryFlags.ReadWrite,
-            new UIntPtr((uint) sizeInBytes),
+            new UIntPtr(sizeInBytes),
             IntPtr.Zero,
             out result);
         result.ValidateSuccess();
@@ -73,7 +73,9 @@ public class ClBuffer : IDisposable {
     }
 
     internal void CheckIfDisposed() {
-        if (IsDisposed || ClContext.IsDisposed) throw new InvalidOperationException("Already disposed.");
+        if (IsDisposed || ClContext.IsDisposed) {
+            throw new InvalidOperationException("Already disposed.");
+        }
     }
 
     ~ClBuffer() {

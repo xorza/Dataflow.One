@@ -64,17 +64,19 @@ public class Function {
 
             var argName = parameter.Name!;
             Type argType;
-            if (parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer)
+            if (parameter.ParameterType.IsByRef || parameter.ParameterType.IsPointer) {
                 argType = parameter.ParameterType.GetElementType()!;
-            else
+            } else {
                 argType = parameter.ParameterType;
+            }
 
             FunctionArg arg;
 
-            if (Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) is OutputAttribute outputAttribute)
+            if (Attribute.GetCustomAttribute(parameter, typeof(OutputAttribute)) is OutputAttribute outputAttribute) {
                 arg = new FunctionArg(argName, ArgDirection.Out, argType, i);
-            else
+            } else {
                 arg = new FunctionArg(argName, ArgDirection.In, argType, i);
+            }
 
             arg.Function = this;
 
@@ -86,19 +88,26 @@ public class Function {
         CheckArgTypes(args);
 
         var result = Delegate.DynamicInvoke(args);
-        if (result is bool boolResult)
+        if (result is bool boolResult) {
             Check.True(boolResult);
-        else
+        } else {
             throw new InvalidOperationException("349j-70v5t g");
+        }
     }
 
     private void CheckArgTypes(object?[]? args) {
         for (var i = 0; i < Args.Count; i++) {
-            if (args == null) throw new ArgumentNullException(nameof(args));
+            if (args == null) {
+                throw new ArgumentNullException(nameof(args));
+            }
 
-            if (args.Length != Args.Count) throw new ArgumentException(nameof(args));
+            if (args.Length != Args.Count) {
+                throw new ArgumentException(nameof(args));
+            }
 
-            if (args[i] != null) Check.True(Args[i].Type.IsInstanceOfType(args[i]!));
+            if (args[i] != null) {
+                Check.True(Args[i].Type.IsInstanceOfType(args[i]!));
+            }
         }
     }
 }

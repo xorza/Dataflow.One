@@ -1,8 +1,6 @@
-using System;
 using System.Linq;
 using System.Text;
 using dfo.OpenCL;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using NUnit.Framework;
 
 namespace dfo.ImageProcessing.Tests;
@@ -50,11 +48,10 @@ public class ClContextTests {
         };
 
         try {
-            clCommandQueue.EnqueueNdRangeKernel(kernel, new int[] {2, 10}, argsValues);
+            clCommandQueue.EnqueueNdRangeKernel(kernel, new[] {2, 10}, argsValues);
             clCommandQueue.EnqueueReadBuffer(resultClBuffer, resultValues);
             clCommandQueue.Finish();
-        }
-        finally {
+        } finally {
             bufferA.Dispose();
             bufferB.Dispose();
             resultClBuffer.Dispose();
