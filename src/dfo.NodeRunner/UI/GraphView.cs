@@ -168,7 +168,7 @@ public sealed class GraphView : INotifyPropertyChanged {
             if (en != null) {
                 foreach (var output in nodeView.Inputs) {
                     var index = output.NodeArg.FunctionArg.ArgumentIndex;
-                    var value = en.GetArgValues()[index];
+                    var value = en.ArgValues[index];
                     nodeView.InputValues.Add(
                         ValueView.FromValue(output, value)
                     );
@@ -179,7 +179,7 @@ public sealed class GraphView : INotifyPropertyChanged {
 
                     foreach (var output in nodeView.Outputs) {
                         var index = output.NodeArg.FunctionArg.ArgumentIndex;
-                        var value = en.GetArgValues()[index];
+                        var value = en.ArgValues[index];
                         nodeView.OutputValues.Add(
                             ValueView.FromValue(output, value)
                         );

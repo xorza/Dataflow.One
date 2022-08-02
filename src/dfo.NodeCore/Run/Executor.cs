@@ -7,22 +7,9 @@ using Debug = dfo.Common.Debug;
 
 namespace dfo.NodeCore.Run;
 
-public interface IArgumentProvider {
-    object?[] GetArguments(EvaluationNode node);
-}
 
-public static class Empty {
-    static Empty() {
-        One = new object();
-    }
-
-    public static object One { get; }
-}
-
-public class Executor : IArgumentProvider {
-    private readonly Dictionary<EvaluationNode, object?[]> _args = new();
-
-    private List<EvaluationNode> _evaluationNodes = new();
+public class Executor  {
+    private readonly List<EvaluationNode> _evaluationNodes = new();
 
     public Executor(Graph graph) {
         Graph = graph;
@@ -34,20 +21,12 @@ public class Executor : IArgumentProvider {
 
     public Graph Graph { get; }
 
-    public object?[] GetArguments(EvaluationNode node) {
-        if (!_args.TryGetValue(node, out var result)) {
-            result = Enumerable.Repeat(Empty.One, node.Node.Args.Count).ToArray();
-            _args.Add(node, result);
-        }
-
-        return result;
-    }
 
     public EvaluationNode GetEvaluationNode(Node node) {
         var result = EvaluationNodes.SingleOrDefault(_ => _.Node == node);
 
         if (result == null) {
-            result = new EvaluationNode(this, node);
+            result = new EvaluationNode(node);
             _evaluationNodes.Add(result);
         }
 
@@ -85,7 +64,7 @@ public class Executor : IArgumentProvider {
         foreach (var node in Graph.Nodes) {
             if (node is FunctionNode functionNode) {
                 var existing = EvaluationNodes.SingleOrDefault(_ => _.Node == functionNode);
-                existing ??= new EvaluationNode(this, functionNode);
+                existing ??= new EvaluationNode(functionNode);
                 newEvaluationNodes.Add(existing);
             } else {
                 throw new NotImplementedException("wv435ty5yt ");
@@ -94,8 +73,9 @@ public class Executor : IArgumentProvider {
 
         ValidateNodeOrder(Graph, newEvaluationNodes);
 
-        _evaluationNodes = newEvaluationNodes;
-        EvaluationNodes.ForEach(_ => _.Reset());
+        _evaluationNodes.Clear();
+        _evaluationNodes.AddRange(newEvaluationNodes);
+        _evaluationNodes.ForEach(_ => _.Reset());
     }
 
     [Conditional("DEBUG")]
