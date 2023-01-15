@@ -8,14 +8,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\dfo.Common\dfo.Common.csproj"/>
-        <ProjectReference Include="..\dfo.NodeRunner.Shared\dfo.NodeRunner.Shared.csproj"/>
-        <ProjectReference Include="..\dfo.OpenCL\dfo.OpenCL.csproj"/>
+        <ProjectReference Include="..\dfo.Common\dfo.Common.csproj" />
+        <ProjectReference Include="..\dfo.NodeRunner.Shared\dfo.NodeRunner.Shared.csproj" />
+        <ProjectReference Include="..\dfo.OpenCL\dfo.OpenCL.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Win32.SystemEvents" Version="6.0.1"/>
-        <PackageReference Include="System.Drawing.Common" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Win32.SystemEvents" Version="7.0.0" />
+        <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>

@@ -16,14 +16,13 @@ public class EvaluationNode {
     private static readonly object Empty = new ();
     private readonly List<DependencyValue> _dependencyValues = new();
     private List<DataSubscription> _dataSubscriptions = new();
-    private object?[] _args;
 
     public EvaluationNode(Node node) {
         Node = node;
         Behavior = node.Behavior;
         HasOutputValues = false;
 
-        _args = Enumerable.Repeat(Empty, Node.Args.Count).ToArray();
+        ArgValues = Enumerable.Repeat(Empty, Node.Args.Count).ToArray();
 
         Reset();
     }
@@ -36,7 +35,7 @@ public class EvaluationNode {
     public EvaluationState State { get; private set; } = EvaluationState.Idle;
     public double ExecutionTime { get; private set; } = double.NaN;
 
-    public object?[] ArgValues => _args;
+    public object?[] ArgValues { get; }
 
     private object? GetOutputValue(FunctionArg output) {
         Check.True(HasOutputValues);
