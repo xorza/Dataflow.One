@@ -18,8 +18,20 @@ public class FileImageSource : StatefulFunction, IDisposable {
         Behavior = FunctionBehavior.Reactive;
     }
 
-    public FileInfo? FileInfo { get; }
-    public Image? Image { get; set; }
+    private FileInfo? _fileInfo = null;
+
+    public FileInfo? FileInfo {
+        get => _fileInfo;
+        set {
+            if (_fileInfo == value) {
+                return;
+            }
+
+            Image?.Dispose();
+        }
+    }
+
+    public Image? Image { get; private set; }
 
     public void Dispose() {
         Image?.Dispose();

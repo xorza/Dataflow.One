@@ -10,7 +10,7 @@
     <Color x:Key="ForegroundColor">#FFAAAAAA</Color>
     <Color x:Key="ActiveForegroundColor">#FFCCCCCC</Color>
 
-    <Color x:Key="HighlightBackgroundColor">#1b739d</Color>
+    <Color x:Key="HighlightBackgroundColor">#1BB4E2</Color>
     <SolidColorBrush x:Key="HighlightBackgroundBrush" Color="{StaticResource HighlightBackgroundColor}" />
 
     <Color x:Key="HighlightBorderColor">#26a0da</Color>

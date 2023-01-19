@@ -13,13 +13,16 @@ public class Blend : Function, IDisposable {
 
     public Blend(Context ctx) {
         _context = ctx;
-        Name = "Blend";
 
         SetFunction(Do);
+        
+        Name = "Blend";
+        Behavior = FunctionBehavior.Reactive;
     }
 
     public void Dispose() { }
 
+    [Reactive]
     public bool Do(Image a, Image b, [Output] out Image image) {
         var clContext = _context.Get<ClContext>();
         Init(clContext);
