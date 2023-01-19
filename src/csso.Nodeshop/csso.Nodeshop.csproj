@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net6.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+
+        <LangVersion>default</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\csso.Common\csso.Common.csproj" />
+        <ProjectReference Include="..\csso.ImageProcessing\csso.ImageProcessing.csproj" />
+        <ProjectReference Include="..\csso.NodeCore\csso.NodeCore.csproj" />
+        <ProjectReference Include="..\csso.Nodeshop.Shared\csso.Nodeshop.Shared.csproj" />
+    </ItemGroup>
+
+</Project>

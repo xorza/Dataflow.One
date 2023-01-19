@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <!--        <TargetFramework>net6.0-windows</TargetFramework>-->
+        <TargetFramework>net6.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+        <LangVersion>default</LangVersion>
+
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\csso.NodeCore\csso.NodeCore.csproj" />
+    </ItemGroup>
+
+</Project>
