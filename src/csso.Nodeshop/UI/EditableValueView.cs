@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using csso.Common;
 using csso.NodeCore;
 using csso.NodeCore.Annotations;
 using csso.NodeCore.Funcs;
@@ -37,9 +38,19 @@ public abstract class EditableValueView : INotifyPropertyChanged {
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public static EditableValueView Create(ConstantFunc func) {
+    public static EditableValueView Create(DataSubscription dataSubscription) {
         var editableValueView =
             typeof(EditableValueView<>)
+                .MakeGenericType(dataSubscription.Subscriber.Type)
+                .GetConstructors()
+                .First()
+                .Invoke(new object[] {});
+        return (EditableValueView) editableValueView;
+    }
+    
+    public static EditableValueView Create(ConstantFunc func) {
+        var editableValueView =
+            typeof(ConstantFuncView<>)
                 .MakeGenericType(func.Type)
                 .GetConstructors()
                 .First()
@@ -56,9 +67,34 @@ public abstract class EditableValueView : INotifyPropertyChanged {
 }
 
 public class EditableValueView<T> : EditableValueView {
+    
+    public DataSubscription DataSubscription { get; }
+
+    public EditableValueView(DataSubscription dataSubscription) : base(dataSubscription.Subscriber.Type) {
+        DataSubscription = dataSubscription;
+    }
+
+    public T? Value {
+        get => (T?)DataSubscription.Value;
+        set {
+            if (EqualityComparer<T>.Default.Equals(value, (T?)DataSubscription.Value)) {
+                return;
+            }
+    
+            DataSubscription.Value = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    protected override void ResetValue() {
+        DataSubscription.Value =  DataCompatibility.Instance.DefaultValue<T>();
+    }
+}
+
+public class ConstantFuncView<T> : EditableValueView {
     private readonly ConstantFunc<T> _constantFunc;
 
-    public EditableValueView(ConstantFunc<T> constantFunc) : base(typeof(T)) {
+    public ConstantFuncView(ConstantFunc<T> constantFunc) : base(typeof(T)) {
         _constantFunc = constantFunc;
     }
 
@@ -78,52 +114,3 @@ public class EditableValueView<T> : EditableValueView {
         _constantFunc.TypedValue = new DataCompatibility().DefaultValue<T>();
     }
 }
-
-
-// public Object Target { get; }
-// public PropertyInfo Property { get; }
-// public EditableValueView(Object target, PropertyInfo property) {
-//     Type = property.PropertyType;
-//     Target = target;
-//     Property = property;
-// }
-// public static EditableValueView Create<TSource, TProperty>(
-//     TSource target,
-//     Expression<Func<TSource, TProperty>> propertyLambda) {
-//     Type type = typeof(TSource);
-//
-//     MemberExpression? member = propertyLambda.Body as MemberExpression;
-//     if (member == null) {
-//         throw new ArgumentException(
-//             $"Expression '{propertyLambda.ToString()}' refers to a method, not a property."
-//         );
-//     }
-//
-//     PropertyInfo? propInfo = member.Member as PropertyInfo;
-//     if (propInfo == null) {
-//         throw new ArgumentException(
-//             $"Expression '{propertyLambda.ToString()}' refers to a field, not a property."
-//         );
-//     }
-//
-//     if (type != propInfo.ReflectedType &&
-//         !type.IsSubclassOf(propInfo.ReflectedType!)) {
-//         throw new ArgumentException(string.Format(
-//             "Expression '{0}' refers to a property that is not from type {1}.",
-//             propertyLambda.ToString(),
-//             type));
-//     }
-//
-//     return new EditableValueView(target!, propInfo);
-// }
-// public object? Value {
-//     get => _value;
-//     set {
-//         if (value == _value) return;
-//         
-//         var converted = DataCompatibility.ConvertValue(value, Type);
-//         _value = converted;
-//         Property.SetValue(Target, converted);
-//         OnPropertyChanged();
-//     }
-// }

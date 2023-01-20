@@ -57,7 +57,7 @@ public static class Debug {
         [Conditional("DEBUG")]
         [DebuggerStepThrough]
         [DebuggerHidden]
-        public static void False() {
+        public static void Fail() {
             throw new AssertionException();
         }
     }

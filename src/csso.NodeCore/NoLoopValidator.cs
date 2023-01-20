@@ -5,17 +5,18 @@ namespace csso.NodeCore;
 
 public class NoLoopValidator {
     public void Go(Graph graph) {
-        var nodeCount = graph.Nodes.Count;
-
         List<Node> path = new();
+
         foreach (var outputNode in graph.Nodes)
         foreach (var binding in graph.GetDataSubscriptions(outputNode)) {
-            Go(binding, path);
+            if (binding.Source != null) {
+                Go(binding.Source, path);
+            }
         }
     }
 
-    private void Go(DataSubscription dataSubscription, List<Node> pathBack) {
-        var node = dataSubscription.Source.Node;
+    private void Go(NodeArg arg, List<Node> pathBack) {
+        var node = arg.Node;
 
         if (pathBack.Contains(node)) {
             throw new Exception("loop detected");
@@ -24,7 +25,9 @@ public class NoLoopValidator {
         pathBack.Add(node);
 
         foreach (var b in node.Graph.GetDataSubscriptions(node)) {
-            Go(b, pathBack);
+            if (b.Source != null) {
+                Go(b.Source, pathBack);
+            }
         }
 
         pathBack.RemoveAt(pathBack.Count - 1);

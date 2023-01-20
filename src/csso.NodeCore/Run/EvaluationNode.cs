@@ -13,7 +13,7 @@ public enum EvaluationState {
 }
 
 public class EvaluationNode {
-    private static readonly object Empty = new ();
+    private static readonly object Empty = new();
     private readonly List<DependencyValue> _dependencyValues = new();
     private List<DataSubscription> _dataSubscriptions = new();
 
@@ -47,11 +47,15 @@ public class EvaluationNode {
         State = EvaluationState.Idle;
         ShouldInvokeThisFrame = false;
     }
+    
+    public void ForceInvoke() {
+        ShouldInvokeThisFrame = true;
+    }
 
     public void Process(bool shouldInvokeThisFrame) {
         Check.True(State == EvaluationState.Idle);
 
-        ShouldInvokeThisFrame = shouldInvokeThisFrame;
+        ShouldInvokeThisFrame |= shouldInvokeThisFrame;
 
         var newDataSubscriptions = Node.Graph.GetDataSubscriptions(Node);
 
@@ -81,12 +85,16 @@ public class EvaluationNode {
                         dataSubscription.Subscriber == Node.Args[dataSubscription.Subscriber.FunctionArg.ArgumentIndex]
                     );
 
-                    _dependencyValues.Add(
-                        new DependencyValue {
-                            TargetNode = dataSubscription.Source.Node,
-                            Index = dataSubscription.Subscriber.FunctionArg.ArgumentIndex,
-                            Target = dataSubscription.Source.FunctionArg
-                        });
+                    if (dataSubscription.Value != null) {
+                        ArgValues[nodeArg.FunctionArg.ArgumentIndex] = dataSubscription.Value;
+                    } else {
+                        _dependencyValues.Add(
+                            new DependencyValue {
+                                TargetNode = dataSubscription.Source!.Node,
+                                Index = dataSubscription.Subscriber.FunctionArg.ArgumentIndex,
+                                Target = dataSubscription.Source.FunctionArg
+                            });
+                    }
                 }
             } else if (nodeArg.ArgDirection == ArgDirection.Out) {
                 ArgValues[nodeArg.FunctionArg.ArgumentIndex] = null;
@@ -117,7 +125,7 @@ public class EvaluationNode {
 
             ValidateArguments();
 
-            ((FunctionNode)Node).Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
+            ((FunctionNode) Node).Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
 
             sw.Stop();
             ExecutionTime = sw.ElapsedMilliseconds * 1.0;

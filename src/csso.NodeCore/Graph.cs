@@ -33,7 +33,7 @@ public sealed class Graph {
 
     public void Add(DataSubscription dataSubscription) {
         Check.True(dataSubscription.Subscriber.Node.Graph == this);
-        Check.True(dataSubscription.Source.Node.Graph == this);
+        Check.True(dataSubscription.Source == null || dataSubscription.Source?.Node.Graph == this);
 
         _dataSubscriptions.RemoveAll(_ => _.Subscriber == dataSubscription.Subscriber);
         _dataSubscriptions.Add(dataSubscription);
@@ -41,7 +41,7 @@ public sealed class Graph {
 
     public void Remove(DataSubscription dataSubscription) {
         Check.True(dataSubscription.Subscriber.Node.Graph == this);
-        Check.True(dataSubscription.Source.Node.Graph == this);
+        Check.True(dataSubscription.Source == null || dataSubscription.Source?.Node.Graph == this);
         _dataSubscriptions.Remove(dataSubscription);
     }
 
@@ -58,6 +58,7 @@ public sealed class Graph {
         return
             _dataSubscriptions
                 .Where(_ => _.Subscriber.Node == node)
+                .OrderBy(_ => _.GetHashCode())
                 .ToList();
     }
 
@@ -106,7 +107,7 @@ public sealed class Graph {
         _dataSubscriptions
             .RemoveAll(_ => _.Subscriber.Node == node);
         _dataSubscriptions
-            .RemoveAll(_ => _.Source.Node == node);
+            .RemoveAll(_ => _.Source?.Node == node);
         _eventSubscriptions
             .RemoveAll(_ => _.Node == node);
     }

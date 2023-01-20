@@ -3,6 +3,10 @@
 namespace csso.NodeCore;
 
 public class DataCompatibility {
+    private  static DataCompatibility? _instance = null;
+    public  static DataCompatibility Instance => _instance ??= new DataCompatibility();
+
+
     public bool IsValueConvertable(Type funcArgument, Type value) {
         return funcArgument == value || value.IsSubclassOf(funcArgument);
     }

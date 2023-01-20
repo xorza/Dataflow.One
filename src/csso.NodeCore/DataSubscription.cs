@@ -29,8 +29,35 @@ public class DataSubscription : INotifyPropertyChanged {
         Source = source;
     }
 
+    public DataSubscription(NodeArg subscriber, Object value) {
+        Check.True(subscriber.ArgDirection == ArgDirection.In);
+
+        Subscriber = subscriber;
+        Value = value;
+    }
+
     public NodeArg Subscriber { get; }
-    public NodeArg Source { get; }
+    public NodeArg? Source { get; }
+
+
+    private object? _value = null;
+
+    public Object? Value {
+        get => _value;
+        set {
+            if (Source != null) {
+                throw new Exception("cannot set value on subscription with source");
+            }
+
+            if (value != null) {
+                if (!DataCompatibility.Instance.IsValueConvertable(Subscriber.Type, value.GetType())) {
+                    throw new Exception("wvesrthbe56u635");
+                }
+            }
+
+            _value = value;
+        }
+    }
 
     public SubscriptionBehavior Behavior {
         get => _behavior;

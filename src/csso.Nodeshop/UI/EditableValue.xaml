@@ -29,7 +29,7 @@
             <TextBox
                 x:Name="ValueTextBox"
                 Grid.Column="1"
-                Text="{Binding}"
+                Text="{Binding Path=Value}"
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Right"
                 VerticalContentAlignment="Center" />

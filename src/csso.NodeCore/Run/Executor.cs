@@ -7,8 +7,7 @@ using Debug = csso.Common.Debug;
 
 namespace csso.NodeCore.Run;
 
-
-public class Executor  {
+public class Executor {
     private readonly List<EvaluationNode> _evaluationNodes = new();
 
     public Executor(Graph graph) {
@@ -95,7 +94,8 @@ public class Executor  {
         Stack<Node> paths = new();
         while (yetToProcessNodes.TryDequeue(out var node)) {
             Graph.GetDataSubscriptions(node)
-                .Select(_ => _.Source.Node)
+                .Select(_ => _.Source?.Node)
+                .SkipNulls()
                 .ForEach(yetToProcessNodes.Enqueue);
 
             paths.Push(node);
@@ -113,17 +113,19 @@ public class Executor  {
         Check.True(evaluationNode.State < EvaluationState.ArgumentsSet);
 
         foreach (var binding in Graph.GetDataSubscriptions(evaluationNode.Node)) {
-            if (binding.Source.Node.Behavior == FunctionBehavior.Proactive) {
+            if (binding.Source?.Node.Behavior == FunctionBehavior.Proactive) {
                 evaluationNode.Process(true);
                 return;
             }
 
-            var targetEvaluationNode = GetEvaluationNode(binding.Source.Node);
-            Check.True(targetEvaluationNode.State == EvaluationState.Processed);
+            if (binding.Source != null) {
+                var targetEvaluationNode = GetEvaluationNode(binding.Source.Node);
+                Check.True(targetEvaluationNode.State == EvaluationState.Processed);
 
-            if (targetEvaluationNode.ShouldInvokeThisFrame) {
-                evaluationNode.Process(true);
-                return;
+                if (targetEvaluationNode.ShouldInvokeThisFrame) {
+                    evaluationNode.Process(true);
+                    return;
+                }
             }
         }
 
@@ -141,15 +143,21 @@ public class Executor  {
         while (yetToProcessENodes.TryDequeue(out var evaluationNode)) {
             invocationList.Push(evaluationNode);
 
-            foreach (var binding in Graph.GetDataSubscriptions(evaluationNode.Node)) {
-                var targetEvaluationNode = GetEvaluationNode(binding.Source.Node);
+          var argumentDataSubscriptions = 
+              Graph.GetDataSubscriptions(evaluationNode.Node)
+                .Where(_ => _.Source!=null)
+                .SkipNulls()
+                .ToList();
+            
+            foreach (var dataSubscription in argumentDataSubscriptions) {
+                var targetEvaluationNode = GetEvaluationNode(dataSubscription.Source!.Node);
 
                 if (!targetEvaluationNode.HasOutputValues) {
                     yetToProcessENodes.Enqueue(targetEvaluationNode);
                     continue;
                 }
 
-                if (binding.Behavior == SubscriptionBehavior.Once) {
+                if (dataSubscription.Behavior == SubscriptionBehavior.Once) {
                     continue;
                 }
 

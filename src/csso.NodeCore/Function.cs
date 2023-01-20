@@ -31,7 +31,7 @@ public class Function {
     public IReadOnlyList<FunctionArg> Args { get; private set; }
     public FunctionBehavior Behavior { get; set; }
     public string Description { get; private set; }
-    // public string FullName => Namespace + "::" + Name;
+    public string FullName => Namespace + "::" + Name;
 
     protected void SetFunction(Delegate func) {
         Check.Argument(func.Method.ReturnType == typeof(bool), nameof(func));

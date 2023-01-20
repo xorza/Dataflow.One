@@ -128,6 +128,10 @@ public sealed class GraphView : INotifyPropertyChanged {
 
         _edges.Clear();
         foreach (var binding in Graph.DataSubscriptions) {
+            if (binding.Source == null) {
+                continue;
+            }
+
             var inputNode = GetNodeView(binding.Subscriber.Node);
             var outputNode = GetNodeView(binding.Source.Node);
 
