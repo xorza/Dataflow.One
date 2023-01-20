@@ -11,30 +11,14 @@ using csso.NodeCore.Funcs;
 namespace csso.Nodeshop.UI;
 
 public abstract class EditableValueView : INotifyPropertyChanged {
-    private bool _hasValue;
-
     protected EditableValueView(Type type) {
         Type = type;
     }
 
     public Type Type { get; }
-
-    public bool HasValue {
-        get => _hasValue;
-        set {
-            if (_hasValue == value) {
-                return;
-            }
-
-            if (!value) {
-                ResetValue();
-            }
-
-            _hasValue = value;
-            OnPropertyChanged();
-        }
+    public virtual bool HasValue {
+        get => true;
     }
-
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -44,13 +28,13 @@ public abstract class EditableValueView : INotifyPropertyChanged {
                 .MakeGenericType(dataSubscription.Subscriber.Type)
                 .GetConstructors()
                 .First()
-                .Invoke(new object[] {});
+                .Invoke(new object[] { });
         return (EditableValueView) editableValueView;
     }
-    
+
     public static EditableValueView Create(ConstantFunc func) {
         var editableValueView =
-            typeof(ConstantFuncView<>)
+            typeof(ConstantValueFuncView<>)
                 .MakeGenericType(func.Type)
                 .GetConstructors()
                 .First()
@@ -67,34 +51,52 @@ public abstract class EditableValueView : INotifyPropertyChanged {
 }
 
 public class EditableValueView<T> : EditableValueView {
-    
-    public DataSubscription DataSubscription { get; }
+    public NodeArg InputArg { get; }
 
-    public EditableValueView(DataSubscription dataSubscription) : base(dataSubscription.Subscriber.Type) {
-        DataSubscription = dataSubscription;
+    public DataSubscription? DataSubscription {
+        get => InputArg.Node.Graph.GetDataSubscription(InputArg);
+    }
+
+    public EditableValueView(NodeArg inputArg) : base(inputArg.Type) {
+        Check.Argument(inputArg.ArgDirection == ArgDirection.In, nameof(inputArg));
+
+        InputArg = inputArg;
     }
 
     public T? Value {
-        get => (T?)DataSubscription.Value;
+        get => (T?) DataSubscription?.Value;
         set {
-            if (EqualityComparer<T>.Default.Equals(value, (T?)DataSubscription.Value)) {
+            if (EqualityComparer<T>.Default.Equals(value, (T?) DataSubscription?.Value)) {
                 return;
             }
-    
-            DataSubscription.Value = value;
+
+            if (value == null) {
+                InputArg.Node.Graph.RemoveSubscription(InputArg);
+            } else {
+                InputArg.Node.Graph.Add(new DataSubscription(InputArg, value));
+            }
+
             OnPropertyChanged();
         }
     }
-    
+
+    public override bool HasValue {
+        get => DataSubscription?.Value != null;
+    }
+
+    public bool HasSource {
+        get => DataSubscription?.Source != null;
+    }
+
     protected override void ResetValue() {
-        DataSubscription.Value =  DataCompatibility.Instance.DefaultValue<T>();
+        InputArg.Node.Graph.RemoveSubscription(InputArg);
     }
 }
 
-public class ConstantFuncView<T> : EditableValueView {
+public class ConstantValueFuncView<T> : EditableValueView {
     private readonly ConstantFunc<T> _constantFunc;
 
-    public ConstantFuncView(ConstantFunc<T> constantFunc) : base(typeof(T)) {
+    public ConstantValueFuncView(ConstantFunc<T> constantFunc) : base(typeof(T)) {
         _constantFunc = constantFunc;
     }
 

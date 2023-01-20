@@ -38,26 +38,27 @@ public class DataSubscription : INotifyPropertyChanged {
 
     public NodeArg Subscriber { get; }
     public NodeArg? Source { get; }
+    
+    // private object? _value = null;
+    //
+    // public Object? Value {
+    //     get => _value;
+    //     set {
+    //         if (Source != null) {
+    //             throw new Exception("cannot set value on subscription with source");
+    //         }
+    //
+    //         if (value != null) {
+    //             if (!DataCompatibility.Instance.IsValueConvertable(Subscriber.Type, value.GetType())) {
+    //                 throw new Exception("wvesrthbe56u635");
+    //             }
+    //         }
+    //
+    //         _value = value;
+    //     }
+    // }
 
-
-    private object? _value = null;
-
-    public Object? Value {
-        get => _value;
-        set {
-            if (Source != null) {
-                throw new Exception("cannot set value on subscription with source");
-            }
-
-            if (value != null) {
-                if (!DataCompatibility.Instance.IsValueConvertable(Subscriber.Type, value.GetType())) {
-                    throw new Exception("wvesrthbe56u635");
-                }
-            }
-
-            _value = value;
-        }
-    }
+    public Object? Value { get; set; }
 
     public SubscriptionBehavior Behavior {
         get => _behavior;
