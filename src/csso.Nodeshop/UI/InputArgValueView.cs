@@ -23,13 +23,13 @@ public abstract class EditableValueView : INotifyPropertyChanged {
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public static EditableValueView Create(NodeArg inputArg) {
+    public static EditableValueView Create(PutView inputView) {
         var editableValueView =
-            typeof(EditableValueView<>)
-                .MakeGenericType(inputArg.Type)
+            typeof(InputArgValueView<>)
+                .MakeGenericType(inputView.NodeArg.Type)
                 .GetConstructors()
                 .First()
-                .Invoke(new object[] {inputArg});
+                .Invoke(new object[] {inputView});
         return (EditableValueView) editableValueView;
     }
 
@@ -51,26 +51,35 @@ public abstract class EditableValueView : INotifyPropertyChanged {
     protected abstract void ResetValue();
 }
 
-public class EditableValueView<T> : EditableValueView {
-    public NodeArg InputArg { get; }
+public class InputArgValueView<T> : EditableValueView {
+    public PutView InputView { get; }
 
     public DataSubscription? DataSubscription {
-        get => InputArg.Node.Graph.GetDataSubscription(InputArg);
+        get => InputView.GetDataSubscription();
+        set {
+            if (value == null) {
+                InputView.NodeView.Node.Graph.RemoveSubscription(InputView.NodeArg);
+            } else {
+                InputView.NodeView.Node.Graph.Add(value);
+            }
+
+            InputView.NodeView.GraphView.Sync();
+        }
     }
 
-    public EditableValueView(NodeArg inputArg) : base(inputArg.Type) {
-        Check.Argument(inputArg.ArgDirection == ArgDirection.In, nameof(inputArg));
+    public InputArgValueView(PutView inputView) : base(inputView.NodeArg.Type) {
+        Check.Argument(inputView.ArgDirection == ArgDirection.In, nameof(inputView));
 
-        InputArg = inputArg;
+        InputView = inputView;
     }
 
     public T? Value {
         get {
-            if (DataSubscription == null) {
+            if (DataSubscription?.Value == null) {
                 return default;
             }
 
-            return (T?) DataSubscription.Value;
+            return (T?) (DataSubscription.Value);
         }
         set {
             if (Equals(value, DataSubscription?.Value)) {
@@ -78,25 +87,19 @@ public class EditableValueView<T> : EditableValueView {
             }
 
             if (value == null) {
-                InputArg.Node.Graph.RemoveSubscription(InputArg);
+                ResetValue();
             } else {
-                InputArg.Node.Graph.Add(new DataSubscription(InputArg, value));
+                DataSubscription = new DataSubscription(InputView.NodeArg, value);
             }
 
             OnPropertyChanged();
         }
     }
 
-    public override bool HasValue {
-        get => DataSubscription?.Value != null;
-    }
-
-    public bool HasSource {
-        get => DataSubscription?.Source != null;
-    }
+    public override bool HasValue => DataSubscription?.Value != null;
 
     protected override void ResetValue() {
-        InputArg.Node.Graph.RemoveSubscription(InputArg);
+        DataSubscription = null;
     }
 }
 

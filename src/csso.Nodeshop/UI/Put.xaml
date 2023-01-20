@@ -58,6 +58,12 @@
                     </Grid>
 
                     <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=PutUserControl, Path=PutView.InputValueView.HasValue}"
+                                      Value="True">
+                            <Setter Property="Stroke" TargetName="Highlight1" Value="GreenYellow" />
+                            <Setter Property="Stroke" TargetName="Highlight2" Value="GreenYellow" />
+                        </DataTrigger>
+                        
                         <DataTrigger Binding="{Binding ElementName=PutUserControl, Path= PutView.IsOutput}"
                                      Value="True">
 

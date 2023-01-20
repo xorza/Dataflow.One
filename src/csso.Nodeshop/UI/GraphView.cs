@@ -60,7 +60,6 @@ public sealed class GraphView : INotifyPropertyChanged {
         }
     }
 
-
     public NodeView? SelectedNode {
         get => _selectedNode;
         set {
@@ -122,6 +121,8 @@ public sealed class GraphView : INotifyPropertyChanged {
             .Select(_ => new NodeView(this, _))
             .ForEach(_nodes.Add);
 
+        _nodes.ForEach(_ => _.Sync());
+
         if (_selectedNode != null && !Nodes.Contains(_selectedNode)) {
             SelectedNode = null;
         }
@@ -142,6 +143,7 @@ public sealed class GraphView : INotifyPropertyChanged {
         }
     }
 
+    [Obsolete("should be done to base graph then sync")]
     public void RemoveNode(NodeView nodeView) {
         Check.True(nodeView.GraphView == this);
 
@@ -150,6 +152,7 @@ public sealed class GraphView : INotifyPropertyChanged {
         Sync();
     }
 
+    [Obsolete("should be done to base graph then sync")]
     public NodeView CreateNode(Function func) {
         var node = Graph.AddNode(func);
         NodeView result = new(this, node);

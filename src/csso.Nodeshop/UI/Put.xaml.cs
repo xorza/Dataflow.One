@@ -17,7 +17,7 @@ public partial class Put : UserControl {
         InitializeComponent();
 
         Loaded += OnLoaded;
-        LayoutUpdated += (object? sender, EventArgs e) => { UpdatePinPoint(); };
+        LayoutUpdated += (_, _) => { UpdatePinPoint(); };
     }
 
     public PutView? PutView {
@@ -36,14 +36,17 @@ public partial class Put : UserControl {
     }
 
     private void UpdatePinPoint() {
-        if (PutView!.Control == null)
+        if (PutView!.Control == null) {
             return;
+        }
 
-        if (!IsVisible)
+        if (!IsVisible) {
             return;
+        }
 
-        if (DragCanvas == null)
+        if (DragCanvas == null) {
             return;
+        }
 
         var upperLeft = PutView.Control
             .TransformToVisual(DragCanvas)

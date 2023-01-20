@@ -18,21 +18,7 @@ public class NodeView : INotifyPropertyChanged {
         Node = node;
         GraphView = graphView;
 
-        foreach (var input in Node.Inputs) {
-            PutView pv = new(input, this);
-            Inputs.Add(pv);
-        }
-
-        foreach (var output in Node.Outputs) {
-            PutView pv = new(output, this);
-            Outputs.Add(pv);
-        }
-
-        if (Node is FunctionNode functionNode) {
-            if (functionNode.Function is ConstantFunc constFunc) {
-                EditableValue = EditableValueView.Create(constFunc);
-            }
-        }
+        Sync();
     }
 
     public GraphView GraphView { get; }
@@ -52,7 +38,7 @@ public class NodeView : INotifyPropertyChanged {
     public ObservableCollection<ValueView> InputValues { get; } = new();
     public ObservableCollection<ValueView> OutputValues { get; } = new();
 
-    public EditableValueView? EditableValue { get; }
+    public EditableValueView? EditableValue { get; private set; }
 
     public bool IsSelected {
         get => _isSelected;
@@ -82,5 +68,23 @@ public class NodeView : INotifyPropertyChanged {
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
+
+    public void Sync() {
+        foreach (var input in Node.Inputs) {
+            PutView pv = new(this, input);
+            Inputs.Add(pv);
+        }
+
+        foreach (var output in Node.Outputs) {
+            PutView pv = new(this, output);
+            Outputs.Add(pv);
+        }
+
+        if (Node is FunctionNode {Function: ConstantFunc constFunc}) {
+            EditableValue = EditableValueView.Create(constFunc);
+        }
+        
+        Inputs.ForEach(_ => _.Sync());
     }
 }

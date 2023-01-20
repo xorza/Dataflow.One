@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using csso.Common;
 using csso.NodeCore;
 using csso.NodeCore.Annotations;
 
@@ -14,13 +15,9 @@ public sealed class PutView : INotifyPropertyChanged {
     private Point _pinPoint;
 
 
-    public PutView(NodeArg nodeArg, NodeView nodeView) {
+    public PutView(NodeView nodeView, NodeArg nodeArg) {
         NodeArg = nodeArg;
         NodeView = nodeView;
-
-        if (IsInput) {
-            InputValueView = EditableValueView.Create(nodeArg);
-        }
     }
 
     public UIElement? Control {
@@ -37,7 +34,7 @@ public sealed class PutView : INotifyPropertyChanged {
     public bool IsInput => ArgDirection == ArgDirection.In;
     public bool IsOutput => ArgDirection == ArgDirection.Out;
 
-    public EditableValueView? InputValueView { get; }
+    public EditableValueView? InputValueView { get; private set;}
 
     public NodeArg NodeArg { get; }
 
@@ -69,10 +66,23 @@ public sealed class PutView : INotifyPropertyChanged {
         }
     }
 
+    public DataSubscription? GetDataSubscription() {
+        Check.True(IsInput);
+
+        return NodeArg.Node.Graph.GetDataSubscription(NodeArg);
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    public void Sync() {
+        if (IsInput) {
+            InputValueView = EditableValueView.Create(this);
+            OnPropertyChanged(nameof(InputValueView));
+        }
     }
 }
