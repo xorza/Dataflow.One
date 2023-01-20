@@ -16,19 +16,20 @@ public abstract class EditableValueView : INotifyPropertyChanged {
     }
 
     public Type Type { get; }
+
     public virtual bool HasValue {
         get => true;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public static EditableValueView Create(DataSubscription dataSubscription) {
+    public static EditableValueView Create(NodeArg inputArg) {
         var editableValueView =
             typeof(EditableValueView<>)
-                .MakeGenericType(dataSubscription.Subscriber.Type)
+                .MakeGenericType(inputArg.Type)
                 .GetConstructors()
                 .First()
-                .Invoke(new object[] { });
+                .Invoke(new object[] {inputArg});
         return (EditableValueView) editableValueView;
     }
 
@@ -64,9 +65,15 @@ public class EditableValueView<T> : EditableValueView {
     }
 
     public T? Value {
-        get => (T?) DataSubscription?.Value;
+        get {
+            if (DataSubscription == null) {
+                return default;
+            }
+
+            return (T?) DataSubscription.Value;
+        }
         set {
-            if (EqualityComparer<T>.Default.Equals(value, (T?) DataSubscription?.Value)) {
+            if (Equals(value, DataSubscription?.Value)) {
                 return;
             }
 

@@ -18,7 +18,9 @@ public sealed class PutView : INotifyPropertyChanged {
         NodeArg = nodeArg;
         NodeView = nodeView;
 
-        ((INotifyCollectionChanged) nodeView.GraphView.Edges).CollectionChanged += Edges_CollectionChanged;
+        if (IsInput) {
+            InputValueView = EditableValueView.Create(nodeArg);
+        }
     }
 
     public UIElement? Control {
@@ -34,6 +36,8 @@ public sealed class PutView : INotifyPropertyChanged {
     public ArgDirection ArgDirection => NodeArg.ArgDirection;
     public bool IsInput => ArgDirection == ArgDirection.In;
     public bool IsOutput => ArgDirection == ArgDirection.Out;
+
+    public EditableValueView? InputValueView { get; }
 
     public NodeArg NodeArg { get; }
 
@@ -70,9 +74,5 @@ public sealed class PutView : INotifyPropertyChanged {
     [NotifyPropertyChangedInvocator]
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    private void Edges_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        // NodeView.GraphVm.Graph.ValueSubscriptions
     }
 }
