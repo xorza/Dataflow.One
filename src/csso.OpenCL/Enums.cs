@@ -42,7 +42,7 @@ internal static partial class Xtensions {
         var enumType = typeof(T);
 
         if (Enum.TryParse(enumType, s, out var result)) {
-            return (T) result!;
+            return (T)result!;
         }
 
         var names = Enum.GetNames<T>();
@@ -59,7 +59,7 @@ internal static partial class Xtensions {
             .SelectMany(member =>
                 member
                     .GetCustomAttributes<NameAttribute>()
-                    .Select(nameAttr => new {member, name = nameAttr.Name}))
+                    .Select(nameAttr => new { member, name = nameAttr.Name }))
             .SingleOrDefault(_ => _.name == s)
             ?.member.Name;
 

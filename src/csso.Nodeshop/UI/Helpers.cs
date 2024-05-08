@@ -1,3 +1,4 @@
 ﻿namespace csso.Nodeshop.UI;
 
-public static class Helper { }
+public static class Helper {
+}

@@ -17,9 +17,7 @@ public abstract class EditableValueView : INotifyPropertyChanged {
 
     public Type Type { get; }
 
-    public virtual bool HasValue {
-        get => true;
-    }
+    public virtual bool HasValue => true;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -29,8 +27,8 @@ public abstract class EditableValueView : INotifyPropertyChanged {
                 .MakeGenericType(inputView.NodeArg.Type)
                 .GetConstructors()
                 .First()
-                .Invoke(new object[] {inputView});
-        return (EditableValueView) editableValueView;
+                .Invoke(new object[] { inputView });
+        return (EditableValueView)editableValueView;
     }
 
     public static EditableValueView Create(ConstantFunc func) {
@@ -39,8 +37,8 @@ public abstract class EditableValueView : INotifyPropertyChanged {
                 .MakeGenericType(func.Type)
                 .GetConstructors()
                 .First()
-                .Invoke(new object[] {func});
-        return (EditableValueView) editableValueView;
+                .Invoke(new object[] { func });
+        return (EditableValueView)editableValueView;
     }
 
     [NotifyPropertyChangedInvocator]
@@ -52,6 +50,12 @@ public abstract class EditableValueView : INotifyPropertyChanged {
 }
 
 public class InputArgValueView<T> : EditableValueView {
+    public InputArgValueView(PutView inputView) : base(inputView.NodeArg.Type) {
+        Check.Argument(inputView.ArgDirection == ArgDirection.In, nameof(inputView));
+
+        InputView = inputView;
+    }
+
     public PutView InputView { get; }
 
     public DataSubscription? DataSubscription {
@@ -67,19 +71,13 @@ public class InputArgValueView<T> : EditableValueView {
         }
     }
 
-    public InputArgValueView(PutView inputView) : base(inputView.NodeArg.Type) {
-        Check.Argument(inputView.ArgDirection == ArgDirection.In, nameof(inputView));
-
-        InputView = inputView;
-    }
-
     public T? Value {
         get {
             if (DataSubscription?.Value == null) {
                 return default;
             }
 
-            return (T?) (DataSubscription.Value);
+            return (T?)DataSubscription.Value;
         }
         set {
             if (Equals(value, DataSubscription?.Value)) {

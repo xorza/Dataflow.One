@@ -11,7 +11,8 @@ namespace csso.Nodeshop;
 public partial class Overview : INotifyPropertyChanged {
     private FunctionFactoryBrowser? _functionFactoryBrowser;
 
-    public Overview() : this(new DummyComputationContext()) { }
+    public Overview() : this(new DummyComputationContext()) {
+    }
 
     public Overview(IComputationContext computationContext) {
         Workspace = new Workspace(computationContext);
@@ -47,7 +48,7 @@ public partial class Overview : INotifyPropertyChanged {
 
     private void FunctionFactoryBrowser_OnLoaded(object sender, RoutedEventArgs e) {
         FunctionFactoryView.Sync(Workspace.FunctionFactory);
-        _functionFactoryBrowser = (FunctionFactoryBrowser) sender;
+        _functionFactoryBrowser = (FunctionFactoryBrowser)sender;
         _functionFactoryBrowser.FunctionFactoryView = FunctionFactoryView;
     }
 

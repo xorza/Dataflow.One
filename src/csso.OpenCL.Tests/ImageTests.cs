@@ -8,7 +8,8 @@ public class ImageTests {
     private readonly ClContext _clContext = new();
 
     [SetUp]
-    public void Setup() { }
+    public void Setup() {
+    }
 
     [Test]
     public void Test1() {
@@ -19,13 +20,13 @@ public class ImageTests {
         var commandQueue = new ClCommandQueue(_clContext);
 
         var pixels = Enumerable
-            .Repeat(new Vec4b(1, 2, 3, 4), (int) (w * h))
+            .Repeat(new Vec4b(1, 2, 3, 4), (int)(w * h))
             .ToArray();
 
         image.Upload(commandQueue, pixels);
 
         pixels = Enumerable
-            .Repeat(new Vec4b(0, 0, 0, 0), (int) (w * h))
+            .Repeat(new Vec4b(0, 0, 0, 0), (int)(w * h))
             .ToArray();
         image.Download(commandQueue, pixels);
 

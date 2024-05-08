@@ -41,22 +41,22 @@ public class Edge : ClickControl {
     }
 
     public bool IsProactive {
-        get => (bool) GetValue(IsProactiveProperty);
+        get => (bool)GetValue(IsProactiveProperty);
         set => SetValue(IsProactiveProperty, value);
     }
 
     public Point InputPosition {
-        get => (Point) GetValue(InputPositionDependencyProperty);
+        get => (Point)GetValue(InputPositionDependencyProperty);
         set => SetValue(InputPositionDependencyProperty, value);
     }
 
     public Point OutputPosition {
-        get => (Point) GetValue(OutputPositionDependencyProperty);
+        get => (Point)GetValue(OutputPositionDependencyProperty);
         set => SetValue(OutputPositionDependencyProperty, value);
     }
 
     private static void Position_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        ((UIElement) d).InvalidateVisual();
+        ((UIElement)d).InvalidateVisual();
     }
 
     private void LeftButtonClickHandler(object? sender, MouseButtonEventArgs ea) {
@@ -64,7 +64,7 @@ public class Edge : ClickControl {
     }
 
     private void MouseButtonEventHandler(object sender, MouseButtonEventArgs e) {
-        var view = (EdgeView) ((FrameworkElement) sender).DataContext;
+        var view = (EdgeView)((FrameworkElement)sender).DataContext;
         view.IsProactive = !view.IsProactive;
     }
 

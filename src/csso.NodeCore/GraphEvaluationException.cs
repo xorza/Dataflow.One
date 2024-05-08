@@ -3,7 +3,8 @@
 namespace csso.NodeCore;
 
 public class GraphEvaluationException : Exception {
-    public GraphEvaluationException(string message) : base(message) { }
+    public GraphEvaluationException(string message) : base(message) {
+    }
 }
 
 public class ArgumentMissingException : GraphEvaluationException {

@@ -12,12 +12,16 @@ public interface IComputationContext {
 }
 
 public class DummyComputationContext : IComputationContext {
-    void IComputationContext.Init(UiApi api) { }
+    void IComputationContext.Init(UiApi api) {
+    }
 
     IEnumerable<Function> IComputationContext.RegisterFunctions() {
         return Array.Empty<Function>();
     }
 
-    void IComputationContext.OnStartRun() { }
-    void IComputationContext.OnFinishRun() { }
+    void IComputationContext.OnStartRun() {
+    }
+
+    void IComputationContext.OnFinishRun() {
+    }
 }

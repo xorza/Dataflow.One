@@ -32,9 +32,11 @@ public class ImageProcessingContext : IComputationContext, IDisposable {
         yield return new Function("Messagebox", Messagebox);
     }
 
-    public void OnStartRun() { }
+    public void OnStartRun() {
+    }
 
-    public void OnFinishRun() { }
+    public void OnFinishRun() {
+    }
 
     public void Dispose() {
         _context.Dispose();

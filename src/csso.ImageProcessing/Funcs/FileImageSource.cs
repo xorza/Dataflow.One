@@ -7,6 +7,8 @@ namespace csso.ImageProcessing.Funcs;
 public class FileImageSource : StatefulFunction, IDisposable {
     private readonly Context _context;
 
+    private readonly FileInfo? _fileInfo = null;
+
     public FileImageSource(Context ctx) {
         _context = ctx;
         Name = "Image from File";
@@ -17,8 +19,6 @@ public class FileImageSource : StatefulFunction, IDisposable {
 
         Behavior = FunctionBehavior.Reactive;
     }
-
-    private FileInfo? _fileInfo = null;
 
     public FileInfo? FileInfo {
         get => _fileInfo;

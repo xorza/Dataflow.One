@@ -6,10 +6,12 @@ using csso.Common;
 namespace csso.NodeCore;
 
 [AttributeUsage(AttributeTargets.Parameter)]
-public sealed class OutputAttribute : Attribute { }
+public sealed class OutputAttribute : Attribute {
+}
 
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-public sealed class ReactiveAttribute : Attribute { }
+public sealed class ReactiveAttribute : Attribute {
+}
 
 public enum FunctionBehavior {
     Reactive,
@@ -17,7 +19,8 @@ public enum FunctionBehavior {
 }
 
 public class Function {
-    protected Function() { }
+    protected Function() {
+    }
 
     public Function(string name, Delegate func) {
         Name = name;
@@ -114,6 +117,6 @@ public class Function {
 
 public abstract class StatefulFunction : Function {
     public virtual Function CreateInstance() {
-        return (Function) Activator.CreateInstance(GetType())!;
+        return (Function)Activator.CreateInstance(GetType())!;
     }
 }

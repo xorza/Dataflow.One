@@ -9,7 +9,8 @@ public class ClContextTests {
     private readonly ClContext _clContext = new();
 
     [SetUp]
-    public void Setup() { }
+    public void Setup() {
+    }
 
     [Test]
     public void two_buffers_and_const_sum() {
@@ -48,7 +49,7 @@ public class ClContextTests {
         };
 
         try {
-            clCommandQueue.EnqueueNdRangeKernel(kernel, new[] {2, 10}, argsValues);
+            clCommandQueue.EnqueueNdRangeKernel(kernel, new[] { 2, 10 }, argsValues);
             clCommandQueue.EnqueueReadBuffer(resultClBuffer, resultValues);
             clCommandQueue.Finish();
         } finally {

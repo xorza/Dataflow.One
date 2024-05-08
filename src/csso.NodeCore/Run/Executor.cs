@@ -143,12 +143,12 @@ public class Executor {
         while (yetToProcessENodes.TryDequeue(out var evaluationNode)) {
             invocationList.Push(evaluationNode);
 
-          var argumentDataSubscriptions = 
-              Graph.GetDataSubscriptions(evaluationNode.Node)
-                .Where(_ => _.Source!=null)
-                .SkipNulls()
-                .ToList();
-            
+            var argumentDataSubscriptions =
+                Graph.GetDataSubscriptions(evaluationNode.Node)
+                    .Where(_ => _.Source != null)
+                    .SkipNulls()
+                    .ToList();
+
             foreach (var dataSubscription in argumentDataSubscriptions) {
                 var targetEvaluationNode = GetEvaluationNode(dataSubscription.Source!.Node);
 

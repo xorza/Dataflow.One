@@ -30,9 +30,11 @@ public class ScalarComutationalContext : IComputationContext {
         yield return ConstStringFuncBaseBase;
     }
 
-    public void OnStartRun() { }
+    public void OnStartRun() {
+    }
 
-    public void OnFinishRun() { }
+    public void OnFinishRun() {
+    }
 
     [Description("messagebox")]
     [FunctionId("A982AA64-D455-4EB5-8CE9-D7A75EDB00E5")]

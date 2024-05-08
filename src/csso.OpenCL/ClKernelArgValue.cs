@@ -14,7 +14,7 @@ public class ScalarClKernelArgValue<T> : ClKernelArgValue where T : unmanaged {
     public T Value { get; }
 
     internal override void Set(ClKernel clKernel, int index) {
-        CL.SetKernelArg(clKernel.InternalClKernel, (uint) index, Value).ValidateSuccess();
+        CL.SetKernelArg(clKernel.InternalClKernel, (uint)index, Value).ValidateSuccess();
     }
 }
 
@@ -26,7 +26,7 @@ public class BufferClKernelArgValue : ClKernelArgValue {
     public ClBuffer ClBuffer { get; }
 
     internal override void Set(ClKernel clKernel, int index) {
-        CL.SetKernelArg(clKernel.InternalClKernel, (uint) index, ClBuffer.RawClBuffer).ValidateSuccess();
+        CL.SetKernelArg(clKernel.InternalClKernel, (uint)index, ClBuffer.RawClBuffer).ValidateSuccess();
     }
 }
 
@@ -38,6 +38,6 @@ public class ImageClKernelArgValue : ClKernelArgValue {
     public ClImage ClImage { get; }
 
     internal override void Set(ClKernel clKernel, int index) {
-        CL.SetKernelArg(clKernel.InternalClKernel, (uint) index, ClImage.RawClImage).ValidateSuccess();
+        CL.SetKernelArg(clKernel.InternalClKernel, (uint)index, ClImage.RawClImage).ValidateSuccess();
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using csso.Common;
 using csso.NodeCore;
 using csso.NodeCore.Funcs;
 
@@ -14,7 +13,7 @@ public class NodeView : INotifyPropertyChanged {
     private bool _isSelected;
     private Point _position;
 
-    public NodeView(GraphView graphView, csso.NodeCore.Node node) {
+    public NodeView(GraphView graphView, NodeCore.Node node) {
         Node = node;
         GraphView = graphView;
 
@@ -23,7 +22,7 @@ public class NodeView : INotifyPropertyChanged {
 
     public GraphView GraphView { get; }
 
-    public csso.NodeCore.Node Node { get; }
+    public NodeCore.Node Node { get; }
 
     public double? ExecutionTime {
         get => _executionTime;
@@ -81,10 +80,10 @@ public class NodeView : INotifyPropertyChanged {
             Outputs.Add(pv);
         }
 
-        if (Node is FunctionNode {Function: ConstantFunc constFunc}) {
+        if (Node is FunctionNode { Function: ConstantFunc constFunc }) {
             EditableValue = EditableValueView.Create(constFunc);
         }
-        
+
         Inputs.ForEach(_ => _.Sync());
     }
 }

@@ -15,12 +15,13 @@ public class Blend : Function, IDisposable {
         _context = ctx;
 
         SetFunction(Do);
-        
+
         Name = "Blend";
         Behavior = FunctionBehavior.Reactive;
     }
 
-    public void Dispose() { }
+    public void Dispose() {
+    }
 
     [Reactive]
     public bool Do(Image a, Image b, [Output] out Image image) {
@@ -53,7 +54,7 @@ public class Blend : Function, IDisposable {
             new ImageClKernelArgValue(bBuff),
             new ImageClKernelArgValue(resultBuff)
         };
-        var workSize = new int[2] {(int) width, (int) height};
+        var workSize = new int[2] { (int)width, (int)height };
 
         using (ClCommandQueue clCommandQueue = new(clContext)) {
             clCommandQueue.EnqueueNdRangeKernel(kernel, workSize, argsValues);

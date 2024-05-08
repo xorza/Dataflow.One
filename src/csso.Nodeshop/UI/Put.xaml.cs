@@ -1,4 +1,3 @@
-using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,21 +16,23 @@ public partial class Put : UserControl {
         InitializeComponent();
 
         Loaded += OnLoaded;
-        LayoutUpdated += (_, _) => { UpdatePinPoint(); };
+        LayoutUpdated += (_, _) => {
+            UpdatePinPoint();
+        };
     }
 
     public PutView? PutView {
-        get => (PutView?) GetValue(PutViewProperty);
+        get => (PutView?)GetValue(PutViewProperty);
         set => SetValue(PutViewProperty, value);
     }
 
     public Canvas? DragCanvas {
-        get => (Canvas) GetValue(DragCanvasProperty);
+        get => (Canvas)GetValue(DragCanvasProperty);
         set => SetValue(DragCanvasProperty, value);
     }
 
     private static void DragCanvas_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        var put = (Put) d;
+        var put = (Put)d;
         put.UpdatePinPoint();
     }
 
@@ -59,17 +60,18 @@ public partial class Put : UserControl {
         PutView.PinPoint = newPinPoint;
     }
 
-    private void OnLoaded(object sender, RoutedEventArgs e) { }
+    private void OnLoaded(object sender, RoutedEventArgs e) {
+    }
 
     private void PinHighlight_LoadedHandler(object sender, RoutedEventArgs args) {
-        var element = (FrameworkElement) sender;
+        var element = (FrameworkElement)sender;
         PutView!.Control = element;
 
         UpdatePinPoint();
     }
 
     private void PinButton_Click(object sender, RoutedEventArgs e) {
-        var pv = (PutView) ((Button) sender).Tag;
+        var pv = (PutView)((Button)sender).Tag;
         PinClick?.Invoke(this,
             new PinClickEventArgs(pv) {
                 RoutedEvent = e.RoutedEvent,

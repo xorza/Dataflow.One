@@ -63,7 +63,7 @@ public class ClBuffer : IDisposable {
             return new ClBuffer(
                 clContext,
                 clBuffer,
-                (uint) (arr.Length * sizeof(T))
+                (uint)(arr.Length * sizeof(T))
             );
         }
     }

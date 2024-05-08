@@ -2,4 +2,5 @@
 
 namespace csso.Common;
 
-public class AssertionException : Exception { }
+public class AssertionException : Exception {
+}

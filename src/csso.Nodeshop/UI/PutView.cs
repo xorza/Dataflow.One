@@ -1,5 +1,4 @@
-﻿using System.Collections.Specialized;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using csso.Common;
@@ -34,7 +33,7 @@ public sealed class PutView : INotifyPropertyChanged {
     public bool IsInput => ArgDirection == ArgDirection.In;
     public bool IsOutput => ArgDirection == ArgDirection.Out;
 
-    public EditableValueView? InputValueView { get; private set;}
+    public EditableValueView? InputValueView { get; private set; }
 
     public NodeArg NodeArg { get; }
 
@@ -66,13 +65,13 @@ public sealed class PutView : INotifyPropertyChanged {
         }
     }
 
+    public event PropertyChangedEventHandler? PropertyChanged;
+
     public DataSubscription? GetDataSubscription() {
         Check.True(IsInput);
 
         return NodeArg.Node.Graph.GetDataSubscription(NodeArg);
     }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
 
     [NotifyPropertyChangedInvocator]
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null) {

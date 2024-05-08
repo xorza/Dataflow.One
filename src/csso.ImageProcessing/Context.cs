@@ -22,7 +22,7 @@ public class Context : IDisposable {
 
     public T Get<T>() where T : class {
         var type = typeof(T);
-        var service = (T) _services[type];
+        var service = (T)_services[type];
         return service;
     }
 

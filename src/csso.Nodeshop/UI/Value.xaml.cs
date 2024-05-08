@@ -21,7 +21,7 @@ public partial class Value : UserControl {
     }
 
     public bool Editable {
-        get => (bool) GetValue(EditableProperty);
+        get => (bool)GetValue(EditableProperty);
         set => SetValue(EditableProperty, value);
     }
 
@@ -31,7 +31,7 @@ public partial class Value : UserControl {
     }
 
     private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        var control = (Value) d;
+        var control = (Value)d;
         control.Refresh();
     }
 

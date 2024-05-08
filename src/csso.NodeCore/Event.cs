@@ -10,7 +10,8 @@ public class Event {
 }
 
 public class AlwaysEvent : Event {
-    public AlwaysEvent() : base("Always") { }
+    public AlwaysEvent() : base("Always") {
+    }
 }
 
 public class EventSubscription {

@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using csso.ImageProcessing;
 using csso.Nodeshop.PlayRoom;
 
 namespace csso.Nodeshop;
@@ -7,8 +6,8 @@ namespace csso.Nodeshop;
 public partial class MainWindow : Window {
     public MainWindow() {
         InitializeComponent();
-        
+
         OverviewContentControl.Content = new Overview(new ScalarComutationalContext());
-       // OverviewContentControl.Content = new Overview(new ImageProcessingContext());
+        // OverviewContentControl.Content = new Overview(new ImageProcessingContext());
     }
 }

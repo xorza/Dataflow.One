@@ -29,7 +29,7 @@ public class DataSubscription : INotifyPropertyChanged {
         Source = source;
     }
 
-    public DataSubscription(NodeArg subscriber, Object value) {
+    public DataSubscription(NodeArg subscriber, object value) {
         Check.True(subscriber.ArgDirection == ArgDirection.In);
 
         Subscriber = subscriber;
@@ -39,7 +39,7 @@ public class DataSubscription : INotifyPropertyChanged {
     public NodeArg Subscriber { get; }
     public NodeArg? Source { get; }
 
-    public Object? Value { get; }
+    public object? Value { get; }
 
     public SubscriptionBehavior Behavior {
         get => _behavior;

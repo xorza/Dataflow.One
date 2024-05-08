@@ -5,7 +5,7 @@ namespace csso.Common;
 public static class StringParser {
     public static bool TryParse(string s, Type type, out object? result) {
         result = null;
-        var parser = type.GetMethod("Parse", new[] {typeof(string)});
+        var parser = type.GetMethod("Parse", new[] { typeof(string) });
         if (parser == null) {
             return false;
         }
@@ -18,7 +18,7 @@ public static class StringParser {
             return false;
         }
 
-        result = parser.Invoke(null, new object?[] {s});
+        result = parser.Invoke(null, new object?[] { s });
         return true;
     }
 }

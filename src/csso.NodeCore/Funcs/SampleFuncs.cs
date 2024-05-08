@@ -57,7 +57,8 @@ public abstract class ConstantFunc : StatefulFunction {
 
 public sealed class ConstantFunc<T> : ConstantFunc {
     public ConstantFunc(string name)
-        : this(name, DataCompatibility.Instance.DefaultValue<T>()) { }
+        : this(name, DataCompatibility.Instance.DefaultValue<T>()) {
+    }
 
     public ConstantFunc(string name, T? defaultValue) : base(name, typeof(T)) {
         SetFunction(Func_);

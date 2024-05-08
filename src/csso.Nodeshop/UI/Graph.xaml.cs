@@ -35,7 +35,7 @@ public partial class Graph : UserControl {
     }
 
     public GraphView? GraphView {
-        get => (GraphView) GetValue(GraphViewProperty);
+        get => (GraphView)GetValue(GraphViewProperty);
         set => SetValue(GraphViewProperty, value);
     }
 
@@ -85,7 +85,7 @@ public partial class Graph : UserControl {
     }
 
     private void MouseWheel_EventHandler(object sender, MouseWheelEventArgs e) {
-        GraphView!.ViewScale *= (float) Math.Pow(1.1, e.Delta / 120.0f);
+        GraphView!.ViewScale *= (float)Math.Pow(1.1, e.Delta / 120.0f);
     }
 
     private void NodeDeselectButton_Handler(object sender, MouseButtonEventArgs e) {
@@ -94,20 +94,22 @@ public partial class Graph : UserControl {
         }
     }
 
-    private void Loaded_Handler(object? sender, EventArgs e) { }
+    private void Loaded_Handler(object? sender, EventArgs e) {
+    }
 
-    private void LayoutUpdated_Handler(object? sender, EventArgs e) { }
+    private void LayoutUpdated_Handler(object? sender, EventArgs e) {
+    }
 
     private static void GraphViewPropertyChangedCallback(DependencyObject d,
         DependencyPropertyChangedEventArgs e) {
-        var graph = (Graph) d;
+        var graph = (Graph)d;
 
         if (e.OldValue is GraphView oldGraphView) {
-            ((INotifyCollectionChanged) oldGraphView.Edges).CollectionChanged -= graph.Edges_CollectionChanged;
+            ((INotifyCollectionChanged)oldGraphView.Edges).CollectionChanged -= graph.Edges_CollectionChanged;
         }
 
         if (e.NewValue is GraphView graphView) {
-            ((INotifyCollectionChanged) graphView.Edges).CollectionChanged += graph.Edges_CollectionChanged;
+            ((INotifyCollectionChanged)graphView.Edges).CollectionChanged += graph.Edges_CollectionChanged;
         }
 
         graph.RedrawEdges();
@@ -135,7 +137,7 @@ public partial class Graph : UserControl {
             }
         }
 
-        csso.Common.Debug.Assert.True(EdgesCanvas.Children.Count == GraphView!.Edges.Count);
+        Common.Debug.Assert.True(EdgesCanvas.Children.Count == GraphView!.Edges.Count);
 
         for (var i = 0; i < EdgesCanvas.Children.Count; i++) {
             Binding inputPointBinding = new("Input.PinPoint");
@@ -150,7 +152,7 @@ public partial class Graph : UserControl {
             Binding contextBinding = new();
             contextBinding.Source = GraphView!.Edges[i];
 
-            var edge = (Edge) EdgesCanvas.Children[i];
+            var edge = (Edge)EdgesCanvas.Children[i];
             edge.SetBinding(Edge.InputPositionDependencyProperty, inputPointBinding);
             edge.SetBinding(Edge.OutputPositionDependencyProperty, outputPointBinding);
             edge.SetBinding(Edge.IsProactiveProperty, proactivePointBinding);
@@ -158,10 +160,11 @@ public partial class Graph : UserControl {
         }
     }
 
-    private void LeftButtonClickHandler(object sender, MouseButtonEventArgs ea) { }
+    private void LeftButtonClickHandler(object sender, MouseButtonEventArgs ea) {
+    }
 
     private void Node_OnPinClick(object sender, PinClickEventArgs e) {
-        csso.Common.Debug.Assert.True(GraphView != null);
+        Common.Debug.Assert.True(GraphView != null);
 
         var graphView = GraphView!;
         if (graphView.SelectedPutView == null ||
@@ -196,7 +199,7 @@ public partial class Graph : UserControl {
         var input = p1.NodeArg.ArgDirection == ArgDirection.In ? p1 : p2;
         var output = p1.NodeArg.ArgDirection == ArgDirection.Out ? p1 : p2;
 
-        csso.Common.Debug.Assert.True(p1 != p2);
+        Common.Debug.Assert.True(p1 != p2);
 
         input.NodeView.Node.Graph.Add(
             new DataSubscription(
@@ -208,19 +211,19 @@ public partial class Graph : UserControl {
     }
 
     private void NodesCanvas_OnLoaded(object sender, RoutedEventArgs e) {
-        _nodesCanvas = (Canvas) sender;
+        _nodesCanvas = (Canvas)sender;
         Xtentions.ForEach(_nodes, _ => _.DragCanvas = _nodesCanvas);
     }
 
     private void Node_OnLoaded(object sender, RoutedEventArgs e) {
-        var node = (Node) sender;
+        var node = (Node)sender;
         node.DragCanvas = _nodesCanvas;
         Check.True(node.NodeView?.GraphView == GraphView);
         AddNode(node);
     }
 
     private void Node_Unloaded_Handler(object sender, RoutedEventArgs e) {
-        var node = (Node) sender;
+        var node = (Node)sender;
         node.DragCanvas = null;
         Check.True(_nodes.Remove(node));
     }
@@ -242,19 +245,19 @@ public partial class Graph : UserControl {
                 args.Handled = true;
             }
 
-            var element = (UIElement) sender;
+            var element = (UIElement)sender;
             _dragStart = args.GetPosition(element);
         }
 
         void Up(object sender, MouseButtonEventArgs args) {
-            var element = (UIElement) sender;
+            var element = (UIElement)sender;
             _dragStart = null;
             element.ReleaseMouseCapture();
         }
 
         void Move(object sender, MouseEventArgs args) {
             if (_dragStart != null && args.LeftButton == MouseButtonState.Pressed) {
-                var element = (UIElement) sender;
+                var element = (UIElement)sender;
                 element.CaptureMouse();
                 var p2 = args.GetPosition(_nodesCanvas);
                 node.NodeView!.Position =

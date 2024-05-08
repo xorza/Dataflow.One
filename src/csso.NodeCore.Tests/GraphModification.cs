@@ -51,7 +51,7 @@ public class GraphModification {
     public void Test1() {
         var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
-        
+
         Assert.Throws<ArgumentMissingException>(() => executor.Run());
         Assert.Throws<ArgumentMissingException>(() => executor.Run());
 

@@ -12,7 +12,8 @@ public class ValueView : INotifyPropertyChanged {
 
     private object? _value;
 
-    static ValueView() { }
+    static ValueView() {
+    }
 
     public ValueView(PutView putView, object? value) {
         IsLoading = false;
@@ -69,5 +70,6 @@ public class ValueView : INotifyPropertyChanged {
 }
 
 internal class NullValueView : ValueView {
-    public NullValueView(PutView putView) : base(putView, "null") { }
+    public NullValueView(PutView putView) : base(putView, "null") {
+    }
 }

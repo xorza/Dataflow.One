@@ -47,7 +47,7 @@ public class EvaluationNode {
         State = EvaluationState.Idle;
         ShouldInvokeThisFrame = false;
     }
-    
+
     public void ForceInvoke() {
         ShouldInvokeThisFrame = true;
     }
@@ -125,7 +125,7 @@ public class EvaluationNode {
 
             ValidateArguments();
 
-            ((FunctionNode) Node).Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
+            ((FunctionNode)Node).Function.Invoke(ArgValues.Length == 0 ? null : ArgValues);
 
             sw.Stop();
             ExecutionTime = sw.ElapsedMilliseconds * 1.0;

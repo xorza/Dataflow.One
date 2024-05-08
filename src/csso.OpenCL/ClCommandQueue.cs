@@ -43,7 +43,7 @@ public class ClCommandQueue : IDisposable {
             clBuffer.RawClBuffer,
             true,
             UIntPtr.Zero,
-            (UIntPtr) clBuffer.SizeInBytes,
+            clBuffer.SizeInBytes,
             bytes,
             0,
             null,
@@ -65,7 +65,7 @@ public class ClCommandQueue : IDisposable {
         }
 
         var globalWorkSize = size
-            .Select(_ => (UIntPtr) _)
+            .Select(_ => (UIntPtr)_)
             .ToArray();
 
         CLResultCode result;
@@ -73,7 +73,7 @@ public class ClCommandQueue : IDisposable {
         result = CL.EnqueueNDRangeKernel(
             RawClCommandQueue,
             clKernel.InternalClKernel,
-            (uint) globalWorkSize.Length,
+            (uint)globalWorkSize.Length,
             null,
             globalWorkSize,
             null,
@@ -117,7 +117,7 @@ public class ClCommandQueue : IDisposable {
             clBuffer.RawClBuffer,
             true,
             UIntPtr.Zero,
-            (UIntPtr) clBuffer.SizeInBytes,
+            clBuffer.SizeInBytes,
             ptr,
             0,
             null,

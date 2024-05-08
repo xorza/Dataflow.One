@@ -77,7 +77,8 @@ public sealed class FunctionNode : Node {
 }
 
 public sealed class GraphNode : Node {
-    public GraphNode() : base(Guid.NewGuid()) { }
+    public GraphNode() : base(Guid.NewGuid()) {
+    }
 
     public override FunctionBehavior Behavior { get; set; }
     public Graph SubGraph { get; set; }

@@ -23,7 +23,7 @@ public sealed class GraphView : INotifyPropertyChanged {
     private float _viewScale = 1.0f;
 
 
-    public GraphView(csso.NodeCore.Graph graph) {
+    public GraphView(NodeCore.Graph graph) {
         Nodes = new ReadOnlyObservableCollection<NodeView>(_nodes);
         Edges = new ReadOnlyObservableCollection<EdgeView>(_edges);
 
@@ -32,7 +32,7 @@ public sealed class GraphView : INotifyPropertyChanged {
         Sync();
     }
 
-    public csso.NodeCore.Graph Graph { get; }
+    public NodeCore.Graph Graph { get; }
     public ReadOnlyObservableCollection<EdgeView> Edges { get; }
     public ReadOnlyObservableCollection<NodeView> Nodes { get; }
 
@@ -102,7 +102,7 @@ public sealed class GraphView : INotifyPropertyChanged {
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private NodeView GetNodeView(csso.NodeCore.Node node) {
+    private NodeView GetNodeView(NodeCore.Node node) {
         return Nodes.Single(_ => _.Node == node);
     }
 

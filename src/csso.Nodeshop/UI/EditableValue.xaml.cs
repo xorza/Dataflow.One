@@ -15,12 +15,12 @@ public partial class EditableValue : UserControl {
     }
 
     public EditableValueView? Value {
-        get => (EditableValueView) GetValue(ValueProperty);
+        get => (EditableValueView)GetValue(ValueProperty);
         set => SetValue(ValueProperty, value);
     }
 
     private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        var control = (EditableValue) d;
+        var control = (EditableValue)d;
         control.ValueTextBox.IsEnabled = e.NewValue != null;
     }
 }

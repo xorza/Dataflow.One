@@ -19,7 +19,8 @@ public class PixelFormatInfo {
         }
     };
 
-    private PixelFormatInfo() { }
+    private PixelFormatInfo() {
+    }
 
     public PixelFormat Pf { get; private set; }
     public DrawingImagingPixelFormat Dipf { get; private set; }

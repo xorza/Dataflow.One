@@ -51,39 +51,39 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     public bool DeletionEnabled {
-        get => (bool) GetValue(DeletionEnabledProperty);
+        get => (bool)GetValue(DeletionEnabledProperty);
         set => SetValue(DeletionEnabledProperty, value);
     }
 
     public Brush HighlightBrush {
-        get => (Brush) GetValue(HighlightBrushProperty);
+        get => (Brush)GetValue(HighlightBrushProperty);
         set => SetValue(HighlightBrushProperty, value);
     }
 
     public NodeView? NodeView {
-        get => (NodeView) GetValue(NodeViewProperty);
+        get => (NodeView)GetValue(NodeViewProperty);
         set => SetValue(NodeViewProperty, value);
     }
 
     public Canvas? DragCanvas {
-        get => (Canvas) GetValue(DragCanvasProperty);
+        get => (Canvas)GetValue(DragCanvasProperty);
         set => SetValue(DragCanvasProperty, value);
     }
 
     public CornerRadius CornerRadius {
-        get => (CornerRadius) GetValue(CornerRadiusProperty);
+        get => (CornerRadius)GetValue(CornerRadiusProperty);
         set => SetValue(CornerRadiusProperty, value);
     }
 
     public Brush HeaderBackground {
-        get => (Brush) GetValue(HeaderBackgroundProperty);
+        get => (Brush)GetValue(HeaderBackgroundProperty);
         set => SetValue(HeaderBackgroundProperty, value);
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private static void DragCanvas_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        var graph = (Node) d;
+        var graph = (Node)d;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e) {
@@ -96,10 +96,11 @@ public partial class Node : UserControl, INotifyPropertyChanged {
 
     public event PinClickEventHandler? PinClick;
 
-    private void LayoutUpdated_EventHandler(object? sender, EventArgs e) { }
+    private void LayoutUpdated_EventHandler(object? sender, EventArgs e) {
+    }
 
     private static void NodeView_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        var node = (Node) d;
+        var node = (Node)d;
         if (e.OldValue is NodeView nv1) {
             nv1.PropertyChanged -= node.NodeView_PropertyChanged;
         }
@@ -126,7 +127,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void PinButton_Click(object sender, RoutedEventArgs e) {
-        var pv = ((Put) sender).PutView!;
+        var pv = ((Put)sender).PutView!;
         PinClick?.Invoke(this,
             new PinClickEventArgs(pv) {
                 RoutedEvent = e.RoutedEvent,
@@ -148,7 +149,7 @@ public partial class Node : UserControl, INotifyPropertyChanged {
     }
 
     private void PinButton_OnLoaded(object sender, RoutedEventArgs e) {
-        var put = (Put) sender;
+        var put = (Put)sender;
         put.PinClick += PinButton_Click;
     }
 }

@@ -18,8 +18,8 @@ public class MemoryBuffer : IDisposable {
         if (copy) {
             Ptr = Memory.Alloc(sizeInBytes);
             Buffer.MemoryCopy(
-                (void*) ptr,
-                (void*) Ptr,
+                (void*)ptr,
+                (void*)Ptr,
                 sizeInBytes,
                 sizeInBytes
             );
@@ -51,7 +51,7 @@ public class MemoryBuffer : IDisposable {
             throw new ArgumentException(nameof(offsetInBytes));
         }
 
-        var data = (T*) (Ptr + (int) offsetInBytes).ToPointer();
+        var data = (T*)(Ptr + (int)offsetInBytes).ToPointer();
         *data = value;
     }
 
@@ -61,13 +61,13 @@ public class MemoryBuffer : IDisposable {
             throw new ArgumentException(nameof(offsetInBytes));
         }
 
-        var data = (T*) (Ptr + (int) offsetInBytes).ToPointer();
+        var data = (T*)(Ptr + (int)offsetInBytes).ToPointer();
         return *data;
     }
 
     public byte[] GetBytes() {
         var result = new byte[SizeInBytes];
-        Marshal.Copy(Ptr, result, 0, (int) SizeInBytes);
+        Marshal.Copy(Ptr, result, 0, (int)SizeInBytes);
 
         return result;
     }
@@ -77,6 +77,6 @@ public class MemoryBuffer : IDisposable {
             throw new ArgumentOutOfRangeException(nameof(sizeInBytes));
         }
 
-        Memory.Copy(data, Ptr + (int) offsetInBytes, sizeInBytes);
+        Memory.Copy(data, Ptr + (int)offsetInBytes, sizeInBytes);
     }
 }

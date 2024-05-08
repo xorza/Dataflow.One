@@ -17,7 +17,7 @@ public class ClProgram : IDisposable {
 
         result = CL.BuildProgram(
             InternalClProgram,
-            (uint) ClContext.ClDevices.Length,
+            (uint)ClContext.ClDevices.Length,
             ClContext.ClDevices,
             "-cl-kernel-arg-info",
             IntPtr.Zero,

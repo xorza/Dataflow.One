@@ -20,12 +20,12 @@ public partial class NodeEdit : UserControl {
     }
 
     public NodeView? NodeView {
-        get => (NodeView) GetValue(NodeViewProperty);
+        get => (NodeView)GetValue(NodeViewProperty);
         set => SetValue(NodeViewProperty, value);
     }
 
     private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        ((NodeEdit) d).Refresh();
+        ((NodeEdit)d).Refresh();
     }
 
     private void Refresh() {

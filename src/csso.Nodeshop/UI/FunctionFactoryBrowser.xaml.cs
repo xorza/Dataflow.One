@@ -35,22 +35,22 @@ public partial class FunctionFactoryBrowser : UserControl {
     }
 
     public FunctionFactoryView? FunctionFactoryView {
-        get => (FunctionFactoryView) GetValue(FunctionFactoryViewProperty);
+        get => (FunctionFactoryView)GetValue(FunctionFactoryViewProperty);
         set => SetValue(FunctionFactoryViewProperty, value);
     }
 
     public Function? SelectedFunction {
-        get => (Function) GetValue(SelectedFunctionProperty);
+        get => (Function)GetValue(SelectedFunctionProperty);
         set => SetValue(SelectedFunctionProperty, value);
     }
 
     public Style? ListViewItemStyle {
-        get => (Style) GetValue(ListViewItemStyleProperty);
+        get => (Style)GetValue(ListViewItemStyleProperty);
         set => SetValue(ListViewItemStyleProperty, value);
     }
 
     public NodeView? NodePreview {
-        get => (NodeView) GetValue(NodePreviewProperty);
+        get => (NodeView)GetValue(NodePreviewProperty);
         set => SetValue(NodePreviewProperty, value);
     }
 
@@ -66,15 +66,15 @@ public partial class FunctionFactoryBrowser : UserControl {
 
     private static void FunctionFactoryView_PropertyChangedCallback(DependencyObject d,
         DependencyPropertyChangedEventArgs e) {
-        var functionFactoryBrowser = (FunctionFactoryBrowser) d;
+        var functionFactoryBrowser = (FunctionFactoryBrowser)d;
 
         if (e.OldValue is FunctionFactoryView ffViewOld) {
-            ((INotifyCollectionChanged) ffViewOld.Functions).CollectionChanged -=
+            ((INotifyCollectionChanged)ffViewOld.Functions).CollectionChanged -=
                 functionFactoryBrowser.FunctionFactory_Functions_OnCollectionChanged;
         }
 
         if (e.NewValue is FunctionFactoryView ffViewNew) {
-            ((INotifyCollectionChanged) ffViewNew.Functions).CollectionChanged +=
+            ((INotifyCollectionChanged)ffViewNew.Functions).CollectionChanged +=
                 functionFactoryBrowser.FunctionFactory_Functions_OnCollectionChanged;
         }
 
@@ -82,7 +82,8 @@ public partial class FunctionFactoryBrowser : UserControl {
         functionFactoryBrowser.NodePreview = null;
     }
 
-    private void FunctionFactory_Functions_OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) { }
+    private void FunctionFactory_Functions_OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+    }
 
     private void SubscribeToMouseDoubleClicks() {
         for (var i = 0; i < FunctionsListView.Items.Count; i++) {
@@ -95,8 +96,8 @@ public partial class FunctionFactoryBrowser : UserControl {
     }
 
     private void ListViewItemOnMouseDoubleClick(object sender, MouseButtonEventArgs e) {
-        var lvi = (ListViewItem) sender;
-        var func = (Function) lvi.Content;
+        var lvi = (ListViewItem)sender;
+        var func = (Function)lvi.Content;
         if (func is StatefulFunction factory) {
             func = factory.CreateInstance();
         }
@@ -106,13 +107,13 @@ public partial class FunctionFactoryBrowser : UserControl {
 
     private static void SelectedFunction_PropertyChangedCallback(DependencyObject d,
         DependencyPropertyChangedEventArgs e) {
-        var functionFactoryBrowser = (FunctionFactoryBrowser) d;
+        var functionFactoryBrowser = (FunctionFactoryBrowser)d;
         if (functionFactoryBrowser.SelectedFunction == null) {
             functionFactoryBrowser.NodePreview = null;
             return;
         }
 
-        GraphView graphView = new(new csso.NodeCore.Graph());
+        GraphView graphView = new(new NodeCore.Graph());
 
         var node
             = graphView.Graph.AddNode(functionFactoryBrowser.SelectedFunction);
@@ -122,7 +123,8 @@ public partial class FunctionFactoryBrowser : UserControl {
     }
 
     private static void
-        NodePreview_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) { }
+        NodePreview_PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+    }
 
 
     private void OnPreviewInput(object sender, RoutedEventArgs e) {

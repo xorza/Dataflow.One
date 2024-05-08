@@ -36,16 +36,16 @@
                              Converter={StaticResource NullVisibilityConverter1},   
                              ConverterParameter=local:NullVisibilityConverterOptions.NullToCollapsed}"
                 Value="{Binding Path=EditableValue}" />
-            
+
             <ItemsControl ItemsSource="{Binding Inputs}">
                 <ItemsControl.Resources>
                     <ResourceDictionary>
                         <DataTemplate DataType="{x:Type ui:PutView}">
-                            <TextBox Text="{Binding Path=InputValueView.Value}"></TextBox>
+                            <TextBox Text="{Binding Path=InputValueView.Value}" />
                         </DataTemplate>
                     </ResourceDictionary>
                 </ItemsControl.Resources>
-                
+
             </ItemsControl>
 
             <Expander

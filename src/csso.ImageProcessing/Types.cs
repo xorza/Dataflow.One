@@ -6,9 +6,9 @@ public struct RGB8U {
     public byte b;
 
     public RGB8U(RGB16U other) {
-        r = (byte) (other.r / 256);
-        g = (byte) (other.g / 256);
-        b = (byte) (other.b / 256);
+        r = (byte)(other.r / 256);
+        g = (byte)(other.g / 256);
+        b = (byte)(other.b / 256);
     }
 }
 
@@ -19,10 +19,10 @@ public struct RGBA8U {
     public byte a;
 
     public RGBA8U(RGBA16U other) {
-        r = (byte) (other.r / 256);
-        g = (byte) (other.g / 256);
-        b = (byte) (other.b / 256);
-        a = (byte) (other.a / 256);
+        r = (byte)(other.r / 256);
+        g = (byte)(other.g / 256);
+        b = (byte)(other.b / 256);
+        a = (byte)(other.a / 256);
     }
 }
 
@@ -32,9 +32,9 @@ public struct RGB16U {
     public ushort b;
 
     public RGB16U(RGB8U other) {
-        r = (ushort) (other.r * 256);
-        g = (ushort) (other.g * 256);
-        b = (ushort) (other.b * 256);
+        r = (ushort)(other.r * 256);
+        g = (ushort)(other.g * 256);
+        b = (ushort)(other.b * 256);
     }
 }
 
@@ -45,10 +45,10 @@ public struct RGBA16U {
     public ushort a;
 
     public RGBA16U(RGBA8U other) {
-        r = (ushort) (other.r * 256);
-        g = (ushort) (other.g * 256);
-        b = (ushort) (other.g * 256);
-        a = (ushort) (other.a * 256);
+        r = (ushort)(other.r * 256);
+        g = (ushort)(other.g * 256);
+        b = (ushort)(other.g * 256);
+        a = (ushort)(other.a * 256);
     }
 }
 

@@ -1,3 +1,4 @@
 ﻿namespace csso.ImageProcessing;
 
-public static class Xtensions { }
+public static class Xtensions {
+}

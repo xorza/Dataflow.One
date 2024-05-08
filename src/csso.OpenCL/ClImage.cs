@@ -10,7 +10,8 @@ public unsafe class ClImage : IDisposable {
         uint width, uint height,
         PixelFormat pixelFormat,
         MemoryBuffer? buffer = null)
-        : this(ctx, width, height, pixelFormat.CalculateStride(width), pixelFormat, buffer) { }
+        : this(ctx, width, height, pixelFormat.CalculateStride(width), pixelFormat, buffer) {
+    }
 
     public ClImage(ClContext ctx,
         uint width, uint height, uint stride,
@@ -91,7 +92,7 @@ public unsafe class ClImage : IDisposable {
 
                 Memory.Copy(
                     new IntPtr(srcDataRowPtr),
-                    buffer.Ptr + (int) (row * Stride),
+                    buffer.Ptr + (int)(row * Stride),
                     Stride
                 );
             }
@@ -105,8 +106,8 @@ public unsafe class ClImage : IDisposable {
             commandQueue.RawClCommandQueue,
             RawClImage,
             true,
-            new UIntPtr[3] {UIntPtr.Zero, UIntPtr.Zero, UIntPtr.Zero},
-            new UIntPtr[3] {new(Width), new(Height), new(1)},
+            new UIntPtr[3] { UIntPtr.Zero, UIntPtr.Zero, UIntPtr.Zero },
+            new UIntPtr[3] { new(Width), new(Height), new(1) },
             new UIntPtr(Stride),
             UIntPtr.Zero,
             buffer.Ptr,
@@ -126,12 +127,12 @@ public unsafe class ClImage : IDisposable {
 
         fixed (T* srcDataPtr = data) {
             for (uint row = 0; row < Height; row++) {
-                var dstDataRowPtr = (byte*) srcDataPtr + row * Stride;
+                var dstDataRowPtr = (byte*)srcDataPtr + row * Stride;
 
                 Memory.Copy(
-                    buffer.Ptr + (int) (row * Stride),
+                    buffer.Ptr + (int)(row * Stride),
                     new IntPtr(dstDataRowPtr),
-                    (uint) (Width * sizeof(T))
+                    (uint)(Width * sizeof(T))
                 );
             }
         }
@@ -142,8 +143,8 @@ public unsafe class ClImage : IDisposable {
             commandQueue.RawClCommandQueue,
             RawClImage,
             true,
-            new UIntPtr[3] {UIntPtr.Zero, UIntPtr.Zero, UIntPtr.Zero},
-            new UIntPtr[3] {new(Width), new(Height), new(1)},
+            new UIntPtr[3] { UIntPtr.Zero, UIntPtr.Zero, UIntPtr.Zero },
+            new UIntPtr[3] { new(Width), new(Height), new(1) },
             new UIntPtr(Stride),
             UIntPtr.Zero,
             buffer.Ptr,

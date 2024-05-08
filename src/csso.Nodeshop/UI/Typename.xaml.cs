@@ -17,12 +17,12 @@ public partial class Typename : UserControl {
     }
 
     public Type? ValueType {
-        get => (Type) GetValue(ValueTypeProperty);
+        get => (Type)GetValue(ValueTypeProperty);
         set => SetValue(ValueTypeProperty, value);
     }
 
     private static void PropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-        ((Typename) d).Refresh();
+        ((Typename)d).Refresh();
     }
 
 
