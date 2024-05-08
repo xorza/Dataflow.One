@@ -51,8 +51,7 @@ public class GraphModification {
     public void Test1() {
         var executor = new Executor(_graph!);
         _frameNoFunc.Executor = executor;
-
-
+        
         Assert.Throws<ArgumentMissingException>(() => executor.Run());
         Assert.Throws<ArgumentMissingException>(() => executor.Run());
 
@@ -63,10 +62,10 @@ public class GraphModification {
         );
 
         executor.Run();
-        Assert.AreEqual(1253, _outputFunc.Value);
+        Assert.That(1253 == _outputFunc.Value);
 
         executor.Run();
-        Assert.AreEqual(1254, _outputFunc.Value);
+        Assert.That(1254 == _outputFunc.Value);
 
         Assert.Pass();
     }

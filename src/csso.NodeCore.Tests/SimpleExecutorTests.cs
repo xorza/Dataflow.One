@@ -29,18 +29,18 @@ public class Tests {
 
         var proactiveConstNode = executor.GetEvaluationNode(_graph.ProactiveConstNode);
 
-        Assert.AreEqual(1253, _graph.OutputFunc.Value);
-        Assert.True(proactiveConstNode.State >= EvaluationState.Invoked);
+        Assert.That(1253 == _graph.OutputFunc.Value);
+        Assert.That(proactiveConstNode.State >= EvaluationState.Invoked);
 
         _graph.ProactiveConstFuncBaseBase.TypedValue = 33;
         executor = new Executor(_graph.Graph);
         _graph.FrameNoFunc.Executor = executor;
         executor.Run();
-        Assert.AreEqual(33, _graph.OutputFunc.Value);
+        Assert.That(33 == _graph.OutputFunc.Value);
 
         _graph.ProactiveConstFuncBaseBase.TypedValue = 4;
         executor.Run();
-        Assert.AreEqual(4, _graph.OutputFunc.Value);
+        Assert.That(4 == _graph.OutputFunc.Value);
 
         Assert.Pass();
     }
@@ -57,10 +57,10 @@ public class Tests {
         _graph.FrameNoFunc.Executor = executor;
 
         executor.Run();
-        Assert.AreEqual(0, _graph.OutputFunc.Value);
+        Assert.That(0 == _graph.OutputFunc.Value);
 
         executor.Run();
-        Assert.AreEqual(1, _graph.OutputFunc.Value);
+        Assert.That(1 == _graph.OutputFunc.Value);
 
         Assert.Pass();
     }
@@ -89,10 +89,10 @@ public class Tests {
         _graph.FrameNoFunc.Executor = executor;
 
         executor.Run();
-        Assert.AreEqual(1256, _graph.OutputFunc.Value);
+        Assert.That(1256 == _graph.OutputFunc.Value);
 
         executor.Run();
-        Assert.AreEqual(1256, _graph.OutputFunc.Value);
+        Assert.That(1256 == _graph.OutputFunc.Value);
 
         Assert.Pass();
     }
@@ -122,21 +122,21 @@ public class Tests {
 
         executor.Run();
 
-        Assert.AreEqual(3, _graph.OutputFunc.Value);
+        Assert.That(3 == _graph.OutputFunc.Value);
 
         var addEvaluationNode = executor.GetEvaluationNode(_graph.AddNode);
         var frameNoEvaluationNode = executor.GetEvaluationNode(_graph.FrameNoNode);
         var reactiveConstNode = executor.GetEvaluationNode(_graph.ReactiveConstNode);
-        Assert.True(frameNoEvaluationNode.State == EvaluationState.Invoked);
-        Assert.True(reactiveConstNode.State == EvaluationState.Invoked);
-        Assert.True(addEvaluationNode.State == EvaluationState.Invoked);
+        Assert.That(frameNoEvaluationNode.State == EvaluationState.Invoked);
+        Assert.That(reactiveConstNode.State == EvaluationState.Invoked);
+        Assert.That(addEvaluationNode.State == EvaluationState.Invoked);
 
         executor.Run();
 
-        Assert.AreEqual(4, _graph.OutputFunc.Value);
-        Assert.AreEqual(EvaluationState.Invoked, frameNoEvaluationNode.State);
-        Assert.AreEqual(EvaluationState.Processed, reactiveConstNode.State);
-        Assert.AreEqual(EvaluationState.Invoked, addEvaluationNode.State);
+        Assert.That(4 == _graph.OutputFunc.Value);
+        Assert.That(EvaluationState.Invoked == frameNoEvaluationNode.State);
+        Assert.That(EvaluationState.Processed == reactiveConstNode.State);
+        Assert.That(EvaluationState.Invoked == addEvaluationNode.State);
 
         Assert.Pass();
     }
@@ -164,19 +164,19 @@ public class Tests {
 
         executor.Run();
 
-        Assert.AreEqual(3, _graph.OutputFunc.Value);
+        Assert.That(3 == _graph.OutputFunc.Value);
 
         var addEvaluationNode = executor.GetEvaluationNode(_graph.AddNode!);
         var outputEvaluationNode = executor.GetEvaluationNode(_graph.OutputNode);
-        Assert.True(addEvaluationNode.State >= EvaluationState.Invoked);
-        Assert.True(outputEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.That(addEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.That(outputEvaluationNode.State >= EvaluationState.Invoked);
 
         executor.Run();
 
-        Assert.AreEqual(3, _graph.OutputFunc.Value);
+        Assert.That(3 == _graph.OutputFunc.Value);
 
-        Assert.False(addEvaluationNode.State >= EvaluationState.Invoked);
-        Assert.True(outputEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.That(addEvaluationNode.State < EvaluationState.Invoked);
+        Assert.That(outputEvaluationNode.State >= EvaluationState.Invoked);
 
         Assert.Pass();
     }
@@ -194,11 +194,11 @@ public class Tests {
         _graph.ProactiveConstFuncBaseBase.TypedValue = 133;
 
         executor.Run();
-        Assert.AreEqual(133, _graph.OutputFunc.Value);
+        Assert.That(133 == _graph.OutputFunc.Value);
 
         _graph.ProactiveConstFuncBaseBase.TypedValue = 132;
         executor.Run();
-        Assert.AreEqual(132, _graph.OutputFunc.Value);
+        Assert.That(132 == _graph.OutputFunc.Value);
 
         Assert.Pass();
     }
@@ -225,19 +225,19 @@ public class Tests {
 
         executor.Run();
 
-        Assert.AreEqual(0, _graph.OutputFunc.Value);
+        Assert.That(0 == _graph.OutputFunc.Value);
 
         var addEvaluationNode = executor.GetEvaluationNode(_graph.AddNode!);
         var outputEvaluationNode = executor.GetEvaluationNode(_graph.OutputNode);
-        Assert.True(addEvaluationNode.State >= EvaluationState.Invoked);
-        Assert.True(outputEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.That(addEvaluationNode.State >= EvaluationState.Invoked);
+        Assert.That(outputEvaluationNode.State >= EvaluationState.Invoked);
 
         executor.Run();
 
-        Assert.AreEqual(2, _graph.OutputFunc.Value);
+        Assert.That(2 == _graph.OutputFunc.Value);
 
-        Assert.True(addEvaluationNode.State == EvaluationState.Invoked);
-        Assert.True(outputEvaluationNode.State == EvaluationState.Invoked);
+        Assert.That(addEvaluationNode.State == EvaluationState.Invoked);
+        Assert.That(outputEvaluationNode.State == EvaluationState.Invoked);
 
         Assert.Pass();
     }

@@ -9,7 +9,8 @@ namespace csso.ImageProcessing.Tests;
 [TestFixture]
 public class BlendTest {
     [SetUp]
-    public void Setup() { }
+    public void Setup() {
+    }
 
     [OneTimeTearDown]
     public void OneTimeTearDown() {
@@ -44,7 +45,6 @@ public class BlendTest {
         var blend = new Blend(_context);
 
         blend.Do(a, b, out var c);
-        Assert.NotNull(c);
 
         using (c) {
             var buffer = c.TakeCpuBuffer(Image.Operation.Read);
